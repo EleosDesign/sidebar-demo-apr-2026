@@ -50,8 +50,8 @@ export default function EhrSelector() {
       ref={popoverRef}
       style={{
         position: 'fixed',
-        bottom: 20,
-        left: 20,
+        top: 12,
+        right: 16,
         zIndex: 50,
         fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       }}
@@ -61,8 +61,8 @@ export default function EhrSelector() {
         <div
           style={{
             position: 'absolute',
-            bottom: 'calc(100% + 8px)',
-            left: 0,
+            top: 'calc(100% + 8px)',
+            right: 0,
             background: '#fff',
             border: '1px solid #e0e4e8',
             borderRadius: 10,
