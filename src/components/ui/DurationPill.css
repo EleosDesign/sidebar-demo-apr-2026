@@ -1,0 +1,21 @@
+/* ── DurationPill animations ─────────────────────────────────────────────── */
+
+@keyframes durStarMain {
+  0%,  100% { transform: scale(1)    rotate(0deg); }
+  50%        { transform: scale(1.15) rotate(8deg); }
+}
+
+@keyframes durStarTwinkle1 {
+  0%,  100% { opacity: 0.6; }
+  50%        { opacity: 0.1; }
+}
+
+@keyframes durStarTwinkle2 {
+  0%,  100% { opacity: 0.4; }
+  50%        { opacity: 0.1; }
+}
+
+@keyframes shimmerText {
+  0%   { background-position: 0%   center; }
+  100% { background-position: 200% center; }
+}

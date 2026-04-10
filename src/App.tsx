@@ -13,6 +13,7 @@ import './App.css';
 const WorkflowsLanding = lazy(() => import('./pages/Workflows/WorkflowsLanding'));
 const WorkflowComposer = lazy(() => import('./pages/Workflows/WorkflowComposer'));
 const WorkflowDetail = lazy(() => import('./pages/Workflows/WorkflowDetail'));
+const ClinicianPage = lazy(() => import('./pages/Clinician/ClinicianPage.jsx'));
 
 function AppContent() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function AppContent() {
           <Route path="/workflows/new" element={<WorkflowComposer />} />
           <Route path="/workflows/:id" element={<WorkflowDetail />} />
           <Route path="/workflows/:id/edit" element={<WorkflowComposer />} />
+          <Route path="/clinician" element={<ClinicianPage />} />
         </Routes>
       </Suspense>
     </div>

@@ -79,3 +79,28 @@
   --sidebar-collapsed-width: 64px;
   --header-height: 64px;
 }
+
+/* ── Eleos clinician brand tokens ─────────────────────────────── */
+:root {
+  --gold-mid: #FFBD00;
+  --gold-light: #FFF1D0;
+  --gold-dark: #D88100;
+  --navy-deep: #172C37;
+  --navy-mid: #204457;
+  --navy-light: #A7BECA;
+  --teal-mid: #80C7C7;
+  --teal-light: #DCF6F0;
+  --teal-dark: #3F8A89;
+  --blue-bright: #0583E3;
+  --rose-mid: #FF8D9F;
+  --eleos-rail: #293D87;
+  --eleos-content-bg: #EAEDFA;
+  --eleos-card-bar: #01579B;
+  --eleos-card-border: #ECEFF1;
+  --eleos-tab-active: #2D4CCD;
+  --eleos-badge-red: #E02D3C;
+  --eleos-online: #46BC9E;
+  --eleos-avatar-bg: #EAEDFA;
+  --eleos-avatar-icon: #2D4CCD;
+  --eleos-chevron: #424242;
+}
