@@ -5394,18 +5394,32 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
   const P = { fontFamily: 'Poppins, sans-serif' };
   const getElapsed = () => startedAt ? Math.floor((Date.now() - startedAt) / 1000) : 0;
   const [seconds, setSeconds] = useState(getElapsed);
+  const containerRef = useRef(null);
+  const [panelH, setPanelH] = useState(600);
 
   useEffect(() => {
     const t = setInterval(() => setSeconds(getElapsed()), 1000);
     return () => clearInterval(t);
   }, [startedAt]);
 
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => setPanelH(entries[0].contentRect.height));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Progressively collapse decorative elements so CTA is always reachable
+  const showIllustration = panelH >= 500;
+  const timerSize = panelH < 420 ? 32 : 48;
+
   const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
   const secs = String(seconds % 60).padStart(2, '0');
 
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
+    <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
       <style>{`@keyframes eqBounce { from { transform: scaleY(1); } to { transform: scaleY(0.35); } }`}</style>
       {/* Header */}
       <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '16px 16px 16px' }}>
@@ -5424,9 +5438,9 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
       {/* Main content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'white', borderRadius: '16px 16px 0 0', boxShadow: '0px 6px 30px 5px rgba(0,0,0,0.12),0px 16px 24px 1px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
         {/* Centred content area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 32, padding: '24px 24px 0' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 32, padding: '24px 24px 0', minHeight: 0 }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-          <svg width="187" height="143" viewBox="0 0 187 143" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ maxWidth: 187, height: 'auto' }}>
+          <svg width="187" height="143" viewBox="0 0 187 143" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ maxWidth: 187, height: 'auto', display: showIllustration ? 'block' : 'none' }}>
             <g clipPath="url(#clip0_mic)">
               <path d="M59.8223 28.5638C60.6429 28.5638 61.3082 27.9004 61.3082 27.0822C61.3082 26.2639 60.6429 25.6006 59.8223 25.6006C59.0017 25.6006 58.3364 26.2639 58.3364 27.0822C58.3364 27.9004 59.0017 28.5638 59.8223 28.5638Z" fill="#FFC04C"/>
               <path d="M47.2332 57.7625C48.0538 57.7625 48.7191 57.0992 48.7191 56.2809C48.7191 55.4626 48.0538 54.7993 47.2332 54.7993C46.4126 54.7993 45.7473 55.4626 45.7473 56.2809C45.7473 57.0992 46.4126 57.7625 47.2332 57.7625Z" fill="#FFC04C"/>
@@ -5457,17 +5471,21 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
               </clipPath>
             </defs>
           </svg>
-          <div style={{ ...P, fontSize: 48, fontWeight: 600, color: 'rgba(0,0,0,0.88)', lineHeight: 1, textAlign: 'center' }}>{mins}:{secs}</div>
+          <div style={{ ...P, fontSize: timerSize, fontWeight: 600, color: 'rgba(0,0,0,0.88)', lineHeight: 1, textAlign: 'center', transition: 'font-size 0.2s' }}>{mins}:{secs}</div>
         </div>
-        <div style={{ background: 'rgba(45,76,205,0.05)', borderRadius: 8, padding: 16, width: '100%', maxWidth: 295 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap' }}>Your microphone:</span>
-            <EqBars activeCount={3} total={19} animOffset={0} />
+        <div style={{ background: 'rgba(45,76,205,0.05)', borderRadius: 8, padding: 16, width: '100%', maxWidth: 295, overflow: 'hidden', boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap', flexShrink: 0 }}>Your microphone:</span>
+            <div style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'flex-end' }}>
+              <EqBars activeCount={3} total={19} animOffset={0} />
+            </div>
           </div>
           <div style={{ height: 1, background: 'rgba(45,76,205,0.15)', marginBottom: 12 }} />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap' }}>Clients microphone:</span>
-            <EqBars activeCount={15} total={19} animOffset={100} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap', flexShrink: 0 }}>Clients microphone:</span>
+            <div style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'flex-end' }}>
+              <EqBars activeCount={15} total={19} animOffset={100} />
+            </div>
           </div>
         </div>
         </div>{/* end centred content area */}
