@@ -7,7 +7,7 @@ import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
-import { NoteTypeProvider, useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 
 const BAR_DELAYS = [0, 0.18, 0.09, 0.27, 0.36];
 
@@ -65,8 +65,13 @@ export default function ClinicianScene({ step, onNext }) {
   };
 
   const handleAddToNote = (section, content) => {
-    // Try direct section match from note type context first
-    const directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
+    // Direct label/id match first
+    let directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
+    // Fallback: eleosMapping translates generic 'Data','Assessment','Plan' → note-type-specific ids
+    if (!directSection && noteTypeCtx?.eleosMapping?.[section]) {
+      const mappedId = noteTypeCtx.eleosMapping[section];
+      directSection = noteTypeCtx.sections.find(s => s.id === mappedId);
+    }
     const field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
     if (!field) return;
     setNoteValues(prev => ({ ...prev, [field]: prev[field] ? prev[field] + '\n\n' + content : content }));
@@ -104,7 +109,6 @@ export default function ClinicianScene({ step, onNext }) {
   );
 
   return (
-    <NoteTypeProvider>
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <style>{`
         @keyframes lbPulse {
@@ -150,7 +154,6 @@ export default function ClinicianScene({ step, onNext }) {
         }
       </EhrFieldProvider>
     </div>
-    </NoteTypeProvider>
   );
 }
 
