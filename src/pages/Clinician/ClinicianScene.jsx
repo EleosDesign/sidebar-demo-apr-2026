@@ -5,6 +5,9 @@ import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldConte
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
+import EhrSelector from '../../components/ehr/EhrSelector.jsx';
+import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
+import { NoteTypeProvider, useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 
 const BAR_DELAYS = [0, 0.18, 0.09, 0.27, 0.36];
 
@@ -48,13 +51,23 @@ export default function ClinicianScene({ step, onNext }) {
   const [isClosing, setIsClosing] = useState(false);
   const [btnPos, setBtnPos] = useState(() => ({ x: 16, y: window.innerHeight - BTN_H - 32 }));
   const [isRecording, setIsRecording] = useState(false);
-  const [noteValues, setNoteValues] = useState(INITIAL_NOTE_VALUES);
   const [highlightedField, setHighlightedField] = useState(null);
   const sidebarSavedState = useRef(null);
   const [sidebarStartTab, setSidebarStartTab] = useState(null);
+  const noteTypeCtx = useNoteTypeContext();
+  const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
+  const setNoteValues = (updater) => {
+    if (!noteTypeCtx) return;
+    const next = typeof updater === 'function' ? updater(noteTypeCtx.noteValues) : updater;
+    Object.entries(next).forEach(([k, v]) => {
+      if (noteTypeCtx.noteValues[k] !== v) noteTypeCtx.updateNoteValue(k, v);
+    });
+  };
 
   const handleAddToNote = (section, content) => {
-    const field = SECTION_TO_NOTE_FIELD[section];
+    // Try direct section match from note type context first
+    const directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
+    const field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
     if (!field) return;
     setNoteValues(prev => ({ ...prev, [field]: prev[field] ? prev[field] + '\n\n' + content : content }));
     setHighlightedField(field);
@@ -91,6 +104,7 @@ export default function ClinicianScene({ step, onNext }) {
   );
 
   return (
+    <NoteTypeProvider>
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <style>{`
         @keyframes lbPulse {
@@ -111,6 +125,8 @@ export default function ClinicianScene({ step, onNext }) {
         }
       `}</style>
       <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
+      <NoteTypeSelector />
+      <EhrSelector />
       <EhrFieldProvider>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
@@ -120,6 +136,7 @@ export default function ClinicianScene({ step, onNext }) {
         }
       </EhrFieldProvider>
     </div>
+    </NoteTypeProvider>
   );
 }
 
