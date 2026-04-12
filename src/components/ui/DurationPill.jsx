@@ -56,7 +56,7 @@ export default function DurationPill() {
         }}
       >
         {/* Animated star cluster */}
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, overflow: 'visible' }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, overflow: 'visible', animation: 'durIconEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both' }}>
           <g style={{ transformOrigin: '12px 10px', animation: 'durStarMain 3s ease-in-out infinite' }}>
             <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#2D4CCD" />
           </g>

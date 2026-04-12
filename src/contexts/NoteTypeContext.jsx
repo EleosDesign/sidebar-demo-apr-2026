@@ -34,7 +34,7 @@ function getInitialValues(noteTypeKey) {
   const sections = flattenSections(noteTypeKey);
   const values = {};
   sections.forEach(s => {
-    values[s.id] = s.sampleContent || '';
+    values[s.id] = '';
   });
   return values;
 }

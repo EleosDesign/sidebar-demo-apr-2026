@@ -228,27 +228,32 @@
         {
           "id": "domain2",
           "label": "Domain 2 - Mental Health History",
-          "description": "Psychiatric history and previous mental health treatment"
+          "description": "Psychiatric history and previous mental health treatment",
+          "sampleContent": "Previous psychiatric diagnoses: Reports a prior counselor suggested an anxiety disorder; no formal diagnosis obtained. No history of psychiatric hospitalization. No prior psychotropic medication trials. Mental health treatment history: Brief outpatient therapy in high school (~4 sessions), discontinued. No current mental health providers. Family mental health history: Mother has reported history of depression; father described as having high expectations and critical communication style. Impact of mental health on current functioning: Anxiety significantly affects social situations, academic performance, and relationship satisfaction."
         },
         {
           "id": "domain3",
           "label": "Domain 3 - Substance Use History",
-          "description": "History of substance use and related consequences"
+          "description": "History of alcohol and drug use",
+          "sampleContent": "Primary substance: Alcohol. Age of first use: 18 (college, socially). Current use pattern: 3-4 nights per week, 4-6 drinks per occasion; higher consumption at parties and social events. Secondary substances: Occasional marijuana use (1-2 times per month), denies other illicit drug use. Nicotine: Denies use. Previous attempts to cut down: Reports trying to reduce drinking twice in the past year — both attempts lasted less than 2 weeks. Family history of substance use: Father reported to have a heavy drinking history. Client's stated relationship between substance use and mental health: Uses alcohol specifically to manage social anxiety, stating \"it's the only thing that makes me feel normal at parties.\""
         },
         {
           "id": "domain4",
           "label": "Domain 4 - ASAM Criteria",
-          "description": "American Society of Addiction Medicine placement criteria assessment"
+          "description": "American Society of Addiction Medicine placement criteria assessment",
+          "sampleContent": "Dimension 1 (Withdrawal): No withdrawal symptoms present; CIWA score 0. Low risk for complicated withdrawal. Dimension 2 (Biomedical): No active medical conditions. No medications. Dimension 3 (Emotional/Behavioral): GAD symptoms present; no current psychiatric medications; thought process intact. Dimension 4 (Readiness to Change): Preparation stage; motivated by academic and relationship concerns. Dimension 5 (Relapse Potential): Moderate-high; alcohol as primary coping mechanism; limited alternative coping skills. Dimension 6 (Recovery Environment): Social environment supports continued use; limited sober social network. ASAM Recommended Level of Care: Level 1.0 — Outpatient Services. Rationale: Client is medically stable, motivated, and functioning adequately in daily life. Outpatient therapy with concurrent skills development and social support building is appropriate at this time."
         },
         {
           "id": "domain5",
           "label": "Domain 5 - Risk Assessment",
-          "description": "Safety assessment including suicide and violence risk"
+          "description": "Safety assessment including suicide and violence risk",
+          "sampleContent": "Suicidal ideation: Denied — no current or historical suicidal ideation, intent, plan, or attempts. Homicidal ideation: Denied — no history of violent thoughts or behaviors toward others. Self-harm: Denied — no history of non-suicidal self-injury. Harm to property: Not reported. Acute safety risk: Low. Protective factors: Supportive relationship with boyfriend, academic goals, self-awareness, and help-seeking behavior. Safety plan: Not indicated at this time given low risk. Client agreed to contact clinician or crisis line if suicidal thoughts emerge. Emergency contacts verified."
         },
         {
           "id": "domain6",
           "label": "Domain 6 - Psychosocial Functioning",
-          "description": "Social, occupational, and interpersonal functioning"
+          "description": "Social, occupational, and interpersonal functioning",
+          "sampleContent": "Academic/occupational functioning: Full-time college senior; GPA has declined from 3.6 to 3.1 over the past year, attributed to increased anxiety and drinking-related impairment. Social functioning: Maintains friendships, though most social activities involve alcohol; reports difficulty attending non-drinking social events. Interpersonal relationships: Relationship with boyfriend described as generally supportive; boyfriend has expressed concern about her drinking and the issue has caused intermittent conflict. Family relationships: Distant from father; closer to mother but does not discuss mental health openly. ADLs: Managed independently; no significant impairment in self-care, hygiene, or daily responsibilities. Housing: Stable; lives with roommates in student housing through end of semester. Financial: Student loans and part-time employment; financially stable for the near term. Legal: No legal history."
         },
         {
           "id": "domain7",
@@ -379,7 +384,8 @@
             {
               "id": "areasComments",
               "label": "Safety Assessment Areas - Additional Comments",
-              "description": "General safety comments and observations"
+              "description": "General safety comments and observations",
+              "sampleContent": "Client denied any safety concerns at the outset of session. Safety screening completed verbally. Client appeared calm and cooperative throughout. No observable indicators of distress or elevated risk at time of service."
             },
             {
               "id": "suicidality",
@@ -387,7 +393,8 @@
               "description": "Suicide risk assessment with ideation, intent, attempt, means, plan checkboxes and informed contacts",
               "options": ["None Reported", "Please Specify"],
               "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"]
+              "fields": ["Other (text)", "I Informed (person)"],
+              "sampleContent": "None reported. Client denied suicidal ideation, intent, plan, or means when directly asked. No passive death wish reported. No prior attempts in history. Risk assessed as low."
             },
             {
               "id": "harmToOthers",
@@ -395,7 +402,8 @@
               "description": "Violence/harm to others risk assessment",
               "options": ["None Reported", "Please Specify"],
               "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"]
+              "fields": ["Other (text)", "I Informed (person)"],
+              "sampleContent": "None reported. Client denied any thoughts, intent, or plans to harm others. No history of violence or aggressive behavior reported. Duty to warn not indicated."
             },
             {
               "id": "harmToProperty",
@@ -403,12 +411,14 @@
               "description": "Property destruction risk assessment",
               "options": ["None Reported", "Please Specify"],
               "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"]
+              "fields": ["Other (text)", "I Informed (person)"],
+              "sampleContent": "None reported. Client denied any ideation or intent to damage property. No history of property destruction noted."
             },
             {
               "id": "safetyNextSteps",
               "label": "Safety Plan & Next Steps",
-              "description": "Safety planning and follow-up actions"
+              "description": "Safety planning and follow-up actions",
+              "sampleContent": "Existing safety plan reviewed and remains current. Client verbalized warning signs, coping strategies, and support contacts. Client confirmed understanding and agreement with plan. Next scheduled service in 1 week. Client instructed to contact clinician or crisis line (988) if concerns arise before next appointment."
             }
           ]
         },
@@ -420,22 +430,26 @@
             {
               "id": "focusOfSession",
               "label": "Focus of Session",
-              "description": "Primary topics and focus areas addressed"
+              "description": "Primary topics and focus areas addressed",
+              "sampleContent": "Session focused on ongoing workplace conflict with supervisor and its impact on anxiety and avoidance behaviors. Client reviewed the behavioral activation exercise assigned at last session and identified barriers to completion. Discussion included the connection between avoidance, increased anxiety, and depressive symptoms. Client expressed frustration with the slow pace of change but demonstrated willingness to continue engaging in treatment."
             },
             {
               "id": "interventions",
               "label": "Interventions",
-              "description": "Therapeutic interventions and techniques used"
+              "description": "Therapeutic interventions and techniques used",
+              "sampleContent": "Cognitive restructuring was used to examine the client's belief that \"addressing conflict will make things worse.\" Evidence for and against this belief was explored collaboratively. Behavioral activation principles were reviewed and a modified, lower-barrier task was planned for the coming week. Psychoeducation on the anxiety-avoidance cycle was provided to help the client understand the function of his current coping patterns."
             },
             {
               "id": "clientResponse",
               "label": "Client Response",
-              "description": "Client's response to interventions and engagement level"
+              "description": "Client's response to interventions and engagement level",
+              "sampleContent": "Client was engaged and participatory throughout the session. He demonstrated insight when identifying the connection between avoidance and increased anxiety. He expressed some ambivalence about the cognitive restructuring exercise but agreed to trial the modified behavioral activation task. Overall engagement was good; client appeared more hopeful by the end of session than at the start."
             },
             {
               "id": "documentPlan",
               "label": "Document the Plan",
-              "description": "Treatment plan and next steps"
+              "description": "Treatment plan and next steps",
+              "sampleContent": "Client will complete a modified behavioral activation task (10-minute email draft to supervisor) before next session. Client will track mood and anxiety levels daily using provided log. Continue weekly individual therapy sessions. Reassess GAD-7 at next session to monitor symptom trajectory. Explore cognitive restructuring techniques further at next appointment."
             },
             {
               "id": "planFromLastService",
@@ -462,7 +476,8 @@
         {
           "id": "presentingProblems",
           "label": "Presenting Problems",
-          "description": "Current issues and concerns bringing client to treatment"
+          "description": "Current issues and concerns bringing client to treatment",
+          "sampleContent": "Client presents with significant anxiety symptoms, including persistent worry, sleep disturbance, and avoidance behaviors that are impacting occupational functioning. Client reports an ongoing conflict with his direct supervisor that has contributed to increased stress and an inability to respond assertively in the workplace. Identified patterns of behavioral avoidance — particularly avoiding email correspondence and interpersonal confrontation — are maintaining and exacerbating anxiety. Client reports sleeping an average of 5 hours per night and endorses moderate symptoms of depression secondary to the anxiety and workplace stressor. No substance use concerns at this time. Client is motivated for treatment and goal-directed."
         },
         {
           "id": "goals",
@@ -473,17 +488,20 @@
         {
           "id": "objectives",
           "label": "Objectives",
-          "description": "Specific steps to achieve treatment goals"
+          "description": "Specific steps to achieve treatment goals",
+          "sampleContent": "1. Client will identify and challenge at least two cognitive distortions related to workplace conflict per week, as tracked in thought log. 2. Client will complete at least one behavioral activation task per week targeting avoided workplace communications, with progress reviewed at each session. 3. Client will implement a sleep hygiene routine (consistent bed/wake time, screen-free wind-down) at least 5 nights per week, tracked via sleep log. 4. Client will reduce GAD-7 score from current 14 (moderate) to 8 or below within 12 weeks. 5. Client will identify and verbalize two assertive communication strategies to use in response to supervisor conflict by session 6."
         },
         {
           "id": "interventions",
           "label": "Interventions",
-          "description": "Therapeutic modalities and approaches to be used"
+          "description": "Therapeutic modalities and approaches to be used",
+          "sampleContent": "Cognitive Behavioral Therapy (CBT) — primary modality, targeting maladaptive thought patterns and behavioral avoidance. Behavioral Activation — graduated task hierarchy addressing avoidance of workplace communications. Psychoeducation — anxiety and avoidance cycle, sleep hygiene, assertive communication. Motivational Interviewing — to explore and strengthen client's motivation for behavioral change. Between-session homework assignments — thought records, behavioral activation logs, and sleep diary to support skill generalization. Coordination with psychiatry if pharmacological support becomes indicated."
         },
         {
           "id": "timeline",
           "label": "Timeline",
-          "description": "Expected duration and review schedule"
+          "description": "Expected duration and review schedule",
+          "sampleContent": "Initial treatment episode: 16 weeks of weekly individual therapy (approximately 4 months). Progress review at week 8 — reassess PHQ-9 and GAD-7, revise objectives as needed. Anticipated transition to biweekly sessions following week 16 if treatment goals are substantially met. Treatment plan to be formally reviewed and updated every 90 days or sooner if clinically indicated. Estimated discharge criteria: GAD-7 below 8, PHQ-9 below 5, client demonstrating consistent use of coping strategies and re-engagement in previously avoided activities."
         }
       ],
       "noteTypes": ["Treatment Plan"]
@@ -495,57 +513,68 @@
         {
           "id": "identifyingInformation",
           "label": "Identifying Information",
-          "description": "Demographics and basic client information"
+          "description": "Demographics and basic client information",
+          "sampleContent": "Client: Marcus Webb. Date of birth: April 3, 1989 (age 37). Gender: Male. Pronouns: He/him. Race/Ethnicity: African American. Primary language: English. Referral source: Self-referral following recommendation from primary care physician. Living situation: Lives alone in apartment; girlfriend considering moving in. Employment: Full-time employment in corporate project management. Insurance: Employer-sponsored PPO. Emergency contact: Sandra Webb (mother), 555-203-4481."
         },
         {
           "id": "presentingProblem",
           "label": "Presenting Problem",
-          "description": "Chief complaint and reason for seeking services"
+          "description": "Chief complaint and reason for seeking services",
+          "sampleContent": "Client presents seeking support for persistent anxiety and stress related to an ongoing conflict with his direct supervisor at work. He reports difficulty responding assertively, avoidance of email correspondence, and increasing worry that the conflict may threaten his job security. Secondary concerns include disrupted sleep (averaging 5 hours per night), low mood, and difficulty concentrating. Client reports these symptoms have been present and worsening over the past 3-4 months. He has not received mental health treatment previously and states he delayed seeking help due to uncertainty about whether his concerns \"were serious enough.\""
         },
         {
           "id": "historyOfPresentingProblem",
           "label": "History of Presenting Problem",
-          "description": "Timeline and development of current issues"
+          "description": "Timeline and development of current issues",
+          "sampleContent": "Client reports that anxiety symptoms have been present in varying degrees throughout his adult life, though he typically managed them without professional support. Approximately 4 months ago, a new supervisor joined his team and began providing critical feedback that client perceived as disproportionate and public. This triggered a significant escalation in anxiety. Client began avoiding responding to supervisor's emails, which has compounded the workplace tension. Over the past 6 weeks, sleep disruption has worsened, mood has declined, and client reports reduced motivation and increased irritability at home. Client denies any discrete traumatic events or significant losses in the past year. He identifies work as a primary source of identity and purpose, which he believes amplifies the distress caused by the current conflict."
         },
         {
           "id": "mentalHealthHistory",
           "label": "Mental Health History",
-          "description": "Previous psychiatric treatment and diagnoses"
+          "description": "Previous psychiatric treatment and diagnoses",
+          "sampleContent": "No prior mental health treatment. Client denies any previous psychiatric diagnoses. Denies history of psychiatric hospitalization. No prior psychotropic medication use. Family history: Mother reports a history of anxiety; paternal grandfather had depression. Client endorses that anxiety has been a \"background feature\" of his life but has never previously sought help, managing independently through exercise and work productivity. No history of trauma treatment. No prior suicide attempts or self-harm behavior."
         },
         {
           "id": "substanceUseHistory",
           "label": "Substance Use History",
-          "description": "History of alcohol and drug use"
+          "description": "History of alcohol and drug use",
+          "sampleContent": "Alcohol: Social use only; 1-2 drinks per week on average, typically at social events. Denies any increase in use related to current stressors. No history of alcohol misuse, withdrawal, or treatment. Cannabis: Denies current or historical use. Other illicit substances: Denies use. Caffeine: Moderate use (2 cups of coffee daily); notes this may worsen anxiety. Tobacco/nicotine: Denies use. Over-the-counter or prescription medications: Takes ibuprofen occasionally for headaches. No misuse of prescription medications. CAGE screening: 0/4. No substance use concerns identified at this time."
         },
         {
           "id": "medicalHistory",
           "label": "Medical History",
-          "description": "Relevant medical conditions and medications"
+          "description": "Relevant medical conditions and medications",
+          "sampleContent": "General health: Reports good physical health overall. Current medications: None prescribed; occasional OTC ibuprofen. Allergies: NKDA. Medical conditions: No chronic conditions reported. Denies history of seizures, head injury, or neurological conditions. Denies cardiovascular or respiratory conditions. Last physical exam: Approximately 8 months ago — PCP noted elevated blood pressure (138/86) attributed to stress; recommended lifestyle changes and follow-up. Client has not returned for follow-up. Sleep: Endorses significant sleep difficulties — difficulty initiating sleep, averaging 5 hours per night. Appetite: Mildly reduced; no significant weight change. Exercise: Runs 3x per week; notes exercise helps but has reduced frequency in recent months."
         },
         {
           "id": "socialHistory",
           "label": "Social History",
-          "description": "Family, relationships, education, employment"
+          "description": "Family, relationships, education, employment",
+          "sampleContent": "Family of origin: Raised by both parents in Atlanta, GA. Younger of two siblings. Describes childhood as stable; close relationship with mother, somewhat distant relationship with father who he describes as \"hardworking but not emotionally expressive.\" Education: Bachelor's degree in Business Administration (University of Georgia, 2011). No disciplinary or academic history of concern. Employment: 8 years with current employer; promoted twice. Recent conflict with new supervisor is the primary identified stressor. Relationships: In a 2-year relationship with girlfriend (Carmen); relationship described as generally positive. They live separately; girlfriend has discussed moving in. Client has some ambivalence about this given current stress level. Social support: Describes a small but meaningful social network. Close friend group of 3-4 people; less frequent contact in recent months due to work stress. Legal history: None."
         },
         {
           "id": "mentalStatusExam",
           "label": "Mental Status Exam",
-          "description": "Formal mental status examination findings"
+          "description": "Formal mental status examination findings",
+          "sampleContent": "Appearance: Well-groomed, appropriately dressed for the occasion. Makes good eye contact. Behavior/psychomotor: Calm, no psychomotor agitation or retardation observed. Some visible tension in jaw and shoulders. Speech: Normal rate, rhythm, and volume. Mood: \"Stressed and kind of stuck.\" Affect: Congruent with reported mood; mildly restricted range but appropriate. Thought process: Linear, goal-directed, and organized. Thought content: Preoccupied with workplace conflict and fears of job loss; no obsessions, compulsions, or paranoid ideation. No suicidal or homicidal ideation. Perceptual disturbances: Denied; none observed. Cognition: Alert and oriented x4. Memory grossly intact. Concentration mildly impaired by reported worry. Insight: Good — client demonstrates awareness of his avoidance patterns and their functional impact. Judgment: Good — client is making appropriate decisions and seeking treatment proactively."
         },
         {
           "id": "riskAssessment",
           "label": "Risk Assessment",
-          "description": "Safety and risk evaluation"
+          "description": "Safety and risk evaluation",
+          "sampleContent": "Suicidal ideation: Denied — no current or historical suicidal ideation, intent, plan, or means. No passive death wish reported. Homicidal ideation: Denied. Self-harm: No history of non-suicidal self-injury. Substance misuse: Not a current concern. Risk level: Low. Protective factors: Strong social support (girlfriend, close friends, family), engaged in employment, proactively seeking treatment, good insight, no history of suicidal behavior, future-oriented thinking. No acute safety concerns identified. Safety planning not indicated at this time; client provided with crisis resources and instructed to reach out if concerns arise."
         },
         {
           "id": "diagnosticImpression",
           "label": "Diagnostic Impression",
-          "description": "Clinical diagnoses and formulation"
+          "description": "Clinical diagnoses and formulation",
+          "sampleContent": "Primary diagnosis: Generalized Anxiety Disorder (F41.1) — Client meets criteria for excessive anxiety and worry occurring more days than not for at least 6 months, associated with difficulty controlling the worry, sleep disturbance, concentration difficulties, muscle tension, and irritability. Anxiety is causing significant impairment in occupational and social functioning. Secondary diagnosis: Adjustment Disorder with Depressed Mood (F43.21) — Secondary depressive symptoms are temporally linked to the workplace stressor and do not meet full criteria for Major Depressive Disorder at this time. Rule out: Major Depressive Disorder, single episode, mild — will monitor over the course of treatment. Formulation: Client's GAD symptoms appear to be longstanding, with recent workplace stressor serving as a significant precipitant. Avoidance behaviors are maintaining anxiety and impairing workplace functioning, creating a reinforcing cycle of stress and avoidance."
         },
         {
           "id": "recommendations",
           "label": "Recommendations",
-          "description": "Treatment recommendations and level of care"
+          "description": "Treatment recommendations and level of care",
+          "sampleContent": "Level of care: Outpatient individual therapy — weekly sessions. Treatment modality: Cognitive Behavioral Therapy (CBT) is the evidence-based intervention of choice for GAD and will be the primary treatment approach. Psychopharmacology: Not indicated at this time; client prefers to begin with therapy. If symptoms do not respond adequately within 8-10 weeks, referral to psychiatry for medication evaluation will be discussed. Behavioral goals: Graduated exposure to avoided workplace communications, sleep hygiene protocol, and behavioral activation for low mood. Monitoring: GAD-7 and PHQ-9 to be administered at intake and every 4 weeks to track symptom response. PCP coordination: Recommend follow-up with PCP regarding elevated blood pressure noted at last physical. Client consented to coordination of care release."
         }
       ],
       "noteTypes": ["Assessment"]
@@ -557,7 +586,8 @@
         {
           "id": "presentingCrisis",
           "label": "Presenting Crisis",
-          "description": "Nature and severity of the crisis situation"
+          "description": "Nature and severity of the crisis situation",
+          "sampleContent": "Client contacted the crisis line and was transferred to the on-call clinician following escalating distress after receiving a formal performance improvement plan (PIP) from his supervisor today. Client reported feeling \"completely overwhelmed\" and \"like everything is falling apart.\" He expressed intense hopelessness about his job security and described a significant spike in anxiety and low mood since receiving the notice approximately 2 hours prior to contact. Client was able to engage in conversation and did not present with active suicidal ideation but expressed passive hopelessness. No access to means reported. Client agreed to a safety assessment and remained engaged throughout the contact."
         },
         {
           "id": "riskAssessment",
@@ -567,34 +597,40 @@
             {
               "id": "suicidalIdeation",
               "label": "Suicidal Ideation",
-              "description": "Suicide risk factors and protective factors"
+              "description": "Suicide risk factors and protective factors",
+              "sampleContent": "Client denies active suicidal ideation, intent, or plan. Endorses passive hopelessness (\"I just don't know how things can get better\") but clearly distinguishes this from a wish to die. Denies any prior suicide attempts or self-harm history. No identified means or access. Protective factors: Strong relationship with girlfriend, close friendships, family support, and stated desire to resolve the workplace situation rather than escape it. Risk level assessed as low-moderate given acute stressor and passive hopelessness; no imminent risk identified."
             },
             {
               "id": "homicidalIdeation",
               "label": "Homicidal Ideation",
-              "description": "Violence risk assessment"
+              "description": "Violence risk assessment",
+              "sampleContent": "Client denies any thoughts, intent, or plan to harm others, including his supervisor. Reports frustration and anger toward supervisor but clearly differentiates this from any desire for physical harm. No history of violent behavior. Duty to warn not indicated. Homicidal risk assessed as none."
             },
             {
               "id": "selfHarmRisk",
               "label": "Self-Harm Risk",
-              "description": "Non-suicidal self-injury assessment"
+              "description": "Non-suicidal self-injury assessment",
+              "sampleContent": "Client denies any history of non-suicidal self-injury (NSSI). Denies current urges to engage in self-harm behavior. No observable signs of self-harm. NSSI risk assessed as none."
             }
           ]
         },
         {
           "id": "mentalStatusExam",
           "label": "Mental Status Exam",
-          "description": "Current mental status findings"
+          "description": "Current mental status findings",
+          "sampleContent": "Appearance: Unable to assess directly (phone contact); voice tone and speech quality used as indicators. Behavior: Cooperative, engaged, and able to follow the conversation. Mild voice tremor consistent with distress. Speech: Normal rate; slightly pressured at the start of contact, slowed to normal as session progressed. Mood: \"Hopeless and scared.\" Affect: Distressed, congruent with reported mood. Thought process: Linear; mildly disorganized at start of contact, became more organized as rapport established. Thought content: Preoccupied with job loss and financial concerns; passive hopelessness; no SI/HI. No psychotic symptoms reported. Cognition: Appears intact; oriented to person, place, and situation. Insight: Good — client acknowledged his distress was acute and situational. Judgment: Adequate — client reached out for help and engaged in safety planning."
         },
         {
           "id": "collateralInformation",
           "label": "Collateral Information",
-          "description": "Information from family, police, or other sources"
+          "description": "Information from family, police, or other sources",
+          "sampleContent": "Collateral not obtained during this contact. Client's girlfriend (Carmen) was identified as a support contact. Client consented to clinician contacting his outpatient therapist the following business day to inform of crisis contact and coordinate follow-up. No police or emergency services involvement."
         },
         {
           "id": "interventions",
           "label": "Interventions Provided",
-          "description": "Crisis interventions and de-escalation techniques used"
+          "description": "Crisis interventions and de-escalation techniques used",
+          "sampleContent": "Active listening and validation provided throughout contact to de-escalate acute distress. Collaborative safety assessment conducted. Brief psychoeducation provided on the difference between acute crisis distress and enduring hopelessness. Grounding technique (5-4-3-2-1 sensory exercise) practiced with client to reduce physiological arousal. Problem-focused discussion around immediate next steps (contacting outpatient therapist, reaching out to girlfriend for support). Client's strengths and existing protective factors identified and reinforced. Crisis resources reviewed: 988 Suicide and Crisis Lifeline, local emergency services."
         },
         {
           "id": "disposition",
@@ -606,12 +642,14 @@
             "Involuntary hospitalization",
             "Outpatient follow-up",
             "Transferred to higher level of care"
-          ]
+          ],
+          "sampleContent": "Disposition: Outpatient follow-up. Client does not meet criteria for hospitalization. Acute distress de-escalated during contact; client able to engage in safety planning and identified supports. Plan: Client will contact his outpatient therapist first thing tomorrow morning to schedule an urgent appointment. Client will spend the evening with his girlfriend and contact crisis line (988) if distress escalates. On-call clinician will send a same-day communication to outpatient therapist regarding this contact."
         },
         {
           "id": "safetyPlan",
           "label": "Safety Plan",
-          "description": "Crisis safety planning with client"
+          "description": "Crisis safety planning with client",
+          "sampleContent": "Warning signs: Escalating hopelessness, isolation, inability to identify any positive future outcomes, increased alcohol use. Coping strategies (internal): Grounding exercises (5-4-3-2-1), deep breathing, reviewing past examples of navigating difficult situations successfully. Social supports to contact: (1) Carmen (girlfriend) — primary contact this evening; (2) David (close friend); (3) Mother. Crisis resources: 988 Suicide and Crisis Lifeline; local emergency room. Means restriction: No identified lethal means; no further restriction needed at this time. Client verbalized understanding of the safety plan and agreed to follow it. Plan reviewed and confirmed before ending contact."
         }
       ],
       "noteTypes": ["Crisis Assessment"]
@@ -623,30 +661,34 @@
         {
           "id": "keyMoments",
           "label": "Key Moments",
-          "description": "Significant moments and themes from the session"
+          "description": "Significant moments and themes from the session",
+          "sampleContent": "A significant moment occurred when client connected his avoidance of the supervisor's emails to a broader pattern of avoiding conflict that he first noticed in his relationship with his father. This insight appeared to carry emotional weight — client paused and reflected before stating, \"I've been doing this my whole life, haven't I?\" The session also included a productive discussion about the difference between short-term relief from avoidance and long-term cost to his self-efficacy and workplace standing. Client identified that receiving the performance feedback publicly was a key trigger, noting that being criticized in front of colleagues felt \"humiliating in a way I can't easily shake.\""
         },
         {
           "id": "interventions",
           "label": "Interventions",
-          "description": "Therapeutic interventions used during session"
+          "description": "Therapeutic interventions used during session",
+          "sampleContent": "Cognitive restructuring was used to examine the belief that \"if I respond to the email, I'll make the situation worse.\" Client was guided through an evidence-based analysis identifying both supporting and contradicting evidence. A behavioral activation exercise was introduced, starting with a low-barrier task — drafting (but not sending) a response email — to reduce the emotional stakes of re-engagement. Psychoeducation on the anxiety-avoidance maintenance cycle was provided, connecting theoretical framework to client's specific experience. Reflective listening and Socratic questioning were used throughout to support client self-discovery rather than directive advice-giving."
         },
         {
           "id": "assessment",
           "label": "Assessment",
-          "description": "Clinical assessment of presentation and progress"
+          "description": "Clinical assessment of presentation and progress",
+          "sampleContent": "Client demonstrated good engagement and improved affect compared to last session. He showed meaningful insight into the developmental roots of his avoidance pattern, suggesting readiness to explore this more deeply. GAD symptoms remain clinically significant (estimated GAD-7 in moderate range based on clinical observation); sleep continues to be disrupted. Mood has stabilized somewhat since last session — client reports fewer hours of worry per day. Behavioral avoidance remains the primary maintaining factor. No safety concerns. Overall, client is making meaningful progress consistent with early-stage CBT."
         },
         {
           "id": "plan",
           "label": "Plan",
-          "description": "Treatment plan and next steps"
+          "description": "Treatment plan and next steps",
+          "sampleContent": "Client will complete the behavioral activation task — draft a response email to supervisor — before next session, without sending it. Client will continue daily mood and anxiety log. Next session will review the email draft as a cognitive restructuring exercise and explore further steps toward re-engagement. Continue to build on the insight connecting avoidance patterns to early relational experiences. Administer GAD-7 and PHQ-9 at next session (week 4 assessment point). Consider introducing sleep restriction protocol if sleep continues to be impaired."
         }
       ],
       "noteTypes": ["Individual Note"]
     }
   },
   "metadata": {
-    "version": "1.0",
-    "lastUpdated": "2026-04-11",
+    "version": "1.1",
+    "lastUpdated": "2026-04-12",
     "totalNoteTypes": 11,
     "ehrSystems": [
       "smartcare",

@@ -5,6 +5,8 @@
  */
 import React, { useState } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useEhrField } from '../ui/EhrFieldContext.jsx';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
@@ -12,6 +14,8 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
   const noteTypeCtx = useNoteTypeContext();
+  const ehrField = useEhrField();
+  const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sections = noteTypeCtx?.sections ?? [
     { id: 'Data/Goal:',                         label: 'Data' },
     { id: 'Intervention/Response:',             label: 'Intervention/Response' },
@@ -26,6 +30,8 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
           <textarea
             value={noteValues[s.id] ?? ''}
             onChange={e => onNoteChange?.(s.id, e.target.value)}
+            onFocus={() => setFocusedEhrField(s.id)}
+            onBlur={() => setFocusedEhrField(null)}
             placeholder="Type here or use the cards on the right to build your note"
             style={{
               width: '100%', minHeight, padding: '10px 12px',
@@ -46,6 +52,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
 // 1. WELLIGENT
 // ═══════════════════════════════════════════════════════════════════════════════
 export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeTab, setActiveTab] = useState('Progress Note');
   const tabs = ['Progress Note', 'Treatment Plan', 'Assessment', 'Medication', 'Lab Results'];
   const rightIcons = [
@@ -71,7 +78,7 @@ export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField })
       <div style={{ background: '#fff', borderBottom: '2px solid #e8e8e8', display: 'flex', alignItems: 'center', padding: '0 14px', height: 46, gap: 10, flexShrink: 0 }}>
         <div style={{ fontWeight: 800, fontSize: 18, color: '#1a3a6b', letterSpacing: '-0.5px' }}>Welligent</div>
         <div style={{ flex: 1 }} />
-        <span style={{ fontSize: 12, color: '#666' }}>Webb, Marcus — MR#10234</span>
+        <span style={{ fontSize: 12, color: '#666' }}>{clientName} — MR#10234</span>
         <span style={{ fontSize: 12, color: '#999', marginLeft: 16 }}>Eleos Clinician</span>
       </div>
       {/* Tabs bar */}
@@ -151,6 +158,7 @@ export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField })
 // 2. QUALIFACTS (SmartCare)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeTab, setActiveTab] = useState('Note');
   const [activeNav, setActiveNav] = useState('Client');
   const tabs = ['Service', 'Note', 'Billing Diagnosis', 'Add-On Codes', 'Warnings', 'Disposition'];
@@ -180,7 +188,7 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
           <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '3px 5px', display: 'flex', alignItems: 'center' }}>{ic}</button>
         ))}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: '#222' }}>Webb, Marcus (10234)</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: '#222' }}>{clientName} (10234)</span>
         </div>
       </div>
       {/* Body */}
@@ -269,6 +277,7 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
 // 3. ARIZE
 // ═══════════════════════════════════════════════════════════════════════════════
 export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeNav, setActiveNav] = useState('Clients');
   const navItems = [
     { label: 'Clients', icon: 'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 7a4 4 0 100 8' },
@@ -330,7 +339,7 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
         {/* Content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
           <div style={{ fontSize: 18, fontWeight: 700, color: '#1a2b4a', marginBottom: 4 }}>Progress Note</div>
-          <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>Webb, Marcus · Individual Therapy · {new Date().toLocaleDateString()}</div>
+          <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString()}</div>
           <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#d0d8e4' minHeight={175} borderRadius={5} />
         </div>
       </div>
@@ -342,6 +351,7 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 4. ECHO (echoVantage)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeTab, setActiveTab] = useState('DATA/INTERVENTION');
   const tabs = ['GOALS/OBJECTIVES', 'DATA/INTERVENTION'];
   return (
@@ -412,6 +422,7 @@ export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 5. CREDIBLE
 // ═══════════════════════════════════════════════════════════════════════════════
 export function CredibleBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeIndex, setActiveIndex] = useState('Narrative');
   const indexItems = ['Narrative', 'Send Copy To', 'Signatures'];
   const quickLinks = ['Treatment Plan', 'Prior Note', 'Labs', 'Medications', 'Allergies', 'Diagnoses', 'Auth/Cert'];
@@ -452,7 +463,7 @@ export function CredibleBg({ noteValues = {}, onNoteChange, highlightedField }) 
             <tbody>
               <tr style={{ background: '#f5ead8' }}>
                 <td style={{ padding: '5px 8px', border: '1px solid #c8b898', fontWeight: 700, color: '#5a3000', width: '33%' }}>
-                  <div>Webb, Marcus</div>
+                  <div>{clientName}</div>
                   <div style={{ fontWeight: 400, color: '#666', marginTop: 2 }}>DOB: 03/15/1985 · (555) 234-5678</div>
                 </td>
                 <td style={{ padding: '5px 8px', border: '1px solid #c8b898', width: '33%' }}>
@@ -573,7 +584,7 @@ export function InsyncBg({ noteValues = {}, onNoteChange, highlightedField }) {
           {/* Patient bar */}
           <div style={{ background: '#fffde7', borderBottom: '1px solid #e8e4c0', padding: '5px 14px', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-            <div style={{ flex: '0 0 280px', height: 22, background: '#fff', border: '1px solid #ddd', borderRadius: 3, fontSize: 12, color: '#333', display: 'flex', alignItems: 'center', padding: '0 8px' }}>Webb, Marcus</div>
+            <div style={{ flex: '0 0 280px', height: 22, background: '#fff', border: '1px solid #ddd', borderRadius: 3, fontSize: 12, color: '#333', display: 'flex', alignItems: 'center', padding: '0 8px' }}>{clientName}</div>
             <div style={{ flex: 1 }} />
             <div style={{ width: 28, height: 28, background: '#3aafd4', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
@@ -947,6 +958,7 @@ export function KipuBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 11. FOOTHOLD (AWARDS)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const navItems = [
     { label: 'Search Client', d: 'M11 11a7 7 0 100-14 7 7 0 000 14z M21 21l-4.35-4.35' },
     { label: 'Home', d: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10' },
@@ -969,7 +981,7 @@ export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) 
         </svg>
         <span style={{ fontWeight: 700, fontSize: 16, color: '#fff', marginLeft: 14 }}>Foothold Technology</span>
         <div style={{ flex: 1 }} />
-        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>Webb, Marcus</span>
+        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{clientName}</span>
       </div>
       {/* Content */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -1026,7 +1038,7 @@ export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) 
           </div>
           {/* Note area (scrollable below fold) */}
           <div style={{ border: '1px solid #e0e8f0', borderRadius: 8, overflow: 'hidden', marginTop: 16 }}>
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid #e0e8f0', fontWeight: 600, fontSize: 14, color: '#1a2a3a' }}>Progress Note — Webb, Marcus</div>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid #e0e8f0', fontWeight: 600, fontSize: 14, color: '#1a2a3a' }}>Progress Note — {clientName}</div>
             <div style={{ padding: '16px' }}>
               <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#d0dae8' minHeight={150} borderRadius={5} />
             </div>
@@ -1041,6 +1053,7 @@ export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) 
 // 12. EXYM
 // ═══════════════════════════════════════════════════════════════════════════════
 export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activePageTab, setActivePageTab] = useState('PAGE 1');
   const navItems = [
     { label: 'Home', drop: true }, { label: 'Clients', drop: true }, { label: 'Activities', drop: false },
@@ -1128,11 +1141,12 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 13–16. PLACEHOLDER EHRs
 // ═══════════════════════════════════════════════════════════════════════════════
 function PlaceholderBg({ name, headerColor, noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   return (
     <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, background: '#f8f9fa', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ background: headerColor, padding: '10px 18px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>{name}</span>
-        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>Webb, Marcus — Progress Note</span>
+        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>{clientName} — Progress Note</span>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
         <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={110} borderRadius={4} />

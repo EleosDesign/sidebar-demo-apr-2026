@@ -128,24 +128,24 @@ export default function ClinicianScene({ step, onNext }) {
           to   { transform: scale(0.04); opacity: 0; filter: blur(8px); }
         }
       `}</style>
-      <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
-      {/* Demo controls tray — bottom-right, discrete but accessible */}
-      <div style={{
-        position: 'fixed', bottom: 20, right: 56, zIndex: 100,
-        display: 'flex', gap: 4, alignItems: 'center',
-        padding: '3px 4px',
-        background: 'rgba(15,25,60,0.07)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        borderRadius: 16,
-        border: '1px solid rgba(255,255,255,0.35)',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-      }}>
-        <NoteTypeSelector />
-        <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
-        <EhrSelector />
-      </div>
       <EhrFieldProvider>
+        <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
+        {/* Demo controls tray — bottom-right, discrete but accessible */}
+        <div style={{
+          position: 'fixed', bottom: 20, right: 56, zIndex: 100,
+          display: 'flex', gap: 4, alignItems: 'center',
+          padding: '3px 4px',
+          background: 'rgba(15,25,60,0.07)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          borderRadius: 16,
+          border: '1px solid rgba(255,255,255,0.35)',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+        }}>
+          <NoteTypeSelector />
+          <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+          <EhrSelector />
+        </div>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
           : isClosing
@@ -453,6 +453,8 @@ const SIDEBAR_BOTTOM_GAP = 16;
 
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
+  const noteTypeCtx = useNoteTypeContext();
+  const { setClientName } = useEhrContext();
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
@@ -668,19 +670,16 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
-        onBack={() => { setActivitiesSession(null); setPhase('sessions'); }}
+        onBack={() => { setActivitiesSession(null); setPhase('sessions'); setClientName('Webb, Marcus'); }}
         onAddToNote={onAddToNote}
-        suggestionsData={
-          activitiesSession.suggestionsKey === 'audio' ? AUDIO_SUGGESTIONS_DATA
-            : (activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio') ? PSYCH_SUGGESTIONS_DATA
-            : SUGGESTIONS_DATA
-        }
+        suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
         onAddedToEHR={() => {
           setDoneIds(prev => new Set([...prev, activitiesSession.id]));
           setActivitiesInitialTab('done');
           setActivitiesSession(null);
           setPhase('sessions');
+          setClientName('Webb, Marcus');
         }}
       />;
       return <MySessionsPanel
@@ -689,15 +688,30 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         extraSessions={addedSessions}
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
         onUndoDone={id => { setDoneIds(prev => { const n = new Set(prev); n.delete(id); return n; }); }}
-        onSelectSession={(session) => { setActivitiesSession(session); setPhase('suggestions'); }}
+        onSelectSession={(session) => {
+          setActivitiesSession(session);
+          setPhase('suggestions');
+          if (session?.name) {
+            const parts = session.name.trim().split(/\s+/);
+            const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : session.name;
+            setClientName(formatted);
+          }
+        }}
       />;
     }
     if (navTab === 'clients') return <ClientsPanel />;
     if (navTab === 'quality')  return <LQAReview clientName="Marcus Webb" sessionLabel="Apr 7, 2026, 10:00 – 10:45 AM" onAdvance={() => handleNavClick('activities')} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || 'Marcus Webb'}
+      suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
       onSuggestionsReached={(name) => {
+        // Update EHR client name
+        if (name) {
+          const parts = name.trim().split(/\s+/);
+          const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : name;
+          setClientName(formatted);
+        }
         // Build the session entry the moment suggestions are shown
         setPendingEHRSession({
           id: `summary-${Date.now()}`,
@@ -710,7 +724,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           summary: 'Session notes drafted via Add Summary — pending EHR submission.',
         });
       }}
-      onSuggestionsLeft={() => setPendingEHRSession(null)}
+      onSuggestionsLeft={() => { setPendingEHRSession(null); setClientName('Webb, Marcus'); }}
       onAddedToEHR={() => {
         // Commit pending session as Done and jump to Activities → Marked as Done
         if (pendingEHRSession) {
@@ -2897,7 +2911,7 @@ function TagField({ label, selected, onChange }) {
   );
 }
 
-function AddSummaryPanel({ initialClient = 'Marcus Webb', onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft }) {
+function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
@@ -3194,7 +3208,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', onAddToNote, onAddedTo
   }
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
-  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} />;
+  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={suggestionsData} />;
 
   // ── Phase 1b: voice capture ───────────────────────────────────────────────
   if (phase === 'voice') {
@@ -3631,6 +3645,7 @@ const AUDIO_SUGGESTIONS_DATA = [
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData = SUGGESTIONS_DATA, isIndividualAudio = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const focusedEhrField = useEhrField()?.activeField ?? null;
   const data = suggestionsData; // dataset varies by session type
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
@@ -3694,10 +3709,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           </div>
           <FigmaUserAvatar />
         </div>
+        {clientName === 'Ryan Cho' && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+            <DurationPill />
+          </div>
+        )}
       </div>
-
-      {/* DurationPill — individual audio sessions with AI timeline */}
-      {clientName === 'Ryan Cho' && <DurationPill />}
 
       {/* Main card */}
       <div style={{ flex: 1, background: 'white', borderRadius: '16px 16px 0 0', boxShadow: SHADOW_EL16, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
@@ -3828,18 +3845,29 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                               </button>
                               <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
                               {/* Add to EHR button */}
-                              <button onClick={() => {
-                                onAddToNote?.(section, card.content);
-                                setAdded(prev => new Set(prev).add(excludeKey));
-                                setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
-                              }} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: added.has(excludeKey) ? '#22c55e' : '#2d4ccd', letterSpacing: '0.16px' }}>
-                                {added.has(excludeKey) ? (
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                ) : (
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                                )}
-                                {added.has(excludeKey) ? 'Added!' : 'Add to EHR'}
-                              </button>
+                              {(() => {
+                                const isAdded = added.has(excludeKey);
+                                const canAdd = isAdded || !!focusedEhrField;
+                                return (
+                                  <button
+                                    onMouseDown={e => e.preventDefault()}
+                                    onClick={() => {
+                                      if (!canAdd) return;
+                                      onAddToNote?.(focusedEhrField ?? section, card.content);
+                                      setAdded(prev => new Set(prev).add(excludeKey));
+                                      setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
+                                    }}
+                                    style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: canAdd ? 'pointer' : 'default', ...P, fontSize: 12, fontWeight: 500, color: isAdded ? '#22c55e' : canAdd ? '#2d4ccd' : '#bbb', letterSpacing: '0.16px', transition: 'color 0.15s' }}
+                                  >
+                                    {isAdded ? (
+                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                    ) : (
+                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                                    )}
+                                    {isAdded ? 'Added!' : 'Add to EHR'}
+                                  </button>
+                                );
+                              })()}
                             </div>
                           )}
                         </div>
@@ -3855,7 +3883,18 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         {/* Bottom CTA bar — Suggestions tab only */}
         {activeTab === 'suggestions' && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'white', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
           {hasScrolledToBottom ? (
-            <button onClick={() => onAddedToEHR?.()} style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            <button
+              onClick={() => {
+                data.forEach(({ section, cards }) => {
+                  cards.forEach(card => {
+                    if (card.type === 'text' && card.showActions && !excluded.has(`${section}-${card.field}`)) {
+                      onAddToNote?.(focusedEhrField ?? section, card.content);
+                    }
+                  });
+                });
+                onAddedToEHR?.();
+              }}
+              style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
               {`Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`}
             </button>
           ) : (
