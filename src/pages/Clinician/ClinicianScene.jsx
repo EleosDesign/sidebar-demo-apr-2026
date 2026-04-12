@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
@@ -207,7 +208,13 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
         onMouseDown={handleMouseDown}
         style={{ position: 'absolute', left: pos.x, top: pillY, cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
       >
-        <style>{`@keyframes lqaPillSpin { to { transform: rotate(360deg); } }`}</style>
+        <style>{`
+          @keyframes lqaPillSpin { to { transform: rotate(360deg); } }
+          @keyframes shieldPulse {
+            0%, 100% { transform: scale(1);   opacity: 1; }
+            50%       { transform: scale(1.18); opacity: 0.6; }
+          }
+        `}</style>
         {/* Dark navy pill */}
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -217,7 +224,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
         }}>
           {/* Shield icon */}
           <div style={{ position: 'relative', width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.12)' }} />
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.12)', animation: 'shieldPulse 2.2s ease-in-out infinite' }} />
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ position: 'relative', zIndex: 1 }}>
               <path d="M12 2L4 6V12C4 16.418 7.582 20 12 22C16.418 20 20 16.418 20 12V6L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -3153,7 +3160,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
         </div>
 
         {/* Bottom CTA */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#f5f5f5', padding: '16px 24px 28px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 28px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
           <button
             onClick={() => setShowCaptureDrawer(true)}
             style={{ width: '100%', padding: '8px 22px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
@@ -3343,7 +3350,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
 
     // Shared bottom audio capture panel
     const AudioCapturePanel = ({ nextEnabled }) => (
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'white', borderRadius: '16px 16px 0 0', boxShadow: '0px -4px 10px rgba(0,0,0,0.1), 0px 4px 10px rgba(0,0,0,0.1)', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', borderRadius: '16px 16px 0 0', boxShadow: '0px -4px 10px rgba(0,0,0,0.1), 0px 4px 10px rgba(0,0,0,0.1)', padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {/* Timer + waveform */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, height: 28, padding: 4 }}>
           <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, flexShrink: 0 }}>
@@ -3606,7 +3613,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
       </div>
 
       {/* Bottom CTA */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#f5f5f5', padding: '16px 24px 12px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 12px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
           disabled={!hasEnoughText}
           onClick={() => { if (hasEnoughText) { setGenerating(true); setTimeout(() => { setGenerating(false); setPhase('suggestions'); }, 3000); } }}
@@ -3954,7 +3961,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Bottom CTA bar — Suggestions tab only */}
-        {activeTab === 'suggestions' && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'white', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
+        {activeTab === 'suggestions' && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
           {hasScrolledToBottom ? (
             <button
               onClick={() => {
@@ -4666,6 +4673,69 @@ function NavRailIcon({ navKey, active, size = 24 }) {
 
 // ── Nav Rail — exact Figma paths ─────────────────────────────────────────────
 
+function IconTooltip({ label, children }) {
+  const ref = useRef(null);
+  const [coords, setCoords] = useState(null);
+
+  const show = () => {
+    if (ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setCoords({ top: r.top - 8, cx: r.left + r.width / 2 });
+    }
+  };
+  const hide = () => setCoords(null);
+
+  return (
+    <div ref={ref} style={{ display: 'inline-flex' }}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+    >
+      {children}
+      {coords && ReactDOM.createPortal(
+        <div style={{
+          position: 'fixed',
+          top: coords.top,
+          left: coords.cx,
+          transform: 'translate(-50%, -100%)',
+          background: 'rgba(25,35,80,0.93)', color: 'white',
+          fontSize: 11, fontWeight: 500, fontFamily: 'Poppins, sans-serif',
+          padding: '4px 8px', borderRadius: 5, whiteSpace: 'nowrap',
+          zIndex: 99999, pointerEvents: 'none',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+        }}>
+          {label}
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
+function NavTooltip({ label, show, children }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {children}
+      {show && hovered && (
+        <div style={{
+          position: 'absolute', left: 'calc(100% + 10px)', top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'rgba(25,35,80,0.93)', color: 'white',
+          fontSize: 12, fontWeight: 500, fontFamily: 'Poppins, sans-serif',
+          padding: '5px 10px', borderRadius: 6, whiteSpace: 'nowrap',
+          zIndex: 9999, pointerEvents: 'none',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+        }}>
+          {label}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow, overflowActive, onMoreClick, showMore, onResizeMouseDown, showLabels, isCapturing, onCollapse, compactMode = false }) {
   const nav = (tab) => () => onNavClick(tab);
   const isActive = (key) => activeItem === key;
@@ -4695,63 +4765,73 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
     switch (key) {
       case 'activities':
         return (
-          <div key="activities" onClick={nav('activities')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, marginTop: compactMode ? 10 : 12, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} size={iconSize} /></div>
-            {lbl('Activities', isActive('activities'))}
-          </div>
+          <NavTooltip key="activities" label="Activities" show={!showLabels}>
+            <div onClick={nav('activities')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, marginTop: compactMode ? 10 : 12, cursor: 'pointer' }}>
+              <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} size={iconSize} /></div>
+              {lbl('Activities', isActive('activities'))}
+            </div>
+          </NavTooltip>
         );
       case 'summary':
         return (
-          <div key="summary" onClick={nav('summary')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} size={iconSize} /></div>
-            {lbl2('Add', 'Summary', isActive('summary'))}
-          </div>
+          <NavTooltip key="summary" label="Add Summary" show={!showLabels}>
+            <div onClick={nav('summary')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+              <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} size={iconSize} /></div>
+              {lbl2('Add', 'Summary', isActive('summary'))}
+            </div>
+          </NavTooltip>
         );
       case 'capture':
         return (
-          <div key="capture" onClick={nav('capture')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-            <div style={{ position: 'relative' }}>
-              <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} size={iconSize} /></div>
-              {isCapturing && (
-                <>
-                  <style>{`@keyframes capturePing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.4); opacity: 0; } } @keyframes captureGlow { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
-                  <span style={{ position: 'absolute', top: 2, right: 2, width: 9, height: 9, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22c55e', animation: 'capturePing 1.6s ease-out infinite' }} />
-                    <span style={{ position: 'relative', width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'captureGlow 1.6s ease-in-out infinite', boxShadow: '0 0 4px rgba(34,197,94,0.7)' }} />
-                  </span>
-                </>
-              )}
+          <NavTooltip key="capture" label="Capture Audio" show={!showLabels}>
+            <div onClick={nav('capture')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+              <div style={{ position: 'relative' }}>
+                <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} size={iconSize} /></div>
+                {isCapturing && (
+                  <>
+                    <style>{`@keyframes capturePing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.4); opacity: 0; } } @keyframes captureGlow { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
+                    <span style={{ position: 'absolute', top: 2, right: 2, width: 9, height: 9, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22c55e', animation: 'capturePing 1.6s ease-out infinite' }} />
+                      <span style={{ position: 'relative', width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'captureGlow 1.6s ease-in-out infinite', boxShadow: '0 0 4px rgba(34,197,94,0.7)' }} />
+                    </span>
+                  </>
+                )}
+              </div>
+              {lbl2('Capture', 'Audio', isActive('capture'))}
             </div>
-            {lbl2('Capture', 'Audio', isActive('capture'))}
-          </div>
+          </NavTooltip>
         );
       case 'clients':
         return (
-          <div key="clients" onClick={nav('clients')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} size={iconSize} /></div>
-            {lbl('Clients', isActive('clients'))}
-          </div>
+          <NavTooltip key="clients" label="Clients" show={!showLabels}>
+            <div onClick={nav('clients')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+              <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} size={iconSize} /></div>
+              {lbl('Clients', isActive('clients'))}
+            </div>
+          </NavTooltip>
         );
       case 'quality': {
         const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
         return (
-          <div key="quality" onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-            <div style={{ position: 'relative' }}>
-              <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} size={iconSize} /></div>
-              {lqaStatus === 'loading' && (
-                <>
-                  <style>{`@keyframes lqaSpin { to { transform: rotate(360deg); } }`}</style>
-                  <span style={{ position: 'absolute', top: 0, right: 0, width: 12, height: 12, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', animation: 'lqaSpin 0.8s linear infinite', background: 'transparent' }} />
-                </>
-              )}
-              {lqaStatus === 'issues' && (
-                <span style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: 'white', letterSpacing: 0 }}>4</span>
-                </span>
-              )}
+          <NavTooltip key="quality" label="Note Quality" show={!showLabels}>
+            <div onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+              <div style={{ position: 'relative' }}>
+                <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} size={iconSize} /></div>
+                {lqaStatus === 'loading' && (
+                  <>
+                    <style>{`@keyframes lqaSpin { to { transform: rotate(360deg); } }`}</style>
+                    <span style={{ position: 'absolute', top: 0, right: 0, width: 12, height: 12, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', animation: 'lqaSpin 0.8s linear infinite', background: 'transparent' }} />
+                  </>
+                )}
+                {lqaStatus === 'issues' && (
+                  <span style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: 'white', letterSpacing: 0 }}>4</span>
+                  </span>
+                )}
+              </div>
+              {lbl('Quality', isActive('quality'))}
             </div>
-            {lbl('Quality', isActive('quality'))}
-          </div>
+          </NavTooltip>
         );
       }
       default: return null;
@@ -4985,8 +5065,12 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                           <div style={{ ...P, fontSize: compactMode ? 11 : 14, fontWeight: 400, color: 'rgba(33,33,33,0.80)', marginTop: 2, letterSpacing: '0.17px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.time}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, paddingTop: 2 }}>
-                          {session.type === 'group' ? <CardGroupIcon /> : <CardPersonIcon />}
-                          {session.sessionType === 'audio' ? <CardAudioIcon /> : <CardDocIcon />}
+                          <IconTooltip label={session.type === 'group' ? 'Group session' : 'Individual session'}>
+                            {session.type === 'group' ? <CardGroupIcon /> : <CardPersonIcon />}
+                          </IconTooltip>
+                          <IconTooltip label={session.sessionType === 'audio' ? 'Audio session' : 'Progress note'}>
+                            {session.sessionType === 'audio' ? <CardAudioIcon /> : <CardDocIcon />}
+                          </IconTooltip>
                           <CardChevron open={isExpanded} />
                         </div>
                       </div>
@@ -5255,7 +5339,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards
       </div>
 
       {/* ── Bottom CTA ── */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#f5f5f5', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
           onClick={() => {
             const now = new Date();
@@ -5491,7 +5575,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
         </div>{/* end centred content area */}
 
         {/* Bottom CTA — flex child at bottom of white card */}
-        <div style={{ flexShrink: 0, background: '#f5f5f5', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
+        <div style={{ flexShrink: 0, background: '#EAEDFA', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
           <button
             onClick={onEndSession}
             style={{ width: '100%', padding: '8px 22px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
@@ -5549,7 +5633,7 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
       </div>
 
       {/* Bottom CTAs */}
-      <div style={{ background: 'white', padding: '12px 16px 24px', borderTop: '1px solid rgba(0,0,0,0.08)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ background: '#EAEDFA', padding: '12px 16px 24px', borderTop: '1px solid rgba(0,0,0,0.08)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button onClick={onGoToActivities} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 13, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
           {compactMode ? 'Activities' : 'Go to Activities List'}
         </button>
