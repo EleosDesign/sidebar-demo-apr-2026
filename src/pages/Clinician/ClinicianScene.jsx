@@ -208,27 +208,24 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
         style={{ position: 'absolute', left: pos.x, top: pillY, cursor: isDragging ? 'grabbing' : 'grab', userSelect: 'none' }}
       >
         <style>{`@keyframes lqaPillSpin { to { transform: rotate(360deg); } }`}</style>
+        {/* Dark navy pill */}
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          gap: 18, width: 75, height: 136, backgroundColor: '#ffffff', borderRadius: 37.5,
-          boxShadow: '0 1px 10px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.10)',
-          padding: '13px 5px', boxSizing: 'border-box',
+          gap: 0, width: 68, height: 140, backgroundColor: '#293D87', borderRadius: 34,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
+          padding: '14px 0', boxSizing: 'border-box',
         }}>
           {/* Shield icon */}
-          <div style={{ position: 'relative', width: 65, height: 65, flexShrink: 0, flexBasis: 65, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundColor: '#2D4CCD', opacity: 0.38 }} />
-            <div style={{ position: 'absolute', inset: 6, borderRadius: '50%', backgroundColor: '#293D87' }} />
+          <div style={{ position: 'relative', width: 52, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.12)' }} />
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ position: 'relative', zIndex: 1 }}>
               <path d="M12 2L4 6V12C4 16.418 7.582 20 12 22C16.418 20 20 16.418 20 12V6L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <svg style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }} width="65" height="65" viewBox="0 0 65 65" fill="none">
-              <path d="M 8 54 A 32.5 32.5 0 0 1 54 8" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
             {lqaStatus === 'loading' && (
-              <div style={{ position: 'absolute', inset: -3, borderRadius: '50%', border: '2.5px solid rgba(45,76,205,0.2)', borderTopColor: '#2D4CCD', animation: 'lqaPillSpin 0.9s linear infinite', zIndex: 3 }} />
+              <div style={{ position: 'absolute', inset: -3, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.8)', animation: 'lqaPillSpin 0.9s linear infinite', zIndex: 3 }} />
             )}
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: '2px solid #293D87', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
               {lqaStatus === 'loading' ? (
                 <>
                   <style>{`@keyframes lqaBadgePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }`}</style>
@@ -239,15 +236,17 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
               )}
             </div>
           </div>
-          {/* Eleos logo circle */}
-          <div style={{ width: 47, height: 47, borderRadius: '50%', backgroundColor: '#293D87', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
-            <div style={{ position: 'absolute', left: 7, top: 11, width: 34, height: 34, overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', left: 3.5, top: 8.22, width: 30.503, height: 25.785 }}>
+          {/* Divider */}
+          <div style={{ width: 32, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', margin: '12px 0' }} />
+          {/* Eleos logo */}
+          <div style={{ width: 52, height: 52, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
+            <div style={{ position: 'absolute', left: 10, top: 10, width: 32, height: 32, overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', left: 3.5, top: 8.22, width: 28, height: 23.6, transform: 'scale(0.92)', transformOrigin: 'top left' }}>
                 <svg preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 30.5033 25.7853" fill="none">
                   <path d="M27.9823 0C28.4694 5.88909 25.3054 9.42663 22.7081 10.2626C16.7903 12.1669 13.7901 7.83483 9.17403 7.26932C1.30763 6.30559 -3.54613 16.2766 3.1921 21.9918C10.0791 27.8333 20.0077 26.3223 24.9222 21.5595C29.5399 17.4385 33.1218 8.53285 27.9823 0Z" fill="#FFC04C"/>
                 </svg>
               </div>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: 31.53, height: 18.96 }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: 31.53, height: 18.96, transform: 'scale(0.92)', transformOrigin: 'top left' }}>
                 <svg preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 31.5283 18.9584" fill="none">
                   <path d="M10.7891 0.0561599C15.6169 -0.0632679 20.4725 -0.183465 24.4893 1.86573C26.9986 2.98914 30.1444 5.66978 31.4785 8.21827C31.9381 13.7921 29.1276 17.2593 26.623 18.3218C26.5899 18.3358 26.556 18.3493 26.5225 18.3628C26.4157 18.4056 26.3094 18.444 26.2041 18.478C25.3534 18.7518 24.563 18.8963 23.8193 18.9419C23.7044 18.9486 23.5878 18.9536 23.4697 18.9566C23.0252 18.9658 22.5969 18.9395 22.1826 18.8853C25.9545 14.634 22.7166 10.3872 18.8164 10.3872H8.5625C8.24862 10.3872 7.91718 10.2807 7.69043 10.0327C7.48118 9.80237 7.35938 9.48344 7.35938 9.16456C7.35939 8.8457 7.48119 8.52662 7.69043 8.29639C7.91713 8.06608 8.21355 7.92457 8.52734 7.90675H18.3281C18.5199 7.90674 18.6943 7.83542 18.8164 7.71143C18.9384 7.56983 19.0078 7.41013 19.0078 7.21534C19.0077 7.02073 18.9383 6.84313 18.8164 6.71925C18.6769 6.59534 18.5024 6.52492 18.3281 6.52491H11.0391C10.7078 6.50707 10.4104 6.36561 10.2012 6.13526C9.99195 5.90512 9.87013 5.58579 9.87012 5.2671C9.87012 4.94842 9.97462 4.62928 10.2012 4.39893C10.4279 4.1687 10.7252 4.02695 11.0391 4.00928H14.9277C15.1195 4.00923 15.294 3.9379 15.416 3.81397C15.5379 3.6724 15.6074 3.51263 15.6074 3.31788C15.6073 3.12346 15.5378 2.94664 15.416 2.82276C15.2765 2.69878 15.1021 2.62751 14.9277 2.62745H7.41113C7.23682 2.64506 7.06214 2.60926 6.90527 2.55616C6.74847 2.50302 6.59164 2.41439 6.46973 2.29053C6.34772 2.18435 6.26003 2.0428 6.17285 1.86573C6.10306 1.70626 6.06836 1.52911 6.06836 1.36964C6.06836 1.21017 6.10314 1.03295 6.17285 0.873543C6.24257 0.714152 6.34767 0.572694 6.46973 0.448738C6.59178 0.324802 6.74838 0.235386 6.90527 0.182137C7.0622 0.129094 7.23682 0.0940988 7.41113 0.111824C8.52796 0.111819 9.65805 0.0841381 10.7891 0.0561599ZM4.5 7.89698C5.18361 7.89712 5.73814 8.46038 5.73828 9.15479C5.73828 9.84932 5.18369 10.4125 4.5 10.4126C3.81611 10.4126 3.26172 9.84947 3.26172 9.15479C3.26186 8.46023 3.81626 7.89698 4.5 7.89698ZM1.23828 0.112801C1.92203 0.112881 2.47656 0.676044 2.47656 1.37061C2.47651 2.06513 1.922 2.62835 1.23828 2.62843C0.554438 2.62843 5.68931e-05 2.06524 0 1.37061C0 0.675936 0.55446 0.112801 1.23828 0.112801Z" fill="white"/>
                 </svg>
@@ -416,13 +415,22 @@ function NoteSection({ noteValues, onNoteChange, highlightedField }) {
     }
   };
 
+  // Sync DAP fields into EhrFieldContext so the dirty-check can detect edits
+  const handleChange = (label, val) => {
+    onNoteChange?.(label, val);
+    const key = DAP_FIELD_MAP[label];
+    if (key && ehrCtx) {
+      ehrCtx.setFieldValues(prev => ({ ...prev, [key]: val }));
+    }
+  };
+
   return (
     <div style={{ padding: '0 10px 12px' }}>
-      <NoteField label="Data/Goal:" height={80} value={noteValues['Data/Goal:']} onChange={v => onNoteChange?.('Data/Goal:', v)} onFocus={() => handleFocus('Data/Goal:')} highlighted={highlightedField === 'Data/Goal:'} />
+      <NoteField label="Data/Goal:" height={80} value={noteValues['Data/Goal:']} onChange={v => handleChange('Data/Goal:', v)} onFocus={() => handleFocus('Data/Goal:')} highlighted={highlightedField === 'Data/Goal:'} />
       <NoteField label="Intervention/Response:" height={72} value={noteValues['Intervention/Response:']} onChange={v => onNoteChange?.('Intervention/Response:', v)} highlighted={highlightedField === 'Intervention/Response:'} />
-      <NoteField label="Assessment/Level of Participation:" height={60} value={noteValues['Assessment/Level of Participation:']} onChange={v => onNoteChange?.('Assessment/Level of Participation:', v)} onFocus={() => handleFocus('Assessment/Level of Participation:')} highlighted={highlightedField === 'Assessment/Level of Participation:'} />
+      <NoteField label="Assessment/Level of Participation:" height={60} value={noteValues['Assessment/Level of Participation:']} onChange={v => handleChange('Assessment/Level of Participation:', v)} onFocus={() => handleFocus('Assessment/Level of Participation:')} highlighted={highlightedField === 'Assessment/Level of Participation:'} />
       <EHRDropdownGrid />
-      <NoteField label="Plan:" height={56} value={noteValues['Plan:']} onChange={v => onNoteChange?.('Plan:', v)} onFocus={() => handleFocus('Plan:')} highlighted={highlightedField === 'Plan:'} placeholder="Continue weekly individual therapy. Client to complete behavioral activation task before next session..." />
+      <NoteField label="Plan:" height={56} value={noteValues['Plan:']} onChange={v => handleChange('Plan:', v)} onFocus={() => handleFocus('Plan:')} highlighted={highlightedField === 'Plan:'} placeholder="Continue weekly individual therapy. Client to complete behavioral activation task before next session..." />
     </div>
   );
 }
@@ -448,7 +456,6 @@ function NoteField({ label, height, value = '', onChange, onFocus, placeholder, 
 
 // ── Eleos Sidebar (main) ──────────────────────────────────────────────────────
 
-const SIDEBAR_W = 467;
 const SIDEBAR_BOTTOM_GAP = 16;
 
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
@@ -471,9 +478,12 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── Drag & resize state ─────────────────────────────────────────────────────
   const G = SIDEBAR_BOTTOM_GAP; // uniform edge gap: top / right / bottom / left
+  const SIDEBAR_W_MIN = 320;
+  const SIDEBAR_W_MAX = 600;
+  const [sidebarW, setSidebarW] = useState(() => savedState?.sidebarW ?? 467);
   const [posX, setPosX] = useState(() => {
     if (!initialPos) return G;
-    return Math.max(G, Math.min(window.innerWidth - SIDEBAR_W - G, initialPos.x));
+    return Math.max(G, Math.min(window.innerWidth - 467 - G, initialPos.x));
   });
   const [posY, setPosY] = useState(() => {
     const initH = Math.round(window.innerHeight * 0.7);
@@ -481,25 +491,30 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
   });
   const [side, setSide] = useState(() => {
-    const x = initialPos ? Math.max(G, Math.min(window.innerWidth - SIDEBAR_W - G, initialPos.x)) : G;
-    return (x + SIDEBAR_W / 2) < window.innerWidth / 2 ? 'left' : 'right';
+    const x = initialPos ? Math.max(G, Math.min(window.innerWidth - 467 - G, initialPos.x)) : G;
+    return (x + 467 / 2) < window.innerWidth / 2 ? 'left' : 'right';
   });
   const [sidebarH, setSidebarH] = useState(() => Math.round(window.innerHeight * 0.7));
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isWidthResizing, setIsWidthResizing] = useState(false);
   const [showOverflow, setShowOverflow] = useState(false);
   const dragRef = useRef(null);
   const resizeRef = useRef(null);
+  const widthResizeRef = useRef(null);
   const posXRef = useRef(posX);
   const posYRef = useRef(posY);
   const sidebarHRef = useRef(sidebarH);
+  const sidebarWRef = useRef(sidebarW);
   posXRef.current = posX;
   posYRef.current = posY;
   sidebarHRef.current = sidebarH;
+  sidebarWRef.current = sidebarW;
 
   // ── Nav overflow calculation ─────────────────────────────────────────────────
   // With labels: item≈64px, fixed≈267px. Without labels: item≈40px, fixed≈220px.
-  const showNavLabels = sidebarH >= 480;
+  const compactMode = sidebarW < 380;
+  const showNavLabels = sidebarH >= 480 && !compactMode;
   const ITEM_H = showNavLabels ? 64 : 40;
   const RAIL_FIXED_H = showNavLabels ? 267 : 220;
   const ALL_NAV_KEYS = ['activities', 'summary', 'capture', 'clients', 'quality'];
@@ -512,11 +527,11 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       if (dragRef.current) {
         const dx = e.clientX - dragRef.current.startMouseX;
         const dy = e.clientY - dragRef.current.startMouseY;
-        const newX = Math.max(G, Math.min(window.innerWidth - SIDEBAR_W - G, dragRef.current.origX + dx));
+        const newX = Math.max(G, Math.min(window.innerWidth - sidebarWRef.current - G, dragRef.current.origX + dx));
         const newY = Math.max(G, Math.min(window.innerHeight - sidebarHRef.current - G, dragRef.current.origY + dy));
         setPosX(newX);
         setPosY(newY);
-        setSide((newX + SIDEBAR_W / 2) < window.innerWidth / 2 ? 'left' : 'right');
+        setSide((newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right');
       }
       if (resizeRef.current) {
         // dragging up → negative dy → increase height; keep bottom edge fixed
@@ -526,10 +541,29 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         setSidebarH(newH);
         setPosY(Math.max(G, bottomEdge - newH));
       }
+      if (widthResizeRef.current) {
+        const { edge, startMouseX, origW, origX } = widthResizeRef.current;
+        const dx = e.clientX - startMouseX;
+        if (edge === 'left') {
+          // Right edge fixed → dragging left widens
+          const newW = Math.max(SIDEBAR_W_MIN, Math.min(SIDEBAR_W_MAX, origW - dx));
+          const rightEdge = origX + origW;
+          const newX = Math.max(G, Math.min(window.innerWidth - SIDEBAR_W_MIN - G, rightEdge - newW));
+          setSidebarW(newW);
+          setPosX(newX);
+        } else {
+          // Left edge fixed → dragging right widens
+          const newW = Math.max(SIDEBAR_W_MIN, Math.min(SIDEBAR_W_MAX, origW + dx));
+          setSidebarW(newW);
+          const clampedX = Math.max(G, Math.min(window.innerWidth - newW - G, posXRef.current));
+          setPosX(clampedX);
+        }
+      }
     };
     const onUp = () => {
-      if (dragRef.current)  { dragRef.current = null;  setIsDragging(false); }
-      if (resizeRef.current) { resizeRef.current = null; setIsResizing(false); }
+      if (dragRef.current)       { dragRef.current = null;       setIsDragging(false); }
+      if (resizeRef.current)     { resizeRef.current = null;     setIsResizing(false); }
+      if (widthResizeRef.current){ widthResizeRef.current = null; setIsWidthResizing(false); }
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
@@ -557,9 +591,21 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     e.preventDefault();
   };
 
+  const handleLeftResizeMouseDown = (e) => {
+    e.stopPropagation(); e.preventDefault();
+    widthResizeRef.current = { edge: 'left', startMouseX: e.clientX, origW: sidebarWRef.current, origX: posXRef.current };
+    setIsWidthResizing(true);
+  };
+
+  const handleRightResizeMouseDown = (e) => {
+    e.stopPropagation(); e.preventDefault();
+    widthResizeRef.current = { edge: 'right', startMouseX: e.clientX, origW: sidebarWRef.current, origX: posXRef.current };
+    setIsWidthResizing(true);
+  };
+
   // ── State persistence ────────────────────────────────────────────────────────
   const stateRef = useRef(null);
-  stateRef.current = { navTab, phase, capturePhase, captureSession };
+  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW };
   // Save state to parent on unmount so it survives close→reopen
   useEffect(() => () => { onSaveState?.(stateRef.current); }, []);
   // Bubble recording status to parent (for launch button indicator)
@@ -658,15 +704,16 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onBack={() => { setCapturePhase(null); setPhase('form'); }}
         onGoToActivities={() => { setCapturePhase(null); setActivitiesInitialTab('ehr'); setNavTab('activities'); setPhase('sessions'); }}
         onStartNew={() => { setCapturePhase(null); setPhase('form'); setCaptureSession({ name: '', dateTime: '' }); }}
+        compactMode={compactMode}
       />
     );
 
     if (step === 2) return <RecordingPanel ending={ending} onEndSession={() => setEnding(true)} />;
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
     }
     if (navTab === 'activities') {
-      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} />;
+      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
@@ -674,6 +721,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onAddToNote={onAddToNote}
         suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
+        compactMode={compactMode}
+        sidebarW={sidebarW}
         onAddedToEHR={() => {
           setDoneIds(prev => new Set([...prev, activitiesSession.id]));
           setActivitiesInitialTab('done');
@@ -688,6 +737,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         extraSessions={addedSessions}
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
         onUndoDone={id => { setDoneIds(prev => { const n = new Set(prev); n.delete(id); return n; }); }}
+        compactMode={compactMode}
         onSelectSession={(session) => {
           setActivitiesSession(session);
           setPhase('suggestions');
@@ -699,12 +749,13 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         }}
       />;
     }
-    if (navTab === 'clients') return <ClientsPanel />;
+    if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
     if (navTab === 'quality')  return <LQAReview clientName="Marcus Webb" sessionLabel="Apr 7, 2026, 10:00 – 10:45 AM" onAdvance={() => handleNavClick('activities')} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || 'Marcus Webb'}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
+      compactMode={compactMode}
       onSuggestionsReached={(name) => {
         // Update EHR client name
         if (name) {
@@ -754,15 +805,31 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         position: 'fixed',
         left: posX,
         top: topPos,
-        width: SIDEBAR_W,
+        width: sidebarW,
         height: sidebarH,
         zIndex: 10,
-        cursor: isDragging ? 'grabbing' : isResizing ? 'ns-resize' : 'grab',
-        userSelect: (isDragging || isResizing) ? 'none' : 'auto',
+        cursor: isDragging ? 'grabbing' : isResizing ? 'ns-resize' : isWidthResizing ? 'ew-resize' : 'grab',
+        userSelect: (isDragging || isResizing || isWidthResizing) ? 'none' : 'auto',
         pointerEvents: 'auto',
       }}
       onMouseDown={handleMouseDown}
     >
+      {/* Left-edge width resize handle */}
+      <div
+        data-resizeHandle="true"
+        onMouseDown={handleLeftResizeMouseDown}
+        style={{ position: 'absolute', left: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div style={{ width: 4, height: 40, borderRadius: 2, background: 'rgba(41,61,135,0.35)', pointerEvents: 'none' }} />
+      </div>
+      {/* Right-edge width resize handle */}
+      <div
+        data-resizeHandle="true"
+        onMouseDown={handleRightResizeMouseDown}
+        style={{ position: 'absolute', right: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        <div style={{ width: 4, height: 40, borderRadius: 2, background: 'rgba(41,61,135,0.35)', pointerEvents: 'none' }} />
+      </div>
       {/* Inner: visual container that clips border-radius */}
       <div style={{
         position: 'absolute',
@@ -786,6 +853,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           showLabels={showNavLabels}
           isCapturing={capturePhase === 'recording'}
           onCollapse={onCollapse}
+          compactMode={compactMode}
         />
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)' }}>
           <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -847,13 +915,14 @@ const CLIENTS_LIST = [
   { id: 10, name: "Samuel Wright" },
 ];
 
-function ClientsPanel() {
+function ClientsPanel({ sidebarW = 467 }) {
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const compactMode = sidebarW < 380;
 
   if (selectedClient) {
-    return <ClientDetailPanelV2 client={selectedClient} onBack={() => setSelectedClient(null)} />;
+    return <ClientDetailPanelV2 client={selectedClient} onBack={() => setSelectedClient(null)} sidebarW={sidebarW} />;
   }
 
   const filtered = CLIENTS_LIST.filter(c =>
@@ -868,7 +937,7 @@ function ClientsPanel() {
         background: 'white',
         borderRadius: 16,
         overflow: 'hidden',
-        paddingTop: 24, paddingBottom: 16, paddingLeft: 16, paddingRight: 16,
+        paddingTop: compactMode ? 16 : 24, paddingBottom: compactMode ? 10 : 16, paddingLeft: compactMode ? 10 : 16, paddingRight: compactMode ? 10 : 16,
         boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)',
         flexShrink: 0,
         zIndex: 2,
@@ -891,14 +960,14 @@ function ClientsPanel() {
 
         {/* Bottom row: "My Clients" centered */}
         <div style={{ padding: 10, textAlign: 'center' }}>
-          <span style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
+          <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
             My Clients
           </span>
         </div>
       </div>
 
       {/* ── Scrollable content ── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 20px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: compactMode ? '0 10px 16px' : '0 16px 20px' }}>
         {/* Sticky top spacer */}
         <div style={{ position: 'sticky', top: 0, height: 24, background: 'var(--eleos-content-bg)', zIndex: 5, marginLeft: -16, marginRight: -16 }} />
         {/* Search row + cards in a flex-column with 24px gap */}
@@ -907,7 +976,7 @@ function ClientsPanel() {
           {/* Search + sort */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Search input — 321px fixed */}
-            <div style={{ position: 'relative', width: 321, flexShrink: 0 }}>
+            <div style={{ position: 'relative', width: '100%' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                 style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
                 <circle cx="11" cy="11" r="7" stroke="rgba(33,33,33,0.42)" strokeWidth="1.8"/>
@@ -919,13 +988,13 @@ function ClientsPanel() {
                 placeholder="Search for a client"
                 style={{
                   width: '100%',
-                  height: 47,
+                  height: compactMode ? 38 : 47,
                   borderRadius: 8,
                   border: '1px solid rgba(33,33,33,0.42)',
                   background: 'white',
                   paddingLeft: 40,
                   paddingRight: search ? 36 : 16,
-                  ...P, fontSize: 14, color: '#212121',
+                  ...P, fontSize: compactMode ? 13 : 14, color: '#212121',
                   outline: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -950,22 +1019,22 @@ function ClientsPanel() {
                 background: 'white',
                 borderRadius: 8,
                 boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.12), 0px 1px 1px 0px rgba(0,0,0,0.05)',
-                padding: 16,
+                padding: compactMode ? '10px 12px' : 16,
                 display: 'flex',
                 alignItems: 'center',
                 cursor: 'pointer',
               }}>
-                <span style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', flex: 1, lineHeight: 1.57, letterSpacing: '0.1px' }}>
+                <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 500, color: '#212121', flex: 1, lineHeight: 1.57, letterSpacing: '0.1px' }}>
                   {client.name}
                 </span>
-                {/* Right icons: person 24×24 + chevron 24×24, gap 16px */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-                  {/* Person icon 24×24 */}
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                {/* Right icons: person + chevron, gap scales with mode */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: compactMode ? 10 : 16, flexShrink: 0 }}>
+                  {/* Person icon */}
+                  <svg width={compactMode ? 18 : 24} height={compactMode ? 18 : 24} viewBox="0 0 24 24" fill="none">
                     <path d="M19.2862 17.5546C18.8849 16.6039 18.3024 15.7403 17.5714 15.012C16.8425 14.2816 15.9791 13.6993 15.0288 13.2972C15.0203 13.2929 15.0118 13.2908 15.0033 13.2865C16.3288 12.3291 17.1905 10.7695 17.1905 9.00996C17.1905 6.09508 14.8288 3.7334 11.9139 3.7334C8.99907 3.7334 6.63738 6.09508 6.63738 9.00996C6.63738 10.7695 7.49908 12.3291 8.8246 13.2887C8.81609 13.2929 8.80758 13.295 8.79907 13.2993C7.84588 13.7014 6.99057 14.278 6.25653 15.0142C5.52613 15.743 4.94378 16.6064 4.54165 17.5567C4.14659 18.487 3.93353 19.4845 3.91399 20.495C3.91343 20.5177 3.91741 20.5403 3.92571 20.5614C3.93401 20.5826 3.94646 20.6018 3.96232 20.6181C3.97818 20.6344 3.99714 20.6473 4.01807 20.6561C4.039 20.6649 4.06149 20.6695 4.08421 20.6695H5.36079C5.45441 20.6695 5.52888 20.595 5.531 20.5035C5.57356 18.861 6.23313 17.3227 7.39908 16.1567C8.60545 14.9503 10.2076 14.2865 11.9139 14.2865C13.6203 14.2865 15.2224 14.9503 16.4288 16.1567C17.5948 17.3227 18.2543 18.861 18.2969 20.5035C18.299 20.5971 18.3735 20.6695 18.4671 20.6695H19.7437C19.7664 20.6695 19.7889 20.6649 19.8098 20.6561C19.8307 20.6473 19.8497 20.6344 19.8656 20.6181C19.8814 20.6018 19.8939 20.5826 19.9022 20.5614C19.9105 20.5403 19.9145 20.5177 19.9139 20.495C19.8926 19.478 19.682 18.4886 19.2862 17.5546ZM11.9139 12.6695C10.9374 12.6695 10.0182 12.2887 9.32672 11.5972C8.63524 10.9057 8.25439 9.98655 8.25439 9.00996C8.25439 8.03337 8.63524 7.11423 9.32672 6.42274C10.0182 5.73126 10.9374 5.35041 11.9139 5.35041C12.8905 5.35041 13.8097 5.73126 14.5012 6.42274C15.1926 7.11423 15.5735 8.03337 15.5735 9.00996C15.5735 9.98655 15.1926 10.9057 14.5012 11.5972C13.8097 12.2887 12.8905 12.6695 11.9139 12.6695Z" fill="#212121"/>
                   </svg>
-                  {/* Chevron pointing right (expand icon rotated -90°) 24×24 */}
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-90deg)' }}>
+                  {/* Chevron pointing right */}
+                  <svg width={compactMode ? 18 : 24} height={compactMode ? 18 : 24} viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-90deg)' }}>
                     <path d="M6 9L12 15L18 9" stroke="#212121" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
@@ -1411,11 +1480,12 @@ const V2_SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0
 const V2_SHADOW_CARD = '0px 1px 3px 0px rgba(0,0,0,0.12), 0px 1px 1px 0px rgba(0,0,0,0.05)';
 
 // Shared header shell used by all V2 detail screens
-function V2Shell({ title, subtitle, onBack, client, children }) {
+function V2Shell({ title, subtitle, onBack, client, children, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const compactMode = sidebarW < 380;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
-      <div style={{ background: 'white', borderRadius: 16, padding: '24px 16px 16px', boxShadow: V2_SHADOW_EL4, flexShrink: 0 }}>
+      <div style={{ background: 'white', borderRadius: 16, padding: compactMode ? '14px 10px 10px' : '24px 16px 16px', boxShadow: V2_SHADOW_EL4, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="#212121" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -1426,22 +1496,22 @@ function V2Shell({ title, subtitle, onBack, client, children }) {
           {client ? (
             <>
               {/* Client name as primary heading */}
-              <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{client.name}</div>
+              <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{client.name}</div>
               {/* Client ID · session subtitle on one compact line */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, marginTop: 2 }}>
-                <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>CL{String(client.id).padStart(6, '0')}</span>
+                <span style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>CL{String(client.id).padStart(6, '0')}</span>
                 {subtitle && (
                   <>
                     <span style={{ width: 3, height: 3, borderRadius: '50%', background: 'rgba(0,0,0,0.38)', flexShrink: 0, display: 'inline-block' }} />
-                    <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{subtitle}</span>
+                    <span style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{subtitle}</span>
                   </>
                 )}
               </div>
             </>
           ) : (
             <>
-              <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{title}</div>
-              {subtitle && <div style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.17px', marginTop: 2 }}>{subtitle}</div>}
+              <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{title}</div>
+              {subtitle && <div style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.17px', marginTop: 2 }}>{subtitle}</div>}
             </>
           )}
         </div>
@@ -1475,8 +1545,9 @@ function V2Toggle({ options, value, onChange }) {
 }
 
 // ── Screen 2: Last Activity Summary ───────────────────────────────────────────
-function V2LastActivity({ onBack, client }) {
+function V2LastActivity({ onBack, client, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const compactMode = sidebarW < 380;
   const Chip = ({ label, grey }) => (
     <div style={{ background: grey ? '#f1f5f9' : '#eaedfa', borderRadius: 9999, padding: '3px 10px', display: 'inline-flex' }}>
       <span style={{ ...P, fontSize: 12, fontWeight: 500, color: grey ? '#45556c' : '#2d4ccd', lineHeight: 'normal' }}>{label}</span>
@@ -1500,12 +1571,12 @@ function V2LastActivity({ onBack, client }) {
     { title: 'Prepare presentation notes', sub: null, due: 'Due: March 17, 2026', grey: true },
   ];
   return (
-    <V2Shell title="Last Activity Summary" subtitle="Session 18 • March 12, 2026" onBack={onBack} client={client}>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 32px' }}>
-        <div style={{ position: 'sticky', top: 0, height: 20, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
+    <V2Shell title="Last Activity Summary" subtitle="Session 18 • March 12, 2026" onBack={onBack} client={client} sidebarW={sidebarW}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: compactMode ? '0 16px 24px' : '0 24px 32px' }}>
+        <div style={{ position: 'sticky', top: 0, height: 20, background: 'white', zIndex: 5, marginLeft: compactMode ? -16 : -24, marginRight: compactMode ? -16 : -24 }} />
 
         {/* Session Plan */}
-        <p style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: 16 }}>Session Plan &amp; Key Points</p>
+        <p style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: compactMode ? 10 : 16 }}>Session Plan &amp; Key Points</p>
         <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 16, padding: 16, marginBottom: 32, display: 'flex', flexDirection: 'column', gap: 12 }}>
           {sessionBullets.map((b, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
@@ -1520,7 +1591,7 @@ function V2LastActivity({ onBack, client }) {
         </div>
 
         {/* Follow-Ups */}
-        <p style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: 16 }}>Follow-Ups to Revisit</p>
+        <p style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: compactMode ? 10 : 16 }}>Follow-Ups to Revisit</p>
         <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, overflow: 'hidden', marginBottom: 32 }}>
           {followUps.map((f, i) => (
             <React.Fragment key={i}>
@@ -1534,7 +1605,7 @@ function V2LastActivity({ onBack, client }) {
         </div>
 
         {/* Tasks & Homework */}
-        <p style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: 16 }}>Tasks &amp; Homework Assigned</p>
+        <p style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57, marginBottom: compactMode ? 10 : 16 }}>Tasks &amp; Homework Assigned</p>
         <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, overflow: 'hidden' }}>
           {tasks.map((t, i) => (
             <React.Fragment key={i}>
@@ -1555,7 +1626,7 @@ function V2LastActivity({ onBack, client }) {
 }
 
 // ── Screen 3 & 4: Most Frequent Themes (Circles + Heatmap) ───────────────────
-function V2MostFrequentThemes({ onBack, client }) {
+function V2MostFrequentThemes({ onBack, client, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [view, setView] = useState('Circles');
 
@@ -1576,7 +1647,7 @@ function V2MostFrequentThemes({ onBack, client }) {
   const heatColor = (v) => ['#e8ecf8','#b3c0ee','#3d5bd4','#1a3ab8'][v] ?? '#e8ecf8';
 
   return (
-    <V2Shell title="Most Frequent Themes" subtitle="Patterns across 18 sessions" onBack={onBack} client={client}>
+    <V2Shell title="Most Frequent Themes" subtitle="Patterns across 18 sessions" onBack={onBack} client={client} sidebarW={sidebarW}>
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 32px' }}>
         <div style={{ position: 'sticky', top: 0, height: 16, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
 
@@ -1667,7 +1738,7 @@ function V2MostFrequentThemes({ onBack, client }) {
 }
 
 // ── Screen 5: Themes by Session ───────────────────────────────────────────────
-function V2ThemesBySession({ onBack, client }) {
+function V2ThemesBySession({ onBack, client, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [expanded, setExpanded] = useState(new Set([0]));
   const sessions = [
@@ -1690,7 +1761,7 @@ function V2ThemesBySession({ onBack, client }) {
     </div>
   );
   return (
-    <V2Shell title="Themes by Session" subtitle="Patterns across 18 sessions" onBack={onBack} client={client}>
+    <V2Shell title="Themes by Session" subtitle="Patterns across 18 sessions" onBack={onBack} client={client} sidebarW={sidebarW}>
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 32px' }}>
         <div style={{ position: 'sticky', top: 0, height: 20, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
         <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 12, overflow: 'hidden' }}>
@@ -1734,7 +1805,7 @@ function V2ThemesBySession({ onBack, client }) {
 }
 
 // ── Screen 6 & 7: Treatment Goals (By Status + Timeline) ─────────────────────
-function V2TreatmentGoals({ onBack, client }) {
+function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [view, setView] = useState('By Status');
 
@@ -1787,7 +1858,7 @@ function V2TreatmentGoals({ onBack, client }) {
   );
 
   return (
-    <V2Shell title="Treatment Goals" subtitle="5 goals tracked • 1 met" onBack={onBack} client={client}>
+    <V2Shell title="Treatment Goals" subtitle="5 goals tracked • 1 met" onBack={onBack} client={client} sidebarW={sidebarW}>
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 32px' }}>
         <div style={{ position: 'sticky', top: 0, height: 16, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
 
@@ -1862,18 +1933,19 @@ function V2TreatmentGoals({ onBack, client }) {
 }
 
 // ── Main client detail panel — routes to sub-screens ─────────────────────────
-function ClientDetailPanelV2({ client, onBack }) {
+function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const compactMode = sidebarW < 380;
   const SHADOW_EL4 = V2_SHADOW_EL4;
   const SHADOW_CARD = V2_SHADOW_CARD;
   const [detailView, setDetailView] = useState(null); // null | 'activity' | 'themes' | 'themes-by-session' | 'goals'
   const [askOpen, setAskOpen] = useState(false);
 
   // Route to detail screens
-  if (detailView === 'activity')          return <V2LastActivity onBack={() => setDetailView(null)} client={client} />;
-  if (detailView === 'themes')            return <V2MostFrequentThemes onBack={() => setDetailView(null)} client={client} />;
-  if (detailView === 'themes-by-session') return <V2ThemesBySession onBack={() => setDetailView(null)} client={client} />;
-  if (detailView === 'goals')             return <V2TreatmentGoals onBack={() => setDetailView(null)} client={client} />;
+  if (detailView === 'activity')          return <V2LastActivity onBack={() => setDetailView(null)} client={client} sidebarW={sidebarW} />;
+  if (detailView === 'themes')            return <V2MostFrequentThemes onBack={() => setDetailView(null)} client={client} sidebarW={sidebarW} />;
+  if (detailView === 'themes-by-session') return <V2ThemesBySession onBack={() => setDetailView(null)} client={client} sidebarW={sidebarW} />;
+  if (detailView === 'goals')             return <V2TreatmentGoals onBack={() => setDetailView(null)} client={client} sidebarW={sidebarW} />;
 
   const bullets = [
     'Continued CBT work on negative thought patterns',
@@ -1895,18 +1967,18 @@ function ClientDetailPanelV2({ client, onBack }) {
   );
 
   const SectionHeader = ({ title }) => (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-      <span style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{title}</span>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: compactMode ? 10 : 16 }}>
+      <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{title}</span>
       <InfoIcon />
     </div>
   );
 
   const SignalCard = ({ icon, title, children, onClick }) => (
-    <div onClick={onClick} style={{ background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: 16, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div onClick={onClick} style={{ background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: compactMode ? '10px 12px' : 16, cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: compactMode ? 7 : 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: compactMode ? 6 : 8 }}>
           {icon}
-          <span style={{ ...P, fontSize: 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>{title}</span>
+          <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>{title}</span>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M9 18L15 12L9 6" stroke="rgba(0,0,0,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1946,7 +2018,7 @@ function ClientDetailPanelV2({ client, onBack }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
       {/* ── Header ── */}
-      <div style={{ background: 'white', borderRadius: 16, paddingTop: 24, paddingBottom: 16, paddingLeft: 16, paddingRight: 16, boxShadow: SHADOW_EL4, flexShrink: 0 }}>
+      <div style={{ background: 'white', borderRadius: 16, paddingTop: compactMode ? 14 : 24, paddingBottom: compactMode ? 10 : 16, paddingLeft: compactMode ? 10 : 16, paddingRight: compactMode ? 10 : 16, boxShadow: SHADOW_EL4, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -1956,8 +2028,8 @@ function ClientDetailPanelV2({ client, onBack }) {
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px' }}>
-          <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{client.name}</div>
-          <div style={{ ...P, fontSize: 14, lineHeight: 1.43, letterSpacing: '0.17px', marginTop: 2 }}>
+          <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{client.name}</div>
+          <div style={{ ...P, fontSize: compactMode ? 12 : 14, lineHeight: 1.43, letterSpacing: '0.17px', marginTop: 2 }}>
             <span style={{ color: 'rgba(0,0,0,0.6)' }}>Client ID</span>
             {' '}<span style={{ color: '#212121' }}>CL{String(client.id).padStart(6, '0')}</span>
           </div>
@@ -1971,21 +2043,21 @@ function ClientDetailPanelV2({ client, onBack }) {
           {/* Sticky spacer */}
           <div style={{ position: 'sticky', top: 0, height: 20, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
 
-          <div style={{ padding: '0 24px 24px' }}>
+          <div style={{ padding: compactMode ? '0 16px 16px' : '0 24px 24px' }}>
             {/* Stats banner */}
-            <div style={{ background: '#fafafa', borderRadius: 8, padding: '16px 16px 12px', marginBottom: 32 }}>
-              <p style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: '0 0 4px' }}>
+            <div style={{ background: '#fafafa', borderRadius: 8, padding: compactMode ? '10px 12px 8px' : '16px 16px 12px', marginBottom: compactMode ? 20 : 32 }}>
+              <p style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: '0 0 4px' }}>
                 38 activities documented · Since Aug 2024
               </p>
-              <p style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px', margin: 0 }}>
+              <p style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px', margin: 0 }}>
                 Last session: Mar 12, 2026
               </p>
             </div>
 
             {/* ── Prep & Follow-Ups ── */}
-            <div style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: compactMode ? 20 : 32 }}>
               <SectionHeader title="Prep & Follow-Ups" />
-              <div style={{ background: 'white', borderRadius: 8, boxShadow: SHADOW_CARD, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ background: 'white', borderRadius: 8, boxShadow: SHADOW_CARD, padding: compactMode ? '10px 12px' : 16, display: 'flex', flexDirection: 'column', gap: compactMode ? 6 : 8 }}>
                 {/* Title row */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -1993,10 +2065,10 @@ function ClientDetailPanelV2({ client, onBack }) {
                       <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#294355" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M14 2v6h6M9 13h6M9 17h4" stroke="#294355" strokeWidth="1.5" strokeLinecap="round"/>
                     </svg>
-                    <span style={{ ...P, fontSize: 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>Activity Overview</span>
+                    <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>Activity Overview</span>
                   </div>
                   <button onClick={() => setDetailView('activity')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2, padding: '4px 0' }}>
-                    <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>View Note</span>
+                    <span style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>{compactMode ? 'View' : 'View Note'}</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                       <path d="M9 18L15 12L9 6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -2007,12 +2079,12 @@ function ClientDetailPanelV2({ client, onBack }) {
                   March 12, 2026 • Session 18
                 </p>
                 {/* Bullets */}
-                <div style={{ background: '#fafafa', borderRadius: 10, padding: '16px' }}>
+                <div style={{ background: '#fafafa', borderRadius: 10, padding: compactMode ? '10px 12px' : '16px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {bullets.map((b, i) => (
                       <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                        <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: '24px', flexShrink: 0 }}>•</span>
-                        <span style={{ ...P, fontSize: 14, fontWeight: 400, color: '#212121', lineHeight: 1.43, letterSpacing: '0.17px' }}>{b}</span>
+                        <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: '24px', flexShrink: 0 }}>•</span>
+                        <span style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: '#212121', lineHeight: 1.43, letterSpacing: '0.17px' }}>{b}</span>
                       </div>
                     ))}
                   </div>
@@ -2021,7 +2093,7 @@ function ClientDetailPanelV2({ client, onBack }) {
             </div>
 
             {/* ── Clinical Signals ── */}
-            <div style={{ marginBottom: 32 }}>
+            <div style={{ marginBottom: compactMode ? 20 : 32 }}>
               <SectionHeader title="Clinical Signals" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <SignalCard icon={<BrainIcon />} title="Most Frequent Themes" onClick={() => setDetailView('themes')}>
@@ -2073,7 +2145,7 @@ function ClientDetailPanelV2({ client, onBack }) {
         <AskEleosBar onOpen={() => setAskOpen(true)} P={P} />
 
         {/* ── Ask Eleos Drawer ── */}
-        {askOpen && <AskEleosDrawer onClose={() => setAskOpen(false)} client={client} P={P} />}
+        {askOpen && <AskEleosDrawer onClose={() => setAskOpen(false)} client={client} P={P} compactMode={compactMode} />}
       </div>
     </div>
   );
@@ -2162,7 +2234,7 @@ const SOURCE_DETAILS = {
   },
 };
 
-function SourceChip({ label, P }) {
+function SourceChip({ label, P, compactMode = false }) {
   const [hovered, setHovered] = useState(false);
   const isOverflow = label.startsWith('+');
   const detail = SOURCE_DETAILS[label];
@@ -2187,25 +2259,26 @@ function SourceChip({ label, P }) {
         <div style={{
           position: 'absolute',
           bottom: 'calc(100% + 8px)',
-          left: 0,
+          /* In compact mode anchor to right edge so tooltip doesn't spill past sidebar */
+          ...(compactMode ? { right: 0, left: 'auto' } : { left: 0 }),
           background: '#fff',
-          borderRadius: 16,
+          borderRadius: compactMode ? 12 : 16,
           boxShadow: '0px 6px 30px 5px rgba(0,0,0,0.12), 0px 16px 24px 1px rgba(0,0,0,0.10), 0px 8px 10px -5px rgba(0,0,0,0.20)',
-          padding: '16px 20px',
-          width: 280,
+          padding: compactMode ? '12px 14px' : '16px 20px',
+          width: compactMode ? 210 : 280,
           zIndex: 200,
           pointerEvents: 'none',
         }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <div style={{ display: 'flex', gap: compactMode ? 8 : 10, alignItems: 'flex-start' }}>
+            <div style={{ width: compactMode ? 26 : 32, height: compactMode ? 26 : 32, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', lineHeight: '20px', letterSpacing: '0.4px' }}>{detail.title}</div>
-              <div style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.4px' }}>{detail.subtitle}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
+              <div style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 500, color: '#2d4ccd', lineHeight: '20px', letterSpacing: '0.4px' }}>{detail.title}</div>
+              <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.4px' }}>{detail.subtitle}</div>
             </div>
           </div>
         </div>
@@ -2214,7 +2287,7 @@ function SourceChip({ label, P }) {
   );
 }
 
-function AskEleosDrawer({ onClose, client, P }) {
+function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
   const [expanded, setExpanded] = useState(false);
   const [chatAction, setChatAction] = useState(null);
   const [messages, setMessages] = useState([]); // { role:'user'|'assistant', type:'text'|'card', text }
@@ -2469,7 +2542,7 @@ function AskEleosDrawer({ onClose, client, P }) {
         maxHeight: '90vh',
       }}>
         {/* Header */}
-        <div style={{ padding: '16px 20px 0', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+        <div style={{ padding: compactMode ? '12px 14px 0' : '16px 20px 0', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
           {chatAction ? (
             <button onClick={handleBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -2477,7 +2550,7 @@ function AskEleosDrawer({ onClose, client, P }) {
               </svg>
             </button>
           ) : <div style={{ width: 28 }} />}
-          <span style={{ ...P, flex: 1, textAlign: 'center', fontSize: 14, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px' }}>
+          <span style={{ ...P, flex: 1, textAlign: 'center', fontSize: compactMode ? 13 : 14, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px' }}>
             {chatAction ? chatAction.title : 'Ask Eleos'}
           </span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28 }}>
@@ -2489,13 +2562,13 @@ function AskEleosDrawer({ onClose, client, P }) {
 
         {chatAction ? (
           /* ── Chat view ── */
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 12px', display: 'flex', flexDirection: 'column', gap: 16, minHeight: 0 }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: compactMode ? '10px 10px 8px' : '16px 16px 12px', display: 'flex', flexDirection: 'column', gap: compactMode ? 10 : 16, minHeight: 0 }}>
             {messages.map((msg, i) => {
               if (msg.role === 'user') {
                 return (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: 40 }}>
-                    <div style={{ background: '#2d4ccd', borderRadius: '16px 16px 4px 16px', padding: '12px 16px' }}>
-                      <p style={{ ...P, fontSize: 14, fontWeight: 400, color: 'white', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>
+                  <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: compactMode ? 24 : 40 }}>
+                    <div style={{ background: '#2d4ccd', borderRadius: '16px 16px 4px 16px', padding: compactMode ? '8px 12px' : '12px 16px' }}>
+                      <p style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: 'white', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>
                         {msg.text}
                       </p>
                     </div>
@@ -2504,7 +2577,7 @@ function AskEleosDrawer({ onClose, client, P }) {
               }
               /* Assistant message */
               const AiAvatar = () => (
-                <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                <div style={{ width: compactMode ? 22 : 28, height: compactMode ? 22 : 28, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L9.5 9.5L2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z" fill="#2d4ccd"/>
                   </svg>
@@ -2512,31 +2585,31 @@ function AskEleosDrawer({ onClose, client, P }) {
               );
               if (msg.type === 'card') {
                 return (
-                  <div key={i} style={{ animation: 'askChatIn 0.35s ease both', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <div key={i} style={{ animation: 'askChatIn 0.35s ease both', display: 'flex', alignItems: 'flex-start', gap: compactMode ? 6 : 10 }}>
                     <AiAvatar />
-                    <div style={{ flex: 1, background: '#fafafa', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    <div style={{ flex: 1, background: '#fafafa', borderRadius: 12, padding: compactMode ? '10px 12px' : 16, display: 'flex', flexDirection: 'column', gap: compactMode ? 16 : 24 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', letterSpacing: '0.018px', lineHeight: 1.57 }}>
+                        <div style={{ ...P, fontSize: compactMode ? 14 : 18, fontWeight: 600, color: '#212121', letterSpacing: '0.018px', lineHeight: 1.57 }}>
                           Pre-Session Brief — {clientName}
                         </div>
-                        <div style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', lineHeight: 1.66 }}>
+                        <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', lineHeight: 1.66 }}>
                           Session {sessionNum} · Scheduled: Apr 8, 2026
                         </div>
                       </div>
                       {PREPARE_SECTIONS.map((section) => (
-                        <div key={section.heading} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <div style={{ ...P, fontSize: 16, fontWeight: 600, color: '#212121', letterSpacing: '0.15px', lineHeight: '24px' }}>
+                        <div key={section.heading} style={{ display: 'flex', flexDirection: 'column', gap: compactMode ? 5 : 8 }}>
+                          <div style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: '#212121', letterSpacing: '0.15px', lineHeight: '24px' }}>
                             {section.heading}
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: compactMode ? 5 : 8 }}>
                             {section.items.map((item, j) => (
-                              <p key={j} style={{ ...P, fontSize: 14, fontWeight: 400, color: '#212121', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>• {item}</p>
+                              <p key={j} style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: '#212121', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>• {item}</p>
                             ))}
                           </div>
                           {section.sources && (
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 2 }}>
                               {section.sources.map((src, si) => (
-                                <SourceChip key={si} label={src} P={P} />
+                                <SourceChip key={si} label={src} P={P} compactMode={compactMode} />
                               ))}
                             </div>
                           )}
@@ -2552,11 +2625,11 @@ function AskEleosDrawer({ onClose, client, P }) {
                 );
               }
               return (
-                <div key={i} style={{ animation: 'askChatIn 0.35s ease both', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <div key={i} style={{ animation: 'askChatIn 0.35s ease both', display: 'flex', alignItems: 'flex-start', gap: compactMode ? 6 : 10 }}>
                   <AiAvatar />
-                  <div style={{ flex: 1, background: '#fafafa', borderRadius: 12, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ flex: 1, background: '#fafafa', borderRadius: 12, padding: compactMode ? '8px 12px' : '12px 16px', display: 'flex', flexDirection: 'column', gap: compactMode ? 5 : 8 }}>
                     {msg.text.split('\n\n').map((para, pi) => (
-                      <p key={pi} style={{ ...P, fontSize: 14, fontWeight: 400, color: '#212121', letterSpacing: '0.17px', lineHeight: 1.57, margin: 0 }}>
+                      <p key={pi} style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: '#212121', letterSpacing: '0.17px', lineHeight: 1.57, margin: 0 }}>
                         {para.split(/(\*\*[^*]+\*\*)/).map((chunk, ci) =>
                           chunk.startsWith('**') && chunk.endsWith('**')
                             ? <strong key={ci} style={{ fontWeight: 600 }}>{chunk.slice(2, -2)}</strong>
@@ -2567,7 +2640,7 @@ function AskEleosDrawer({ onClose, client, P }) {
                     {msg.sources && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, paddingTop: 4, borderTop: '1px solid rgba(0,0,0,0.08)', marginTop: 4 }}>
                         {msg.sources.map((src, si) => (
-                          <SourceChip key={si} label={src} P={P} />
+                          <SourceChip key={si} label={src} P={P} compactMode={compactMode} />
                         ))}
                       </div>
                     )}
@@ -2600,35 +2673,35 @@ function AskEleosDrawer({ onClose, client, P }) {
           /* ── Home view ── */
           <>
             {/* Greeting */}
-            <div style={{ padding: '8px 24px 28px', textAlign: 'center' }}>
-              <div style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>
+            <div style={{ padding: compactMode ? '6px 16px 18px' : '8px 24px 28px', textAlign: 'center' }}>
+              <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>
                 Hello {DEMO_PROVIDER.firstName}
               </div>
-              <div style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>
+              <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>
                 How can I help you today?
               </div>
             </div>
 
             {/* Action cards */}
-            <div style={{ padding: '12px 24px 0', display: 'flex', flexDirection: 'column', gap: 12, overflowY: 'auto', maxHeight: '55vh' }}>
+            <div style={{ padding: compactMode ? '8px 16px 0' : '12px 24px 0', display: 'flex', flexDirection: 'column', gap: compactMode ? 8 : 12, overflowY: 'auto', maxHeight: '55vh' }}>
               {allActions.map((action, i) => (
                 <button
                   key={i}
                   className="ask-action-card"
                   onClick={() => handleSelectAction(action)}
-                  style={{ background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: 16, textAlign: 'left', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}
+                  style={{ background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: compactMode ? '10px 12px' : 16, textAlign: 'left', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: compactMode ? 4 : 8, width: '100%' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: compactMode ? 8 : 12 }}>
                     <div style={{ flexShrink: 0 }}>{action.icon}</div>
-                    <span style={{ ...P, fontSize: 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>{action.title}</span>
+                    <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>{action.title}</span>
                   </div>
-                  <p style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>{action.desc}</p>
+                  <p style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>{action.desc}</p>
                 </button>
               ))}
             </div>
 
             {/* Expand more */}
-            <div style={{ padding: '12px 24px 4px' }}>
+            <div style={{ padding: compactMode ? '8px 16px 4px' : '12px 24px 4px' }}>
               <button
                 onClick={() => setExpanded(e => !e)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: 0 }}
@@ -2911,7 +2984,7 @@ function TagField({ label, selected, onChange }) {
   );
 }
 
-function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft }) {
+function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
@@ -2967,7 +3040,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
             <FigmaUserAvatar />
           </div>
           <div style={{ textAlign: 'center', paddingBottom: 6 }}>
-            <span style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
+            <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
               Add activity
             </span>
           </div>
@@ -2978,13 +3051,13 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           {/* Sticky top spacer */}
           <div style={{ position: 'sticky', top: 0, height: 24, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24, borderRadius: '16px 16px 0 0' }} />
 
-          <p style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', marginBottom: 24, marginTop: 0 }}>
+          <p style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', marginBottom: 24, marginTop: 0 }}>
             First, add info about the activity
           </p>
 
           {/* Client — autocomplete */}
           <div style={{ marginBottom: 16 }}>
-            <span style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Client:</span>
+            <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Client:</span>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <div style={{ flex: 1, position: 'relative' }}>
                 <div
@@ -2998,7 +3071,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                     onFocus={() => setClientDropOpen(true)}
                     onBlur={() => setTimeout(() => setClientDropOpen(false), 150)}
                     placeholder="Select client or group"
-                    style={{ ...P, flex: 1, fontSize: 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px', border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
+                    style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px', border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
                   />
                   {clientQuery && (
                     <svg onMouseDown={e => { e.preventDefault(); clearClientField(); }} width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ cursor: 'pointer', flexShrink: 0 }}>
@@ -3028,19 +3101,19 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           </div>
 
           {/* Activity Type */}
-          <AcFormField label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management']} />
+          <AcFormField label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management']} compactMode={compactMode} />
 
           {/* Population */}
-          <AcFormField label="Population:" defaultValue="Adult" options={['Adult', 'Child/Adolescent', 'Older Adult', 'Couple', 'Family']} />
+          <AcFormField label="Population:" defaultValue="Adult" options={['Adult', 'Child/Adolescent', 'Older Adult', 'Couple', 'Family']} compactMode={compactMode} />
 
           {/* Note Type */}
-          <AcFormField label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note']} />
+          <AcFormField label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note']} compactMode={compactMode} />
 
           {/* Date — native input, custom display */}
           <div style={{ marginBottom: 16 }}>
-            <span style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Date:</span>
+            <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Date:</span>
             <div onClick={() => dateRef.current?.showPicker()} style={{ background: 'white', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
-              <span style={{ ...P, flex: 1, fontSize: 16, color: 'rgba(0,0,0,0.87)', lineHeight: '24px', letterSpacing: '0.15px' }}>{displayDate}</span>
+              <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', lineHeight: '24px', letterSpacing: '0.15px' }}>{displayDate}</span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <rect x="3" y="4" width="18" height="18" rx="2" stroke="rgba(33,33,33,0.54)" strokeWidth="1.5"/>
                 <path d="M3 9h18M8 2v4M16 2v4" stroke="rgba(33,33,33,0.54)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -3052,9 +3125,9 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
 
           {/* Start Time */}
           <div style={{ marginBottom: 16 }}>
-            <span style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Start Time:</span>
+            <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Start Time:</span>
             <div onClick={() => startTimeRef.current?.showPicker()} style={{ background: 'white', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
-              <span style={{ ...P, flex: 1, fontSize: 16, color: startTime ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.38)', lineHeight: '24px', letterSpacing: '0.15px' }}>{displayStart || 'hh:mm AM'}</span>
+              <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: startTime ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.38)', lineHeight: '24px', letterSpacing: '0.15px' }}>{displayStart || 'hh:mm AM'}</span>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="9" stroke="rgba(33,33,33,0.54)" strokeWidth="1.5"/>
                 <path d="M12 7v5l3 3" stroke="rgba(33,33,33,0.54)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -3208,7 +3281,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
   }
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
-  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={suggestionsData} />;
+  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={suggestionsData} compactMode={compactMode} sidebarW={467} />;
 
   // ── Phase 1b: voice capture ───────────────────────────────────────────────
   if (phase === 'voice') {
@@ -3464,7 +3537,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                 <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
               </svg>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: 280 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: '100%', maxWidth: 280 }}>
               <span style={{ ...P, fontSize: 24, fontWeight: 500, lineHeight: 1.334, color: 'white' }}>Generating suggestions</span>
               <span style={{ ...P, fontSize: 16, fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.15px', color: 'white', opacity: 0.8 }}>They will be ready soon</span>
             </div>
@@ -3508,7 +3581,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
             value={notes}
             onChange={e => setNotes(e.target.value)}
             placeholder={'Add info about the activity, like\n\nWhat you did with your client\nWhat their response was\nYour plans until and for your next activity'}
-            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: '16px', fontSize: 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: 'white', transition: 'border-color 0.15s' }}
+            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: 'white', transition: 'border-color 0.15s' }}
           />
           <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', marginTop: 8, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
             {hasEnoughText ? 'Ready to generate suggestions.' : 'Add more info to generate suggestions.'}
@@ -3539,7 +3612,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           onClick={() => { if (hasEnoughText) { setGenerating(true); setTimeout(() => { setGenerating(false); setPhase('suggestions'); }, 3000); } }}
           style={{ width: '100%', padding: '8px 22px', background: hasEnoughText ? '#2d4ccd' : 'rgba(45,76,205,0.12)', color: hasEnoughText ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: hasEnoughText ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', transition: 'background 0.2s, color 0.2s', boxShadow: hasEnoughText ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
         >
-          Generate Suggestions
+          {compactMode ? 'Generate' : 'Generate Suggestions'}
         </button>
         <div style={{ textAlign: 'center', marginTop: 10, marginBottom: 4 }}>
           <span style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
@@ -3571,7 +3644,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
             </svg>
           </div>
           {/* Text */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: 280 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: '100%', maxWidth: 280 }}>
             <span style={{ ...P, fontSize: 24, fontWeight: 500, lineHeight: 1.334, color: 'white' }}>Generating suggestions</span>
             <span style={{ ...P, fontSize: 16, fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.15px', color: 'white', opacity: 0.8 }}>They will be ready soon</span>
           </div>
@@ -3643,7 +3716,7 @@ const AUDIO_SUGGESTIONS_DATA = [
 
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
-function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData = SUGGESTIONS_DATA, isIndividualAudio = false }) {
+function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData = SUGGESTIONS_DATA, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const data = suggestionsData; // dataset varies by session type
@@ -3698,13 +3771,13 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8 }}>
 
       {/* Header */}
-      <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '16px 16px 12px' }}>
+      <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: compactMode ? '10px 10px 8px' : '16px 16px 12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'rgba(0,0,0,0.54)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <span style={{ ...P, fontSize: 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</span>
+            <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</span>
             <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>
           </div>
           <FigmaUserAvatar />
@@ -3720,12 +3793,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
       <div style={{ flex: 1, background: 'white', borderRadius: '16px 16px 0 0', boxShadow: SHADOW_EL16, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', flexShrink: 0, height: 42, borderBottom: '1px solid rgba(0,0,0,0.12)', background: 'white' }}>
+        <div style={{ display: 'flex', flexShrink: 0, height: compactMode ? 34 : 42, borderBottom: '1px solid rgba(0,0,0,0.12)', background: 'white' }}>
           {TABS.map(tab => (
             <div key={tab} onClick={() => setActiveTab(tab)}
               style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ ...P, fontSize: 14, fontWeight: activeTab === tab ? 500 : 400, color: activeTab === tab ? '#2d4ccd' : 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{TAB_LABELS[tab]}</span>
+                <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === tab ? 500 : 400, color: activeTab === tab ? '#2d4ccd' : 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{TAB_LABELS[tab]}</span>
                 {tab === 'coding' && (
                   <span style={{ background: '#2d4ccd', borderRadius: 9999, padding: '1px 6px', fontSize: 12, fontWeight: 500, color: 'white', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px', lineHeight: '18px' }}>{CPT_COUNT}</span>
                 )}
@@ -3736,7 +3809,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>
 
         {/* Insights tab content */}
-        {activeTab === 'insights' && <InsightsPanel />}
+        {activeTab === 'insights' && <InsightsPanel sidebarW={sidebarW} />}
 
         {/* Coding tab content — individual audio sessions only */}
         {activeTab === 'coding' && (
@@ -3895,7 +3968,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 onAddedToEHR?.();
               }}
               style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
-              {`Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`}
+              {compactMode ? `Add ${activeCount} to EHR` : `Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`}
             </button>
           ) : (
             <button style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'rgba(45,76,205,0.12)', border: 'none', borderRadius: 4, cursor: 'default', ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px' }}>
@@ -3914,8 +3987,17 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
 
 // ── Insights Panel ────────────────────────────────────────────────────────────
 
-function InsightsPanel() {
+function InsightsPanel({ sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const compactMode = sidebarW < 380;
+  // Compute how wide the arc chart can actually be:
+  // nav rail + InsightsPanel outer padding (20×2) + card inner padding (12×2 default, 8×2 compact)
+  const navRailW = compactMode ? 54 : 74;
+  const cardPadH = compactMode ? 16 : 24; // 8×2 or 12×2
+  const contentW = sidebarW - navRailW - 40 - cardPadH; // full card content width
+  const chartW = Math.min(240, contentW);
+  const chartR = chartW / 240; // scale ratio 0–1
+  const bubbleScale = Math.min(1, contentW / 260); // bubble chart design width = 260px
   const [themesView, setThemesView] = useState('graph'); // 'graph' | 'tags'
   const [selectedTheme, setSelectedTheme] = useState(null); // null | theme label
   const [themeZoom, setThemeZoom] = useState(1);
@@ -3966,11 +4048,11 @@ function InsightsPanel() {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="rgba(0,0,0,0.38)" strokeWidth="1.5"/><path d="M12 8h.01M12 11v5" stroke="rgba(0,0,0,0.38)" strokeWidth="1.5" strokeLinecap="round"/></svg>
       </div>
 
-      <div style={{ background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: '16px 12px 12px', marginBottom: 20 }}>
+      <div style={{ background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 12, padding: compactMode ? '12px 8px 10px' : '16px 12px 12px', marginBottom: 20 }}>
         {/* Arc chart */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-          <div style={{ position: 'relative', width: 240, height: 218, overflow: 'hidden' }}>
-            <svg width="240" height="240" viewBox="0 0 240 240" style={{ position: 'absolute', top: 0, left: 0 }}>
+          <div style={{ position: 'relative', width: chartW, height: Math.round(218 * chartR), overflow: 'hidden' }}>
+            <svg width={chartW} height={chartW} viewBox="0 0 240 240" style={{ position: 'absolute', top: 0, left: 0 }}>
               {/* Open horseshoe segments — no track */}
               {arcs.map(a => (
                 <circle key={a.label} cx={CX} cy={CY} r={R} fill="none"
@@ -3981,9 +4063,9 @@ function InsightsPanel() {
                 />
               ))}
             </svg>
-            {/* Center content — fixed paddingTop keeps illustration clear of arc regardless of container height */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 62, gap: 2 }}>
-              <svg width="104" height="104" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: 4 }}>
+            {/* Center content — paddingTop and illustration scale with chartR */}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(62 * chartR), gap: 2 }}>
+              <svg width={Math.round(104 * chartR)} height={Math.round(104 * chartR)} viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: 4 }}>
                 <path d="M45 90C69.8528 90 90 69.8528 90 45C90 20.1472 69.8528 0 45 0C20.1472 0 0 20.1472 0 45C0 69.8528 20.1472 90 45 90Z" fill="url(#paint0_radial_2613_35556)"/>
                 <path d="M33.9268 79.0997C34.8277 79.0999 35.5576 79.8316 35.5576 80.7335C35.5575 81.6353 34.8276 82.3662 33.9268 82.3663C33.0258 82.3663 32.2951 81.6354 32.2949 80.7335C32.2949 79.8315 33.0257 79.0997 33.9268 79.0997ZM39.2695 79.6642C39.8594 79.6644 40.3378 80.143 40.3379 80.7335C40.3379 81.3241 39.8594 81.8026 39.2695 81.8029C38.6794 81.8029 38.2012 81.3242 38.2012 80.7335C38.2013 80.1429 38.6795 79.6642 39.2695 79.6642ZM60.002 78.0314C60.592 78.0315 61.0703 78.5101 61.0703 79.1007C61.0702 79.6913 60.5919 80.17 60.002 80.17C59.4119 80.17 58.9337 79.6913 58.9336 79.1007C58.9336 78.51 59.4119 78.0314 60.002 78.0314ZM19.6768 65.2316C19.8144 66.705 20.1675 68.4691 20.5352 69.0421C20.8763 69.5723 21.505 70.0261 22.9053 70.2911C21.5365 70.4913 20.854 70.8966 20.5879 71.3907C19.9866 72.5112 19.8707 73.6936 19.71 75.5665C19.5758 73.6612 19.4283 72.4615 18.8906 71.4904C18.6176 70.9996 17.816 70.5909 16.4482 70.2911C17.8485 70.0261 18.4784 69.5723 18.8184 69.0421C19.186 68.469 19.6097 66.6066 19.6768 65.2316ZM62.2803 73.089C62.943 73.0892 63.4805 73.6277 63.4805 74.2911C63.4803 74.9545 62.9429 75.4921 62.2803 75.4923C61.6175 75.4923 61.0802 74.9546 61.0801 74.2911C61.0801 73.6276 61.6174 73.089 62.2803 73.089ZM23.9385 73.0909C24.5081 73.091 24.9697 73.5529 24.9697 74.1232C24.9696 74.6933 24.508 75.1554 23.9385 75.1554C23.3689 75.1554 22.9073 74.6933 22.9072 74.1232C22.9072 73.5529 23.3688 73.0909 23.9385 73.0909ZM73.0049 67.798C73.6735 67.798 74.2158 68.3406 74.2158 69.0099C74.2157 69.6791 73.6735 70.2218 73.0049 70.2218C72.3364 70.2217 71.795 69.6791 71.7949 69.0099C71.7949 68.3406 72.3363 67.7981 73.0049 67.798ZM13.6084 66.5704C14.2813 66.5707 14.8271 67.1165 14.8271 67.7902C14.8271 68.4638 14.2813 69.0096 13.6084 69.0099C12.9353 69.0099 12.3897 68.4639 12.3896 67.7902C12.3896 67.1164 12.9353 66.5704 13.6084 66.5704ZM13.0215 60.5499C13.9015 60.55 14.6152 61.2637 14.6152 62.1447C14.6152 63.0256 13.9015 63.7393 13.0215 63.7394C12.1415 63.7394 11.4277 63.0256 11.4277 62.1447C11.4277 61.2637 12.1415 60.5499 13.0215 60.5499ZM70.4717 40.4015C70.6359 42.1644 71.0585 44.2758 71.499 44.9611C71.9061 45.5952 72.6587 46.1381 74.335 46.4552C72.6976 46.6948 71.8805 47.1801 71.5625 47.7716C70.8434 49.1119 70.7048 50.526 70.5117 52.7667C70.3522 50.4867 70.1752 49.0528 69.5312 47.8907C69.2052 47.3027 68.2467 46.814 66.6094 46.4552C68.2837 46.138 69.0383 45.5954 69.4453 44.9611C69.8858 44.2758 70.3918 42.0463 70.4717 40.4015ZM77.6631 48.7472C78.562 48.7474 79.2909 49.4772 79.291 50.3771C79.291 51.2771 78.5621 52.0068 77.6631 52.007C76.7639 52.007 76.0352 51.2772 76.0352 50.3771C76.0353 49.4771 76.764 48.7472 77.6631 48.7472ZM60.0049 40.0714C60.7131 40.0715 61.2871 40.6467 61.2871 41.3556C61.287 42.0644 60.713 42.6387 60.0049 42.6388C59.2968 42.6388 58.7228 42.0644 58.7227 41.3556C58.7227 40.6466 59.2967 40.0714 60.0049 40.0714ZM14.6162 20.8019C14.7827 22.5842 15.2092 24.7186 15.6543 25.4122C16.0659 26.0535 16.8285 26.603 18.5225 26.9259C16.8657 27.1678 16.0393 27.6567 15.7178 28.255C14.9905 29.6104 14.8517 31.0416 14.6562 33.3068C14.4944 31.0011 14.315 29.551 13.6641 28.3761C13.3345 27.7811 12.3658 27.2863 10.71 26.924C12.4039 26.6022 13.1665 26.0535 13.5781 25.4122C14.0232 24.7183 14.5353 22.4649 14.6162 20.8019ZM26.3779 28.3702C27.3153 28.3702 28.075 29.1312 28.0752 30.0695C28.0752 31.0079 27.3154 31.7687 26.3779 31.7687C25.4405 31.7686 24.6807 31.0079 24.6807 30.0695C24.6809 29.1312 25.4407 28.3704 26.3779 28.3702ZM72.5986 21.3644C73.4901 21.3644 74.2129 22.0881 74.2129 22.9806C74.2129 23.873 73.4901 24.5968 72.5986 24.5968C71.7073 24.5966 70.9854 23.8729 70.9854 22.9806C70.9854 22.0883 71.7073 21.3646 72.5986 21.3644ZM64.3564 12.4337C64.4871 13.8331 64.8227 15.5089 65.1719 16.0529C65.4945 16.5563 66.0921 16.987 67.4229 17.2394C66.1224 17.4292 65.4738 17.8135 65.2217 18.2833C64.6505 19.3471 64.5403 20.47 64.3877 22.2491C64.2605 20.4399 64.1205 19.3006 63.6094 18.3781C63.3502 17.9117 62.5894 17.5241 61.29 17.2394C62.6197 16.9871 63.2172 16.5563 63.541 16.0529C63.8902 15.5089 64.2928 13.7394 64.3564 12.4337ZM19.7812 14.3312C20.4746 14.3314 21.037 14.894 21.0371 15.588C21.0371 16.2822 20.4746 16.8456 19.7812 16.8458C19.0877 16.8458 18.5254 16.2823 18.5254 15.588C18.5255 14.8939 19.0878 14.3312 19.7812 14.3312ZM36.7295 11.1808C37.3771 11.1808 37.9023 11.7064 37.9023 12.3546C37.9023 13.0028 37.377 13.5284 36.7295 13.5284C36.082 13.5284 35.5576 13.0028 35.5576 12.3546C35.5576 11.7064 36.082 11.1809 36.7295 11.1808ZM41.8721 7.63391C42.8502 7.63417 43.6436 8.42812 43.6436 9.40735C43.6435 10.3865 42.8502 11.1805 41.8721 11.1808C40.8937 11.1808 40.1006 10.3867 40.1006 9.40735C40.1006 8.42796 40.8937 7.63391 41.8721 7.63391Z" fill="white"/>
                 <path d="M19.9558 22.1125H48.9373C50.3991 22.1125 51.5846 23.2972 51.5847 24.759V48.0286C51.5847 49.4905 50.3992 50.676 48.9373 50.676H32.4607C32.1385 50.6761 31.8292 50.7943 31.5906 51.0061L31.4929 51.1028L25.1326 58.0686V51.9866C25.1324 51.2626 24.546 50.6761 23.822 50.676H19.9558C18.4939 50.6759 17.3093 49.4905 17.3093 48.0286V24.759C17.3094 23.2972 18.494 22.1126 19.9558 22.1125Z" fill="white" stroke="#294355" strokeWidth="1.4913"/>
@@ -3997,15 +4079,29 @@ function InsightsPanel() {
                   </radialGradient>
                 </defs>
               </svg>
-              <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.54)', letterSpacing: '0.4px', lineHeight: 1.4 }}>Session Time</span>
-              <span style={{ ...P, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>60 min</span>
+              <span style={{ ...P, fontSize: Math.round(12 * chartR), fontWeight: 400, color: 'rgba(0,0,0,0.54)', letterSpacing: '0.4px', lineHeight: 1.4 }}>Session Time</span>
+              <span style={{ ...P, fontSize: Math.round(13 * chartR), fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>60 min</span>
             </div>
           </div>
         </div>
         {/* Legend — bordered card, order: Patient | Provider | Silence */}
         {(() => {
           const legendSegs = [arcSegs[0], arcSegs[2], arcSegs[1]];
-          return (
+          return compactMode ? (
+            /* Compact: vertical rows — label left, pct right */
+            <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, overflow: 'hidden' }}>
+              {legendSegs.map((s, i) => (
+                <div key={s.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 12px', borderTop: i > 0 ? '1px solid rgba(0,0,0,0.12)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
+                    <span style={{ ...P, fontSize: 13, fontWeight: 500, color: 'rgba(0,0,0,0.75)', letterSpacing: '0.16px' }}>{s.label}</span>
+                  </div>
+                  <span style={{ ...P, fontSize: 14, fontWeight: 700, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px' }}>{s.pct}%</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* Default: 3 columns horizontal */
             <div style={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, display: 'flex', overflow: 'hidden' }}>
               {legendSegs.map((s, i) => (
                 <div key={s.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 8px', gap: 4, borderLeft: i > 0 ? '1px solid rgba(0,0,0,0.12)' : 'none' }}>
@@ -4207,18 +4303,25 @@ function InsightsPanel() {
           /* ── Overview mode ── */
           themesView === 'graph' ? (
             /* Bubble chart — click to drill down */
-            <div style={{ position: 'relative', height: 200, margin: '0 auto', maxWidth: 260 }}>
-              {bubbles.map(b => (
-                <div key={b.label} onClick={() => setSelectedTheme(b.label)} style={{
-                  position: 'absolute', top: b.top, left: b.left,
-                  width: b.size, height: b.size, borderRadius: '50%',
-                  background: b.color, cursor: 'pointer',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <span style={{ ...P, fontSize: b.size > 100 ? 20 : 16, fontWeight: 600, color: 'white', lineHeight: 1, letterSpacing: '0.17px' }}>{b.count}</span>
-                  <span style={{ ...P, fontSize: 12, fontWeight: 500, color: 'white', textAlign: 'center', padding: '0 8px', lineHeight: 1.3, letterSpacing: '0.16px' }}>{b.label}</span>
-                </div>
-              ))}
+            <div style={{ position: 'relative', height: Math.round(200 * bubbleScale), margin: '0 auto', maxWidth: Math.round(260 * bubbleScale) }}>
+              {bubbles.map(b => {
+                const bw = Math.round(b.size * bubbleScale);
+                const countFs = Math.round((b.size > 100 ? 20 : 16) * bubbleScale);
+                const labelFs = Math.round(12 * bubbleScale);
+                return (
+                  <div key={b.label} onClick={() => setSelectedTheme(b.label)} style={{
+                    position: 'absolute',
+                    top: Math.round(b.top * bubbleScale),
+                    left: Math.round(b.left * bubbleScale),
+                    width: bw, height: bw, borderRadius: '50%',
+                    background: b.color, cursor: 'pointer',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <span style={{ ...P, fontSize: countFs, fontWeight: 600, color: 'white', lineHeight: 1, letterSpacing: '0.17px' }}>{b.count}</span>
+                    <span style={{ ...P, fontSize: labelFs, fontWeight: 500, color: 'white', textAlign: 'center', padding: `0 ${Math.round(8 * bubbleScale)}px`, lineHeight: 1.3, letterSpacing: '0.16px' }}>{b.label}</span>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             /* Tags list */
@@ -4514,26 +4617,26 @@ const NAV_ITEM_LABELS = {
 };
 
 // Reusable icon renderer (used both in rail and overflow menu)
-function NavRailIcon({ navKey, active }) {
+function NavRailIcon({ navKey, active, size = 24 }) {
   const c = active ? '#293D87' : 'white';
   switch (navKey) {
     case 'activities':
       return (
-        <svg width="24" height="24" viewBox="27 150 20 21" fill="none">
+        <svg width={size} height={size} viewBox="27 150 20 21" fill="none">
           <path d="M39 152.63H46M39 157.63H46M39 163.63H46M39 168.63H46M29 151.63H34C34.5523 151.63 35 152.078 35 152.63V157.63C35 158.183 34.5523 158.63 34 158.63H29C28.4477 158.63 28 158.183 28 157.63V152.63C28 152.078 28.4477 151.63 29 151.63ZM29 162.63H34C34.5523 162.63 35 163.078 35 163.63V168.63C35 169.183 34.5523 169.63 34 169.63H29C28.4477 169.63 28 169.183 28 168.63V163.63C28 163.078 28.4477 162.63 29 162.63Z"
             stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       );
     case 'summary':
       return (
-        <svg width="24" height="24" viewBox="26 249 22 22" fill="none">
+        <svg width={size} height={size} viewBox="26 249 22 22" fill="none">
           <path d="M36 253.331H29.7778C29.3063 253.331 28.8541 253.519 28.5207 253.852C28.1873 254.186 28 254.638 28 255.109V267.554C28 268.025 28.1873 268.477 28.5207 268.811C28.8541 269.144 29.3063 269.331 29.7778 269.331H42.2222C42.6937 269.331 43.1459 269.144 43.4793 268.811C43.8127 268.477 44 268.025 44 267.554V261.331M42.6667 251.998C43.0203 251.644 43.4999 251.446 44 251.446C44.5001 251.446 44.9797 251.644 45.3333 251.998C45.687 252.352 45.8856 252.831 45.8856 253.331C45.8856 253.832 45.687 254.311 45.3333 254.665L36.8889 263.109L33.3333 263.998L34.2222 260.443L42.6667 251.998Z"
             stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       );
     case 'capture':
       return (
-        <svg width="24" height="24" viewBox="17 4 24 24" fill="none">
+        <svg width={size} height={size} viewBox="17 4 24 24" fill="none">
           <path fillRule="evenodd" clipRule="evenodd"
             d="M33.6924 20.6926C32.3593 22.0258 30.5518 22.7757 28.6665 22.7778C26.7811 22.7757 24.9736 22.0258 23.6405 20.6926C22.3073 19.3595 21.5575 17.552 21.5553 15.6667V12.1111C21.5553 10.2251 22.3045 8.41639 23.6381 7.0828C24.9717 5.7492 26.7805 5 28.6665 5C30.5524 5 32.3612 5.7492 33.6948 7.0828C35.0284 8.41639 35.7776 10.2251 35.7776 12.1111V15.6667C35.7754 17.552 35.0256 19.3595 33.6924 20.6926ZM32.1047 8.04071C31.1434 7.22744 29.9256 6.78012 28.6665 6.77778C27.4073 6.78012 26.1895 7.22744 25.2282 8.04071C24.2669 8.85398 23.624 9.98085 23.4131 11.2222H25.9998C26.2355 11.2222 26.4616 11.3159 26.6283 11.4826C26.795 11.6493 26.8887 11.8754 26.8887 12.1111C26.8887 12.3469 26.795 12.573 26.6283 12.7397C26.4616 12.9063 26.2355 13 25.9998 13H23.3331V14.7778H25.9998C26.2355 14.7778 26.4616 14.8714 26.6283 15.0381C26.795 15.2048 26.8887 15.4309 26.8887 15.6667C26.8887 15.9024 26.795 16.1285 26.6283 16.2952C26.4616 16.4619 26.2355 16.5556 25.9998 16.5556H23.4131C23.622 17.7978 24.2644 18.9258 25.2261 19.7393C26.1879 20.5528 27.4068 20.9992 28.6665 20.9992C29.9261 20.9992 31.145 20.5528 32.1068 19.7393C33.0685 18.9258 33.7109 17.7978 33.9198 16.5556H31.3331C31.0974 16.5556 30.8713 16.4619 30.7046 16.2952C30.5379 16.1285 30.4442 15.9024 30.4442 15.6667C30.4442 15.4309 30.5379 15.2048 30.7046 15.0381C30.8713 14.8714 31.0974 14.7778 31.3331 14.7778H33.9998V13H31.3331C31.0974 13 30.8713 12.9063 30.7046 12.7397C30.5379 12.573 30.4442 12.3469 30.4442 12.1111C30.4442 11.8754 30.5379 11.6493 30.7046 11.4826C30.8713 11.3159 31.0974 11.2222 31.3331 11.2222H33.9198C33.7089 9.98085 33.066 8.85398 32.1047 8.04071ZM37.8159 15.927C37.9826 15.7603 38.2087 15.6667 38.4444 15.6667C38.6802 15.6667 38.9063 15.7603 39.073 15.927C39.2397 16.0937 39.3333 16.3198 39.3333 16.5556C39.3303 19.1478 38.2991 21.6331 36.4661 23.4661C34.6331 25.2991 32.1478 26.3303 29.5556 26.3333H27.7778C25.1855 26.3303 22.7002 25.2991 20.8672 23.4661C19.0342 21.6331 18.0031 19.1478 18 16.5556C18 16.3198 18.0937 16.0937 18.2603 15.927C18.427 15.7603 18.6531 15.6667 18.8889 15.6667C19.1246 15.6667 19.3507 15.7603 19.5174 15.927C19.6841 16.0937 19.7778 16.3198 19.7778 16.5556C19.7804 18.6765 20.6241 20.7098 22.1238 22.2096C23.6235 23.7093 25.6568 24.553 27.7778 24.5556H29.5556C31.6766 24.5532 33.71 23.7096 35.2098 22.2098C36.7096 20.71 37.5532 18.6766 37.5556 16.5556C37.5556 16.3198 37.6492 16.0937 37.8159 15.927Z"
             fill={c}/>
@@ -4541,7 +4644,7 @@ function NavRailIcon({ navKey, active }) {
       );
     case 'clients':
       return (
-        <svg width="24" height="24" viewBox="25 490 23 23" fill="none">
+        <svg width={size} height={size} viewBox="25 490 23 23" fill="none">
           <path fillRule="evenodd" clipRule="evenodd" d="M28.546 502.032C29.7985 500.78 31.4973 500.076 33.2687 500.076C35.04 500.076 36.7388 500.78 37.9913 502.032C39.2438 503.285 39.9475 504.984 39.9475 506.755C39.9475 507.282 39.5203 507.709 38.9933 507.709C38.4664 507.709 38.0392 507.282 38.0392 506.755C38.0392 505.49 37.5366 504.276 36.642 503.382C35.7473 502.487 34.5339 501.984 33.2687 501.984C32.0035 501.984 30.7901 502.487 29.8954 503.382C29.0008 504.276 28.4982 505.49 28.4982 506.755C28.4982 507.282 28.071 507.709 27.5441 507.709C27.0171 507.709 26.59 507.282 26.59 506.755C26.59 504.984 27.2937 503.285 28.546 502.032Z" fill={c}/>
           <path fillRule="evenodd" clipRule="evenodd" d="M33.2684 494.352C31.6875 494.352 30.406 495.633 30.406 497.214C30.406 498.795 31.6875 500.076 33.2684 500.076C34.8492 500.076 36.1307 498.795 36.1307 497.214C36.1307 495.633 34.8492 494.352 33.2684 494.352ZM28.4978 497.214C28.4978 494.579 30.6337 492.443 33.2684 492.443C35.9031 492.443 38.039 494.579 38.039 497.214C38.039 499.849 35.9031 501.985 33.2684 501.985C30.6337 501.985 28.4978 499.849 28.4978 497.214Z" fill={c}/>
           <path fillRule="evenodd" clipRule="evenodd" d="M39.9473 495.306C39.9473 494.779 40.3744 494.352 40.9014 494.352H46.4549C46.9818 494.352 47.409 494.779 47.409 495.306C47.409 495.833 46.9818 496.26 46.4549 496.26H40.9014C40.3744 496.26 39.9473 495.833 39.9473 495.306Z" fill={c}/>
@@ -4551,7 +4654,7 @@ function NavRailIcon({ navKey, active }) {
       );
     case 'quality':
       return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
           <path d="M12 2L4 6V12C4 16.418 7.582 20 12 22C16.418 20 20 16.418 20 12V6L12 2Z"
             stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M9 12L11 14L15 10" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -4563,16 +4666,17 @@ function NavRailIcon({ navKey, active }) {
 
 // ── Nav Rail — exact Figma paths ─────────────────────────────────────────────
 
-function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow, overflowActive, onMoreClick, showMore, onResizeMouseDown, showLabels, isCapturing, onCollapse }) {
+function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow, overflowActive, onMoreClick, showMore, onResizeMouseDown, showLabels, isCapturing, onCollapse, compactMode = false }) {
   const nav = (tab) => () => onNavClick(tab);
   const isActive = (key) => activeItem === key;
   const ehrCtx = useEhrField();
 
+  const iconSize = compactMode ? 18 : 24;
   const iconBg = (active) => ({
-    borderRadius: 8,
+    borderRadius: 6,
     background: active ? 'white' : 'transparent',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: 4, flexShrink: 0,
+    padding: compactMode ? 2 : 4, flexShrink: 0,
   });
 
   const lbl = (text, active) => showLabels ? (
@@ -4591,23 +4695,23 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
     switch (key) {
       case 'activities':
         return (
-          <div key="activities" onClick={nav('activities')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, marginTop: 12, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} /></div>
+          <div key="activities" onClick={nav('activities')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, marginTop: compactMode ? 10 : 12, cursor: 'pointer' }}>
+            <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} size={iconSize} /></div>
             {lbl('Activities', isActive('activities'))}
           </div>
         );
       case 'summary':
         return (
-          <div key="summary" onClick={nav('summary')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} /></div>
+          <div key="summary" onClick={nav('summary')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+            <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} size={iconSize} /></div>
             {lbl2('Add', 'Summary', isActive('summary'))}
           </div>
         );
       case 'capture':
         return (
-          <div key="capture" onClick={nav('capture')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, cursor: 'pointer' }}>
+          <div key="capture" onClick={nav('capture')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
             <div style={{ position: 'relative' }}>
-              <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} /></div>
+              <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} size={iconSize} /></div>
               {isCapturing && (
                 <>
                   <style>{`@keyframes capturePing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.4); opacity: 0; } } @keyframes captureGlow { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
@@ -4623,17 +4727,17 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         );
       case 'clients':
         return (
-          <div key="clients" onClick={nav('clients')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, cursor: 'pointer' }}>
-            <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} /></div>
+          <div key="clients" onClick={nav('clients')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
+            <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} size={iconSize} /></div>
             {lbl('Clients', isActive('clients'))}
           </div>
         );
       case 'quality': {
         const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
         return (
-          <div key="quality" onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, cursor: 'pointer' }}>
+          <div key="quality" onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
             <div style={{ position: 'relative' }}>
-              <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} /></div>
+              <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} size={iconSize} /></div>
               {lqaStatus === 'loading' && (
                 <>
                   <style>{`@keyframes lqaSpin { to { transform: rotate(360deg); } }`}</style>
@@ -4657,7 +4761,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
   const moreActive = showMore || overflowActive;
 
   return (
-    <div style={{ width: 74, flexShrink: 0, background: '#293D87', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 24, paddingBottom: 24, position: 'relative' }}>
+    <div style={{ width: compactMode ? 54 : 74, flexShrink: 0, background: '#293D87', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 24, paddingBottom: 24, position: 'relative' }}>
 
       {/* ── Resize handle — same color as rail, pill indicates drag target ── */}
       <div
@@ -4669,21 +4773,21 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
       </div>
 
       {/* Close panel icon */}
-      <svg onClick={onCollapse} width="24" height="24" viewBox="5 5 22 22" fill="none" style={{ marginBottom: 4, flexShrink: 0, cursor: 'pointer' }}>
+      <svg onClick={onCollapse} width={compactMode ? 18 : 24} height={compactMode ? 18 : 24} viewBox="5 5 22 22" fill="none" style={{ marginBottom: 4, flexShrink: 0, cursor: 'pointer' }}>
         <path d="M13 7V25M20 19L17 16L20 13M9 7H23C24.1046 7 25 7.89543 25 9V23C25 24.1046 24.1046 25 23 25H9C7.89543 25 7 24.1046 7 23V9C7 7.89543 7.89543 7 9 7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
 
       {/* Divider */}
-      <div style={{ width: 52, height: 1, background: 'white', opacity: 0.3, margin: '6px 0 10px' }} />
+      <div style={{ width: compactMode ? 36 : 52, height: 1, background: 'white', opacity: 0.3, margin: compactMode ? '4px 0 6px' : '6px 0 10px' }} />
 
       {/* Visible nav items */}
       {(visibleItems || ['activities', 'summary', 'capture', 'clients']).map(key => renderItem(key))}
 
       {/* "More" button when items overflow */}
       {hasOverflow && (
-        <div onClick={onMoreClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 14, cursor: 'pointer' }}>
+        <div onClick={onMoreClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
           <div style={iconBg(moreActive)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
               <circle cx="5" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
               <circle cx="12" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
               <circle cx="19" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
@@ -4745,7 +4849,7 @@ const INITIAL_DONE_IDS = new Set(MARKED_DONE_LIST.map(s => s.id));
 
 const MONTH_FULL = { Jan:'January', Feb:'February', Mar:'March', Apr:'April', May:'May', Jun:'June', Jul:'July', Aug:'August', Sep:'September', Oct:'October', Nov:'November', Dec:'December' };
 
-function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone }) {
+function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false }) {
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState('');
@@ -4788,7 +4892,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 
         {/* Panel title — centered, 18px SemiBold */}
         <div style={{ textAlign: 'center', padding: '10px 16px' }}>
-          <span style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px' }}>My Activities</span>
+          <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px' }}>My Activities</span>
         </div>
 
         {/* Search field — 47px tall, 12px padding, 20px icon, 8px gap */}
@@ -4801,7 +4905,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
             value={search}
             onChange={e => { setSearch(e.target.value); setExpanded(null); }}
             placeholder="Filter by client name"
-            style={{ height: 47, width: '100%', boxSizing: 'border-box', background: 'white', border: '1px solid rgba(33,33,33,0.42)', borderRadius: 8, paddingLeft: 40, paddingRight: 16, ...P, fontSize: 14, color: '#212121', letterSpacing: '0.17px', outline: 'none' }}
+            style={{ height: compactMode ? 38 : 47, width: '100%', boxSizing: 'border-box', background: 'white', border: '1px solid rgba(33,33,33,0.42)', borderRadius: 8, paddingLeft: 40, paddingRight: 16, ...P, fontSize: 14, color: '#212121', letterSpacing: '0.17px', outline: 'none' }}
           />
         </div>
 
@@ -4809,12 +4913,12 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
         <div style={{ display: 'flex', marginTop: 8 }}>
           {/* Add to EHR tab */}
           <div onClick={() => switchTab('ehr')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'ehr' ? '2px solid #2D4CCD' : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Add to EHR</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Add to EHR</span>
             <span style={{ background: activeTab === 'ehr' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'ehr' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'ehr' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{ehrList.length}</span>
           </div>
           {/* Marked as Done tab */}
           <div onClick={() => switchTab('done')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'done' ? '2px solid #2D4CCD' : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Marked as Done</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{compactMode ? 'Done' : 'Marked as Done'}</span>
             <span style={{ background: activeTab === 'done' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'done' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'done' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{doneList.length}</span>
           </div>
         </div>
@@ -4856,11 +4960,11 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                 <div style={{ display: 'flex', alignItems: 'stretch', marginBottom, paddingLeft: 8, paddingRight: 8 }}>
 
                   {/* Date column — shows only for first session in date group, aligns to top */}
-                  <div style={{ width: 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 14 }}>
+                  <div style={{ width: compactMode ? 38 : 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: compactMode ? 20 : 14 }}>
                     {isFirstInGroup ? (
                       <>
-                        <div style={{ ...P, fontSize: 12, fontWeight: 500, color: 'rgba(33,33,33,0.80)', textTransform: 'uppercase', lineHeight: 1.66, letterSpacing: '0.4px' }}>{session.month}</div>
-                        <div style={{ ...P, fontSize: 20, fontWeight: 600, color: '#212121', lineHeight: 1.2 }}>{session.day}</div>
+                        <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 500, color: 'rgba(33,33,33,0.80)', textTransform: 'uppercase', lineHeight: 1.66, letterSpacing: '0.4px' }}>{session.month}</div>
+                        <div style={{ ...P, fontSize: compactMode ? 16 : 20, fontWeight: 600, color: '#212121', lineHeight: 1.2 }}>{session.day}</div>
                       </>
                     ) : null}
                   </div>
@@ -4874,11 +4978,11 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                     <div style={{ width: 6, flexShrink: 0, background: activeTab === 'done' ? '#293D87' : '#01579B' }} />
 
                     {/* Card content */}
-                    <div style={{ flex: 1, padding: '12px 12px 12px 14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <div style={{ flex: 1, minWidth: 0, padding: compactMode ? '8px 8px 8px 10px' : '12px 12px 12px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', minWidth: 0 }}>
                         <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}>
-                          <div style={{ ...P, fontWeight: 500, fontSize: 16, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.name}</div>
-                          <div style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(33,33,33,0.80)', marginTop: 2, letterSpacing: '0.17px' }}>{session.time}</div>
+                          <div style={{ ...P, fontWeight: 500, fontSize: compactMode ? 14 : 16, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.name}</div>
+                          <div style={{ ...P, fontSize: compactMode ? 11 : 14, fontWeight: 400, color: 'rgba(33,33,33,0.80)', marginTop: 2, letterSpacing: '0.17px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.time}</div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, paddingTop: 2 }}>
                           {session.type === 'group' ? <CardGroupIcon /> : <CardPersonIcon />}
@@ -4910,18 +5014,18 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                               <p style={{ ...P, fontSize: 13, color: '#212121', lineHeight: 1.6, margin: '0 0 14px' }}>
                                 {session.summary}
                               </p>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'nowrap' }}>
                                 <span
-                                  style={{ ...P, fontSize: 13, fontWeight: 400, color: '#2D4CCD', textDecoration: 'underline', cursor: 'pointer' }}
+                                  style={{ ...P, fontSize: compactMode ? 12 : 13, fontWeight: 400, color: '#2D4CCD', textDecoration: 'underline', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                   onClick={e => { e.stopPropagation(); markDone(session.id); }}
                                 >
-                                  Mark as submitted
+                                  {compactMode ? 'Mark submitted' : 'Mark as submitted'}
                                 </span>
                                 <button
                                   onClick={e => { e.stopPropagation(); onSelectSession(session); }}
-                                  style={{ padding: '7px 18px', background: '#2D4CCD', color: 'white', ...P, fontSize: 13, fontWeight: 500, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.1px' }}
+                                  style={{ padding: compactMode ? '5px 10px' : '7px 18px', background: '#2D4CCD', color: 'white', ...P, fontSize: compactMode ? 12 : 13, fontWeight: 500, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.1px', whiteSpace: 'nowrap' }}
                                 >
-                                  Select session
+                                  {compactMode ? 'Select' : 'Select session'}
                                 </button>
                               </div>
                             </>
@@ -4947,7 +5051,7 @@ const CLIENT_OPTIONS = [
   'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho', 'Thursday AM Group',
 ];
 
-function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards' }) {
+function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards', compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
@@ -5061,7 +5165,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards
             </svg>
           </div>
           {/* Pronouns + Edit Client */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, width: 281 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, width: '100%' }}>
             <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: He/Him</span>
             <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.15px', lineHeight: '24px', cursor: 'pointer' }}>Edit Client</span>
           </div>
@@ -5129,18 +5233,18 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards
         </>}
 
         {/* Session Type */}
-        <AcFormField key={isGroup ? 'group' : 'individual'} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy']} />
+        <AcFormField key={isGroup ? 'group' : 'individual'} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy']} compactMode={compactMode} />
 
         {/* Setting */}
-        <AcFormField label="Setting:" defaultValue="In Person" options={['In Person', 'Telehealth', 'Hybrid']} />
+        <AcFormField label="Setting:" defaultValue="In Person" options={['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} />
 
         {/* Note Type */}
-        <AcFormField label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} />
+        <AcFormField label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
-          <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, display: 'block', marginBottom: 8 }}>Audio Input:</span>
-          <AcFormField label={null} defaultValue="MacBook Pro Microphone (Built In)" options={['MacBook Pro Microphone (Built In)', 'External Microphone', 'AirPods Pro', 'iPhone Microphone']} />
+          <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, display: 'block', marginBottom: 8 }}>Audio Input:</span>
+          <AcFormField label={null} defaultValue="MacBook Pro Microphone (Built In)" options={['MacBook Pro Microphone (Built In)', 'External Microphone', 'AirPods Pro', 'iPhone Microphone']} compactMode={compactMode} />
         </div>
 
         {/* Sound check */}
@@ -5167,20 +5271,20 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards
   );
 }
 
-function AcFormField({ label, defaultValue, options = [] }) {
+function AcFormField({ label, defaultValue, options = [], compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [selected, setSelected] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   return (
     <div style={{ marginBottom: 16, position: 'relative' }}>
       {label && (
-        <span style={{ ...P, fontSize: 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>{label}</span>
+        <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>{label}</span>
       )}
       <div
         onClick={() => setOpen(v => !v)}
         style={{ background: 'white', border: `1px solid ${open ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
       >
-        <span style={{ ...P, flex: 1, fontSize: 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected}</span>
+        <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected}</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
           <path d="M5 7.5L10 12.5L15 7.5" stroke={open ? '#2d4ccd' : 'rgba(33,33,33,0.54)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -5355,7 +5459,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
           </svg>
           <div style={{ ...P, fontSize: 48, fontWeight: 600, color: 'rgba(0,0,0,0.88)', lineHeight: 1, textAlign: 'center' }}>{mins}:{secs}</div>
         </div>
-        <div style={{ background: 'rgba(45,76,205,0.05)', borderRadius: 8, padding: 16, width: 295, flexShrink: 0 }}>
+        <div style={{ background: 'rgba(45,76,205,0.05)', borderRadius: 8, padding: 16, width: '100%', maxWidth: 295 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
             <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap' }}>Your microphone:</span>
             <EqBars activeCount={3} total={19} animOffset={0} />
@@ -5384,7 +5488,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
 
 // ── Session End Panel ─────────────────────────────────────────────────────────
 
-function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew }) {
+function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   return (
@@ -5429,10 +5533,10 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
       {/* Bottom CTAs */}
       <div style={{ background: 'white', padding: '12px 16px 24px', borderTop: '1px solid rgba(0,0,0,0.08)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button onClick={onGoToActivities} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 13, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
-          Go to Activities List
+          {compactMode ? 'Activities' : 'Go to Activities List'}
         </button>
         <button onClick={onStartNew} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#2d4ccd', ...P, fontWeight: 500, fontSize: 13, border: '1px solid rgba(45,76,205,0.5)', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px' }}>
-          Start New Session
+          {compactMode ? 'New Session' : 'Start New Session'}
         </button>
       </div>
       </div>{/* end content+CTAs wrapper */}
@@ -5504,17 +5608,17 @@ function RecordingPanel({ ending, onEndSession }) {
                 <div style={{ flex: 1, marginLeft: 6, display: 'flex' }}>
                   <div style={{ width: 6, flexShrink: 0, background: 'var(--eleos-card-bar)', borderRadius: '4px 0 0 4px', alignSelf: 'stretch' }} />
                   <div style={{
-                    flex: 1, background: 'white',
+                    flex: 1, minWidth: 0, background: 'white',
                     border: '1px solid var(--eleos-card-border)', borderLeft: 'none',
                     borderRadius: '0 4px 4px 0', padding: '10px 10px',
                     boxShadow: '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.12)',
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 0 }}>
-                      <div>
-                        <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500, fontSize: 13, color: '#212121' }}>{session.name}</div>
-                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#757575', marginTop: 2 }}>{session.time}</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', minWidth: 0, marginBottom: 0 }}>
+                      <div style={{ flex: 1, minWidth: 0, marginRight: 8 }}>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 500, fontSize: 13, color: '#212121', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.name}</div>
+                        <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, color: '#757575', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.time}</div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 2 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, paddingTop: 2 }}>
                         {session.type === 'group' ? <CardGroupIcon /> : <CardPersonIcon />}
                         <CardDocIcon />
                         <CardChevron open={false} />
