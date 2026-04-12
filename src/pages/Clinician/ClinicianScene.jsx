@@ -125,8 +125,22 @@ export default function ClinicianScene({ step, onNext }) {
         }
       `}</style>
       <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
-      <NoteTypeSelector />
-      <EhrSelector />
+      {/* Demo controls tray — bottom-right, discrete but accessible */}
+      <div style={{
+        position: 'fixed', bottom: 20, right: 56, zIndex: 100,
+        display: 'flex', gap: 4, alignItems: 'center',
+        padding: '3px 4px',
+        background: 'rgba(15,25,60,0.07)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: 16,
+        border: '1px solid rgba(255,255,255,0.35)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      }}>
+        <NoteTypeSelector />
+        <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+        <EhrSelector />
+      </div>
       <EhrFieldProvider>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />

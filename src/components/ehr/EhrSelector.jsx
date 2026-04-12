@@ -1,29 +1,24 @@
-/**
- * EhrSelector.jsx
- * Floating bottom-left pill button that lets the user switch the EHR background.
- * Rendered only for clinician-skin scenes (see Shell.jsx).
- */
 import React, { useState, useRef, useEffect } from 'react';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_LABELS } from './EhrBackgrounds.jsx';
 
 const EHR_LIST = [
-  { id: 'welligent',    label: 'Welligent' },
-  { id: 'qualifacts',   label: 'Qualifacts' },
-  { id: 'arize',        label: 'Arize' },
-  { id: 'echo',         label: 'Echo' },
-  { id: 'credible',     label: 'Credible' },
-  { id: 'insync',       label: 'Insync' },
-  { id: 'carlogic',     label: 'Carelogic' },
-  { id: 'myevolve',     label: 'myEvolv' },
-  { id: 'myavatar',     label: 'myAvatar' },
-  { id: 'kipu',         label: 'Kipu' },
-  { id: 'foothold',     label: 'Foothold' },
-  { id: 'exym',         label: 'Exym' },
-  { id: 'netsmart',     label: 'Netsmart' },
-  { id: 'pce',          label: 'PCE' },
-  { id: 'eleos-lite',   label: 'Eleos Lite' },
-  { id: 'streamline',   label: 'Streamline' },
+  { id: 'welligent',  label: 'Welligent' },
+  { id: 'qualifacts', label: 'Qualifacts' },
+  { id: 'arize',      label: 'Arize' },
+  { id: 'echo',       label: 'Echo' },
+  { id: 'credible',   label: 'Credible' },
+  { id: 'insync',     label: 'Insync' },
+  { id: 'carlogic',   label: 'Carelogic' },
+  { id: 'myevolve',   label: 'myEvolv' },
+  { id: 'myavatar',   label: 'myAvatar' },
+  { id: 'kipu',       label: 'Kipu' },
+  { id: 'foothold',   label: 'Foothold' },
+  { id: 'exym',       label: 'Exym' },
+  { id: 'netsmart',   label: 'Netsmart' },
+  { id: 'pce',        label: 'PCE' },
+  { id: 'eleos-lite', label: 'Eleos Lite' },
+  { id: 'streamline', label: 'Streamline' },
 ];
 
 export default function EhrSelector() {
@@ -31,13 +26,10 @@ export default function EhrSelector() {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef(null);
 
-  // Close popover when clicking outside
   useEffect(() => {
     if (!open) return;
     const handleClick = (e) => {
-      if (popoverRef.current && !popoverRef.current.contains(e.target)) {
-        setOpen(false);
-      }
+      if (popoverRef.current && !popoverRef.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -46,35 +38,26 @@ export default function EhrSelector() {
   const currentLabel = EHR_LABELS[selectedEhr] ?? 'EHR';
 
   return (
-    <div
-      ref={popoverRef}
-      style={{
-        position: 'fixed',
-        top: 12,
-        right: 16,
-        zIndex: 50,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      }}
-    >
-      {/* Popover grid */}
+    <div ref={popoverRef} style={{ position: 'relative', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      {/* Popover — opens upward */}
       {open && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
-            background: '#fff',
-            border: '1px solid #e0e4e8',
-            borderRadius: 10,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1)',
-            padding: '12px',
-            width: 280,
-          }}
-        >
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #f0f0f0' }}>
-            Select EHR Background
+        <div style={{
+          position: 'absolute',
+          bottom: 'calc(100% + 10px)',
+          right: 0,
+          background: '#fff',
+          border: '1px solid #e4e8ee',
+          borderRadius: 12,
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+          padding: '12px',
+          width: 'max-content',
+          minWidth: 280,
+          zIndex: 101,
+        }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, paddingBottom: 7, borderBottom: '1px solid #f0f2f5' }}>
+            EHR Background
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(64px, 1fr))', gap: 5 }}>
             {EHR_LIST.map(({ id, label }) => {
               const isActive = selectedEhr === id;
               return (
@@ -82,18 +65,21 @@ export default function EhrSelector() {
                   key={id}
                   onClick={() => { setSelectedEhr(id); setOpen(false); }}
                   style={{
-                    padding: '7px 4px',
-                    border: isActive ? '1.5px solid #1a3560' : '1px solid #e0e4e8',
+                    padding: '6px 4px',
+                    border: 'none',
                     borderRadius: 6,
-                    background: isActive ? '#1a3560' : '#f8f9fb',
-                    color: isActive ? '#fff' : '#333',
+                    background: isActive ? '#1a3560' : '#f5f7fa',
+                    color: isActive ? '#fff' : '#444',
                     fontSize: 11,
                     fontWeight: isActive ? 600 : 400,
                     cursor: 'pointer',
                     textAlign: 'center',
                     lineHeight: 1.3,
-                    transition: 'all 0.15s',
+                    transition: 'background 0.1s',
+                    outline: isActive ? 'none' : undefined,
                   }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#eaecf2'; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = '#f5f7fa'; }}
                 >
                   {label}
                 </button>
@@ -103,37 +89,37 @@ export default function EhrSelector() {
         </div>
       )}
 
-      {/* Trigger pill */}
+      {/* Trigger */}
       <button
         onClick={() => setOpen(v => !v)}
+        title="Switch EHR background"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '7px 14px 7px 10px',
-          background: 'rgba(255,255,255,0.92)',
-          border: '1px solid #d0d8e4',
-          borderRadius: 20,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+          display: 'flex', alignItems: 'center', gap: 4,
+          padding: '5px 9px 5px 7px',
+          background: open ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+          border: '1px solid rgba(255,255,255,0.65)',
+          borderRadius: 12,
           cursor: 'pointer',
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: 500,
-          color: '#333',
+          color: '#1a3560',
           backdropFilter: 'blur(8px)',
-          transition: 'box-shadow 0.15s',
+          WebkitBackdropFilter: 'blur(8px)',
+          whiteSpace: 'nowrap',
+          transition: 'background 0.15s',
         }}
+        onMouseEnter={e => { if (!open) e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; }}
+        onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; }}
       >
-        {/* Grid icon */}
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-          <rect x="0" y="0" width="6" height="6" rx="1" fill="#8a9aaa"/>
-          <rect x="8" y="0" width="6" height="6" rx="1" fill="#8a9aaa"/>
-          <rect x="0" y="8" width="6" height="6" rx="1" fill="#8a9aaa"/>
-          <rect x="8" y="8" width="6" height="6" rx="1" fill="#8a9aaa"/>
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" style={{ opacity: 0.6, flexShrink: 0 }}>
+          <rect x="0" y="0" width="6" height="6" rx="1" fill="currentColor"/>
+          <rect x="8" y="0" width="6" height="6" rx="1" fill="currentColor"/>
+          <rect x="0" y="8" width="6" height="6" rx="1" fill="currentColor"/>
+          <rect x="8" y="8" width="6" height="6" rx="1" fill="currentColor"/>
         </svg>
-        <span style={{ color: '#666', marginRight: 2 }}>EHR:</span>
-        <span style={{ color: '#1a3560', fontWeight: 600 }}>{currentLabel}</span>
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ marginLeft: 2 }}>
-          <path d={open ? 'M2 7l3-3 3 3' : 'M2 3l3 3 3-3'} stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <span style={{ fontWeight: 600, letterSpacing: '0.01em' }}>{currentLabel}</span>
+        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}>
+          <path d={open ? 'M2 7l3-3 3 3' : 'M2 3l3 3 3-3'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
     </div>

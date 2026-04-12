@@ -18,34 +18,25 @@ export default function NoteTypeSelector() {
   const current = NOTE_TYPE_LIST.find(n => n.id === selectedNoteType);
 
   return (
-    <div
-      ref={ref}
-      style={{
-        position: 'fixed',
-        top: 12,
-        right: 210,   // sits left of EhrSelector
-        zIndex: 50,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      }}
-    >
-      {/* Popover */}
+    <div ref={ref} style={{ position: 'relative', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      {/* Popover — opens upward */}
       {open && (
         <div style={{
           position: 'absolute',
-          top: 'calc(100% + 8px)',
+          bottom: 'calc(100% + 10px)',
           right: 0,
           background: '#fff',
-          border: '1px solid #e0e4e8',
-          borderRadius: 10,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          padding: '12px',
-          width: 300,
-          zIndex: 51,
+          border: '1px solid #e4e8ee',
+          borderRadius: 12,
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+          padding: '10px',
+          width: 220,
+          zIndex: 101,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #f0f0f0' }}>
-            Select Note Type
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, paddingBottom: 7, borderBottom: '1px solid #f0f2f5' }}>
+            Note Type
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {NOTE_TYPE_LIST.map(({ id, label }) => {
               const isActive = selectedNoteType === id;
               return (
@@ -53,17 +44,19 @@ export default function NoteTypeSelector() {
                   key={id}
                   onClick={() => { setSelectedNoteType(id); setOpen(false); }}
                   style={{
-                    padding: '8px 12px',
-                    border: isActive ? '1.5px solid #1a3560' : '1px solid #e0e4e8',
+                    padding: '7px 10px',
+                    border: 'none',
                     borderRadius: 6,
-                    background: isActive ? '#1a3560' : '#f8f9fb',
-                    color: isActive ? '#fff' : '#333',
+                    background: isActive ? '#eef1fb' : 'transparent',
+                    color: isActive ? '#1a3560' : '#444',
                     fontSize: 12,
                     fontWeight: isActive ? 600 : 400,
                     cursor: 'pointer',
                     textAlign: 'left',
-                    transition: 'all 0.15s',
+                    transition: 'background 0.1s',
                   }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = '#f5f7fa'; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
                 >
                   {label}
                 </button>
@@ -73,36 +66,37 @@ export default function NoteTypeSelector() {
         </div>
       )}
 
-      {/* Trigger pill */}
+      {/* Trigger */}
       <button
         onClick={() => setOpen(v => !v)}
+        title="Switch note type"
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '7px 14px 7px 10px',
-          background: 'rgba(255,255,255,0.92)',
-          border: '1px solid #d0d8e4',
-          borderRadius: 20,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+          display: 'flex', alignItems: 'center', gap: 4,
+          padding: '5px 9px 5px 7px',
+          background: open ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
+          border: '1px solid rgba(255,255,255,0.65)',
+          borderRadius: 12,
           cursor: 'pointer',
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: 500,
-          color: '#333',
+          color: '#1a3560',
           backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           whiteSpace: 'nowrap',
+          transition: 'background 0.15s',
         }}
+        onMouseEnter={e => { if (!open) e.currentTarget.style.background = 'rgba(255,255,255,0.8)'; }}
+        onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'rgba(255,255,255,0.5)'; }}
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8a9aaa" strokeWidth="2" strokeLinecap="round">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6, flexShrink: 0 }}>
           <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
           <polyline points="14 2 14 8 20 8"/>
           <line x1="16" y1="13" x2="8" y2="13"/>
           <line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
-        <span style={{ color: '#666', marginRight: 2 }}>Note:</span>
-        <span style={{ color: '#1a3560', fontWeight: 600 }}>{current?.label ?? 'DAP'}</span>
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ marginLeft: 2 }}>
-          <path d={open ? 'M2 7l3-3 3 3' : 'M2 3l3 3 3-3'} stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <span style={{ fontWeight: 600, letterSpacing: '0.01em' }}>{current?.label ?? 'DAP'}</span>
+        <svg width="8" height="8" viewBox="0 0 10 10" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}>
+          <path d={open ? 'M2 7l3-3 3 3' : 'M2 3l3 3 3-3'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
     </div>
