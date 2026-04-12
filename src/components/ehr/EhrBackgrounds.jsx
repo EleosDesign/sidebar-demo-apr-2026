@@ -4,34 +4,34 @@
  * Patient: Webb, Marcus
  */
 import React, { useState } from 'react';
-
-// ── Shared field registry ──────────────────────────────────────────────────────
-const NOTE_FIELDS = [
-  { key: 'Data/Goal:',                          label: 'Data' },
-  { key: 'Intervention/Response:',              label: 'Intervention/Response' },
-  { key: 'Assessment/Level of Participation:',  label: 'Assessment' },
-  { key: 'Plan:',                               label: 'Plan' },
-];
+import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
+  const noteTypeCtx = useNoteTypeContext();
+  const sections = noteTypeCtx?.sections ?? [
+    { id: 'Data/Goal:',                         label: 'Data' },
+    { id: 'Intervention/Response:',             label: 'Intervention/Response' },
+    { id: 'Assessment/Level of Participation:', label: 'Assessment' },
+    { id: 'Plan:',                              label: 'Plan' },
+  ];
   return (
     <>
-      {NOTE_FIELDS.map(f => (
-        <div key={f.key} style={{ marginBottom: 22 }}>
-          <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{f.label}</div>
+      {sections.map(s => (
+        <div key={s.id} style={{ marginBottom: 22 }}>
+          <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
           <textarea
-            value={noteValues[f.key] ?? ''}
-            onChange={e => onNoteChange?.(f.key, e.target.value)}
+            value={noteValues[s.id] ?? ''}
+            onChange={e => onNoteChange?.(s.id, e.target.value)}
             placeholder="Type here or use the cards on the right to build your note"
             style={{
               width: '100%', minHeight, padding: '10px 12px',
               border: `1px solid ${borderColor}`, borderRadius,
               resize: 'vertical', fontSize, color: '#333', fontFamily,
-              background: highlightedField === f.key ? '#fffde7' : bg,
+              background: highlightedField === s.id ? '#fffde7' : bg,
               outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
               transition: 'background 0.3s',
             }}

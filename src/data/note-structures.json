@@ -1,0 +1,660 @@
+{
+  "noteTypes": {
+    "DAP": {
+      "name": "DAP Note",
+      "description": "Data, Assessment, Plan format for documenting therapeutic sessions",
+      "sections": [
+        {
+          "id": "data",
+          "label": "Data",
+          "description": "Objective observations and interventions during the session",
+          "sampleContent": "The therapist and client discussed the client's relationship with his partner, including their current living situation and the possibility of her moving back in. The therapist shared concerns about the potential challenges of a codependent dynamic, especially during early recovery. Therapist placed emphasis on the importance of both the client and his partner maintaining their individual recovery, noting that this would support both their personal well-being and the health of their relationship. Client was encouraged to establish clear boundaries with his partner and explored what those boundaries might look like in practice, highlighting their importance for both his own well-being and that of his family. Motivational interviewing techniques were used to strengthen the client's commitment to recovery and to support him in taking actionable steps toward his goals. The therapist also provided psychoeducation on the benefits of family sessions for couples in recovery, particularly in improving communication and relationship functioning."
+        },
+        {
+          "id": "assessment",
+          "label": "Assessment",
+          "description": "Clinical assessment of client's presentation and engagement",
+          "sampleContent": "The client appeared engaged, open, and receptive throughout the session. He demonstrated a clear commitment to his recovery and a willingness to take necessary steps to support both himself and his family. The client showed insight into the importance of setting boundaries, particularly within his relationship, as a way to foster a more stable and healthy environment."
+        },
+        {
+          "id": "plan",
+          "label": "Plan",
+          "description": "Treatment plan and next steps",
+          "sampleContent": "The client will continue to engage in his current treatment and uphold his sobriety. The client will set boundaries for his girlfriend's move-in, emphasizing on commitment to treatment and sobriety. The client will engage in a potential family therapy session to further improve his relationship dynamics."
+        }
+      ],
+      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "ehrMapping": {
+        "smartcare": {
+          "data": "interventions",
+          "assessment": "assessments",
+          "plan": "plan"
+        }
+      }
+    },
+    "SOAP": {
+      "name": "SOAP Note",
+      "description": "Subjective, Objective, Assessment, Plan format commonly used for medical and psychiatric documentation",
+      "sections": [
+        {
+          "id": "subjective",
+          "label": "Subjective",
+          "description": "Client's reported symptoms and experiences",
+          "sampleContent": "Client stated, \"It has been hard to leave the house.\" He shared a history of experiencing these feelings during this season."
+        },
+        {
+          "id": "objective",
+          "label": "Objective",
+          "description": "Observable and measurable data",
+          "sampleContent": "The session took place at the client's home, where he appeared receptive to discussion about his difficulties."
+        },
+        {
+          "id": "assessment",
+          "label": "Assessment",
+          "description": "Clinical assessment and diagnostic impression",
+          "sampleContent": "Client is struggling with feelings of depression, particularly during the current season, but he denied any desire to harm himself."
+        },
+        {
+          "id": "plan",
+          "label": "Plan",
+          "description": "Treatment plan and interventions",
+          "sampleContent": "Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group."
+        }
+      ],
+      "usedBy": ["Calvin Murphy"],
+      "featureFlag": "ENABLE_CALVIN_MURPHY",
+      "ehrMapping": {
+        "streamline": {
+          "subjective": "soapSubjective",
+          "objective": "soapObjective",
+          "assessment": "soapAssessment",
+          "plan": "soapPlan"
+        }
+      }
+    },
+    "CaseManagement": {
+      "name": "Case Management Note",
+      "description": "Comprehensive case management documentation for non-clinical services",
+      "sections": [
+        {
+          "id": "noteAddressesObjective",
+          "label": "Note Addresses Which Objective",
+          "description": "Purpose and objective of the case management session",
+          "sampleContent": "The purpose of this session was to evaluate the client's mental status, support him in managing depressive symptoms, and discuss coping strategies."
+        },
+        {
+          "id": "serviceDetails",
+          "label": "Describe details of the case management service",
+          "description": "Detailed description of services provided",
+          "sampleContent": "The session took place at a local park near the client's home. The client expressed symptoms of increased depression, stating, \"It has been hard to leave the house.\" He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions."
+        },
+        {
+          "id": "linkageToServices",
+          "label": "Explain linkage to services",
+          "description": "Connection to community resources and services",
+          "sampleContent": "The Wise Mind technique is integral in helping the client balance emotional responses with logical reasoning, which can enhance his decision-making and problem-solving capabilities."
+        },
+        {
+          "id": "clinicalObservations",
+          "label": "Clinical Observations",
+          "description": "Observable clinical findings",
+          "sampleContent": "During the mental status exam, the client's mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan."
+        },
+        {
+          "id": "clientResponses",
+          "label": "Client Responses",
+          "description": "Client's reactions and engagement",
+          "sampleContent": "The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process."
+        },
+        {
+          "id": "progressTowardsObjectives",
+          "label": "Progress Towards Recovery Plan Objectives",
+          "description": "Assessment of progress toward treatment goals",
+          "sampleContent": "Client is making progress in recognizing patterns and utilizing coping strategies, though continued support is needed to maintain momentum."
+        },
+        {
+          "id": "timelinesForNextService",
+          "label": "Timelines for Next Service",
+          "description": "Follow-up plans and scheduling",
+          "sampleContent": "Case Manager will follow up with the client next week to evaluate if he was able to start attending the group."
+        }
+      ],
+      "usedBy": ["Trisha Platts"],
+      "ehrMapping": {
+        "streamline": {
+          "noteAddressesObjective": "caseNoteAddressesObjective",
+          "serviceDetails": "caseServiceDetails",
+          "linkageToServices": "caseLinkageToServices",
+          "clinicalObservations": "caseClinicalObservations",
+          "clientResponses": "caseClientResponses",
+          "progressTowardsObjectives": "caseProgressTowardsObjectives",
+          "timelinesForNextService": "caseTimelinesForNextService"
+        }
+      }
+    },
+    "PsychiatricMedical": {
+      "name": "Psychiatric/Medical Note",
+      "description": "Comprehensive psychiatric evaluation and medication management note (CalMHSA format)",
+      "sections": [
+        {
+          "id": "subjective",
+          "label": "Subjective",
+          "description": "Chief complaint and patient's subjective report",
+          "sampleContent": "Patient reports continuing symptoms of anxiety and mood instability. States \"I'm still struggling with motivation and feeling overwhelmed by daily tasks.\""
+        },
+        {
+          "id": "clientHistory",
+          "label": "Client History",
+          "description": "Relevant psychiatric and medical history",
+          "sampleContent": "Patient has a history of Major Depressive Disorder and Generalized Anxiety Disorder. Previous medication trials include Sertraline and Escitalopram with partial response. Family history positive for depression in mother."
+        },
+        {
+          "id": "msePe",
+          "label": "MSE/PE (Mental Status Exam/Physical Exam)",
+          "description": "Mental status and physical examination findings",
+          "sampleContent": "Alert and oriented x4. Appearance appropriate for age. Speech normal rate and rhythm. Mood reported as \"depressed,\" affect congruent and restricted. Thought process linear and goal-directed. No hallucinations or delusions reported. Insight and judgment fair."
+        },
+        {
+          "id": "assessmentPlan",
+          "label": "Assessment/Plan",
+          "description": "Clinical assessment and treatment plan",
+          "sampleContent": "The patient continues to manage multiple psychosocial stressors, including housing instability, work pressure, and family adjustments following her husband's return from deployment. She reports significant anxiety, which appears to be a primary driver for her continued use of tobacco, marijuana, and alcohol, as well as recent escalating use of non-prescribed opioid pain medication. The treatment plan was adjusted to better target anxiety symptoms by switching her primary antidepressant and providing a PRN anxiolytic. Nicotine replacement therapy was initiated to support smoking cessation efforts, and she was strongly counseled to see her PCP for her back pain."
+        },
+        {
+          "id": "additionalInfo",
+          "label": "Additional Information",
+          "description": "Supplementary clinical information",
+          "sampleContent": "Patient educated on medication side effects and importance of adherence. Emergency contact information verified. Follow-up scheduled in 4 weeks."
+        }
+      ],
+      "usedBy": ["Patricia Rodriguez"],
+      "ehrSystem": "calmhsa-psych",
+      "ehrMapping": {
+        "calmhsa": {
+          "subjective": "calMhsaPatriciaSubjective",
+          "clientHistory": "calMhsaPatriciaClientHistory",
+          "msePe": "calMhsaPatriciaMsePe",
+          "assessmentPlan": "calMhsaPatriciaAssessmentPlan",
+          "additionalInfo": "calMhsaPatriciaAdditionalInfo"
+        }
+      }
+    },
+    "CalAIMAssessment": {
+      "name": "CalAIM Assessment (7-Domain)",
+      "description": "California Advancing and Innovating Medi-Cal comprehensive assessment covering 7 life domains",
+      "sections": [
+        {
+          "id": "domain1",
+          "label": "Domain 1 - Presenting Problems",
+          "description": "Primary presenting concerns and symptoms",
+          "subsections": [
+            {
+              "id": "dimension1",
+              "label": "Dimension 1: Withdrawal Potential",
+              "sampleContent": "Alcohol use pattern: Reports drinking 3-4 nights per week, typically 4-6 drinks per occasion, with increased consumption at social events. Timeline: Began drinking socially in college (age 18); increase in frequency noted over the past 6 months. Last use: Yesterday evening (3 glasses of wine). CIWA score: 0 — no signs of active withdrawal. Reported withdrawal history: Denies history of withdrawal symptoms upon cessation."
+            },
+            {
+              "id": "dimension2",
+              "label": "Dimension 2: Biomedical Conditions & Complications",
+              "sampleContent": "Current physical health concerns: None disclosed. Medical conditions: Denies any chronic medical issues. Medication list: None reported. Reported or observed physical symptoms: Appears healthy; no visible health concerns. Healthcare engagement: States she does not have a current primary care provider."
+            },
+            {
+              "id": "dimension3",
+              "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications",
+              "sampleContent": "Active psychological / behavioral / emotional / cognitive conditions: the client reports significant anxiety, describing it as nervousness that impacts her functioning. Past psychiatric diagnoses: Reports being told she had \"some sort of anxiety disorder\" by a previous counselor. Reported or observed cognitive functioning: Appears intact; thought process is linear and organized. Reported self-harm or homicidal thoughts/behaviors: Denies any history of suicidal or homicidal ideation. Psychotropic medications & response: None currently or historically reported. Stabilizing factors: Reports a supportive boyfriend. Reported or observed management of ADLs: Appears to be managing ADLs without difficulty. Stated connection between current signs/symptoms and SUD: the client explicitly states she uses alcohol to manage her social anxiety symptoms, saying it helps her \"relax and have fun.\""
+            },
+            {
+              "id": "dimension4",
+              "label": "Dimension 4: Readiness To Change",
+              "sampleContent": "Stated reasons for seeking treatment now: the client expresses concern about her alcohol use interfering with her academic performance and mentions a recent incident of heavy drinking that upset her boyfriend. Interest level in engaging in treatment: Appears motivated; states she wants to \"get a handle on things\" before graduation. Identified strengths supporting change: High self-awareness, supportive relationship, academic goals. Stage of Change: Appears to be in the Preparation stage — recognizes the problem and is considering action. Barriers to change: May struggle with social situations where alcohol use is normalized; history of using alcohol as a coping tool."
+            },
+            {
+              "id": "dimension5",
+              "label": "Dimension 5: Relapse / Continued Use / Continued Problem Potential",
+              "sampleContent": "Prior treatment history: Brief outpatient therapy in high school (approximately 4 sessions) — discontinued due to stated lack of readiness. History of SUD treatment: None reported. Longest period of sobriety/reduced use: Did not drink for 3 months during high school therapy; otherwise, no extended periods of abstinence. Previous relapse triggers: Social events, anxiety. Current relapse risk: Moderate to high, given continued use of alcohol as a primary coping mechanism and upcoming graduation-related stress."
+            },
+            {
+              "id": "dimension6",
+              "label": "Dimension 6: Recovery / Living Environment",
+              "sampleContent": "Current living situation: Lives with roommates in shared student housing. Stability: Stable during the school year. Presence of substance use: Roommates drink socially; alcohol present in the home. Support network: Boyfriend (supportive, concerned about her drinking); close friends (some of whom also drink regularly). Employment/school: Full-time college senior; reports academic performance has been declining. Potential barriers to recovery in current environment: Social drinking culture, easy access to alcohol, high stress related to school and upcoming transition."
+            },
+            {
+              "id": "dimension7",
+              "label": "Dimension 7: Trauma & ACEs",
+              "sampleContent": "Reported trauma history: Describes ongoing emotional invalidation by her father and unfavorable comparisons to her sibling throughout childhood. ACEs screen: Positive for emotional abuse (ongoing parental criticism). Impact on current functioning: Reports that family dynamics contribute to low self-esteem and anxiety. Previous trauma-focused treatment: None reported. Willingness to address trauma: Open to exploration; acknowledges potential connection between family-of-origin issues and current coping patterns."
+            }
+          ]
+        },
+        {
+          "id": "domain2",
+          "label": "Domain 2 - Mental Health History",
+          "description": "Psychiatric history and previous mental health treatment"
+        },
+        {
+          "id": "domain3",
+          "label": "Domain 3 - Substance Use History",
+          "description": "History of substance use and related consequences"
+        },
+        {
+          "id": "domain4",
+          "label": "Domain 4 - ASAM Criteria",
+          "description": "American Society of Addiction Medicine placement criteria assessment"
+        },
+        {
+          "id": "domain5",
+          "label": "Domain 5 - Risk Assessment",
+          "description": "Safety assessment including suicide and violence risk"
+        },
+        {
+          "id": "domain6",
+          "label": "Domain 6 - Psychosocial Functioning",
+          "description": "Social, occupational, and interpersonal functioning"
+        },
+        {
+          "id": "domain7",
+          "label": "Domain 7 - Treatment Planning",
+          "description": "Individualized treatment plan based on assessment findings",
+          "subsections": [
+            {
+              "id": "goals",
+              "label": "Treatment Goals",
+              "sampleContent": "1. Reduce anxiety symptoms and develop healthier coping mechanisms. 2. Moderate alcohol use to safe levels or achieve abstinence. 3. Successfully complete senior year and graduate."
+            },
+            {
+              "id": "interventions",
+              "label": "Planned Interventions",
+              "sampleContent": "Individual therapy focused on anxiety management and exploration of family-of-origin issues. Skills training in DBT-informed coping strategies. Possible referral to campus support groups for students addressing alcohol use."
+            },
+            {
+              "id": "interpretiveSummary",
+              "label": "Interpretive Summary",
+              "sampleContent": "The client is a 23-year-old female college senior presenting with symptoms of long-standing anxiety and a pattern of maladaptive alcohol use, which she identifies as a coping mechanism for social distress. These interconnected issues are causing significant impairment in her academic functioning and personal well-being, prompting her to seek services. A key contributing factor to her distress appears to be a history of paternal emotional invalidation and unfavorable comparisons to her sibling, which has likely impacted her self-concept. Although a previous, brief course of therapy was unsuccessful due to a stated lack of readiness, the client now presents as highly motivated and ready to engage in treatment. Her strengths include strong self-awareness, intelligence, and a supportive network that includes her boyfriend and close friends. Her stated goals are to reduce anxiety, moderate her drinking, and successfully complete her education. The focus of treatment will be to address these goals by developing healthier coping skills, exploring the function of her alcohol use, and processing the impact of her family dynamics on her current mental health."
+            }
+          ]
+        }
+      ],
+      "usedBy": ["Ashlyn Rivera"],
+      "ehrSystem": "calmhsa-psych",
+      "ehrMapping": {
+        "calmhsa": {
+          "domain1": "calMhsaAshlynDomain1",
+          "domain2": "calMhsaAshlynDomain2",
+          "domain3": "calMhsaAshlynDomain3",
+          "domain4": "calMhsaAshlynDomain4",
+          "domain5": "calMhsaAshlynDomain5",
+          "domain6": "calMhsaAshlynDomain6",
+          "domain7": "calMhsaAshlynDomain7"
+        }
+      }
+    },
+    "ProgressNote": {
+      "name": "Progress Note (CalMHSA)",
+      "description": "General progress note format for CalMHSA system",
+      "sections": [
+        {
+          "id": "information",
+          "label": "Information",
+          "description": "Session details, interventions, and observations",
+          "sampleContent": "The purpose of this session was to evaluate the client's mental status, support him in managing depressive symptoms, and discuss coping strategies. The session took place at a local park near the client's home. The client expressed symptoms of increased depression, stating, \"It has been hard to leave the house.\" He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions. During the mental status exam, the client's mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan. The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process."
+        },
+        {
+          "id": "carePlan",
+          "label": "Care Plan",
+          "description": "Treatment plan and client response to interventions",
+          "sampleContent": "Throughout the session, client showed engagement when discussing their symptoms and demonstrated an understanding of the Wise Mind technique practice with their therapist. Client's emotional state appeared downcast, but they were receptive to the conversation. By agreeing to the safety plan, client expressed a willingness to prioritize their well-being. Client's response to therapist's suggestions remained positive, and they articulated their commitment to seek support when needed."
+        }
+      ],
+      "ehrSystem": "calmhsa-psych",
+      "ehrMapping": {
+        "calmhsa": {
+          "information": "calMhsaProgressInformation",
+          "carePlan": "calMhsaProgressCarePlan"
+        }
+      }
+    },
+    "GroupNote": {
+      "name": "Group Note",
+      "description": "Documentation for group therapy sessions",
+      "variants": {
+        "calmhsa": {
+          "name": "CalMHSA Group Note",
+          "sections": [
+            {
+              "id": "groupSummary",
+              "label": "Group Summary",
+              "description": "Overall group session description including topics, dynamics, and interventions",
+              "sampleContent": "Today's group focused on developing healthy coping mechanisms for managing stress and triggers. Members discussed their experiences with mindfulness techniques introduced last week. The group dynamic was supportive, with several members offering encouragement to peers who shared vulnerable moments. Psychoeducation was provided on the connection between thoughts, feelings, and behaviors. Members engaged in a role-play exercise to practice assertive communication skills."
+            },
+            {
+              "id": "individualSummary",
+              "label": "Individual Summary",
+              "description": "Individual participant observations, contributions, and progress",
+              "sampleContent": "Member A demonstrated strong engagement and willingly shared personal examples. Showed progress in identifying triggers. Member B remained quiet initially but participated more actively during the role-play exercise. Member C provided supportive feedback to peers and demonstrated application of previously learned skills."
+            }
+          ],
+          "ehrSystem": "calmhsa-psych"
+        },
+        "streamlineSmartscribe": {
+          "name": "Streamline Smartscribe Group Note",
+          "sections": [
+            {
+              "id": "objectivesAddressed",
+              "label": "Objectives Addressed by this Service",
+              "description": "Treatment objectives addressed in the group session",
+              "sampleContent": "No objectives linked to procedure code."
+            },
+            {
+              "id": "groupSummary",
+              "label": "Group Summary",
+              "description": "Brief overview of group session",
+              "sampleContent": "Recovery-focused group addressing substance use triggers and coping strategies."
+            },
+            {
+              "id": "serviceNote",
+              "label": "Service Note",
+              "description": "Client response to intervention, progress toward goals, and strengths/barriers",
+              "sampleContent": "Group members actively participated in discussing personal triggers and practiced identifying early warning signs. Members demonstrated engagement and supported one another. Several participants shared specific examples of using coping skills learned in previous sessions. Barriers noted included difficulty with consistency in applying skills outside of group setting."
+            },
+            {
+              "id": "documentPlan",
+              "label": "Document the Plan",
+              "description": "Plan for continued treatment and follow-up",
+              "sampleContent": "Members will practice daily mindfulness exercises and bring examples to next session. Group will continue focus on relapse prevention strategies. Individual check-ins scheduled for members who expressed increased struggle."
+            }
+          ],
+          "ehrSystem": "smartscribe",
+          "usedBy": ["Anger Management Group", "SUD Group"]
+        }
+      }
+    },
+    "IndividualServiceNote": {
+      "name": "Individual Service Note (Streamline Smartscribe)",
+      "description": "Comprehensive individual service note with quality assurance features for Streamline Smartscribe EHR",
+      "sections": [
+        {
+          "id": "safetyAssessment",
+          "label": "Safety Assessment",
+          "description": "Comprehensive safety and risk assessment",
+          "subsections": [
+            {
+              "id": "areasComments",
+              "label": "Safety Assessment Areas - Additional Comments",
+              "description": "General safety comments and observations"
+            },
+            {
+              "id": "suicidality",
+              "label": "Suicidality",
+              "description": "Suicide risk assessment with ideation, intent, attempt, means, plan checkboxes and informed contacts",
+              "options": ["None Reported", "Please Specify"],
+              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
+              "fields": ["Other (text)", "I Informed (person)"]
+            },
+            {
+              "id": "harmToOthers",
+              "label": "Harm to Others",
+              "description": "Violence/harm to others risk assessment",
+              "options": ["None Reported", "Please Specify"],
+              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
+              "fields": ["Other (text)", "I Informed (person)"]
+            },
+            {
+              "id": "harmToProperty",
+              "label": "Harm to Property",
+              "description": "Property destruction risk assessment",
+              "options": ["None Reported", "Please Specify"],
+              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
+              "fields": ["Other (text)", "I Informed (person)"]
+            },
+            {
+              "id": "safetyNextSteps",
+              "label": "Safety Plan & Next Steps",
+              "description": "Safety planning and follow-up actions"
+            }
+          ]
+        },
+        {
+          "id": "sessionContent",
+          "label": "Session Content",
+          "description": "Clinical session documentation",
+          "subsections": [
+            {
+              "id": "focusOfSession",
+              "label": "Focus of Session",
+              "description": "Primary topics and focus areas addressed"
+            },
+            {
+              "id": "interventions",
+              "label": "Interventions",
+              "description": "Therapeutic interventions and techniques used"
+            },
+            {
+              "id": "clientResponse",
+              "label": "Client Response",
+              "description": "Client's response to interventions and engagement level"
+            },
+            {
+              "id": "documentPlan",
+              "label": "Document the Plan",
+              "description": "Treatment plan and next steps"
+            },
+            {
+              "id": "planFromLastService",
+              "label": "Plan from Last Service",
+              "description": "Follow-up on previous session's plan",
+              "sampleContent": "Review and update as needed"
+            }
+          ]
+        }
+      ],
+      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "ehrSystem": "smartscribe",
+      "qualityFeatures": [
+        "Real-time field validation",
+        "Required field indicators",
+        "Safety assessment prompts",
+        "Integrated quality checks"
+      ]
+    },
+    "TreatmentPlan": {
+      "name": "Treatment Plan",
+      "description": "Comprehensive treatment planning document",
+      "sections": [
+        {
+          "id": "presentingProblems",
+          "label": "Presenting Problems",
+          "description": "Current issues and concerns bringing client to treatment"
+        },
+        {
+          "id": "goals",
+          "label": "Treatment Goals",
+          "description": "Specific, measurable treatment objectives",
+          "sampleContent": "1. Reduce symptoms of depression as measured by PHQ-9 scores. 2. Develop and consistently use healthy coping strategies. 3. Improve interpersonal relationships and social support network."
+        },
+        {
+          "id": "objectives",
+          "label": "Objectives",
+          "description": "Specific steps to achieve treatment goals"
+        },
+        {
+          "id": "interventions",
+          "label": "Interventions",
+          "description": "Therapeutic modalities and approaches to be used"
+        },
+        {
+          "id": "timeline",
+          "label": "Timeline",
+          "description": "Expected duration and review schedule"
+        }
+      ],
+      "noteTypes": ["Treatment Plan"]
+    },
+    "Assessment": {
+      "name": "Clinical Assessment",
+      "description": "Initial or periodic comprehensive clinical assessment",
+      "sections": [
+        {
+          "id": "identifyingInformation",
+          "label": "Identifying Information",
+          "description": "Demographics and basic client information"
+        },
+        {
+          "id": "presentingProblem",
+          "label": "Presenting Problem",
+          "description": "Chief complaint and reason for seeking services"
+        },
+        {
+          "id": "historyOfPresentingProblem",
+          "label": "History of Presenting Problem",
+          "description": "Timeline and development of current issues"
+        },
+        {
+          "id": "mentalHealthHistory",
+          "label": "Mental Health History",
+          "description": "Previous psychiatric treatment and diagnoses"
+        },
+        {
+          "id": "substanceUseHistory",
+          "label": "Substance Use History",
+          "description": "History of alcohol and drug use"
+        },
+        {
+          "id": "medicalHistory",
+          "label": "Medical History",
+          "description": "Relevant medical conditions and medications"
+        },
+        {
+          "id": "socialHistory",
+          "label": "Social History",
+          "description": "Family, relationships, education, employment"
+        },
+        {
+          "id": "mentalStatusExam",
+          "label": "Mental Status Exam",
+          "description": "Formal mental status examination findings"
+        },
+        {
+          "id": "riskAssessment",
+          "label": "Risk Assessment",
+          "description": "Safety and risk evaluation"
+        },
+        {
+          "id": "diagnosticImpression",
+          "label": "Diagnostic Impression",
+          "description": "Clinical diagnoses and formulation"
+        },
+        {
+          "id": "recommendations",
+          "label": "Recommendations",
+          "description": "Treatment recommendations and level of care"
+        }
+      ],
+      "noteTypes": ["Assessment"]
+    },
+    "CrisisAssessment": {
+      "name": "Crisis Assessment",
+      "description": "Emergency/crisis intervention assessment and documentation",
+      "sections": [
+        {
+          "id": "presentingCrisis",
+          "label": "Presenting Crisis",
+          "description": "Nature and severity of the crisis situation"
+        },
+        {
+          "id": "riskAssessment",
+          "label": "Risk Assessment",
+          "description": "Immediate safety and risk evaluation",
+          "subsections": [
+            {
+              "id": "suicidalIdeation",
+              "label": "Suicidal Ideation",
+              "description": "Suicide risk factors and protective factors"
+            },
+            {
+              "id": "homicidalIdeation",
+              "label": "Homicidal Ideation",
+              "description": "Violence risk assessment"
+            },
+            {
+              "id": "selfHarmRisk",
+              "label": "Self-Harm Risk",
+              "description": "Non-suicidal self-injury assessment"
+            }
+          ]
+        },
+        {
+          "id": "mentalStatusExam",
+          "label": "Mental Status Exam",
+          "description": "Current mental status findings"
+        },
+        {
+          "id": "collateralInformation",
+          "label": "Collateral Information",
+          "description": "Information from family, police, or other sources"
+        },
+        {
+          "id": "interventions",
+          "label": "Interventions Provided",
+          "description": "Crisis interventions and de-escalation techniques used"
+        },
+        {
+          "id": "disposition",
+          "label": "Disposition",
+          "description": "Outcome and follow-up plan",
+          "options": [
+            "Released to family/support",
+            "Voluntary hospitalization",
+            "Involuntary hospitalization",
+            "Outpatient follow-up",
+            "Transferred to higher level of care"
+          ]
+        },
+        {
+          "id": "safetyPlan",
+          "label": "Safety Plan",
+          "description": "Crisis safety planning with client"
+        }
+      ],
+      "noteTypes": ["Crisis Assessment"]
+    },
+    "IndividualNote": {
+      "name": "Individual Note",
+      "description": "Standard individual therapy session note",
+      "sections": [
+        {
+          "id": "keyMoments",
+          "label": "Key Moments",
+          "description": "Significant moments and themes from the session"
+        },
+        {
+          "id": "interventions",
+          "label": "Interventions",
+          "description": "Therapeutic interventions used during session"
+        },
+        {
+          "id": "assessment",
+          "label": "Assessment",
+          "description": "Clinical assessment of presentation and progress"
+        },
+        {
+          "id": "plan",
+          "label": "Plan",
+          "description": "Treatment plan and next steps"
+        }
+      ],
+      "noteTypes": ["Individual Note"]
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2026-04-11",
+    "totalNoteTypes": 11,
+    "ehrSystems": [
+      "smartcare",
+      "calmhsa-psych",
+      "smartscribe",
+      "streamline",
+      "eleos-lite",
+      "foothold"
+    ]
+  }
+}

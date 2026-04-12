@@ -5,6 +5,9 @@ import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldConte
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
+import EhrSelector from '../../components/ehr/EhrSelector.jsx';
+import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
+import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 
 const BAR_DELAYS = [0, 0.18, 0.09, 0.27, 0.36];
 
@@ -48,13 +51,28 @@ export default function ClinicianScene({ step, onNext }) {
   const [isClosing, setIsClosing] = useState(false);
   const [btnPos, setBtnPos] = useState(() => ({ x: 16, y: window.innerHeight - BTN_H - 32 }));
   const [isRecording, setIsRecording] = useState(false);
-  const [noteValues, setNoteValues] = useState(INITIAL_NOTE_VALUES);
   const [highlightedField, setHighlightedField] = useState(null);
   const sidebarSavedState = useRef(null);
   const [sidebarStartTab, setSidebarStartTab] = useState(null);
+  const noteTypeCtx = useNoteTypeContext();
+  const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
+  const setNoteValues = (updater) => {
+    if (!noteTypeCtx) return;
+    const next = typeof updater === 'function' ? updater(noteTypeCtx.noteValues) : updater;
+    Object.entries(next).forEach(([k, v]) => {
+      if (noteTypeCtx.noteValues[k] !== v) noteTypeCtx.updateNoteValue(k, v);
+    });
+  };
 
   const handleAddToNote = (section, content) => {
-    const field = SECTION_TO_NOTE_FIELD[section];
+    // Direct label/id match first
+    let directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
+    // Fallback: eleosMapping translates generic 'Data','Assessment','Plan' → note-type-specific ids
+    if (!directSection && noteTypeCtx?.eleosMapping?.[section]) {
+      const mappedId = noteTypeCtx.eleosMapping[section];
+      directSection = noteTypeCtx.sections.find(s => s.id === mappedId);
+    }
+    const field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
     if (!field) return;
     setNoteValues(prev => ({ ...prev, [field]: prev[field] ? prev[field] + '\n\n' + content : content }));
     setHighlightedField(field);
@@ -111,6 +129,22 @@ export default function ClinicianScene({ step, onNext }) {
         }
       `}</style>
       <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
+      {/* Demo controls tray — bottom-right, discrete but accessible */}
+      <div style={{
+        position: 'fixed', bottom: 20, right: 56, zIndex: 100,
+        display: 'flex', gap: 4, alignItems: 'center',
+        padding: '3px 4px',
+        background: 'rgba(15,25,60,0.07)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderRadius: 16,
+        border: '1px solid rgba(255,255,255,0.35)',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      }}>
+        <NoteTypeSelector />
+        <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+        <EhrSelector />
+      </div>
       <EhrFieldProvider>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />

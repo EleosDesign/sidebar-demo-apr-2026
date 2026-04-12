@@ -17,7 +17,6 @@ const ClinicianPage = lazy(() => import('./pages/Clinician/ClinicianPage.jsx'));
 
 function AppContent() {
   const location = useLocation();
-  // Workflow sub-pages manage their own scroll — need overflow:hidden on wrapper
   const isFullHeight = location.pathname !== '/workflows'
     && location.pathname.startsWith('/workflows');
   return (
@@ -44,13 +43,32 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="app-layout">
-        <Sidebar />
-        <div className="app-main">
-          <header className="app-header" />
-          <AppContent />
-        </div>
-      </div>
+      <AppLayout />
     </BrowserRouter>
+  );
+}
+
+function AppLayout() {
+  const location = useLocation();
+  const isClinician = location.pathname === '/clinician';
+
+  if (isClinician) {
+    return (
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <Suspense fallback={<div style={{ padding: 32 }}>Loading…</div>}>
+          <ClinicianPage />
+        </Suspense>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-layout">
+      <Sidebar />
+      <div className="app-main">
+        <header className="app-header" />
+        <AppContent />
+      </div>
+    </div>
   );
 }
