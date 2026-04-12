@@ -120,18 +120,18 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
           <button
             onClick={onAdvance}
-            style={{ width: 32, height: 32, border: 'none', background: '#f0f2ff', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="#2D4CCD" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18L9 12L15 6" stroke="#212121" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif", flex: 1, textAlign: 'center' }}>Note Quality</span>
+          <span style={{ fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', fontFamily: "'Poppins',sans-serif", flex: 1, textAlign: 'center' }}>Note Quality</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'default', flexShrink: 0 }}>
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none">
               <rect width="24" height="24" rx="12" fill="#EAEDFA"/>
               <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill="#2D4CCD"/>
-              <path fillRule="evenodd" clipRule="evenodd" d="M8.86341 14.6665C7.61096 14.6665 6.66675 15.5532 6.66675 16.6665V17.3332C6.66675 17.7014 6.36827 17.9998 6.00008 17.9998C5.63189 17.9998 5.33341 17.7014 5.33341 17.3332V16.6665C5.33341 14.714 7.00759 13.3332 8.86341 13.3332H15.1368C16.9926 13.3332 18.6667 14.714 18.6667 16.6665V17.3332C18.6667 17.7014 18.3683 17.9998 18.0001 17.9998C17.6319 17.9998 17.3334 17.7014 17.3334 17.3332V16.6665C17.3334 15.5532 16.3892 14.6665 15.1368 14.6665H8.86341Z" fill="#2D4CCD"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill="#2D4CCD"/>
               <circle cx="22" cy="4" r="3" fill="#46BC9E"/>
             </svg>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

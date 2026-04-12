@@ -5189,7 +5189,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px 10px' }}>
-          <span style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
+          <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>
             Audio Capture
           </span>
         </div>
@@ -5593,8 +5593,22 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
 function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
+  const containerRef = useRef(null);
+  const [panelH, setPanelH] = useState(600);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(entries => setPanelH(entries[0].contentRect.height));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const showIllustration = panelH >= 480;
+  const showDescription  = panelH >= 360;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
+    <div ref={containerRef} style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '16px 16px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -5611,9 +5625,9 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
 
       {/* Content + CTAs — wrapped together so no gap appears between them */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderRadius: '16px 16px 0 0', boxShadow: '0px 6px 30px 5px rgba(0,0,0,0.12),0px 16px 24px 1px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white', padding: '24px', gap: 24 }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'white', padding: '24px', gap: 24 }}>
         {/* Inline SVG — no network load */}
-        <svg preserveAspectRatio="none" width="169" height="116" overflow="visible" viewBox="0 0 169 116" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg preserveAspectRatio="none" width="169" height="116" overflow="visible" viewBox="0 0 169 116" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: showIllustration ? 'block' : 'none' }}>
           <path d="M113.82 38.2293C101.809 38.2293 89.6258 37.7593 78.2034 34.5975C66.781 31.4356 56.7648 25.5249 47.5379 18.6029C41.5397 14.088 36.0581 10.5131 28.2805 11.0543C20.6568 11.4535 13.3655 14.2803 7.48768 19.1157C-2.42802 27.6613 -0.921292 43.6558 3.03925 54.8648C8.9944 71.7423 27.1325 83.4641 42.6016 91.1124C60.4097 99.9428 79.911 105.07 99.5845 108.018C116.804 110.611 138.86 112.491 153.755 101.353C167.445 91.1124 171.204 67.7401 167.846 51.945C166.997 47.2973 164.472 43.1154 160.743 40.1806C151.143 33.2159 136.794 37.8733 126.002 38.1011C121.985 38.1154 117.909 38.2151 113.82 38.2293Z" fill="#F0F7F8"/>
           <path d="M148 102V108" stroke="#FFC04C" strokeWidth="1.23352" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M145 105H151" stroke="#FFC04C" strokeWidth="1.23352" strokeLinecap="round" strokeLinejoin="round"/>
@@ -5628,7 +5642,7 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
         </svg>
         <div style={{ textAlign: 'center' }}>
           <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px', marginBottom: 10 }}>Audio capture completed</div>
-          <div style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.57, letterSpacing: '0.17px', maxWidth: 280 }}>We're generating suggestions for you! They will be available shortly.</div>
+          {showDescription && <div style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.57, letterSpacing: '0.17px', maxWidth: 280 }}>We're generating suggestions for you! They will be available shortly.</div>}
         </div>
       </div>
 
