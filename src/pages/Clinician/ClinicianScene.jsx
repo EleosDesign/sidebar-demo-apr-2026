@@ -5040,7 +5040,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                 <div style={{ display: 'flex', alignItems: 'stretch', marginBottom, paddingLeft: 8, paddingRight: 8 }}>
 
                   {/* Date column — shows only for first session in date group, aligns to top */}
-                  <div style={{ width: compactMode ? 38 : 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: compactMode ? 20 : 14 }}>
+                  <div style={{ width: compactMode ? 38 : 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     {isFirstInGroup ? (
                       <>
                         <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 500, color: 'rgba(33,33,33,0.80)', textTransform: 'uppercase', lineHeight: 1.66, letterSpacing: '0.4px' }}>{session.month}</div>
