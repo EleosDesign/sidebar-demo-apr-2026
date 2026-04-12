@@ -3,12 +3,26 @@
  * Each component: position:absolute inset:0, accepts { noteValues, onNoteChange, highlightedField }
  * Patient: Webb, Marcus
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
+// Maps note field IDs to EhrFieldContext keys for dirty-tracking.
+// Covers both the NoteTypeContext-derived lowercase IDs ('data', 'assessment', 'plan')
+// and the legacy hardcoded fallback IDs used when NoteTypeContext is absent.
+const DAP_FIELD_MAP = {
+  // NoteTypeContext / note-structures.json IDs (lowercase)
+  'data': 'data',
+  'assessment': 'assessment',
+  'plan': 'plan',
+  // Legacy fallback IDs
+  'Data/Goal:': 'data',
+  'Assessment/Level of Participation:': 'assessment',
+  'Plan:': 'plan',
+};
+
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
@@ -22,6 +36,30 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
     { id: 'Assessment/Level of Participation:', label: 'Assessment' },
     { id: 'Plan:',                              label: 'Plan' },
   ];
+
+  // Seed fieldValues with existing note content on mount so the LQA snapshot
+  // captures real text (not empty strings) when analysis first runs.
+  useEffect(() => {
+    if (!ehrField) return;
+    ehrField.setFieldValues(prev => {
+      const next = { ...prev };
+      Object.entries(DAP_FIELD_MAP).forEach(([noteKey, ctxKey]) => {
+        const val = noteValues[noteKey];
+        if (val !== undefined) next[ctxKey] = val;
+      });
+      return next;
+    });
+  }, []); // eslint-disable-line
+
+  const handleChange = (id, val) => {
+    onNoteChange?.(id, val);
+    // Keep EhrFieldContext.fieldValues in sync so LQA dirty-check works
+    const key = DAP_FIELD_MAP[id];
+    if (key && ehrField) {
+      ehrField.setFieldValues(prev => ({ ...prev, [key]: val }));
+    }
+  };
+
   return (
     <>
       {sections.map(s => (
@@ -29,7 +67,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
           <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
           <textarea
             value={noteValues[s.id] ?? ''}
-            onChange={e => onNoteChange?.(s.id, e.target.value)}
+            onChange={e => handleChange(s.id, e.target.value)}
             onFocus={() => setFocusedEhrField(s.id)}
             onBlur={() => setFocusedEhrField(null)}
             placeholder="Type here or use the cards on the right to build your note"
