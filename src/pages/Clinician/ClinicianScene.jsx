@@ -3202,7 +3202,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
               animation: 'captureDrawerIn 0.3s cubic-bezier(0.16,1,0.3,1) both',
             }}>
               {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', paddingRight: 83 }}>
+              <div style={{ display: 'flex', alignItems: 'center', paddingRight: 20 }}>
                 <button
                   onClick={() => setShowCaptureDrawer(false)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
@@ -3224,19 +3224,19 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                   onClick={() => { setShowCaptureDrawer(false); setVoiceRecording(false); setVoiceSeconds(0); setPhase('voice'); }}
                   style={{ background: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', width: '100%', textAlign: 'left' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                      <line x1="2" y1="12" x2="2" y2="12" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                      <line x1="6" y1="9" x2="6" y2="15" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                      <line x1="10" y1="6" x2="10" y2="18" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                      <line x1="14" y1="9" x2="14" y2="15" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                      <line x1="18" y1="11" x2="18" y2="13" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                      <line x1="22" y1="12" x2="22" y2="12" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.1px', lineHeight: 1.57 }}>Voice summary</span>
-                      <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, maxWidth: 209 }}>Speak freely about the activity for up to 20 minutes</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                        <line x1="2" y1="12" x2="2" y2="12" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="6" y1="9" x2="6" y2="15" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="10" y1="6" x2="10" y2="18" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="14" y1="9" x2="14" y2="15" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="18" y1="11" x2="18" y2="13" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                        <line x1="22" y1="12" x2="22" y2="12" stroke="rgba(0,0,0,0.87)" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                      <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.1px', lineHeight: 1.57, flex: 1 }}>Voice summary</span>
                     </div>
+                    <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, paddingLeft: 36 }}>Speak freely about the activity for up to 20 minutes</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                     <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
@@ -3255,22 +3255,22 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                   onClick={() => { setShowCaptureDrawer(false); setPhase('text'); }}
                   style={{ background: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', width: '100%', textAlign: 'left' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
-                      <g clipPath="url(#tsClip)">
-                        <path fillRule="evenodd" clipRule="evenodd" d="M3.87868 1.87868C4.44129 1.31607 5.20435 1 6 1H13.4C13.9523 1 14.4 1.44772 14.4 2C14.4 2.55228 13.9523 3 13.4 3H6C5.73478 3 5.48043 3.10536 5.29289 3.29289C5.10536 3.48043 5 3.73478 5 4V20C5 20.2652 5.10536 20.5196 5.29289 20.7071C5.48043 20.8946 5.73478 21 6 21H18C18.2652 21 18.5196 20.8946 18.7071 20.7071C18.8946 20.5196 19 20.2652 19 20V12.6C19 12.0477 19.4477 11.6 20 11.6C20.5523 11.6 21 12.0477 21 12.6V20C21 20.7957 20.6839 21.5587 20.1213 22.1213C19.5587 22.6839 18.7957 23 18 23H6C5.20435 23 4.44129 22.6839 3.87868 22.1213C3.31607 21.5587 3 20.7956 3 20V4C3 3.20435 3.31607 2.44129 3.87868 1.87868Z" fill="black" fillOpacity="0.6"/>
-                        <path fillRule="evenodd" clipRule="evenodd" d="M1 6C1 5.44772 1.44772 5 2 5H6C6.55228 5 7 5.44772 7 6C7 6.55228 6.55228 7 6 7H2C1.44772 7 1 6.55228 1 6Z" fill="black" fillOpacity="0.6"/>
-                        <path fillRule="evenodd" clipRule="evenodd" d="M1 10C1 9.44772 1.44772 9 2 9H6C6.55228 9 7 9.44772 7 10C7 10.5523 6.55228 11 6 11H2C1.44772 11 1 10.5523 1 10Z" fill="black" fillOpacity="0.6"/>
-                        <path fillRule="evenodd" clipRule="evenodd" d="M1 14C1 13.4477 1.44772 13 2 13H6C6.55228 13 7 13.4477 7 14C7 14.5523 6.55228 15 6 15H2C1.44772 15 1 14.5523 1 14Z" fill="black" fillOpacity="0.6"/>
-                        <path fillRule="evenodd" clipRule="evenodd" d="M1 18C1 17.4477 1.44772 17 2 17H6C6.55228 17 7 17.4477 7 18C7 18.5523 6.55228 19 6 19H2C1.44772 19 1 18.5523 1 18Z" fill="black" fillOpacity="0.6"/>
-                        <path fillRule="evenodd" clipRule="evenodd" d="M17.6669 1.91486C18.2528 1.32897 19.0474 0.999817 19.876 0.999817C20.7046 0.999817 21.4992 1.32897 22.0851 1.91486C22.671 2.50075 23.0001 3.29539 23.0001 4.12397C23.0001 4.95254 22.671 5.74718 22.0851 6.33307L17.0723 11.3419C17.0723 11.3419 17.0722 11.3419 17.0722 11.3419C16.7158 11.6985 16.2752 11.9596 15.7913 12.1009L12.921 12.938C12.921 12.938 12.921 12.938 12.921 12.938C12.6628 13.0133 12.3892 13.0178 12.1287 12.951C11.8682 12.8843 11.6305 12.7488 11.4403 12.5586C11.2502 12.3685 11.1146 12.1307 11.0479 11.8702C10.9812 11.6098 10.9857 11.3361 11.061 11.078C11.061 11.078 11.061 11.078 11.061 11.078L11.8981 8.20766C12.0394 7.72382 12.3003 7.28337 12.6567 6.927C12.6568 6.92689 12.657 6.92678 12.6571 6.92666L17.6667 1.915L18.3739 2.62188L17.6669 1.91486ZM19.0812 3.32893C19.0812 3.32898 19.0811 3.32903 19.0811 3.32907L14.0709 8.34127C13.9521 8.46 13.8651 8.60674 13.818 8.76794C13.818 8.76797 13.818 8.76801 13.818 8.76804C13.8179 8.76812 13.8179 8.76819 13.8179 8.76827L13.2362 10.7627L15.2307 10.1811C15.392 10.1339 15.5389 10.0469 15.6577 9.92805L20.6709 4.91886C20.671 4.91876 20.6711 4.91867 20.6712 4.91858C20.8818 4.70778 21.0001 4.42198 21.0001 4.12397C21.0001 3.82582 20.8817 3.53989 20.6709 3.32907C20.4601 3.11825 20.1741 2.99982 19.876 2.99982C19.5779 2.99982 19.292 3.1182 19.0812 3.32893Z" fill="black" fillOpacity="0.6"/>
-                      </g>
-                      <defs><clipPath id="tsClip"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.1px', lineHeight: 1.57 }}>Text Summary</span>
-                      <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, maxWidth: 209 }}>Add key details about activity in your own words</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                        <g clipPath="url(#tsClip)">
+                          <path fillRule="evenodd" clipRule="evenodd" d="M3.87868 1.87868C4.44129 1.31607 5.20435 1 6 1H13.4C13.9523 1 14.4 1.44772 14.4 2C14.4 2.55228 13.9523 3 13.4 3H6C5.73478 3 5.48043 3.10536 5.29289 3.29289C5.10536 3.48043 5 3.73478 5 4V20C5 20.2652 5.10536 20.5196 5.29289 20.7071C5.48043 20.8946 5.73478 21 6 21H18C18.2652 21 18.5196 20.8946 18.7071 20.7071C18.8946 20.5196 19 20.2652 19 20V12.6C19 12.0477 19.4477 11.6 20 11.6C20.5523 11.6 21 12.0477 21 12.6V20C21 20.7957 20.6839 21.5587 20.1213 22.1213C19.5587 22.6839 18.7957 23 18 23H6C5.20435 23 4.44129 22.6839 3.87868 22.1213C3.31607 21.5587 3 20.7956 3 20V4C3 3.20435 3.31607 2.44129 3.87868 1.87868Z" fill="black" fillOpacity="0.6"/>
+                          <path fillRule="evenodd" clipRule="evenodd" d="M1 6C1 5.44772 1.44772 5 2 5H6C6.55228 5 7 5.44772 7 6C7 6.55228 6.55228 7 6 7H2C1.44772 7 1 6.55228 1 6Z" fill="black" fillOpacity="0.6"/>
+                          <path fillRule="evenodd" clipRule="evenodd" d="M1 10C1 9.44772 1.44772 9 2 9H6C6.55228 9 7 9.44772 7 10C7 10.5523 6.55228 11 6 11H2C1.44772 11 1 10.5523 1 10Z" fill="black" fillOpacity="0.6"/>
+                          <path fillRule="evenodd" clipRule="evenodd" d="M1 14C1 13.4477 1.44772 13 2 13H6C6.55228 13 7 13.4477 7 14C7 14.5523 6.55228 15 6 15H2C1.44772 15 1 14.5523 1 14Z" fill="black" fillOpacity="0.6"/>
+                          <path fillRule="evenodd" clipRule="evenodd" d="M1 18C1 17.4477 1.44772 17 2 17H6C6.55228 17 7 17.4477 7 18C7 18.5523 6.55228 19 6 19H2C1.44772 19 1 18.5523 1 18Z" fill="black" fillOpacity="0.6"/>
+                          <path fillRule="evenodd" clipRule="evenodd" d="M17.6669 1.91486C18.2528 1.32897 19.0474 0.999817 19.876 0.999817C20.7046 0.999817 21.4992 1.32897 22.0851 1.91486C22.671 2.50075 23.0001 3.29539 23.0001 4.12397C23.0001 4.95254 22.671 5.74718 22.0851 6.33307L17.0723 11.3419C17.0723 11.3419 17.0722 11.3419 17.0722 11.3419C16.7158 11.6985 16.2752 11.9596 15.7913 12.1009L12.921 12.938C12.921 12.938 12.921 12.938 12.921 12.938C12.6628 13.0133 12.3892 13.0178 12.1287 12.951C11.8682 12.8843 11.6305 12.7488 11.4403 12.5586C11.2502 12.3685 11.1146 12.1307 11.0479 11.8702C10.9812 11.6098 10.9857 11.3361 11.061 11.078C11.061 11.078 11.061 11.078 11.061 11.078L11.8981 8.20766C12.0394 7.72382 12.3003 7.28337 12.6567 6.927C12.6568 6.92689 12.657 6.92678 12.6571 6.92666L17.6667 1.915L18.3739 2.62188L17.6669 1.91486ZM19.0812 3.32893C19.0812 3.32898 19.0811 3.32903 19.0811 3.32907L14.0709 8.34127C13.9521 8.46 13.8651 8.60674 13.818 8.76794C13.818 8.76797 13.818 8.76801 13.818 8.76804C13.8179 8.76812 13.8179 8.76819 13.8179 8.76827L13.2362 10.7627L15.2307 10.1811C15.392 10.1339 15.5389 10.0469 15.6577 9.92805L20.6709 4.91886C20.671 4.91876 20.6711 4.91867 20.6712 4.91858C20.8818 4.70778 21.0001 4.42198 21.0001 4.12397C21.0001 3.82582 20.8817 3.53989 20.6709 3.32907C20.4601 3.11825 20.1741 2.99982 19.876 2.99982C19.5779 2.99982 19.292 3.1182 19.0812 3.32893Z" fill="black" fillOpacity="0.6"/>
+                        </g>
+                        <defs><clipPath id="tsClip"><rect width="24" height="24" fill="white"/></clipPath></defs>
+                      </svg>
+                      <span style={{ ...P, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.1px', lineHeight: 1.57, flex: 1 }}>Text Summary</span>
                     </div>
+                    <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, paddingLeft: 36 }}>Add key details about activity in your own words</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                     <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
