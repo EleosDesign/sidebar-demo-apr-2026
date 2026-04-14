@@ -1407,25 +1407,323 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 13–16. PLACEHOLDER EHRs
+// 13. NETSMART (myEvolv full-window view)
 // ═══════════════════════════════════════════════════════════════════════════════
-function PlaceholderBg({ name, headerColor, noteValues = {}, onNoteChange, highlightedField }) {
+export function NetsmartBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const [activeSide, setActiveSide] = useState('Therapy');
+  const sideItems = ['Telehealth Confirmations', 'Therapy', 'Assessment Launch', 'Internal Tasks', 'Additional Information', 'Referral to Another Agency', 'Tasks/Schedules', 'Service Related Encounter Information'];
+  const actionBtns = ['Save', 'Cancel', 'Delete', 'Print ▾', 'Send Alert', 'History', 'Refresh', 'Copy Test', 'Form Info', 'Save Draft'];
+  const navTabs = ['myEvolv', 'Taskbar', 'Referral', 'Program', 'Client', 'People', 'Family', 'Incidents', 'Outreach', 'Groups', 'Resource', 'Finance', 'Agency', 'State', 'Reports', 'Setup'];
+
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, background: '#f8f9fa', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div style={{ background: headerColor, padding: '10px 18px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>{name}</span>
-        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }}>Webb, Marcus — Progress Note</span>
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#e0e0e0' }}>
+      {/* App header */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', padding: '6px 16px', flexShrink: 0, gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 28, height: 28, background: '#1a2b5e', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: 15, fontFamily: 'Georgia,serif' }}>W</span>
+          </div>
+          <span style={{ fontWeight: 700, fontSize: 14, color: '#222' }}>MyEvolv</span>
+        </div>
+        <div style={{ flex: 1 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {[
+            { label: 'Presenter Notes', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/></svg> },
+            { label: 'Edit', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> },
+            { label: 'Create Demos', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg> },
+          ].map(b => (
+            <button key={b.label} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 12, color: '#555', display: 'flex', alignItems: 'center', gap: 4 }}>{b.icon}{b.label}</button>
+          ))}
+          <button style={{ background: '#7c3aed', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: 6, padding: '5px 14px', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Share
+          </button>
+        </div>
       </div>
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-        <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={110} borderRadius={4} />
+      {/* Module nav bar */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto' }}>
+        {navTabs.map((tab, i) => (
+          <button key={i} style={{ padding: '7px 12px', background: 'transparent', border: 'none', borderBottom: '3px solid transparent', cursor: 'pointer', fontSize: 12, color: '#555', whiteSpace: 'nowrap', flexShrink: 0 }}>{tab}</button>
+        ))}
+      </div>
+      {/* Content: grey bg + modal */}
+      <div style={{ flex: 1, background: '#d8d8d8', overflow: 'hidden', display: 'flex', padding: '6px 6px 6px 44px' }}>
+        <div style={{ background: '#fff', border: '1px solid #bbb', boxShadow: '2px 4px 16px rgba(0,0,0,0.18)', display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
+          <div style={{ background: '#f0f0f0', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', padding: '4px 8px', flexShrink: 0 }}>
+            <span style={{ fontSize: 13, color: '#333', flex: 1 }}>Therapy (Individual and Family)</span>
+            <div style={{ display: 'flex', gap: 2 }}>
+              {['−', '□', '×'].map(c => (
+                <button key={c} style={{ width: 20, height: 20, background: '#e8e8e8', border: '1px solid #ccc', borderRadius: 2, fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>{c}</button>
+              ))}
+            </div>
+          </div>
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid #e8e8e8', display: 'flex', flexWrap: 'wrap', gap: 5, flexShrink: 0 }}>
+            {actionBtns.map(b => (
+              <button key={b} style={{ padding: '5px 16px', background: '#1f7068', color: '#fff', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{b}</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+            <div style={{ width: 162, borderRight: '1px solid #e8e8e8', flexShrink: 0, overflowY: 'auto' }}>
+              <div style={{ padding: '8px 12px 4px', fontWeight: 700, fontSize: 12, color: '#333' }}>Information</div>
+              {sideItems.map(item => (
+                <div key={item} onClick={() => setActiveSide(item)} style={{
+                  padding: '6px 10px 6px 18px', fontSize: 12, cursor: 'pointer',
+                  color: activeSide === item ? '#1f7068' : '#444',
+                  fontWeight: activeSide === item ? 600 : 400,
+                  background: activeSide === item ? '#f0faf9' : 'transparent',
+                  borderLeft: activeSide === item ? '3px solid #1f7068' : '3px solid transparent',
+                }}>{item}</div>
+              ))}
+            </div>
+            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+              <div style={{ flex: '0 0 58%', overflowY: 'auto', padding: '16px 20px' }}>
+                <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#666' fontSize={13} borderColor='#ccc' minHeight={170} borderRadius={4} />
+              </div>
+              <div style={{ width: 1, background: '#ddd', flexShrink: 0 }} />
+              <div style={{ flex: 1 }} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export function NetsmartBg(props) { return <PlaceholderBg name="Netsmart" headerColor="#1a4a7a" {...props} />; }
-export function PCEBg(props) { return <PlaceholderBg name="PCE" headerColor="#2a6a3a" {...props} />; }
-export function EleosLiteBg(props) { return <PlaceholderBg name="Eleos Lite" headerColor="#1a3560" {...props} />; }
+// ═══════════════════════════════════════════════════════════════════════════════
+// 14. PCE
+// ═══════════════════════════════════════════════════════════════════════════════
+export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const [activeIndex, setActiveIndex] = useState('Narrative');
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, fontFamily: 'Arial, sans-serif', fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
+      {/* Top bar */}
+      <div style={{ background: '#fff', borderBottom: '2px solid #cc3300', display: 'flex', alignItems: 'center', padding: '5px 10px', flexShrink: 0, gap: 4 }}>
+        {['Back', 'Home', 'Logout', 'Help'].map(label => (
+          <button key={label} style={{ background: '#cc3300', color: '#fff', border: 'none', borderRadius: 3, padding: '4px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>{label}</button>
+        ))}
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+        </button>
+        <div style={{ flex: 1 }} />
+        <span style={{ fontWeight: 700, fontSize: 14, color: '#222' }}>Change Behavioral Health Progress Note</span>
+        <div style={{ flex: 1 }} />
+      </div>
+      {/* Patient info bar */}
+      <div style={{ background: '#f5f5f5', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'stretch', padding: '8px 14px', gap: 16, flexShrink: 0, fontSize: 12 }}>
+        {/* Left: DOB/Address */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
+          <span style={{ color: '#333' }}><strong>Date of Birth</strong></span>
+          <span style={{ color: '#333' }}><strong>Home Phone</strong></span>
+          <span style={{ color: '#333' }}><strong>Address</strong></span>
+        </div>
+        {/* Current Admission box */}
+        <div style={{ border: '1px solid #aaa', padding: '6px 10px', background: '#fff', minWidth: 200 }}>
+          <div style={{ background: '#a8c4d8', fontWeight: 700, fontSize: 11, padding: '2px 6px', marginBottom: 6, textAlign: 'center' }}>Current Admission</div>
+          {['Primary Org:', 'Primary Program:', 'Case Holder:'].map(label => (
+            <div key={label} style={{ fontSize: 12, color: '#333', marginBottom: 2 }}><strong>{label}</strong></div>
+          ))}
+        </div>
+        {/* Links */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 24px', alignContent: 'start' }}>
+          {[
+            { label: 'Chart Documents', icon: '🗂️', color: '#2255aa' },
+            { label: '1 Alert', icon: '⚠️', color: '#cc0000' },
+            { label: 'Eligibility/Insurance', icon: '🧾', color: '#2255aa' },
+            { label: 'Diagnosis', icon: '🔬', color: '#2255aa' },
+            { label: 'Health/PHCP Info', icon: '❤️', color: '#2255aa' },
+            { label: 'Clinical Decision Supports', icon: '💡', color: '#2255aa' },
+            { label: 'Latest Clinical Documents', icon: '📋', color: '#2255aa' },
+            { label: 'Assignments', icon: '📌', color: '#2255aa' },
+            { label: 'Quality Measures', icon: '📊', color: '#2255aa' },
+          ].map(item => (
+            <a key={item.label} href="#" onClick={e => e.preventDefault()} style={{ fontSize: 12, color: item.color, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ fontSize: 11 }}>{item.icon}</span>{item.label}
+            </a>
+          ))}
+        </div>
+        {/* Case info */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginLeft: 'auto', textAlign: 'right', minWidth: 180 }}>
+          <span style={{ fontSize: 12, color: '#333' }}><strong>Case #:</strong> 000002</span>
+          <span style={{ fontSize: 12, color: '#333' }}><strong>LOC/Grid:</strong> None</span>
+          <span style={{ fontSize: 12 }}><strong>Case:</strong> <span style={{ color: '#2a7a2a', fontWeight: 700 }}>Open</span></span>
+        </div>
+      </div>
+      {/* Body */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Index sidebar */}
+        <div style={{ width: 160, flexShrink: 0, padding: '10px 8px' }}>
+          <div style={{ border: '1px solid #888', overflow: 'hidden', borderRadius: 2 }}>
+            <div style={{ background: '#5b8ab8', color: '#fff', fontWeight: 700, fontSize: 12, padding: '4px 8px', textAlign: 'center' }}>Index</div>
+            {[
+              { num: '1.', label: 'Narrative', link: false },
+              { num: '2.', label: 'Send Copy To', link: true },
+              { num: '3.', label: 'Signatures', link: true },
+            ].map(item => (
+              <div key={item.label} onClick={() => setActiveIndex(item.label)} style={{ padding: '5px 8px', background: activeIndex === item.label ? '#e8d8a0' : '#fff', cursor: 'pointer', fontSize: 12, borderTop: '1px solid #ddd', display: 'flex', gap: 4 }}>
+                <span style={{ color: '#555' }}>{item.num}</span>
+                {item.link ? <a href="#" onClick={e => e.preventDefault()} style={{ color: '#2255aa' }}>{item.label}</a> : <span style={{ color: '#333', fontWeight: 600 }}>{item.label}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Note area */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', background: '#fff' }}>
+          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={175} borderRadius={3} />
+        </div>
+        <div style={{ width: 1, background: '#ddd', flexShrink: 0 }} />
+        <div style={{ flex: 1, background: '#fff' }} />
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 15. ELEOS LITE
+// ═══════════════════════════════════════════════════════════════════════════════
+export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const [activeNav, setActiveNav] = useState('Progress Notes');
+  const clinicalModules = ['Overview', 'Vitals', 'Demographics', 'Progress Notes', 'Appointments', 'History'];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#f7f8fa' }}>
+      {/* Top nav */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e8ecf0', display: 'flex', alignItems: 'center', padding: '0 20px', height: 52, flexShrink: 0, gap: 4 }}>
+        {/* Hamburger */}
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', marginRight: 4, display: 'flex', flexDirection: 'column', gap: 3.5 }}>
+          {[0,1,2].map(i => <div key={i} style={{ width: 18, height: 2, background: '#444', borderRadius: 1 }} />)}
+        </button>
+        {/* Eleos logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 24 }}>
+          <svg width="28" height="28" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="18" fill="#1a3560"/>
+            <path d="M11 18 Q18 8 25 18 Q18 28 11 18Z" fill="#f0c040" opacity="0.9"/>
+            <circle cx="18" cy="18" r="4" fill="#fff"/>
+          </svg>
+          <span style={{ fontWeight: 700, fontSize: 16, color: '#1a3560' }}>eleos</span>
+        </div>
+        {/* Nav items */}
+        {['Patients', 'Schedule', 'Tasks', 'Reports'].map(item => (
+          <button key={item} style={{
+            padding: '6px 14px', border: 'none', cursor: 'pointer', fontSize: 13, borderRadius: 6, fontWeight: item === 'Patients' ? 600 : 400,
+            background: item === 'Patients' ? '#1a3560' : 'transparent',
+            color: item === 'Patients' ? '#fff' : '#555',
+          }}>{item}</button>
+        ))}
+        <div style={{ flex: 1 }} />
+        {/* Search */}
+        <div style={{ position: 'relative', width: 280 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search by patient name, DOB, or MRN..." style={{ width: '100%', padding: '8px 12px 8px 32px', border: '1px solid #e0e4ea', borderRadius: 8, fontSize: 12, color: '#333', outline: 'none', background: '#f7f8fa', boxSizing: 'border-box' }} />
+        </div>
+        {/* Icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 16 }}>
+          <div style={{ position: 'relative' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <div style={{ position: 'absolute', top: -4, right: -4, background: '#e84040', color: '#fff', borderRadius: '50%', width: 13, height: 13, fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>1</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          {/* User avatar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#222' }}>Dr. Sarah Johnson</div>
+              <div style={{ fontSize: 10, color: '#888' }}>Psychiatrist, MD</div>
+            </div>
+            <div style={{ width: 32, height: 32, background: '#1a3560', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 12 }}>SJ</div>
+          </div>
+        </div>
+      </div>
+      {/* Body */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Left sidebar */}
+        <div style={{ width: 200, background: '#fff', borderRight: '1px solid #e8ecf0', flexShrink: 0, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+          {/* Current Patient */}
+          <div style={{ padding: '14px 14px 8px', borderBottom: '1px solid #e8ecf0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Current Patient</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#f5f7fa', border: '1px solid #e8ecf0', borderRadius: 8, padding: '8px 10px' }}>
+              <div style={{ width: 32, height: 32, background: '#e0e6f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6080a0" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: '#1a2a3a' }}>Jacob Rosen</div>
+                <div style={{ fontSize: 10, color: '#888' }}>MRN: 8829-102</div>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          {/* Clinical Modules */}
+          <div style={{ padding: '12px 14px 4px' }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Clinical Modules</span>
+          </div>
+          {clinicalModules.map(item => (
+            <div key={item} onClick={() => setActiveNav(item)} style={{
+              display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', cursor: 'pointer', borderRadius: 0,
+              background: activeNav === item ? '#1a3560' : 'transparent',
+            }}
+            onMouseEnter={e => { if (activeNav !== item) e.currentTarget.style.background = '#f5f7fa'; }}
+            onMouseLeave={e => { if (activeNav !== item) e.currentTarget.style.background = 'transparent'; }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={activeNav === item ? '#fff' : '#6080a0'} strokeWidth="1.8">
+                {item === 'Overview' && <><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></>}
+                {item === 'Vitals' && <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>}
+                {item === 'Demographics' && <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}
+                {item === 'Progress Notes' && <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></>}
+                {item === 'Appointments' && <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>}
+                {item === 'History' && <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>}
+              </svg>
+              <span style={{ fontSize: 13, color: activeNav === item ? '#fff' : '#334', fontWeight: activeNav === item ? 600 : 400, flex: 1 }}>{item}</span>
+              {activeNav === item && <div style={{ width: 6, height: 6, background: '#4a9eff', borderRadius: '50%' }} />}
+            </div>
+          ))}
+          {/* System */}
+          <div style={{ padding: '12px 14px 4px', marginTop: 4 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.07em' }}>System</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', cursor: 'pointer' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#f5f7fa'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6080a0" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span style={{ fontSize: 13, color: '#334' }}>Configuration</span>
+          </div>
+          {/* System Status */}
+          <div style={{ margin: '10px 10px 14px', background: '#f5f7fa', border: '1px solid #e8ecf0', borderRadius: 8, padding: '10px 12px', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <div style={{ width: 8, height: 8, background: '#2ecc71', borderRadius: '50%' }} />
+              <span style={{ fontWeight: 600, fontSize: 12, color: '#222' }}>System Status</span>
+            </div>
+            <div style={{ fontSize: 11, color: '#888' }}>All systems operational. Last synced 2 mins ago.</div>
+          </div>
+        </div>
+        {/* Main content */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Encounter header */}
+          <div style={{ background: '#fff', borderBottom: '1px solid #e8ecf0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 24px', flexShrink: 0 }}>
+            <span style={{ fontSize: 13, color: '#666' }}>
+              Encounter #29384 &nbsp;·&nbsp; Outpatient Visit &nbsp;·&nbsp; 4/14/2026
+            </span>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button style={{ background: '#fff', border: '1px solid #ccd0d8', borderRadius: 6, padding: '7px 16px', fontSize: 13, cursor: 'pointer', color: '#333', fontWeight: 500 }}>Save Draft</button>
+              <button style={{ background: '#2255cc', border: 'none', borderRadius: 6, padding: '7px 16px', fontSize: 13, cursor: 'pointer', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                Sign &amp; Finalize
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
+          </div>
+          {/* Note area */}
+          <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+            <div style={{ flex: '0 0 62%', overflowY: 'auto', padding: '20px 28px', background: '#fff' }}>
+              <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#dde4ee' minHeight={180} borderRadius={6} />
+            </div>
+            <div style={{ width: 1, background: '#e8ecf0', flexShrink: 0 }} />
+            <div style={{ flex: 1, background: '#f7f8fa' }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const navItems = [
     { badge: 'AA', label: 'Access Assessment', arrow: false },
