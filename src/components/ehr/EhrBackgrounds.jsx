@@ -225,42 +225,52 @@ export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField })
 // 2. QUALIFACTS (SmartCare)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }) {
-  const [activeTab, setActiveTab] = useState('Note');
+  const [activeTab, setActiveTab] = useState('Service');
   const [activeNav, setActiveNav] = useState('Client');
   const tabs = ['Service', 'Note', 'Billing Diagnosis', 'Add-On Codes', 'Warnings', 'Disposition'];
+  const hBtn = { background: 'none', border: 'none', cursor: 'pointer', padding: '3px 5px', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' };
 
   const navItems = [
-    { badge: { l: 'CT', bg: '#3a8fc1' }, label: 'Consent To Share Data', hasArrow: false },
-    { badge: { l: 'HO', bg: '#1d6aae' }, label: 'My Office', hasArrow: true },
-    { badge: { l: 'ST', bg: '#1d6aae' }, label: 'Shared Treatment Plan', hasArrow: false },
-    { badge: { l: 'CL', bg: '#1d6aae' }, label: 'Client', hasArrow: true },
-    { badge: { l: 'CF', bg: '#7a6a5a' }, label: 'Client Funds', hasArrow: false },
-    { badge: { l: 'SL', bg: '#4a6a9a' }, label: 'SmartLinks', hasArrow: false },
+    { badge: <span style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:4,background:'#3a8fc1',color:'#fff',fontSize:9,fontWeight:800 }}>CT</span>, label: 'Consent To Share Data', hasArrow: false },
+    { badge: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b7a90" strokeWidth="1.8" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>, label: 'My Office', hasArrow: true },
+    { badge: <span style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:4,background:'#1d6aae',color:'#fff',fontSize:9,fontWeight:800 }}>ST</span>, label: 'Shared Treatment Plan', hasArrow: false },
+    { badge: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b7a90" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: 'Client', hasArrow: true },
+    { badge: <span style={{ display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:4,background:'#7a6a5a',color:'#fff',fontSize:9,fontWeight:800 }}>CF</span>, label: 'Client Funds', hasArrow: false },
+    { badge: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b7a90" strokeWidth="1.8" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>, label: 'SmartLinks', hasArrow: false },
   ];
 
   return (
     <div style={{ position: 'absolute', inset: 0, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#e8edf5' }}>
       {/* Top header */}
       <div style={{ background: '#fff', borderBottom: '3px solid #f5a623', display: 'flex', alignItems: 'center', padding: '0 14px', height: 48, gap: 8, flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
-          {/* Qualifacts Q mark */}
-          <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#1a3a6b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 17, fontFamily: 'Georgia,serif', lineHeight: 1 }}>Q</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontWeight: 800, fontSize: 15, color: '#1a3a6b', fontStyle: 'italic' }}>SmartCare™</span>
-            <span style={{ fontSize: 7, color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>Behavioral Health EHR</span>
-          </div>
+        {/* Hamburger */}
+        <button style={hBtn}><svg width="18" height="14" viewBox="0 0 18 14"><line x1="0" y1="1" x2="18" y2="1" stroke="#333" strokeWidth="2"/><line x1="0" y1="7" x2="18" y2="7" stroke="#333" strokeWidth="2"/><line x1="0" y1="13" x2="18" y2="13" stroke="#333" strokeWidth="2"/></svg></button>
+        {/* SmartCare wordmark */}
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, marginRight: 8 }}>
+          <span style={{ fontWeight: 800, fontSize: 16, color: '#1a3a6b', fontStyle: 'italic' }}>SmartCare<sup style={{ fontSize: 9, fontWeight: 400 }}>™</sup></span>
+          <span style={{ fontSize: 7, color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>Behavioral Health EHR</span>
         </div>
-        {[
-          <svg key="s" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-          <svg key="h" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>,
-          <svg key="u" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-        ].map((ic, i) => (
-          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '3px 5px', display: 'flex', alignItems: 'center' }}>{ic}</button>
-        ))}
+        {/* Icon buttons */}
+        <button style={hBtn}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+        <button style={hBtn}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+        <button style={hBtn}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+        <button style={hBtn}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+        {/* Patient bar */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: '#222' }}>Webb, Marcus (10234)</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: '#222' }}>
+            <span>Test, Client (1099)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {[
+                <svg key="cam" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
+                <svg key="q" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+                <svg key="sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>,
+                <svg key="br" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
+              ].map((ic, i) => <button key={i} style={hBtn}>{ic}</button>)}
+              <button style={hBtn}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+              <button style={{ ...hBtn, color: '#1d6aae', fontWeight: 700, fontSize: 18 }}>+</button>
+              <button style={{ ...hBtn, color: '#aaa', fontSize: 18 }}>✕</button>
+            </div>
+          </div>
         </div>
       </div>
       {/* Body */}
@@ -269,9 +279,10 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
         <div style={{ width: 338, background: '#fff', borderRight: '1px solid #dde1e7', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
           <div style={{ display: 'flex', borderBottom: '1px solid #eee', padding: '6px 12px 0' }}>
             {[
-              <svg key="u" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d6aae" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-              <svg key="h" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>,
+              <svg key="u" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1d6aae" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+              <svg key="h" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>,
               <svg key="g" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>,
+              <svg key="m" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
             ].map((ic, i) => (
               <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 10px 6px', borderBottom: i === 0 ? '2px solid #1d6aae' : '2px solid transparent' }}>{ic}</button>
             ))}
@@ -287,7 +298,7 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
                   borderLeft: isActive ? '3px solid #1d6aae' : '3px solid transparent',
                   fontWeight: isActive ? 600 : 400,
                 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 4, background: item.badge.bg, color: '#fff', fontSize: 9, fontWeight: 800, flexShrink: 0 }}>{item.badge.l}</span>
+                  <span style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 24 }}>{item.badge}</span>
                   <span style={{ flex: 1 }}>{item.label}</span>
                   {item.hasArrow && <svg width="7" height="11" viewBox="0 0 7 11"><polyline points="1 1 6 5.5 1 10" fill="none" stroke="#bbb" strokeWidth="1.5"/></svg>}
                 </button>
@@ -299,7 +310,6 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
         <div style={{ flex: 1, overflowY: 'auto', background: '#e8edf5', padding: '14px 20px' }}>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1a2b4a', margin: '0 0 10px' }}>Progress Note</h1>
           <div style={{ background: '#fff', border: '1px solid #dde4ee', borderRadius: 4, marginBottom: 16 }}>
-            {/* Effective row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid #eee' }}>
               <label style={{ fontSize: 12, color: '#555' }}>Effective</label>
               <input defaultValue="04/10/2026" style={{ border: '1px solid #bbb', borderRadius: 3, padding: '4px 8px', fontSize: 12, width: 100 }} readOnly />
@@ -308,7 +318,6 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
               <label style={{ fontSize: 12, color: '#555', marginLeft: 12 }}>Author</label>
               <input defaultValue="Eleos Clinician" style={{ border: '1px solid #bbb', borderRadius: 3, padding: '4px 8px', fontSize: 12, flex: 1 }} readOnly />
             </div>
-            {/* Tabs */}
             <div style={{ display: 'flex', borderBottom: '2px solid #e0e4ea', padding: '0 14px' }}>
               {tabs.map(tab => (
                 <button key={tab} onClick={() => setActiveTab(tab)} style={{
@@ -320,19 +329,30 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
                 }}>{tab}</button>
               ))}
             </div>
-            {/* Note content */}
             <div style={{ padding: '16px 14px' }}>
               {activeTab === 'Note' ? (
                 <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#444' fontSize={12} borderColor='#ccc' minHeight={140} />
               ) : activeTab === 'Service' ? (
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: '#1a2b4a', marginBottom: 14 }}>Service</div>
-                  {[['Status', 'Show'], ['Program', ''], ['Location', ''], ['Mode Of Delivery', ''], ['Transportation Service', 'No']].map(([lbl, val]) => (
-                    <div key={lbl} style={{ display: 'flex', alignItems: 'center', marginBottom: 10, gap: 6 }}>
-                      <label style={{ width: 160, flexShrink: 0, fontSize: 12, color: '#444' }}>{lbl}</label>
-                      <input defaultValue={val} style={{ flex: 1, border: '1px solid #bbb', borderRadius: 3, padding: '4px 8px', fontSize: 12 }} readOnly />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 40px' }}>
+                    <div>
+                      {[['Status','Show'],['Program',''],['Location',''],['Mode Of Delivery',''],['Cancel Reason',''],['Transportation Service','No']].map(([lbl,val]) => (
+                        <div key={lbl} style={{ display: 'flex', alignItems: 'center', marginBottom: 10, gap: 6 }}>
+                          <label style={{ width: 130, flexShrink: 0, fontSize: 12, color: '#444' }}>{lbl}</label>
+                          <input defaultValue={val} style={{ flex: 1, border: '1px solid #bbb', borderRadius: 3, padding: '4px 8px', fontSize: 12 }} readOnly />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                    <div>
+                      {[['Start Date','04/10/2026'],['Start Time',''],['Travel Time',''],['Documentation Time',''],['Service Time',''],['Attending','']].map(([lbl,val]) => (
+                        <div key={lbl} style={{ display: 'flex', alignItems: 'center', marginBottom: 10, gap: 6 }}>
+                          <label style={{ width: 140, flexShrink: 0, fontSize: 12, color: '#444' }}>{lbl}</label>
+                          <input defaultValue={val} style={{ flex: 1, border: '1px solid #bbb', borderRadius: 3, padding: '4px 8px', fontSize: 12 }} readOnly />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div style={{ padding: '30px', textAlign: 'center', color: '#aaa', fontSize: 13 }}>{activeTab} content</div>
