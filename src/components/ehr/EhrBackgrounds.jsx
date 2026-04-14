@@ -972,7 +972,19 @@ export function MyEvolvBg({ noteValues = {}, onNoteChange, highlightedField }) {
           </div>
         </div>
         <div style={{ flex: 1 }} />
-        <button style={{ background: '#7c3aed', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: 6, padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>Share</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {[
+            { label: 'Presenter Notes', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/></svg> },
+            { label: 'Edit', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> },
+            { label: 'Create Demos', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg> },
+          ].map(b => (
+            <button key={b.label} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 12, color: '#555', display: 'flex', alignItems: 'center', gap: 4 }}>{b.icon}{b.label}</button>
+          ))}
+          <button style={{ background: '#7c3aed', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: 6, padding: '5px 14px', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Share
+          </button>
+        </div>
       </div>
       {/* Module nav bar */}
       <div style={{ background: '#fff', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto' }}>
@@ -1195,7 +1207,10 @@ export function KipuBg({ noteValues = {}, onNoteChange, highlightedField }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: '#1a3a6a' }}>Golden Thread</span>
-              <button style={{ background: '#2db564', color: '#fff', border: 'none', borderRadius: 4, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>+ Golden Thread</button>
+              <button style={{ background: '#2db564', color: '#fff', border: 'none', borderRadius: 4, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                Golden Thread
+              </button>
             </div>
           </div>
         </div>
