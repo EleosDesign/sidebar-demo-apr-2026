@@ -1080,18 +1080,31 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
             </div>
             <div style={{ padding: '10px 10px 4px', flexShrink: 0 }}>
               <div style={{ position: 'relative' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <input placeholder="What can I help you find?" style={{ width: '100%', padding: '6px 8px 6px 26px', background: '#fff', border: 'none', borderRadius: 4, fontSize: 11, color: '#333', outline: 'none', boxSizing: 'border-box' }} />
               </div>
+              <a href="#" onClick={e => e.preventDefault()} style={{ display: 'block', fontSize: 11, color: '#2ab090', textDecoration: 'underline', marginTop: 5, paddingLeft: 2 }}>Advanced Client Search</a>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-              {['My Clients', 'My Forms', 'My Favorites', 'Recent Forms'].map(item => (
-                <div key={item} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', cursor: 'pointer', color: '#cce0f0', fontSize: 13, fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <span>{item}</span>
-                  <span style={{ fontSize: 10, color: '#7aa8c8' }}>▶</span>
+              {[{ label: 'My Clients', arrow: false }, { label: 'My Forms', arrow: true }, { label: 'My Favorites', arrow: true }, { label: 'Recent Forms', arrow: true }].map(item => (
+                <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', cursor: 'pointer', color: '#cce0f0', fontSize: 13, fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span>{item.label}</span>
+                  {item.arrow && <span style={{ fontSize: 10, color: '#7aa8c8' }}>▶</span>}
                 </div>
               ))}
               <div style={{ padding: '10px 14px 4px', fontSize: 11, fontWeight: 700, color: '#7aa8c8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Control Panel</div>
-              <div style={{ display: 'flex', margin: '4px 10px 0' }}>
+              <div style={{ display: 'flex', gap: 10, padding: '4px 14px 10px' }}>
+                {[
+                  <svg key="i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aac0d8" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r="0.5" fill="#aac0d8"/></svg>,
+                  <svg key="l" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aac0d8" strokeWidth="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
+                  <svg key="c" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aac0d8" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+                  <svg key="p" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aac0d8" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
+                  <svg key="u" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aac0d8" strokeWidth="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+                ].map((icon, i) => (
+                  <button key={i} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}>{icon}</button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', margin: '0 10px' }}>
                 <button style={{ flex: 1, padding: '6px', background: '#1a2b4e', color: '#fff', border: 'none', borderRadius: '3px 0 0 3px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>My Clients</button>
                 <button style={{ flex: 1, padding: '6px', background: '#2a4a70', color: '#aac0d8', border: 'none', borderRadius: '0 3px 3px 0', fontSize: 12, cursor: 'pointer' }}>Site</button>
               </div>
