@@ -1426,7 +1426,145 @@ function PlaceholderBg({ name, headerColor, noteValues = {}, onNoteChange, highl
 export function NetsmartBg(props) { return <PlaceholderBg name="Netsmart" headerColor="#1a4a7a" {...props} />; }
 export function PCEBg(props) { return <PlaceholderBg name="PCE" headerColor="#2a6a3a" {...props} />; }
 export function EleosLiteBg(props) { return <PlaceholderBg name="Eleos Lite" headerColor="#1a3560" {...props} />; }
-export function StreamlineBg(props) { return <PlaceholderBg name="Streamline" headerColor="#4a3a7a" {...props} />; }
+export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const navItems = [
+    { badge: 'AA', label: 'Access Assessment', arrow: false },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>, label: 'Psych/Med Documents', arrow: true },
+    { badge: 'QO', label: 'Quick Orders', arrow: false },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>, label: 'Assessment/Screening Tools', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>, label: 'Clinical Documents', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>, label: 'Client Dashboard', arrow: false },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>, label: 'Client Chart', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Flow Sheet (Vitals)', arrow: false },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>, label: 'Consents', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3"/></svg>, label: 'Medication Management (Rx)', arrow: false },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.81 19.79 19.79 0 0 1 1.61 1.18 2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15.18z"/></svg>, label: 'Referrals', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>, label: 'Releases and Disclosures', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, label: 'Flags/Protocols/Events', arrow: true },
+    { badge: 'B', label: 'Billing', arrow: true },
+    { badge: 'D', label: 'Documents', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>, label: 'Inpatient/Residential', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>, label: 'Orders', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>, label: 'Primary Care', arrow: true },
+    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>, label: 'SmartLinks', arrow: false },
+  ];
+
+  const actionIcons = [
+    <svg key="more" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>,
+    <svg key="check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>,
+    <svg key="person" width="14" height="14" viewBox="0 0 24 24" fill="#1a3560" stroke="none"><circle cx="12" cy="8" r="5" fill="#1a3560"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#1a3560"/></svg>,
+    <svg key="star1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    <svg key="star2" width="14" height="14" viewBox="0 0 24 24" fill="#f0c040" stroke="#f0c040" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    <svg key="cal1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    <svg key="cal2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/></svg>,
+    <svg key="book" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+    <svg key="q" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+    <svg key="info" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+    <svg key="trash" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>,
+    <svg key="print" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
+    <svg key="doc" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+  ];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
+      {/* Top header bar */}
+      <div style={{ background: '#fff', borderBottom: '2px solid #2ecc5a', display: 'flex', alignItems: 'center', padding: '0 12px', height: 38, flexShrink: 0, gap: 10 }}>
+        {/* Hamburger */}
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#1a3560', display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {[0,1,2].map(i => <div key={i} style={{ width: 16, height: 2, background: '#1a3560', borderRadius: 1 }} />)}
+        </button>
+        {/* SmartCare logo */}
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, marginRight: 8 }}>
+          <span style={{ fontWeight: 700, fontSize: 14, color: '#1a3560', letterSpacing: '-0.01em' }}>
+            SmartCare<span style={{ color: '#2ecc5a', fontSize: 10 }}>™</span>
+          </span>
+          <span style={{ fontSize: 7.5, color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Behavioral Health EHR</span>
+        </div>
+        {/* Search, star, person */}
+        {[
+          <svg key="s" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+          <svg key="st" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+          <svg key="p" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
+        ].map((icon, i) => (
+          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>{icon}</button>
+        ))}
+        {/* Patient tab */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f4f8', border: '1px solid #dde4ee', borderRadius: 4, padding: '3px 10px', fontSize: 12.5, color: '#1a3560', fontWeight: 500 }}>
+          <span>(1026)</span>
+          <span style={{ background: '#2ecc5a', color: '#fff', borderRadius: 3, padding: '1px 5px', fontSize: 10, fontWeight: 700 }}>ASAM</span>
+          {['T','T','T'].map((t,i) => <span key={i} style={{ fontSize: 11, fontWeight: 700, color: '#1a3560', marginLeft: 2 }}>{t}</span>)}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <div style={{ flex: 1 }} />
+        {/* Right icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {[
+            <div key="n1" style={{ position: 'relative' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              <div style={{ position: 'absolute', top: -4, right: -4, background: '#e84040', color: '#fff', borderRadius: '50%', width: 13, height: 13, fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>3</div>
+            </div>,
+            <div key="n2" style={{ position: 'relative' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <div style={{ position: 'absolute', top: -4, right: -4, background: '#e84040', color: '#fff', borderRadius: '50%', width: 13, height: 13, fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>5</div>
+            </div>,
+            <svg key="clk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            <svg key="help" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+            <svg key="pwr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>,
+          ].map((icon, i) => (
+            <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>{icon}</button>
+          ))}
+        </div>
+      </div>
+      {/* Action toolbar */}
+      <div style={{ background: '#f0f4f8', borderBottom: '1px solid #dde4ee', display: 'flex', alignItems: 'center', padding: '3px 10px', height: 32, flexShrink: 0, gap: 6 }}>
+        <span style={{ fontSize: 11, color: '#555', fontWeight: 600, marginRight: 2 }}>GoTo</span>
+        {actionIcons.map((icon, i) => (
+          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 3px', display: 'flex', alignItems: 'center' }}>{icon}</button>
+        ))}
+        <div style={{ flex: 1 }} />
+        <button style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#1a3560', color: '#fff', border: 'none', borderRadius: 3, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save
+        </button>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: 14, color: '#888' }}>×</button>
+      </div>
+      {/* Body */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Left sidebar */}
+        <div style={{ width: 220, background: '#fff', borderRight: '1px solid #dde4ee', flexShrink: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+          {/* Tab icons */}
+          <div style={{ display: 'flex', borderBottom: '1px solid #dde4ee', padding: '6px 12px', gap: 14 }}>
+            {[
+              <svg key="p" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a3560" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
+              <svg key="g" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>,
+              <svg key="l" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+            ].map((icon, i) => <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}>{icon}</button>)}
+          </div>
+          {/* Nav items */}
+          {navItems.map((item, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 12px', borderBottom: '1px solid #f0f2f5', cursor: 'pointer' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f5f8ff'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 22, color: '#1a3560', fontSize: 11, fontWeight: 700 }}>{item.badge}</span>
+              <span style={{ flex: 1, fontSize: 12.5, color: '#1a3560' }}>{item.label}</span>
+              {item.arrow && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>}
+            </div>
+          ))}
+        </div>
+        {/* Note area */}
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <div style={{ flex: '0 0 60%', overflowY: 'auto', padding: '20px 24px', background: '#fff' }}>
+            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#dde4ee' minHeight={175} borderRadius={4} />
+          </div>
+          <div style={{ width: 1, background: '#dde4ee', flexShrink: 0 }} />
+          <div style={{ flex: 1, background: '#fff' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // REGISTRY
