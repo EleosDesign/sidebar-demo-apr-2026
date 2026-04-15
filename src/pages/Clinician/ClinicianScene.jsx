@@ -53,7 +53,9 @@ export default function ClinicianScene({ step, onNext }) {
   const [btnPos, setBtnPos] = useState(() => ({ x: 16, y: window.innerHeight - BTN_H - 32 }));
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
-  const sidebarSavedState = useRef(null);
+  const sidebarSavedState = useRef(
+    (() => { try { return JSON.parse(localStorage.getItem('eleos-sidebar-state') ?? 'null'); } catch { return null; } })()
+  );
   const [sidebarStartTab, setSidebarStartTab] = useState(null);
   const noteTypeCtx = useNoteTypeContext();
   const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
@@ -101,7 +103,7 @@ export default function ClinicianScene({ step, onNext }) {
     <div style={{ position: 'absolute', inset: 0, transformOrigin: sidebarOrigin, animation: anim, pointerEvents: 'none' }} onAnimationEnd={onEnd}>
       <EleosSidebar step={step} onNext={onNext} onCollapse={handleCollapse} initialPos={btnPos}
         savedState={sidebarSavedState.current}
-        onSaveState={s => { sidebarSavedState.current = s; }}
+        onSaveState={s => { sidebarSavedState.current = s; try { localStorage.setItem('eleos-sidebar-state', JSON.stringify(s)); } catch {} }}
         onRecordingChange={setIsRecording}
         onAddToNote={handleAddToNote}
         startTab={sidebarStartTab}
@@ -489,19 +491,22 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const SIDEBAR_W_MAX = 600;
   const [sidebarW, setSidebarW] = useState(() => savedState?.sidebarW ?? 467);
   const [posX, setPosX] = useState(() => {
+    if (savedState?.posX != null) return savedState.posX;
     if (!initialPos) return G;
-    return Math.max(G, Math.min(window.innerWidth - 467 - G, initialPos.x));
+    return Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x));
   });
   const [posY, setPosY] = useState(() => {
-    const initH = Math.round(window.innerHeight * 0.7);
+    if (savedState?.posY != null) return savedState.posY;
+    const initH = savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7);
     if (!initialPos) return window.innerHeight - initH - G;
     return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
   });
   const [side, setSide] = useState(() => {
-    const x = initialPos ? Math.max(G, Math.min(window.innerWidth - 467 - G, initialPos.x)) : G;
-    return (x + 467 / 2) < window.innerWidth / 2 ? 'left' : 'right';
+    if (savedState?.side) return savedState.side;
+    const x = initialPos ? Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x)) : G;
+    return (x + (savedState?.sidebarW ?? 467) / 2) < window.innerWidth / 2 ? 'left' : 'right';
   });
-  const [sidebarH, setSidebarH] = useState(() => Math.round(window.innerHeight * 0.7));
+  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7));
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isWidthResizing, setIsWidthResizing] = useState(false);
@@ -612,7 +617,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── State persistence ────────────────────────────────────────────────────────
   const stateRef = useRef(null);
-  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW };
+  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW, posX: posXRef.current, posY: posYRef.current, sidebarH: sidebarHRef.current, side };
   // Save state to parent on unmount so it survives close→reopen
   useEffect(() => () => { onSaveState?.(stateRef.current); }, []);
   // Bubble recording status to parent (for launch button indicator)
@@ -825,18 +830,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       <div
         data-resizeHandle="true"
         onMouseDown={handleLeftResizeMouseDown}
-        style={{ position: 'absolute', left: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <div style={{ width: 4, height: 40, borderRadius: 2, background: 'rgba(41,61,135,0.35)', pointerEvents: 'none' }} />
-      </div>
+        style={{ position: 'absolute', left: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20 }}
+      />
       {/* Right-edge width resize handle */}
       <div
         data-resizeHandle="true"
         onMouseDown={handleRightResizeMouseDown}
-        style={{ position: 'absolute', right: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <div style={{ width: 4, height: 40, borderRadius: 2, background: 'rgba(41,61,135,0.35)', pointerEvents: 'none' }} />
-      </div>
+        style={{ position: 'absolute', right: -4, top: 0, width: 10, height: '100%', cursor: 'ew-resize', zIndex: 20 }}
+      />
       {/* Inner: visual container that clips border-radius */}
       <div style={{
         position: 'absolute',
