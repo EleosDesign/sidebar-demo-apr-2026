@@ -330,6 +330,48 @@
         }
       }
     },
+    "AngerManagementGroup": {
+      "name": "Anger Management Group",
+      "description": "Group session note with overall summary and individual participant notes",
+      "sections": [
+        {
+          "id": "overallSummary",
+          "label": "Overall Summary",
+          "description": "Summary of the full group session",
+          "sampleContent": "The anger management support group session began with introductions and a brief overview of group rules, emphasizing confidentiality and respectful communication."
+        },
+        {
+          "id": "tyler",
+          "label": "Tyler",
+          "description": "Individual note for Tyler",
+          "sampleContent": "Tyler chose a turtle during the check-in activity, expressing feelings of boredom and slowness."
+        },
+        {
+          "id": "connor",
+          "label": "Connor",
+          "description": "Individual note for Connor",
+          "sampleContent": "Connor chose his cat, Bella, because of her constant happiness, a state he desired for himself."
+        },
+        {
+          "id": "jeff",
+          "label": "Jeff",
+          "description": "Individual note for Jeff",
+          "sampleContent": "Jeff chose a shark, stating his love for the ocean and sharks."
+        },
+        {
+          "id": "allison",
+          "label": "Allison",
+          "description": "Individual note for Allison",
+          "sampleContent": "Allison chose a jellyfish during the check-in, appreciating their beauty and the ocean environment."
+        },
+        {
+          "id": "participant1",
+          "label": "Participant 1",
+          "description": "Individual note for Participant 1",
+          "sampleContent": "Participant 1 shared an animal in response to the icebreaker prompt but did not elaborate beyond a brief statement."
+        }
+      ]
+    },
     "GroupNote": {
       "name": "Group Note",
       "description": "Documentation for group therapy sessions",

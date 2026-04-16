@@ -34,7 +34,7 @@ const SESSION_LIST = [
   { id: 'larry',     ...daysAgo(1), name: 'Larry Quinn',            time: '9:00 – 9:45 AM',     type: 'individual', sessionType: 'audio', liveQA: true,  noteType: 'Individual Audio',           isActive: false, summary: 'Client presented with elevated anxiety related to upcoming retirement transition. Explored identity concerns and loss of structure. Began values clarification exercise; client to complete worksheet before next session.' },
   { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
   { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
-  { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single',                      isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
+  { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single', noteType: 'Anger Management Group', isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
   { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true,  isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
   { id: 'patricia',  ...daysAgo(3), name: 'Patricia Rodriguez',     time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'audio', specialty: 'psychiatry', noteType: 'Med Management', isActive: false, summary: 'Client reported increased anxiety following medication adjustment. Discussed somatic symptoms and their relationship to health anxiety. Introduced interoceptive exposure rationale. Client hesitant but willing to try graduated approach.' },
   { id: 'ashlyn',    ...daysAgo(4), name: 'Ashlyn Rivera',          time: '10:30 – 11:15 AM',   type: 'individual', sessionType: 'audio', noteType: 'Assessment',                          isActive: false, summary: 'Client discussed trauma-related avoidance. Identified two avoided situations linked to past trauma. Using CPT framework, began challenging stuck points around self-blame. Client tolerated emotional content well; no dissociation noted.' },
@@ -774,12 +774,13 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           }
           // Switch EHR note type to match the session
           const NOTE_TYPE_KEY_MAP = {
-            'Individual Audio': 'IndividualAudio',
-            'Progress Note':    'ProgressNote',
-            'Case Management':  'CaseManagement',
-            'Treatment Plan':   'TreatmentPlan',
-            'Med Management':   'PsychiatricMedical',
-            'Assessment':       'Assessment',
+            'Individual Audio':      'IndividualAudio',
+            'Progress Note':         'ProgressNote',
+            'Case Management':       'CaseManagement',
+            'Treatment Plan':        'TreatmentPlan',
+            'Med Management':        'PsychiatricMedical',
+            'Assessment':            'Assessment',
+            'Anger Management Group':'AngerManagementGroup',
           };
           const noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
           noteTypeCtx?.setSelectedNoteType(noteTypeKey);
@@ -3813,6 +3814,31 @@ const ASSESSMENT_SUGGESTIONS_DATA = [
 
 // ── Group session — single suggestion per member ──────────────────────────────
 
+// ── Anger Management Group suggestions ───────────────────────────────────────
+
+const ANGER_GROUP_SUGGESTIONS_DATA = [
+  { section: 'Overall Summary', cards: [
+    { field: 'Overall Summary', content: 'The anger management support group session, facilitated by this writer, began with introductions and a brief overview of group rules, emphasizing confidentiality and respectful communication. This writer then initiated a check-in activity, asking participants to identify with an animal and explain their choice. This transitioned into a discussion of the reasons for attending the group, with participants disclosing their anger management related concerns. A common theme emerged around the impact of emotions on personal well-being, relationships, and family dynamics, particularly for those with children. This writer validated the participants\' disclosures, acknowledged their vulnerability, and highlighted the courage it takes to seek support. The session concluded with this writer prompting participants to reflect on their personal goals for the group.', type: 'text', showActions: true },
+  ]},
+  { section: 'Tyler', cards: [
+    { field: 'Tyler', content: 'Tyler chose a turtle during the check-in activity, expressing feelings of boredom and slowness. When asked to elaborate on why he was attending the group, he disclosed that his wife had been frustrating him. When the writer asked him to clarify what he meant by "bored," Tyler reiterated that those were his wife\'s words and explained that his daily routine involved caring for his children. He also expressed that it wasn\'t necessarily wrong for him to be angry, and acknowledged that it is probably better to figure out why he was lashing out and address that issue. Later, when it was mentioned that children can serve as a motivating factor to remain in the group, Tyler expressed that his motivation was rooted in his desire for a brighter future, and better emotional regulation.', type: 'text', showActions: true },
+  ]},
+  { section: 'Connor', cards: [
+    { field: 'Connor', content: 'Connor chose his cat, Bella, because of her constant happiness, a state he desired for himself. He shared that he joined the group to stop lashing out at family, explaining that although he doesn\'t believe he drinks excessively, he has been unable to stop when he has tried which leads to outburst of anger. He expressed having two daughters whose mother passed away a few years prior and felt a need to invest more energy in them. Connor described drinking as his "me time" after his daughters go to bed and acknowledged that this habit might be indicative of a deeper emotional need. He stated that his drinking affects his energy levels and contributes to poor sleep and fatigue. Connor also said that his kids are a motivator for him to be a better father and example. He also wanted to commit to raising his children correctly and is trying to do so by participating in treatment. This writer pointed out to the group that Connor and another group member both have children and asked how they feel being in treatment while also caring for and modeling behavior for their children.', type: 'text', showActions: true },
+  ]},
+  { section: 'Jeff', cards: [
+    { field: 'Jeff', content: 'Jeff chose a shark, stating his love for the ocean and sharks. When asked why he was in the group, he did not immediately respond. Later in the group session, this writer observed that Jeff appeared somewhat hesitant about being in the group and asked him how he felt. Jeff confirmed that his husband wanted him to attend treatment because he recognized he had a problem. While Jeff acknowledged that taking the outburst of anger were probably not the best and that figuring out the root cause may be beneficial, he said he did not believe that his anger had negatively impacted him or put his children in danger.', type: 'text', showActions: true },
+  ]},
+  { section: 'Allison', cards: [
+    { field: 'Allison', content: 'Allison chose a jellyfish during the check-in, appreciating their beauty and the ocean environment. She identified feelings of fear as her primary concern, explaining it leads to anger and other emotions she can\'t control. Allison recognized that caffeine use wasn\'t healthy and expressed a goal of cutting back or eliminating it from her life. She agreed with another group participant about taking a step towards growth by attending group therapy. She appreciated how addressing her fear and anger brought awareness to the underlying issues, which motivated her to seek help now. Allison also expressed gratitude for the group environment. This writer commended another participant for her self-awareness in recognizing a potential problem early on and for taking steps to address it. This intervention resonated with Allison.', type: 'text', showActions: true },
+  ]},
+  { section: 'Participant 1', cards: [
+    { field: 'Participant 1', content: 'Participant 1 shared an animal in response to the icebreaker prompt but did not elaborate beyond a brief statement. They did not verbally contribute to the remainder of the group discussion and did not respond to follow-up prompts.', type: 'text', showActions: true },
+  ]},
+];
+
+// ── Group session — single suggestion per member ──────────────────────────────
+
 const GROUP_SINGLE_SUGGESTIONS_DATA = [
   { section: 'Data', cards: [
     { field: 'Group Process', content: 'Group session focused on anger recognition and de-escalation strategies. 7 of 8 members present and engaged. Facilitated structured discussion on identifying physiological and cognitive early warning signs of anger escalation.', type: 'text', showActions: true },
@@ -3900,6 +3926,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
     if (session.id === 'jake' || session.id === 'larry') return JAKE_CAROL_SUGGESTIONS_DATA;
+    if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
     if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
     if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;
