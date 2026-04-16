@@ -4227,7 +4227,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 data.forEach(({ section, cards }) => {
                   cards.forEach(card => {
                     if (card.type === 'text' && card.showActions && !excluded.has(`${section}-${card.field}`)) {
-                      onAddToNote?.(focusedEhrField ?? section, card.content, card.field);
+                      onAddToNote?.(section, card.content, card.field);
                     }
                   });
                 });
