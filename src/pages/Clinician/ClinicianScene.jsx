@@ -3833,6 +3833,20 @@ const GROUP_ASAM_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Progress Note suggestions (Jacob Rosen) ───────────────────────────────────
+
+const PROGRESS_NOTE_SUGGESTIONS_DATA = [
+  { section: 'Progress Note', cards: [
+    { field: 'Note Addresses Which Objective', content: 'This session addresses Objective 2: Improve coping skills for managing depressive symptoms and low motivation. Client engagement in behavioral activation continues to be the primary focus of treatment at this stage.', type: 'text', showActions: true },
+    { field: 'Describe Details of the Case Management Service', content: 'Individual outpatient therapy session, 45 minutes. Clinician provided direct therapeutic intervention including psychoeducation on behavioral activation and collaborative review of activity scheduling. Progress toward treatment plan goals was reviewed.', type: 'text', showActions: true },
+    { field: 'Explain Linkage to Services', content: 'Client is currently linked to weekly individual therapy. Clinician discussed potential referral to psychiatry for medication evaluation given persistence of depressive symptoms. Client expressed openness; referral information provided and warm handoff to be initiated next session.', type: 'text', showActions: true },
+    { field: 'Clinical Observations', content: 'Client appeared dysthymic with restricted affect at session onset, gradually showing increased engagement as session progressed. Speech was slow but coherent. No indications of thought disorder, suicidal ideation, or self-harm. Eye contact intermittent. Collaborative and responsive to prompts throughout.', type: 'text', showActions: true },
+    { field: 'Client Responses', content: 'Client reported minimal engagement in previously enjoyed activities over the past week, attributing low motivation to persistent fatigue and negative self-talk. Responded positively to validation and expressed cautious optimism about the updated behavioral activation plan. Identified two low-effort activities to try before the next session.', type: 'text', showActions: true },
+    { field: 'Progress Towards Recovery Plan Objectives', content: 'Objective 1 (Reduce PHQ-9 score to ≤9): Moderate progress — current self-reported PHQ-9 estimated at 11, down from 14 at intake. Objective 2 (Increase pleasant activity engagement): Partial progress — client completed 1 of 3 planned activities. Objective 3 (Develop coping toolkit): On track — client has identified 3 coping strategies; practicing two consistently.', type: 'text', showActions: true },
+    { field: 'Timelines for Next Service', content: 'Next individual therapy session scheduled in one week. Client to complete behavioral activation log and return with completed worksheet. Psychiatry referral to be initiated at next session if symptom plateau continues. Treatment plan review due in 30 days.', type: 'text', showActions: true },
+  ]},
+];
+
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
@@ -3848,6 +3862,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;
     if (session.noteType === 'Treatment Plan') return TREATMENT_PLAN_SUGGESTIONS_DATA;
+    if (session.noteType === 'Progress Note') return PROGRESS_NOTE_SUGGESTIONS_DATA;
     if (session.type === 'group' && session.includesASAM) return GROUP_ASAM_SUGGESTIONS_DATA;
     if (session.type === 'group') return GROUP_SINGLE_SUGGESTIONS_DATA;
     return SUGGESTIONS_DATA;
