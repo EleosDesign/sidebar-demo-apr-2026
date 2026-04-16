@@ -3846,6 +3846,29 @@ const GROUP_ASAM_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Jake Carol suggestions ────────────────────────────────────────────────────
+
+const JAKE_CAROL_SUGGESTIONS_DATA = [
+  { section: 'Key Moments', cards: [
+    { field: 'Relationship & Living Situation', content: 'The therapist and client discussed the client\'s relationship with his partner, including their current living situation and the possibility of her moving back in.', type: 'text', showActions: true },
+    { field: 'Codependency & Early Recovery', content: 'The therapist shared concerns about the potential challenges of a codependent dynamic, especially during early recovery, and emphasized the importance of both the client and his partner maintaining their individual recovery.', type: 'text', showActions: true },
+  ]},
+  { section: 'Interventions', cards: [
+    { field: 'Boundary Setting', content: 'Client was encouraged to establish clear boundaries with his partner and explored what those boundaries might look like in practice, highlighting their importance for both his own well-being and that of his family.', type: 'text', showActions: true },
+    { field: 'Motivational Interviewing', content: 'Motivational interviewing techniques were used to strengthen the client\'s commitment to recovery and to support him in taking actionable steps toward his goals.', type: 'text', showActions: true },
+    { field: 'Psychoeducation', content: 'The therapist provided psychoeducation on the benefits of family sessions for couples in recovery, particularly in improving communication and relationship functioning.', type: 'text', showActions: true },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Engagement & Receptivity', content: 'The client appeared engaged, open, and receptive throughout the session. He demonstrated a clear commitment to his recovery and a willingness to take necessary steps to support both himself and his family.', type: 'text', showActions: true },
+    { field: 'Insight', content: 'The client showed insight into the importance of setting boundaries, particularly within his relationship, as a way to foster a more stable and healthy environment.', type: 'text', showActions: true },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Treatment & Sobriety', content: 'The client will continue participating in his current treatment and maintaining sobriety.', type: 'text', showActions: true },
+    { field: 'Boundaries', content: 'He will establish and uphold clear boundaries regarding his partner\'s potential move-in, with an emphasis on her commitment to treatment and sobriety.', type: 'text', showActions: true },
+    { field: 'Family Therapy', content: 'Additionally, the client will consider participating in family therapy sessions to further strengthen relationship dynamics and communication.', type: 'text', showActions: true },
+  ]},
+];
+
 // ── Progress Note suggestions (Jacob Rosen) ───────────────────────────────────
 
 const PROGRESS_NOTE_SUGGESTIONS_DATA = [
@@ -3871,6 +3894,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const resolvedData = (() => {
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
+    if (session.id === 'jake') return JAKE_CAROL_SUGGESTIONS_DATA;
     if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
     if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;
