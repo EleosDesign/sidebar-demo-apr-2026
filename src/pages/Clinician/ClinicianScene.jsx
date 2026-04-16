@@ -35,7 +35,7 @@ const SESSION_LIST = [
   { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
   { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
   { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single', noteType: 'Anger Management Group', isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
-  { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true,  isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
+  { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true, noteType: 'SUD Group', isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
   { id: 'patricia',  ...daysAgo(3), name: 'Patricia Rodriguez',     time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'audio', specialty: 'psychiatry', noteType: 'Med Management', isActive: false, summary: 'Client reported increased anxiety following medication adjustment. Discussed somatic symptoms and their relationship to health anxiety. Introduced interoceptive exposure rationale. Client hesitant but willing to try graduated approach.' },
   { id: 'ashlyn',    ...daysAgo(4), name: 'Ashlyn Rivera',          time: '10:30 – 11:15 AM',   type: 'individual', sessionType: 'audio', noteType: 'Assessment',                          isActive: false, summary: 'Client discussed trauma-related avoidance. Identified two avoided situations linked to past trauma. Using CPT framework, began challenging stuck points around self-blame. Client tolerated emotional content well; no dissociation noted.' },
   // ── Existing clients ─────────────────────────────────────────────────────────
@@ -780,7 +780,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             'Treatment Plan':        'TreatmentPlan',
             'Med Management':        'PsychiatricMedical',
             'Assessment':            'Assessment',
-            'Anger Management Group':'AngerManagementGroup',
+            'Anger Management Group': 'AngerManagementGroup',
+            'SUD Group':              'SUDGroup',
           };
           const noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
           noteTypeCtx?.setSelectedNoteType(noteTypeKey);
@@ -3857,6 +3858,44 @@ const GROUP_SINGLE_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── SUD Group suggestions ─────────────────────────────────────────────────────
+
+const SUD_GROUP_SUGGESTIONS_DATA = [
+  { section: 'Group Summary', cards: [
+    { field: 'Group Summary', content: 'Therapist facilitated the first session of an 8-week substance abuse support group. The stated purpose was to provide a confidential space for members to address substance use issues. Therapist established group norms, including confidentiality and respectful communication. Interventions included using an icebreaker question to build rapport, psychoeducation on group logistics, and direct questioning to explore members\' reasons for attending and their motivations for change. Therapist also utilized normalization by commending participants for attending and sharing her own recovery status to foster connection. The session concluded with a directive for participants to reflect on their personal goals for the group.', type: 'text', showActions: true },
+  ]},
+  { section: 'Lisette', cards: [
+    { field: 'Client Response to Intervention(s)', content: 'The patient was engaged and responsive. She identified as a turtle in an icebreaker, stating she feels tired and slow. She reported that her drinking escalated recreationally after a breakup and moving away from her family, and it has now become a daily craving she cannot control. She stated she wants to get better for herself and to have a brighter future.', type: 'text', showActions: true },
+    { field: 'ASAM-Relevant Disclosures', content: 'The patient reported escalating alcohol use to the point of daily cravings and an inability to go for long periods without drinking (Dimension 1). She identified external stressors, such as a breakup and isolation from family, as triggers for her initial increased use (Dimension 6). Her stated motivation is internal, wanting a \'brighter\' future for herself (Dimension 4).', type: 'text', showActions: true },
+    { field: 'Significant Peer Interactions', content: 'The patient affirmed another participant\'s statement, agreeing that seeking help was a significant step forward rather than pretending to have her drinking under control.', type: 'text', showActions: true },
+    { field: 'Explicitly Stated Plans For Next Steps', content: 'No next steps were discussed.', type: 'text', showActions: true },
+  ]},
+  { section: 'Bethany', cards: [
+    { field: 'Client Response to Intervention(s)', content: 'The patient was engaged and actively participated. She responded to the icebreaker, stating she would be a jellyfish. She identified her presenting issue as an addiction to caffeine that began in college and which she now recognizes as unhealthy. She expressed a desire to regain a sense of control over her life as her primary motivation for change.', type: 'text', showActions: true },
+    { field: 'ASAM-Relevant Disclosures', content: 'The patient reported a compulsive use of caffeine that she feels she is no longer in control of (Dimension 1). She expressed a strong desire to cut back or quit, citing a need to feel in control as her motivation (Dimension 4). She also demonstrated insight by acknowledging her concern that this pattern could lead to addiction to other substances, such as alcohol, in the future (Dimension 5).', type: 'text', showActions: true },
+    { field: 'Significant Peer Interactions', content: 'The patient agreed with another participant, stating that addressing her caffeine use now could prevent a more harmful addiction from developing later.', type: 'text', showActions: true },
+    { field: 'Explicitly Stated Plans for Next Steps', content: 'The patient stated a plan to \'cut back on it or try to cut it out\' of her life.', type: 'text', showActions: true },
+  ]},
+  { section: 'Tara', cards: [
+    { field: 'Client Response to Intervention(s)', content: 'The patient participated in all activities but appeared ambivalent about treatment. She stated she was present because her husband discovered her using his pain medication. She relayed her husband\'s belief that she uses due to boredom as a stay-at-home mother. When questioned by therapist, the patient conceded it was best to address why she was using the pills. She also identified not wanting her children to witness her substance use as a motivating factor.', type: 'text', showActions: true },
+    { field: 'ASAM-Relevant Disclosures', content: 'The patient disclosed non-prescribed use of her husband\'s pain medication (Dimension 1). Her presence in treatment is due to external pressure from her spouse, although she also identified an internal motivation to be a good parent (Dimension 4). She reported \'boredom\' as a potential driver for her use, suggesting a possible underlying issue related to life satisfaction (Dimension 3). Her recovery environment includes her husband, who prompted her treatment, and her children, whom she does not want to be aware of her use (Dimension 6).', type: 'text', showActions: true },
+    { field: 'Significant Peer Interactions', content: 'No significant peer interactions were noted.', type: 'text', showActions: true },
+    { field: 'Explicitly Stated Plans for Next Steps', content: 'The patient stated she should \'figure out why I was taking them and address that\'.', type: 'text', showActions: true },
+  ]},
+  { section: 'John', cards: [
+    { field: 'Client Response to Intervention(s)', content: 'The patient was open and engaged. He shared that he wants to stop drinking alcohol but finds himself unable to stop on his own. He is a widower with two daughters and stated his primary motivation is to have more energy for them. He described a nightly drinking pattern that leads to poor sleep and fatigue, which he characterized as a \'sad little me time\'.', type: 'text', showActions: true },
+    { field: 'ASAM-Relevant Disclosures', content: 'The patient reported an inability to control his alcohol consumption and has been unsuccessful in attempts to quit on his own (Dimension 1). His use results in fatigue, which impacts his functioning (Dimension 2). The patient is a widower, indicating potential co-occurring grief (Dimension 3). He expressed strong motivation for change centered on his desire to be a more present and energetic father for his two daughters (Dimension 4). His recovery environment includes being the sole parent to two children (Dimension 6).', type: 'text', showActions: true },
+    { field: 'Significant Peer Interactions', content: 'In response to a group question about parenting, the patient stated that his children are a primary reason for his being in treatment.', type: 'text', showActions: true },
+    { field: 'Explicitly Stated Next Steps', content: 'No next steps were discussed.', type: 'text', showActions: true },
+  ]},
+  { section: 'Participant 1', cards: [
+    { field: 'Client Response to Intervention(s)', content: 'Participant 1 participated in the icebreaker activity and provided a brief response to the prompt but did not elaborate further. They did not verbally engage in subsequent group discussion and did not respond to questions regarding substance use history or motivation for treatment. No additional information was shared during this session.', type: 'text', showActions: true },
+    { field: 'ASAM-Relevant Disclosures', content: 'No ASAM-relevant disclosures were made.', type: 'text', showActions: true },
+    { field: 'Significant Peer Interactions', content: 'No significant peer interactions were reported.', type: 'text', showActions: true },
+    { field: 'Explicitly Stated Plans for Next Steps', content: 'No next steps were discussed or identified by the participant.', type: 'text', showActions: true },
+  ]},
+];
+
 // ── Group session — multiple suggestions per member + ASAM ───────────────────
 
 const GROUP_ASAM_SUGGESTIONS_DATA = [
@@ -3927,6 +3966,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (!session) return SUGGESTIONS_DATA;
     if (session.id === 'jake' || session.id === 'larry') return JAKE_CAROL_SUGGESTIONS_DATA;
     if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
+    if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
     if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
     if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;

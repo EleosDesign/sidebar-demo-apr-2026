@@ -330,6 +330,48 @@
         }
       }
     },
+    "SUDGroup": {
+      "name": "SUD Group",
+      "description": "SUD group session note with overall summary and per-participant ASAM-informed notes",
+      "sections": [
+        {
+          "id": "groupSummary",
+          "label": "Group Summary",
+          "description": "Summary of the full group session",
+          "sampleContent": "Therapist facilitated the first session of an 8-week substance abuse support group."
+        },
+        {
+          "id": "lisette",
+          "label": "Lisette",
+          "description": "Individual note for Lisette",
+          "sampleContent": "The patient was engaged and responsive."
+        },
+        {
+          "id": "bethany",
+          "label": "Bethany",
+          "description": "Individual note for Bethany",
+          "sampleContent": "The patient was engaged and actively participated."
+        },
+        {
+          "id": "tara",
+          "label": "Tara",
+          "description": "Individual note for Tara",
+          "sampleContent": "The patient participated in all activities but appeared ambivalent about treatment."
+        },
+        {
+          "id": "john",
+          "label": "John",
+          "description": "Individual note for John",
+          "sampleContent": "The patient was open and engaged."
+        },
+        {
+          "id": "participant1Sud",
+          "label": "Participant 1",
+          "description": "Individual note for Participant 1",
+          "sampleContent": "Participant 1 participated in the icebreaker activity and provided a brief response."
+        }
+      ]
+    },
     "AngerManagementGroup": {
       "name": "Anger Management Group",
       "description": "Group session note with overall summary and individual participant notes",
