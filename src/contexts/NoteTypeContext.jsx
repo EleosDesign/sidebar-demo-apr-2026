@@ -99,8 +99,12 @@ export function NoteTypeProvider({ children }) {
     setNoteValues(getInitialValues(selectedNoteType));
   }, [selectedNoteType]);
 
-  const updateNoteValue = (sectionId, value) => {
-    setNoteValues(prev => ({ ...prev, [sectionId]: value }));
+  const updateNoteValue = (sectionId, valueOrUpdater) => {
+    if (typeof valueOrUpdater === 'function') {
+      setNoteValues(prev => ({ ...prev, [sectionId]: valueOrUpdater(prev[sectionId] ?? '') }));
+    } else {
+      setNoteValues(prev => ({ ...prev, [sectionId]: valueOrUpdater }));
+    }
   };
 
   return (

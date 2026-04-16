@@ -4,17 +4,17 @@ import { useEhrField } from './EhrFieldContext.jsx';
 // ── Demo data ──────────────────────────────────────────────────────────────────
 
 const OPEN_ITEMS = [
-  { id: 0, title: 'Actionable Plan',    detail: 'Make the plan clearer with specific, actionable steps that the client can take.' },
-  { id: 1, title: 'Golden Thread',      detail: "We couldn't find an active treatment plan for this patient. Ensure your note references the client's treatment goals." },
-  { id: 2, title: 'Copy/Paste',         detail: 'Avoid copying and pasting — each note should capture the unique session and progress.' },
-  { id: 3, title: 'Short/Empty Fields', detail: "Ensure your note section contains enough substance to reflect the session's value." },
+  { id: 0, title: 'Progress Mentioned',              detail: 'Note lacks specific progress documentation or goal indicators.' },
+  { id: 1, title: 'Client Response to Intervention', detail: 'No client response documented after intervention.' },
+  { id: 2, title: 'Compliant Plan',                  detail: 'Both criteria were not met: no next step or next appointment documented.' },
+  { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).' },
 ];
 
-const COMPLETED_ITEMS = ['Client Identified Present', 'Session Goal Addressed', 'Appropriate Diagnosis Documented'];
+const COMPLETED_ITEMS = ['Completeness', 'Uniqueness', 'Golden Thread', 'Intervention Used'];
 
 const ALL_CLEAR_ITEMS = [
-  'Actionable Plan', 'Golden Thread', 'Copy/Paste', 'Short/Empty Fields',
-  'Client Identified Present', 'Session Goal Addressed', 'Appropriate Diagnosis Documented',
+  'Progress Mentioned', 'Client Response to Intervention', 'Compliant Plan', 'Service Code Match',
+  'Completeness', 'Uniqueness', 'Golden Thread', 'Intervention Used',
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ function CheckItem({ label }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessionLabel = 'Apr 6, 2026, 10:00 – 10:45 AM' }) {
+export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM' }) {
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
   const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
@@ -215,8 +215,8 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>
                   Open Items <span>({visibleItems.length})</span>
                 </span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d={openExpanded ? 'M7 14l5-5 5 5H7z' : 'M7 10l5 5 5-5H7z'} fill="#888" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: openExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
+                  <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               {openExpanded && (
@@ -234,8 +234,8 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>
                   Completed <span>({COMPLETED_ITEMS.length})</span>
                 </span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d={completedExpanded ? 'M7 14l5-5 5 5H7z' : 'M7 10l5 5 5-5H7z'} fill="#888" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: completedExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
+                  <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               {completedExpanded && (
@@ -253,7 +253,9 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Open Items <span>(0)</span></span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 14l5-5 5 5H7z" fill="#888" /></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
               <div style={{ padding: '0 14px 14px' }}>
                 <div style={{ textAlign: 'center', fontSize: 14, color: '#888', fontFamily: "'Poppins',sans-serif", padding: '12px 0' }}>All items resolved!</div>
@@ -262,7 +264,9 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #f0f0f0' }}>
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({ALL_CLEAR_ITEMS.length})</span></span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 14l5-5 5 5H7z" fill="#888" /></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(180deg)', flexShrink: 0 }}>
+                  <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
               <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {ALL_CLEAR_ITEMS.map((item, i) => <CheckItem key={i} label={item} />)}
@@ -273,27 +277,28 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
       </div>
 
       {/* ── Footer ── */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid #f0f0f0', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {state === 'idle' && (
-          <button onClick={runAnalysis}
-            style={{ width: '100%', padding: 14, background: '#2D4CCD', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, fontFamily: "'Poppins',sans-serif", cursor: 'pointer' }}>
-            Check Note Quality
-          </button>
-        )}
-        {state === 'progress' && (
-          <button disabled style={{ width: '100%', padding: 14, background: '#2D4CCD', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, fontFamily: "'Poppins',sans-serif", cursor: 'not-allowed', opacity: 0.5 }}>
-            Analyzing...
-          </button>
-        )}
+      <div style={{ padding: '12px 16px 16px', borderTop: '1px solid #f0f0f0', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
         {state === 'results' && (
           <div style={{ width: '100%', height: 3, background: '#e0e4f7', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
             <div style={{
               height: '100%', borderRadius: 2,
               background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : 'linear-gradient(90deg, #2D4CCD, #7B8EE8)',
-              width: resultsVariant === 'allClear' ? '100%' : '35%',
+              width: resultsVariant === 'allClear' ? '100%' : `${Math.round(COMPLETED_ITEMS.length / (COMPLETED_ITEMS.length + OPEN_ITEMS.length) * 100)}%`,
               transition: 'width 0.5s ease, background 0.5s ease',
             }} />
           </div>
+        )}
+        {state === 'idle' && (
+          <button onClick={runAnalysis}
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            Check Note Quality
+          </button>
+        )}
+        {state === 'progress' && (
+          <button disabled
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'not-allowed', opacity: 0.5, fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            Analyzing...
+          </button>
         )}
         {state === 'results' && resultsVariant === 'issues' && (
           <>
@@ -301,19 +306,19 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
               onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
               disabled={!changedSinceAnalysis}
               style={{
-                width: '100%', padding: 14, border: 'none', borderRadius: 10, fontSize: 15,
-                fontWeight: 600, fontFamily: "'Poppins',sans-serif",
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                width: '100%', height: 30, border: 'none', borderRadius: 4,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
                 transition: 'background 0.2s, color 0.2s',
                 ...(changedSinceAnalysis
-                  ? { background: '#2D4CCD', color: '#fff', cursor: 'pointer' }
-                  : { background: '#e8eaff', color: '#8892d6', cursor: 'not-allowed' }
+                  ? { background: '#2d4ccd', color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: 'rgba(45,76,205,0.12)', color: '#2d4ccd', cursor: 'not-allowed' }
                 ),
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M4 4v5h5M20 20v-5h-5" stroke={changedSinceAnalysis ? '#fff' : '#8892d6'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke={changedSinceAnalysis ? '#fff' : '#8892d6'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Re-Run Analysis
             </button>
@@ -326,8 +331,8 @@ export default function LQAReview({ onAdvance, clientName = 'Marcus Webb', sessi
         )}
         {state === 'results' && resultsVariant === 'allClear' && (
           <button onClick={onAdvance}
-            style={{ width: '100%', padding: 14, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, fontFamily: "'Poppins',sans-serif", cursor: 'pointer' }}>
-            Submit Note
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            Mark as Submitted
           </button>
         )}
       </div>
