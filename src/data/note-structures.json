@@ -487,37 +487,90 @@
       "description": "Comprehensive treatment planning document",
       "sections": [
         {
-          "id": "presentingProblems",
-          "label": "Presenting Problems",
-          "description": "Current issues and concerns bringing client to treatment",
-          "sampleContent": "Client presents with significant anxiety symptoms, including persistent worry, sleep disturbance, and avoidance behaviors that are impacting occupational functioning. Client reports an ongoing conflict with his direct supervisor that has contributed to increased stress and an inability to respond assertively in the workplace. Identified patterns of behavioral avoidance — particularly avoiding email correspondence and interpersonal confrontation — are maintaining and exacerbating anxiety. Client reports sleeping an average of 5 hours per night and endorses moderate symptoms of depression secondary to the anxiety and workplace stressor. No substance use concerns at this time. Client is motivated for treatment and goal-directed."
+          "id": "substanceUse",
+          "label": "Substance Use",
+          "description": "Client's history and current status of substance use",
+          "sampleContent": "The client reports a history of substance use that is interfering with her ability to regain custody of her son. She expresses ambivalence about change, stating she doesn't believe it is a 'big issue,' but acknowledges she needs to work on it. She identifies her friends and her partner, Justin, as triggers for use."
         },
         {
-          "id": "goals",
-          "label": "Treatment Goals",
-          "description": "Specific, measurable treatment objectives",
-          "sampleContent": "1. Reduce symptoms of depression as measured by PHQ-9 scores. 2. Develop and consistently use healthy coping strategies. 3. Improve interpersonal relationships and social support network."
+          "id": "educationalVocationalBarriers",
+          "label": "Educational And Vocational Barriers",
+          "description": "Client's educational background and vocational barriers",
+          "sampleContent": "The client has obtained her GED but expresses a desire for further education to 'get a better job' upon release and provide for her son. She identifies financial cost and time management, particularly balancing work, school, and parenting, as significant barriers."
         },
         {
-          "id": "objectives",
-          "label": "Objectives",
-          "description": "Specific steps to achieve treatment goals",
-          "sampleContent": "1. Client will identify and challenge at least two cognitive distortions related to workplace conflict per week, as tracked in thought log. 2. Client will complete at least one behavioral activation task per week targeting avoided workplace communications, with progress reviewed at each session. 3. Client will implement a sleep hygiene routine (consistent bed/wake time, screen-free wind-down) at least 5 nights per week, tracked via sleep log. 4. Client will reduce GAD-7 score from current 14 (moderate) to 8 or below within 12 weeks. 5. Client will identify and verbalize two assertive communication strategies to use in response to supervisor conflict by session 6."
+          "id": "parentingStress",
+          "label": "Parenting Stress",
+          "description": "Parenting challenges and associated stress",
+          "sampleContent": "The client reports feeling 'really overwhelmed taking care of' her son, Jake, and indicates there is 'a lot of stress around that' for her."
         },
         {
-          "id": "interventions",
-          "label": "Interventions",
-          "description": "Therapeutic modalities and approaches to be used",
-          "sampleContent": "Cognitive Behavioral Therapy (CBT) — primary modality, targeting maladaptive thought patterns and behavioral avoidance. Behavioral Activation — graduated task hierarchy addressing avoidance of workplace communications. Psychoeducation — anxiety and avoidance cycle, sleep hygiene, assertive communication. Motivational Interviewing — to explore and strengthen client's motivation for behavioral change. Between-session homework assignments — thought records, behavioral activation logs, and sleep diary to support skill generalization. Coordination with psychiatry if pharmacological support becomes indicated."
+          "id": "antisocialPeerAssociations",
+          "label": "Antisocial Peer Associations",
+          "description": "Peer relationships connected to risk behaviors",
+          "sampleContent": "The client's social network, including her friends and partner, appear to be connected to her substance use and 'offending' behavior. The client states that when she is around them, she uses substances."
         },
         {
-          "id": "timeline",
-          "label": "Timeline",
-          "description": "Expected duration and review schedule",
-          "sampleContent": "Initial treatment episode: 16 weeks of weekly individual therapy (approximately 4 months). Progress review at week 8 — reassess PHQ-9 and GAD-7, revise objectives as needed. Anticipated transition to biweekly sessions following week 16 if treatment goals are substantially met. Treatment plan to be formally reviewed and updated every 90 days or sooner if clinically indicated. Estimated discharge criteria: GAD-7 below 8, PHQ-9 below 5, client demonstrating consistent use of coping strategies and re-engagement in previously avoided activities."
+          "id": "achieveHigherEducation",
+          "label": "Achieve Higher Education",
+          "description": "Goal related to educational attainment",
+          "sampleContent": "The client's long-term goal is to obtain a two-year associate's degree to secure a career that is both fulfilling ('help people') and provides sufficient income to independently support her son, Jake."
+        },
+        {
+          "id": "reduceHarmSubstanceUse",
+          "label": "Reduce Harm From Substance Use",
+          "description": "Goal to reduce substance use and associated harms",
+          "sampleContent": "The client and provider agreed on the goal to 'significantly reduce' substance use. While the client is not committed to abstinence, she is willing to work towards this goal to improve her chances of regaining custody of her son."
+        },
+        {
+          "id": "educationalCaseManagement",
+          "label": "Educational Case Management",
+          "description": "Case management support for educational goals",
+          "sampleContent": "Provider will assist the client by researching college entrance exam requirements, providing a pass for extra computer time for research, and offering support in completing college applications."
+        },
+        {
+          "id": "motivationalInterviewing",
+          "label": "Motivational Interviewing",
+          "description": "MI techniques to address ambivalence",
+          "sampleContent": "Provider will use motivational interviewing techniques, including a cost-benefit analysis and exploring the client's self-rated motivation (5/10), to address ambivalence and build intrinsic motivation for reducing substance use."
+        },
+        {
+          "id": "referralOnSiteProgramming",
+          "label": "Referral To On-Site Programming",
+          "description": "Referral to on-site substance use support",
+          "sampleContent": "Provider will provide information about on-site substance use support groups and will explore options for the client to participate in the facility's substance abuse treatment wing."
+        },
+        {
+          "id": "accountabilityProgressMonitoring",
+          "label": "Accountability And Progress Monitoring",
+          "description": "Follow-up and progress tracking plan",
+          "sampleContent": "Provider will follow up on the client's completion of assigned tasks and will verify attendance at support group meetings by checking in with the group facilitator."
+        },
+        {
+          "id": "exploreEducationalOptions",
+          "label": "Explore Educational Options",
+          "description": "Objective to research educational opportunities",
+          "sampleContent": "By the next session, the client will use approved computer time to research potential college options, including a local community college, to identify programs of interest."
+        },
+        {
+          "id": "prepareCollegeEntrance",
+          "label": "Prepare For College Entrance",
+          "description": "Objective to prepare for college entrance exam",
+          "sampleContent": "Within the next 30 days, the client will work with provider to identify and prepare for a college entrance or placement exam."
+        },
+        {
+          "id": "increaseMotivationForChange",
+          "label": "Increase Motivation For Change",
+          "description": "Objective to build intrinsic motivation for change",
+          "sampleContent": "By the next session, the client will complete a cost-benefit analysis worksheet, focusing on identifying the positive outcomes of changing her substance use and the negative consequences of continuing her use."
+        },
+        {
+          "id": "engageInSoberSupport",
+          "label": "Engage In Sober Support",
+          "description": "Objective to attend sober support group",
+          "sampleContent": "Before the next weekly session, the client will attend two on-site support group meetings to begin building a pro-social support network."
         }
-      ],
-      "noteTypes": ["Treatment Plan"]
+      ]
     },
     "Assessment": {
       "name": "Clinical Assessment",

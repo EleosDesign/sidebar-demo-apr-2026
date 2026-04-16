@@ -3767,20 +3767,27 @@ const CASE_MGMT_SUGGESTIONS_DATA = [
 // ── Treatment Plan suggestions ────────────────────────────────────────────────
 
 const TREATMENT_PLAN_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Presenting Problems', content: 'Client presents with complicated grief following bereavement, characterized by persistent yearning, difficulty accepting the loss, and functional impairment in daily activities. Symptoms present for 6+ months with moderate severity.', type: 'text', showActions: true },
-    { field: 'Diagnoses', chips: ['Prolonged Grief Disorder (F43.8)', 'Adjustment Disorder with Depressed Mood (F43.21)'], type: 'chips' },
-    { field: 'Clinical Strengths', content: 'Client demonstrates strong insight, willingness to engage in treatment, and existing social supports. Motivated to restore daily functioning and find meaning post-loss.', type: 'text' },
+  { section: 'Presenting Problems', cards: [
+    { field: 'Substance Use', content: 'The client reports a history of substance use that is interfering with her ability to regain custody of her son. She expresses ambivalence about change, stating she doesn\'t believe it is a \'big issue,\' but acknowledges she needs to work on it. She identifies her friends and her partner, Justin, as triggers for use.', type: 'text', showActions: true },
+    { field: 'Educational And Vocational Barriers', content: 'The client has obtained her GED but expresses a desire for further education to \'get a better job\' upon release and provide for her son. She identifies financial cost and time management, particularly balancing work, school, and parenting, as significant barriers.', type: 'text', showActions: true },
+    { field: 'Parenting Stress', content: 'The client reports feeling \'really overwhelmed taking care of\' her son, Jake, and indicates there is \'a lot of stress around that\' for her.', type: 'text', showActions: true },
+    { field: 'Antisocial Peer Associations', content: 'The client\'s social network, including her friends and partner, appear to be connected to her substance use and \'offending\' behavior. The client states that when she is around them, she uses substances.', type: 'text', showActions: true },
   ]},
-  { section: 'Assessment', cards: [
-    { field: 'Goals', content: '1. Reduce grief-related functional impairment from severe to mild within 16 sessions.\n2. Develop adaptive coping strategies to manage grief triggers.\n3. Re-engage in meaningful social and recreational activities.', type: 'text', showActions: true },
-    { field: 'Objectives', chips: ['Complete grief psychoeducation module', 'Identify 3 valued activities to re-engage', 'Practice dual process coping weekly'], type: 'chips' },
-    { field: 'Measurable Outcomes', content: 'Prolonged Grief Disorder-13 score reduction from baseline 38 to below 30 within 12 sessions. Client-reported return to at least 2 social activities per week within 8 sessions.', type: 'text' },
+  { section: 'Treatment Goals', cards: [
+    { field: 'Achieve Higher Education', content: 'The client\'s long-term goal is to obtain a two-year associate\'s degree to secure a career that is both fulfilling (\'help people\') and provides sufficient income to independently support her son, Jake.', type: 'text', showActions: true },
+    { field: 'Reduce Harm From Substance Use', content: 'The client and provider agreed on the goal to \'significantly reduce\' substance use. While the client is not committed to abstinence, she is willing to work towards this goal to improve her chances of regaining custody of her son.', type: 'text', showActions: true },
   ]},
-  { section: 'Plan', cards: [
-    { field: 'Interventions', content: 'Complicated Grief Treatment (CGT) — 16-session evidence-based protocol. Sessions to include loss narrative work, situational revisiting of avoided situations, and imaginal conversations. Dual process coping model introduced.', type: 'text', showActions: true },
-    { field: 'Modalities', chips: ['Individual therapy weekly', 'CGT protocol', 'Psychoeducation', 'Bibliotherapy'], type: 'chips' },
-    { field: 'Review Date', content: 'Treatment plan review at session 8. Reassess goals and adjust frequency based on progress. Coordinate with PCP if somatic symptoms persist.', type: 'text' },
+  { section: 'Interventions or Services', cards: [
+    { field: 'Educational Case Management', content: 'Provider will assist the client by researching college entrance exam requirements, providing a pass for extra computer time for research, and offering support in completing college applications.', type: 'text', showActions: true },
+    { field: 'Motivational Interviewing', content: 'Provider will use motivational interviewing techniques, including a cost-benefit analysis and exploring the client\'s self-rated motivation (5/10), to address ambivalence and build intrinsic motivation for reducing substance use.', type: 'text', showActions: true },
+    { field: 'Referral To On-Site Programming', content: 'Provider will provide information about on-site substance use support groups and will explore options for the client to participate in the facility\'s substance abuse treatment wing.', type: 'text', showActions: true },
+    { field: 'Accountability And Progress Monitoring', content: 'Provider will follow up on the client\'s completion of assigned tasks and will verify attendance at support group meetings by checking in with the group facilitator.', type: 'text', showActions: true },
+  ]},
+  { section: 'Measurable Objectives', cards: [
+    { field: 'Explore Educational Options', content: 'By the next session, the client will use approved computer time to research potential college options, including a local community college, to identify programs of interest.', type: 'text', showActions: true },
+    { field: 'Prepare For College Entrance', content: 'Within the next 30 days, the client will work with provider to identify and prepare for a college entrance or placement exam.', type: 'text', showActions: true },
+    { field: 'Increase Motivation For Change', content: 'By the next session, the client will complete a cost-benefit analysis worksheet, focusing on identifying the positive outcomes of changing her substance use and the negative consequences of continuing her use.', type: 'text', showActions: true },
+    { field: 'Engage In Sober Support', content: 'Before the next weekly session, the client will attend two on-site support group meetings to begin building a pro-social support network.', type: 'text', showActions: true },
   ]},
 ];
 
