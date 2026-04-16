@@ -29,7 +29,7 @@ function daysAgo(n) {
 // New clients (today–4 days ago) appear first; existing clients follow (5–8 days ago)
 const SESSION_LIST = [
   // ── New clients ──────────────────────────────────────────────────────────────
-  { id: 'jake',      ...daysAgo(0), name: 'Jake Carol',             time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Client discussed ongoing difficulties with interpersonal conflict at home. Identified triggers for reactive anger. Worked on pause-and-plan technique. Homework: log three instances of using the technique before next session.' },
+  { id: 'jake',      ...daysAgo(0), name: 'Jake Carol',             time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'audio',  noteType: 'Individual Audio',                  isActive: false, summary: 'Client discussed ongoing difficulties with interpersonal conflict at home. Identified triggers for reactive anger. Worked on pause-and-plan technique. Homework: log three instances of using the technique before next session.' },
   { id: 'jacob',     ...daysAgo(0), name: 'Jacob Rosen',            time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Progress Note',                       isActive: false, summary: 'Session addressed depressive symptoms and low motivation. Client reported minimal engagement in previously enjoyed activities. Behavioral activation plan updated — added two low-effort pleasant activities for the week.' },
   { id: 'larry',     ...daysAgo(1), name: 'Larry Quinn',            time: '9:00 – 9:45 AM',     type: 'individual', sessionType: 'audio', liveQA: true,                                    isActive: false, summary: 'Client presented with elevated anxiety related to upcoming retirement transition. Explored identity concerns and loss of structure. Began values clarification exercise; client to complete worksheet before next session.' },
   { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
@@ -774,11 +774,12 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           }
           // Switch EHR note type to match the session
           const NOTE_TYPE_KEY_MAP = {
-            'Progress Note':   'ProgressNote',
-            'Case Management': 'CaseManagement',
-            'Treatment Plan':  'TreatmentPlan',
-            'Med Management':  'PsychiatricMedical',
-            'Assessment':      'Assessment',
+            'Individual Audio': 'IndividualAudio',
+            'Progress Note':    'ProgressNote',
+            'Case Management':  'CaseManagement',
+            'Treatment Plan':   'TreatmentPlan',
+            'Med Management':   'PsychiatricMedical',
+            'Assessment':       'Assessment',
           };
           const noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
           noteTypeCtx?.setSelectedNoteType(noteTypeKey);
