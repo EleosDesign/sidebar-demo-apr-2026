@@ -25,16 +25,26 @@ function daysAgo(n) {
   return { month: MONTH_ABBREVS[d.getMonth()], day: String(d.getDate()) };
 }
 
-// Sessions shown in the "My Sessions" list (recording panel, step 2)
-// Today = 2026-04-01 (Wed). Last week: Mon Mar 30, Tue Mar 31, Wed Apr 1 (today)
-// Sessions span: today (1), yesterday (2), 2 days ago (3), last Thu (5), last Thu (5), last Fri (4)
+// Sessions shown in the "My Sessions" list
+// New clients (today–4 days ago) appear first; existing clients follow (5–8 days ago)
 const SESSION_LIST = [
-  { id: 'marcus',    ...daysAgo(1), name: 'Marcus Webb',       time: '10:00 – 10:45 AM', type: 'individual', sessionType: 'text',  isActive: true,  summary: 'Client reported significant work-related stress and anxiety around manager conflict. Avoidance patterns discussed; behavioral activation task assigned for the week.' },
-  { id: 'priya',     ...daysAgo(2), name: 'Priya Nair',        time: '2:00 – 2:45 PM',   type: 'individual', sessionType: 'audio', isActive: false, summary: 'Reviewed progress on sleep hygiene goals. Client reports improvement — averaging 7 hrs/night. Discussed upcoming family visit as potential stressor. Coping strategies reviewed.' },
-  { id: 'ryan',      ...daysAgo(2), name: 'Ryan Cho',          time: '4:00 – 4:45 PM',   type: 'individual', sessionType: 'text',  isActive: false, summary: 'Session focused on distress tolerance skills. Client practiced TIPP technique in session. Reported two episodes of self-harm urges this week; safety plan reviewed and updated.' },
-  { id: 'group-thu', ...daysAgo(5), name: 'Thursday AM Group', time: '9:00 – 10:00 AM',  type: 'group',      sessionType: 'audio', isActive: false, summary: 'Group focused on interpersonal effectiveness. 6 of 8 members present. Discussion on boundary-setting in workplace relationships. Homework: identify one boundary to practice this week.' },
-  { id: 'aisha',     ...daysAgo(5), name: 'Aisha Monroe',      time: '11:00 – 11:45 AM', type: 'individual', sessionType: 'audio', isActive: false, summary: 'Initial assessment session. Client presenting with moderate depression following recent job loss. PHQ-9 score: 14. Treatment goals established. Weekly CBT sessions recommended.' },
-  { id: 'carmen',    ...daysAgo(4), name: 'Carmen Vega',       time: '1:30 – 2:15 PM',   type: 'individual', sessionType: 'text',  isActive: false, summary: 'Follow-up on exposure hierarchy progress. Client completed 3 of 5 planned exposures. Reported SUDS peak of 65, returning to 20 within 15 min. Strong progress noted.' },
+  // ── New clients ──────────────────────────────────────────────────────────────
+  { id: 'jake',      ...daysAgo(0), name: 'Jake Carol',             time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Client discussed ongoing difficulties with interpersonal conflict at home. Identified triggers for reactive anger. Worked on pause-and-plan technique. Homework: log three instances of using the technique before next session.' },
+  { id: 'jacob',     ...daysAgo(0), name: 'Jacob Rosen',            time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Progress Note',                       isActive: false, summary: 'Session addressed depressive symptoms and low motivation. Client reported minimal engagement in previously enjoyed activities. Behavioral activation plan updated — added two low-effort pleasant activities for the week.' },
+  { id: 'larry',     ...daysAgo(1), name: 'Larry Quinn',            time: '9:00 – 9:45 AM',     type: 'individual', sessionType: 'audio', liveQA: true,                                    isActive: false, summary: 'Client presented with elevated anxiety related to upcoming retirement transition. Explored identity concerns and loss of structure. Began values clarification exercise; client to complete worksheet before next session.' },
+  { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
+  { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
+  { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single',                      isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
+  { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true,  isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
+  { id: 'patricia',  ...daysAgo(3), name: 'Patricia Rodriguez',     time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'audio', specialty: 'psychiatry', noteType: 'Med Management', isActive: false, summary: 'Client reported increased anxiety following medication adjustment. Discussed somatic symptoms and their relationship to health anxiety. Introduced interoceptive exposure rationale. Client hesitant but willing to try graduated approach.' },
+  { id: 'ashlyn',    ...daysAgo(4), name: 'Ashlyn Rivera',          time: '10:30 – 11:15 AM',   type: 'individual', sessionType: 'audio', noteType: 'Assessment',                          isActive: false, summary: 'Client discussed trauma-related avoidance. Identified two avoided situations linked to past trauma. Using CPT framework, began challenging stuck points around self-blame. Client tolerated emotional content well; no dissociation noted.' },
+  // ── Existing clients ─────────────────────────────────────────────────────────
+  { id: 'marcus',    ...daysAgo(5), name: 'Marcus Webb',            time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'text',                                                    isActive: true,  summary: 'Client reported significant work-related stress and anxiety around manager conflict. Avoidance patterns discussed; behavioral activation task assigned for the week.' },
+  { id: 'priya',     ...daysAgo(6), name: 'Priya Nair',             time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Reviewed progress on sleep hygiene goals. Client reports improvement — averaging 7 hrs/night. Discussed upcoming family visit as potential stressor. Coping strategies reviewed.' },
+  { id: 'ryan',      ...daysAgo(6), name: 'Ryan Cho',               time: '4:00 – 4:45 PM',     type: 'individual', sessionType: 'text',                                                    isActive: false, summary: 'Session focused on distress tolerance skills. Client practiced TIPP technique in session. Reported two episodes of self-harm urges this week; safety plan reviewed and updated.' },
+  { id: 'carmen',    ...daysAgo(7), name: 'Carmen Vega',            time: '1:30 – 2:15 PM',     type: 'individual', sessionType: 'text',                                                    isActive: false, summary: 'Follow-up on exposure hierarchy progress. Client completed 3 of 5 planned exposures. Reported SUDS peak of 65, returning to 20 within 15 min. Strong progress noted.' },
+  { id: 'group-thu', ...daysAgo(8), name: 'Thursday AM Group',      time: '9:00 – 10:00 AM',    type: 'group',      sessionType: 'audio',                                                   isActive: false, summary: 'Group focused on interpersonal effectiveness. 6 of 8 members present. Discussion on boundary-setting in workplace relationships. Homework: identify one boundary to practice this week.' },
+  { id: 'aisha',     ...daysAgo(8), name: 'Aisha Monroe',           time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Initial assessment session. Client presenting with moderate depression following recent job loss. PHQ-9 score: 14. Treatment goals established. Weekly CBT sessions recommended.' },
 ];
 
 // ── Root ─────────────────────────────────────────────────────────────────────
@@ -731,7 +741,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
         onBack={() => { setActivitiesSession(null); setPhase('sessions'); setClientName('Webb, Marcus'); }}
         onAddToNote={onAddToNote}
-        suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
+        suggestionsData={noteTypeCtx?.suggestionsData}
+        session={activitiesSession}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
         compactMode={compactMode}
         sidebarW={sidebarW}
@@ -3722,12 +3733,126 @@ const AUDIO_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Case Management suggestions ──────────────────────────────────────────────
+
+const CASE_MGMT_SUGGESTIONS_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Session Focus', content: 'Case management contact conducted to review service coordination, address barriers to care, and assess progress toward goals. Client reports partial engagement with referred services. Transportation and scheduling remain ongoing barriers.', type: 'text', showActions: true },
+    { field: 'Services Reviewed', chips: ['Outpatient therapy', 'Peer support', 'Housing assistance', 'Vocational rehab'], type: 'chips' },
+    { field: 'Barriers Identified', content: 'Limited transportation access and inconsistent phone service impacting ability to attend scheduled appointments. Client reports financial strain limiting access to medication.', type: 'text' },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Functional Status', content: 'Client demonstrates moderate ability to manage ADLs independently. Social support network remains limited. Engagement with case management is inconsistent but improving. Motivation to address housing instability is present.', type: 'text', showActions: true },
+    { field: 'Risk & Strengths', chips: ['No acute crisis', 'Motivated for change', 'Limited support network', 'Financial instability'], type: 'chips' },
+    { field: 'Goal Progress', content: 'Employment goal: 20% progress — resume completed, applications pending. Housing goal: 40% — waitlisted for transitional housing program. Recovery goal: 60% — sustained sobriety 45 days.', type: 'text' },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Action Steps', content: 'Coordinate with housing agency to confirm waitlist status. Contact prescriber regarding medication assistance program enrollment. Provide bus pass resources and schedule next appointment with flexible timing.', type: 'text', showActions: true },
+    { field: 'Referrals', chips: ['Medication Assistance Program', 'Transit assistance', 'Food bank referral'], type: 'chips' },
+    { field: 'Follow-up', content: 'Case management contact in 2 weeks. Warm handoff to housing navigator scheduled for next Tuesday.', type: 'text' },
+  ]},
+];
+
+// ── Treatment Plan suggestions ────────────────────────────────────────────────
+
+const TREATMENT_PLAN_SUGGESTIONS_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Presenting Problems', content: 'Client presents with complicated grief following bereavement, characterized by persistent yearning, difficulty accepting the loss, and functional impairment in daily activities. Symptoms present for 6+ months with moderate severity.', type: 'text', showActions: true },
+    { field: 'Diagnoses', chips: ['Prolonged Grief Disorder (F43.8)', 'Adjustment Disorder with Depressed Mood (F43.21)'], type: 'chips' },
+    { field: 'Clinical Strengths', content: 'Client demonstrates strong insight, willingness to engage in treatment, and existing social supports. Motivated to restore daily functioning and find meaning post-loss.', type: 'text' },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Goals', content: '1. Reduce grief-related functional impairment from severe to mild within 16 sessions.\n2. Develop adaptive coping strategies to manage grief triggers.\n3. Re-engage in meaningful social and recreational activities.', type: 'text', showActions: true },
+    { field: 'Objectives', chips: ['Complete grief psychoeducation module', 'Identify 3 valued activities to re-engage', 'Practice dual process coping weekly'], type: 'chips' },
+    { field: 'Measurable Outcomes', content: 'Prolonged Grief Disorder-13 score reduction from baseline 38 to below 30 within 12 sessions. Client-reported return to at least 2 social activities per week within 8 sessions.', type: 'text' },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Interventions', content: 'Complicated Grief Treatment (CGT) — 16-session evidence-based protocol. Sessions to include loss narrative work, situational revisiting of avoided situations, and imaginal conversations. Dual process coping model introduced.', type: 'text', showActions: true },
+    { field: 'Modalities', chips: ['Individual therapy weekly', 'CGT protocol', 'Psychoeducation', 'Bibliotherapy'], type: 'chips' },
+    { field: 'Review Date', content: 'Treatment plan review at session 8. Reassess goals and adjust frequency based on progress. Coordinate with PCP if somatic symptoms persist.', type: 'text' },
+  ]},
+];
+
+// ── Assessment suggestions ────────────────────────────────────────────────────
+
+const ASSESSMENT_SUGGESTIONS_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Reason for Referral', content: 'Client referred for comprehensive psychological assessment to evaluate trauma-related symptoms, establish diagnosis, and inform treatment planning. Client reports history of repeated trauma and current avoidance behaviors impacting daily function.', type: 'text', showActions: true },
+    { field: 'Assessment Methods', chips: ['Clinical interview', 'PCL-5 (PTSD Checklist)', 'PHQ-9', 'GAD-7', 'Behavioral observations'], type: 'chips' },
+    { field: 'Symptom Presentation', content: 'Client endorses intrusive memories, avoidance of trauma-related cues, negative alterations in cognition and mood, and hypervigilance. PCL-5 score: 48 (above clinical threshold of 33). PHQ-9: 14 (moderate depression). GAD-7: 12 (moderate anxiety).', type: 'text' },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Clinical Impressions', content: 'Presentation consistent with PTSD, chronic, with comorbid moderate depression. No evidence of psychosis or active SI. Cognitive functioning within normal limits. Strong therapeutic alliance observed; client engaged throughout assessment.', type: 'text', showActions: true },
+    { field: 'Diagnoses', chips: ['PTSD, Chronic (F43.10)', 'MDD, Recurrent, Moderate (F33.1)'], type: 'chips' },
+    { field: 'Functional Impact', content: 'Trauma-related avoidance significantly impacts occupational functioning (frequent absences), social engagement (isolation), and sleep (averaging 4–5 hrs/night with nightmares). ADLs generally maintained.', type: 'text' },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Recommendations', content: 'Initiate Cognitive Processing Therapy (CPT) — 12-session protocol targeting stuck points related to trauma. Refer to psychiatry for evaluation of pharmacological support (SSRI). Coordinate with primary care regarding sleep disturbance.', type: 'text', showActions: true },
+    { field: 'Priority Areas', chips: ['Trauma processing (CPT)', 'Sleep intervention', 'Safety planning', 'Psychiatric evaluation'], type: 'chips' },
+    { field: 'Follow-up', content: 'Share assessment report with referring provider. Schedule intake for CPT within 2 weeks. Provide psychoeducation handout on PTSD and treatment rationale before next contact.', type: 'text' },
+  ]},
+];
+
+// ── Group session — single suggestion per member ──────────────────────────────
+
+const GROUP_SINGLE_SUGGESTIONS_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Group Process', content: 'Group session focused on anger recognition and de-escalation strategies. 7 of 8 members present and engaged. Facilitated structured discussion on identifying physiological and cognitive early warning signs of anger escalation.', type: 'text', showActions: true },
+    { field: 'Member Participation', chips: ['Active participation: 5 members', 'Observer role: 2 members', 'Homework reviewed collectively'], type: 'chips' },
+    { field: 'Session Content', content: 'Introduced pause-and-plan technique with group practice via role-play. One member shared a successful real-world application since last session; group reinforced with positive feedback. Psychoeducation on amygdala hijack and window of tolerance provided.', type: 'text' },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Group Dynamics', content: 'Group cohesion remains strong. Therapeutic alliance developing well across members. Two members continue to demonstrate leadership behaviors supportive of group norms. One new member integrated smoothly into group process.', type: 'text', showActions: true },
+    { field: 'Progress Indicators', chips: ['Skill practice improving', 'Self-disclosure increasing', 'Homework compliance: 70%'], type: 'chips' },
+    { field: 'Individual Progress Note', content: 'Each group member to receive individual progress note reflecting personal engagement level, skill acquisition, and goal progress within group context. Single-note format per member. See attached individual summaries.', type: 'text' },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Next Session Focus', content: 'Session 8: Communication and assertiveness skills. Members to practice assertive communication in low-stakes scenarios before next session. Review homework from session 7 as group warm-up activity.', type: 'text', showActions: true },
+    { field: 'Homework Assigned', chips: ['Anger log ×3 this week', 'Practice pause-and-plan in one real situation', 'Rate trigger intensity 0–10'], type: 'chips' },
+    { field: 'Individual Follow-up', content: 'One member flagged for individual check-in prior to next group session to address elevated distress observed today. Remaining members continue group-only contact as scheduled.', type: 'text' },
+  ]},
+];
+
+// ── Group session — multiple suggestions per member + ASAM ───────────────────
+
+const GROUP_ASAM_SUGGESTIONS_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Group Process', content: 'SUD group session focused on craving management and social triggers. 5 of 6 members present. One member disclosed a slip since last session; group responded with support and non-judgment. Motivational enhancement techniques used to reinforce ambivalence exploration.', type: 'text', showActions: true },
+    { field: 'ASAM Dimensions', chips: ['D1: Acute intoxication — none reported', 'D2: Biomedical — stable', 'D3: Emotional/Behavioral — moderate', 'D4: Readiness — contemplation–preparation', 'D5: Relapse potential — moderate-high', 'D6: Recovery environment — limited support'], type: 'chips' },
+    { field: 'Session Content', content: 'Reviewed urge surfing and HALT framework. Role-played refusal skills for social scenarios. Discussed building sober support networks. One member identified a sponsor; group celebrated milestone. Psychoeducation on the neurobiological basis of craving provided.', type: 'text' },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Clinical Status', content: 'Group continues to demonstrate recovery-oriented engagement. ASAM Level of Care reassessment indicates continued appropriateness of current IOP level for most members. One member presenting with elevated relapse risk warrants increased monitoring and possible step-up evaluation.', type: 'text', showActions: true },
+    { field: 'Member Progress', chips: ['Sustained abstinence: 3 members', 'Single slip — re-engaged: 1 member', 'Active use — safety planning: 1 member', 'Absent: 1 member'], type: 'chips' },
+    { field: 'ASAM Level of Care', content: 'Majority of members appropriate for ASAM Level 2.1 (Intensive Outpatient). One member to be referred for Level 2.5 (Partial Hospitalization) evaluation based on elevated D5 (relapse potential) and D6 (recovery environment) scores.', type: 'text' },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Group Plan', content: 'Continue ASAM-informed IOP group twice weekly. Next session: relapse prevention planning and building recovery capital. Schedule ASAM reassessment for member at elevated risk. Coordinate with prescribers regarding MAT status for two members.', type: 'text', showActions: true },
+    { field: 'Individual Suggestions', chips: ['Multiple per-member notes generated', 'ASAM dimension scores documented individually', 'Step-up referral initiated for 1 member', 'MAT coordination for 2 members'], type: 'chips' },
+    { field: 'Follow-up', content: 'Group meets again in 3 days. Individual case reviews scheduled with each member\'s primary counselor this week. ASAM reassessment forms distributed for completion prior to next clinical team meeting.', type: 'text' },
+  ]},
+];
+
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
-function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData = SUGGESTIONS_DATA, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
+function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
-  const data = suggestionsData; // dataset varies by session type
+
+  // Resolve which dataset to use — NoteTypeContext override takes priority,
+  // then session-based selection, then default.
+  const resolvedData = (() => {
+    if (suggestionsData) return suggestionsData;
+    if (!session) return SUGGESTIONS_DATA;
+    if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
+    if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
+    if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;
+    if (session.noteType === 'Treatment Plan') return TREATMENT_PLAN_SUGGESTIONS_DATA;
+    if (session.type === 'group' && session.includesASAM) return GROUP_ASAM_SUGGESTIONS_DATA;
+    if (session.type === 'group') return GROUP_SINGLE_SUGGESTIONS_DATA;
+    return SUGGESTIONS_DATA;
+  })();
+  const data = resolvedData;
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
 
@@ -5134,6 +5259,8 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 const CLIENT_OPTIONS = [
   'Marcus Webb', 'Aisha Monroe', 'Tom Reilly', 'Carmen Vega', 'David Park',
   'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho', 'Thursday AM Group',
+  'Jake Carol', 'Jacob Rosen', 'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
+  'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
 function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards', compactMode = false }) {
