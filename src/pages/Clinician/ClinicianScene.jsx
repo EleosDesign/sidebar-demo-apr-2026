@@ -77,9 +77,13 @@ export default function ClinicianScene({ step, onNext }) {
     });
   };
 
-  const handleAddToNote = (section, content) => {
+  const handleAddToNote = (section, content, cardField) => {
     // Direct label/id match first
     let directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
+    // Secondary: try the card's own field label (used when section is a group name like 'Progress Note')
+    if (!directSection && cardField) {
+      directSection = noteTypeCtx?.sections?.find(s => s.label === cardField || s.id === cardField);
+    }
     // Fallback: eleosMapping translates generic 'Data','Assessment','Plan' → note-type-specific ids
     if (!directSection && noteTypeCtx?.eleosMapping?.[section]) {
       const mappedId = noteTypeCtx.eleosMapping[section];
@@ -4083,7 +4087,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                     onMouseDown={e => e.preventDefault()}
                                     onClick={() => {
                                       if (!canAdd) return;
-                                      onAddToNote?.(focusedEhrField ?? section, card.content);
+                                      onAddToNote?.(focusedEhrField ?? section, card.content, card.field);
                                       setAdded(prev => new Set(prev).add(excludeKey));
                                       setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
                                     }}
@@ -4118,7 +4122,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 data.forEach(({ section, cards }) => {
                   cards.forEach(card => {
                     if (card.type === 'text' && card.showActions && !excluded.has(`${section}-${card.field}`)) {
-                      onAddToNote?.(focusedEhrField ?? section, card.content);
+                      onAddToNote?.(focusedEhrField ?? section, card.content, card.field);
                     }
                   });
                 });
