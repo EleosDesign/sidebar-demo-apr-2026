@@ -3921,6 +3921,15 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const [copied, setCopied] = useState(new Set()); // tracks cards whose content was copied
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const scrollRef = useRef(null);
+  const sectionRefs = useRef({});
+
+  const scrollToSection = (idx) => {
+    const section = data[idx]?.section;
+    const el = sectionRefs.current[section];
+    if (el && scrollRef.current) {
+      scrollRef.current.scrollTo({ top: el.offsetTop - scrollRef.current.offsetTop, behavior: 'smooth' });
+    }
+  };
 
   const checkScrollBottom = () => {
     const el = scrollRef.current;
@@ -4011,12 +4020,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
             <span style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', marginLeft: 3 }}>{currentSection.section}</span>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button onClick={() => setActiveSectionIdx(i => Math.max(0, i - 1))} disabled={activeSectionIdx === 0}
+            <button onClick={() => { const next = Math.max(0, activeSectionIdx - 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === 0}
               style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.5)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === 0 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === 0 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               Prev
             </button>
-            <button onClick={() => setActiveSectionIdx(i => Math.min(data.length - 1, i + 1))} disabled={activeSectionIdx === data.length - 1}
+            <button onClick={() => { const next = Math.min(data.length - 1, activeSectionIdx + 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === data.length - 1}
               style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === data.length - 1 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === data.length - 1 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
               Next
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -4030,7 +4039,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           {data.map(({ section, cards }) => {
             const isOpen = openSections.has(section);
             return (
-              <div key={section}>
+              <div key={section} ref={el => { sectionRefs.current[section] = el; }}>
                 {/* Section header */}
                 <div onClick={() => toggleSection(section)}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'white', borderTop: '1px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', cursor: 'pointer' }}>
