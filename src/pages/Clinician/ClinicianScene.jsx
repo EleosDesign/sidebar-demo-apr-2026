@@ -768,6 +768,16 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : session.name;
             setClientName(formatted);
           }
+          // Switch EHR note type to match the session
+          const NOTE_TYPE_KEY_MAP = {
+            'Progress Note':   'ProgressNote',
+            'Case Management': 'CaseManagement',
+            'Treatment Plan':  'TreatmentPlan',
+            'Med Management':  'PsychiatricMedical',
+            'Assessment':      'Assessment',
+          };
+          const noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
+          noteTypeCtx?.setSelectedNoteType(noteTypeKey);
         }}
       />;
     }
@@ -3836,13 +3846,13 @@ const GROUP_ASAM_SUGGESTIONS_DATA = [
 
 const PROGRESS_NOTE_SUGGESTIONS_DATA = [
   { section: 'Progress Note', cards: [
-    { field: 'Note Addresses Which Objective', content: 'This session addresses Objective 2: Improve coping skills for managing depressive symptoms and low motivation. Client engagement in behavioral activation continues to be the primary focus of treatment at this stage.', type: 'text', showActions: true },
-    { field: 'Describe Details of the Case Management Service', content: 'Individual outpatient therapy session, 45 minutes. Clinician provided direct therapeutic intervention including psychoeducation on behavioral activation and collaborative review of activity scheduling. Progress toward treatment plan goals was reviewed.', type: 'text', showActions: true },
-    { field: 'Explain Linkage to Services', content: 'Client is currently linked to weekly individual therapy. Clinician discussed potential referral to psychiatry for medication evaluation given persistence of depressive symptoms. Client expressed openness; referral information provided and warm handoff to be initiated next session.', type: 'text', showActions: true },
-    { field: 'Clinical Observations', content: 'Client appeared dysthymic with restricted affect at session onset, gradually showing increased engagement as session progressed. Speech was slow but coherent. No indications of thought disorder, suicidal ideation, or self-harm. Eye contact intermittent. Collaborative and responsive to prompts throughout.', type: 'text', showActions: true },
-    { field: 'Client Responses', content: 'Client reported minimal engagement in previously enjoyed activities over the past week, attributing low motivation to persistent fatigue and negative self-talk. Responded positively to validation and expressed cautious optimism about the updated behavioral activation plan. Identified two low-effort activities to try before the next session.', type: 'text', showActions: true },
-    { field: 'Progress Towards Recovery Plan Objectives', content: 'Objective 1 (Reduce PHQ-9 score to ≤9): Moderate progress — current self-reported PHQ-9 estimated at 11, down from 14 at intake. Objective 2 (Increase pleasant activity engagement): Partial progress — client completed 1 of 3 planned activities. Objective 3 (Develop coping toolkit): On track — client has identified 3 coping strategies; practicing two consistently.', type: 'text', showActions: true },
-    { field: 'Timelines for Next Service', content: 'Next individual therapy session scheduled in one week. Client to complete behavioral activation log and return with completed worksheet. Psychiatry referral to be initiated at next session if symptom plateau continues. Treatment plan review due in 30 days.', type: 'text', showActions: true },
+    { field: 'Note Addresses Which Objective', content: 'The purpose of this session was to evaluate the client\'s mental status, support him in managing depressive symptoms, and discuss coping strategies.', type: 'text', showActions: true },
+    { field: 'Describe Details of the Case Management Service', content: 'The session took place at a local park near the client\'s home. The client expressed symptoms of increased depression, stating, "It has been hard to leave the house." He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions.', type: 'text', showActions: true },
+    { field: 'Explain Linkage to Services', content: 'The Wise Mind technique is integral in helping the client balance emotional responses with logical reasoning, which can enhance his decision-making and problem-solving capabilities.', type: 'text', showActions: true },
+    { field: 'Clinical Observations', content: 'During the mental status exam, the client\'s mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan.', type: 'text', showActions: true },
+    { field: 'Client Responses', content: 'The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process.', type: 'text', showActions: true },
+    { field: 'Progress Towards Recovery Plan Objectives', content: 'Despite ongoing struggles with depression, the client has shown progress by being open about his feelings and agreeing to utilize coping strategies, including the safety planning discussed during the session.', type: 'text', showActions: true },
+    { field: 'Timelines for Next Service', content: 'The client agreed to reach out for additional support as he navigates his depressive symptoms moving forward.', type: 'text', showActions: true },
   ]},
 ];
 
