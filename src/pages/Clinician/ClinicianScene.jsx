@@ -3750,20 +3750,17 @@ const AUDIO_SUGGESTIONS_DATA = [
 // ── Case Management suggestions ──────────────────────────────────────────────
 
 const CASE_MGMT_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Session Focus', content: 'Case management contact conducted to review service coordination, address barriers to care, and assess progress toward goals. Client reports partial engagement with referred services. Transportation and scheduling remain ongoing barriers.', type: 'text', showActions: true },
-    { field: 'Services Reviewed', chips: ['Outpatient therapy', 'Peer support', 'Housing assistance', 'Vocational rehab'], type: 'chips' },
-    { field: 'Barriers Identified', content: 'Limited transportation access and inconsistent phone service impacting ability to attend scheduled appointments. Client reports financial strain limiting access to medication.', type: 'text' },
+  { section: 'Subjective', cards: [
+    { field: 'Subjective', content: 'Client stated, "It has been hard to leave the house." He shared a history of experiencing these feelings during this season.', type: 'text', showActions: true },
+  ]},
+  { section: 'Objective', cards: [
+    { field: 'Objective', content: 'The session took place at the client\'s home, where he appeared receptive to discussion about his difficulties.', type: 'text', showActions: true },
   ]},
   { section: 'Assessment', cards: [
-    { field: 'Functional Status', content: 'Client demonstrates moderate ability to manage ADLs independently. Social support network remains limited. Engagement with case management is inconsistent but improving. Motivation to address housing instability is present.', type: 'text', showActions: true },
-    { field: 'Risk & Strengths', chips: ['No acute crisis', 'Motivated for change', 'Limited support network', 'Financial instability'], type: 'chips' },
-    { field: 'Goal Progress', content: 'Employment goal: 20% progress — resume completed, applications pending. Housing goal: 40% — waitlisted for transitional housing program. Recovery goal: 60% — sustained sobriety 45 days.', type: 'text' },
+    { field: 'Assessment', content: 'Client is struggling with feelings of depression, particularly during the current season, but he denied any desire to harm himself.', type: 'text', showActions: true },
   ]},
   { section: 'Plan', cards: [
-    { field: 'Action Steps', content: 'Coordinate with housing agency to confirm waitlist status. Contact prescriber regarding medication assistance program enrollment. Provide bus pass resources and schedule next appointment with flexible timing.', type: 'text', showActions: true },
-    { field: 'Referrals', chips: ['Medication Assistance Program', 'Transit assistance', 'Food bank referral'], type: 'chips' },
-    { field: 'Follow-up', content: 'Case management contact in 2 weeks. Warm handoff to housing navigator scheduled for next Tuesday.', type: 'text' },
+    { field: 'Plan', content: 'Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group.', type: 'text', showActions: true },
   ]},
 ];
 

@@ -74,61 +74,39 @@
     },
     "CaseManagement": {
       "name": "Case Management Note",
-      "description": "Comprehensive case management documentation for non-clinical services",
+      "description": "Case management session note in SOAP format",
       "sections": [
         {
-          "id": "noteAddressesObjective",
-          "label": "Note Addresses Which Objective",
-          "description": "Purpose and objective of the case management session",
-          "sampleContent": "The purpose of this session was to evaluate the client's mental status, support him in managing depressive symptoms, and discuss coping strategies."
+          "id": "subjective",
+          "label": "Subjective",
+          "description": "Client's self-reported experience and statements",
+          "sampleContent": "Client stated, \"It has been hard to leave the house.\" He shared a history of experiencing these feelings during this season."
         },
         {
-          "id": "serviceDetails",
-          "label": "Describe details of the case management service",
-          "description": "Detailed description of services provided",
-          "sampleContent": "The session took place at a local park near the client's home. The client expressed symptoms of increased depression, stating, \"It has been hard to leave the house.\" He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions."
+          "id": "objective",
+          "label": "Objective",
+          "description": "Observable facts about the session setting and client presentation",
+          "sampleContent": "The session took place at the client's home, where he appeared receptive to discussion about his difficulties."
         },
         {
-          "id": "linkageToServices",
-          "label": "Explain linkage to services",
-          "description": "Connection to community resources and services",
-          "sampleContent": "The Wise Mind technique is integral in helping the client balance emotional responses with logical reasoning, which can enhance his decision-making and problem-solving capabilities."
+          "id": "assessment",
+          "label": "Assessment",
+          "description": "Clinical assessment of the client's current status",
+          "sampleContent": "Client is struggling with feelings of depression, particularly during the current season, but he denied any desire to harm himself."
         },
         {
-          "id": "clinicalObservations",
-          "label": "Clinical Observations",
-          "description": "Observable clinical findings",
-          "sampleContent": "During the mental status exam, the client's mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan."
-        },
-        {
-          "id": "clientResponses",
-          "label": "Client Responses",
-          "description": "Client's reactions and engagement",
-          "sampleContent": "The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process."
-        },
-        {
-          "id": "progressTowardsObjectives",
-          "label": "Progress Towards Recovery Plan Objectives",
-          "description": "Assessment of progress toward treatment goals",
-          "sampleContent": "Client is making progress in recognizing patterns and utilizing coping strategies, though continued support is needed to maintain momentum."
-        },
-        {
-          "id": "timelinesForNextService",
-          "label": "Timelines for Next Service",
-          "description": "Follow-up plans and scheduling",
-          "sampleContent": "Case Manager will follow up with the client next week to evaluate if he was able to start attending the group."
+          "id": "plan",
+          "label": "Plan",
+          "description": "Next steps and follow-up plan",
+          "sampleContent": "Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group."
         }
       ],
-      "usedBy": ["Trisha Platts"],
       "ehrMapping": {
         "streamline": {
-          "noteAddressesObjective": "caseNoteAddressesObjective",
-          "serviceDetails": "caseServiceDetails",
-          "linkageToServices": "caseLinkageToServices",
-          "clinicalObservations": "caseClinicalObservations",
-          "clientResponses": "caseClientResponses",
-          "progressTowardsObjectives": "caseProgressTowardsObjectives",
-          "timelinesForNextService": "caseTimelinesForNextService"
+          "subjective": "caseSubjective",
+          "objective": "caseObjective",
+          "assessment": "caseAssessment",
+          "plan": "casePlan"
         }
       }
     },
