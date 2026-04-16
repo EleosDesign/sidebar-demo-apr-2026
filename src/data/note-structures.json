@@ -112,50 +112,65 @@
     },
     "PsychiatricMedical": {
       "name": "Psychiatric/Medical Note",
-      "description": "Comprehensive psychiatric evaluation and medication management note (CalMHSA format)",
+      "description": "Comprehensive psychiatric evaluation and medication management note",
       "sections": [
         {
-          "id": "subjective",
-          "label": "Subjective",
-          "description": "Chief complaint and patient's subjective report",
-          "sampleContent": "Patient reports continuing symptoms of anxiety and mood instability. States \"I'm still struggling with motivation and feeling overwhelmed by daily tasks.\""
+          "id": "chiefComplaint",
+          "label": "Chief Complaint",
+          "description": "Patient's chief complaint for the visit",
+          "sampleContent": "Routine follow-up for medication management and to address ongoing stressors."
         },
         {
-          "id": "clientHistory",
-          "label": "Client History",
-          "description": "Relevant psychiatric and medical history",
-          "sampleContent": "Patient has a history of Major Depressive Disorder and Generalized Anxiety Disorder. Previous medication trials include Sertraline and Escitalopram with partial response. Family history positive for depression in mother."
+          "id": "historyOfIllness",
+          "label": "History of Illness",
+          "description": "History of present illness and symptom review",
+          "sampleContent": "Patient is a female who presents for a follow-up visit. She reports significant ongoing stress since the last visit."
         },
         {
-          "id": "msePe",
-          "label": "MSE/PE (Mental Status Exam/Physical Exam)",
-          "description": "Mental status and physical examination findings",
-          "sampleContent": "Alert and oriented x4. Appearance appropriate for age. Speech normal rate and rhythm. Mood reported as \"depressed,\" affect congruent and restricted. Thought process linear and goal-directed. No hallucinations or delusions reported. Insight and judgment fair."
+          "id": "medicationHistorySideEffects",
+          "label": "Medication History and Side Effects",
+          "description": "Current medications, adherence, and reported side effects",
+          "sampleContent": "Current medications discussed: Unspecified sleep medication (reported non-adherence), Sertraline (to be discontinued), non-prescribed pain medication, marijuana."
         },
         {
-          "id": "assessmentPlan",
-          "label": "Assessment/Plan",
-          "description": "Clinical assessment and treatment plan",
-          "sampleContent": "The patient continues to manage multiple psychosocial stressors, including housing instability, work pressure, and family adjustments following her husband's return from deployment. She reports significant anxiety, which appears to be a primary driver for her continued use of tobacco, marijuana, and alcohol, as well as recent escalating use of non-prescribed opioid pain medication. The treatment plan was adjusted to better target anxiety symptoms by switching her primary antidepressant and providing a PRN anxiolytic. Nicotine replacement therapy was initiated to support smoking cessation efforts, and she was strongly counseled to see her PCP for her back pain."
+          "id": "familySocialHistory",
+          "label": "Family and Social History",
+          "description": "Relevant family and social background",
+          "sampleContent": "Patient reports ongoing stress related to being unable to find affordable housing. She is employed, but finds her job stressful."
         },
         {
-          "id": "additionalInfo",
-          "label": "Additional Information",
-          "description": "Supplementary clinical information",
-          "sampleContent": "Patient educated on medication side effects and importance of adherence. Emergency contact information verified. Follow-up scheduled in 4 weeks."
+          "id": "mentalStatus",
+          "label": "Mental Status",
+          "description": "Mental status examination findings",
+          "sampleContent": "Behavior: Cooperative with the interview, maintains good eye contact. Speech: Normal rate, rhythm, and volume. Mood: Reports feeling anxious and moderately depressed."
+        },
+        {
+          "id": "interventions",
+          "label": "Interventions",
+          "description": "Psychoeducation and clinical interventions provided",
+          "sampleContent": "Psychoeducation was provided on the risks of using non-prescribed pain medication, including dependence and potential withdrawal."
+        },
+        {
+          "id": "therapeuticInterventions",
+          "label": "Therapeutic Interventions",
+          "description": "Therapeutic modalities utilized during the session",
+          "sampleContent": "The psychiatrist utilized supportive psychotherapy to explore the patient's feelings about current life stressors."
+        },
+        {
+          "id": "summary",
+          "label": "Summary",
+          "description": "Clinical summary and overall impression",
+          "sampleContent": "The patient continues to manage multiple psychosocial stressors, including housing instability, work pressure, and family adjustments following her husband's return from deployment."
+        },
+        {
+          "id": "plan",
+          "label": "Plan",
+          "description": "Treatment plan and follow-up instructions",
+          "sampleContent": "1. Discontinue Sertraline. 2. Start Citalopram 20 mg by mouth once daily. 3. Start Hydroxyzine 25 mg as needed for anxiety. 4. Return to clinic in 4-6 weeks."
         }
       ],
       "usedBy": ["Patricia Rodriguez"],
-      "ehrSystem": "calmhsa-psych",
-      "ehrMapping": {
-        "calmhsa": {
-          "subjective": "calMhsaPatriciaSubjective",
-          "clientHistory": "calMhsaPatriciaClientHistory",
-          "msePe": "calMhsaPatriciaMsePe",
-          "assessmentPlan": "calMhsaPatriciaAssessmentPlan",
-          "additionalInfo": "calMhsaPatriciaAdditionalInfo"
-        }
-      }
+      "ehrSystem": "calmhsa-psych"
     },
     "CalAIMAssessment": {
       "name": "CalAIM Assessment (7-Domain)",
@@ -661,70 +676,136 @@
       "description": "Initial or periodic comprehensive clinical assessment",
       "sections": [
         {
-          "id": "identifyingInformation",
-          "label": "Identifying Information",
-          "description": "Demographics and basic client information",
-          "sampleContent": "Client: Marcus Webb. Date of birth: April 3, 1989 (age 37). Gender: Male. Pronouns: He/him. Race/Ethnicity: African American. Primary language: English. Referral source: Self-referral following recommendation from primary care physician. Living situation: Lives alone in apartment; girlfriend considering moving in. Employment: Full-time employment in corporate project management. Insurance: Employer-sponsored PPO. Emergency contact: Sandra Webb (mother), 555-203-4481."
-        },
-        {
           "id": "presentingProblem",
           "label": "Presenting Problem",
           "description": "Chief complaint and reason for seeking services",
-          "sampleContent": "Client presents seeking support for persistent anxiety and stress related to an ongoing conflict with his direct supervisor at work. He reports difficulty responding assertively, avoidance of email correspondence, and increasing worry that the conflict may threaten his job security. Secondary concerns include disrupted sleep (averaging 5 hours per night), low mood, and difficulty concentrating. Client reports these symptoms have been present and worsening over the past 3-4 months. He has not received mental health treatment previously and states he delayed seeking help due to uncertainty about whether his concerns \"were serious enough.\""
+          "sampleContent": "The client is a 23-year-old female university student presenting for an initial assessment due to concerns about anxiety and alcohol use."
         },
         {
-          "id": "historyOfPresentingProblem",
-          "label": "History of Presenting Problem",
-          "description": "Timeline and development of current issues",
-          "sampleContent": "Client reports that anxiety symptoms have been present in varying degrees throughout his adult life, though he typically managed them without professional support. Approximately 4 months ago, a new supervisor joined his team and began providing critical feedback that client perceived as disproportionate and public. This triggered a significant escalation in anxiety. Client began avoiding responding to supervisor's emails, which has compounded the workplace tension. Over the past 6 weeks, sleep disruption has worsened, mood has declined, and client reports reduced motivation and increased irritability at home. Client denies any discrete traumatic events or significant losses in the past year. He identifies work as a primary source of identity and purpose, which he believes amplifies the distress caused by the current conflict."
+          "id": "anxietySymptomsHistory",
+          "label": "Anxiety Symptoms And History",
+          "description": "History and current presentation of anxiety symptoms",
+          "sampleContent": "The client reports experiencing symptoms of anxiety since approximately age 13 or 14, describing them as a persistent nervousness related to various life stressors."
         },
         {
-          "id": "mentalHealthHistory",
-          "label": "Mental Health History",
-          "description": "Previous psychiatric treatment and diagnoses",
-          "sampleContent": "No prior mental health treatment. Client denies any previous psychiatric diagnoses. Denies history of psychiatric hospitalization. No prior psychotropic medication use. Family history: Mother reports a history of anxiety; paternal grandfather had depression. Client endorses that anxiety has been a \"background feature\" of his life but has never previously sought help, managing independently through exercise and work productivity. No history of trauma treatment. No prior suicide attempts or self-harm behavior."
+          "id": "previousMentalHealthTreatment",
+          "label": "Previous Mental Health Treatment",
+          "description": "Prior mental health treatment history",
+          "sampleContent": "The client has a history of brief mental health treatment, seeing a counselor for approximately five or six sessions and a psychiatrist once or twice a few years ago."
         },
         {
-          "id": "substanceUseHistory",
-          "label": "Substance Use History",
-          "description": "History of alcohol and drug use",
-          "sampleContent": "Alcohol: Social use only; 1-2 drinks per week on average, typically at social events. Denies any increase in use related to current stressors. No history of alcohol misuse, withdrawal, or treatment. Cannabis: Denies current or historical use. Other illicit substances: Denies use. Caffeine: Moderate use (2 cups of coffee daily); notes this may worsen anxiety. Tobacco/nicotine: Denies use. Over-the-counter or prescription medications: Takes ibuprofen occasionally for headaches. No misuse of prescription medications. CAGE screening: 0/4. No substance use concerns identified at this time."
+          "id": "alcoholUseHistoryPattern",
+          "label": "Alcohol Use History And Pattern",
+          "description": "History and pattern of alcohol use",
+          "sampleContent": "The client reports first using alcohol at age 14. Her use has progressed from social experimentation to a primary coping mechanism for anxiety."
         },
         {
-          "id": "medicalHistory",
-          "label": "Medical History",
-          "description": "Relevant medical conditions and medications",
-          "sampleContent": "General health: Reports good physical health overall. Current medications: None prescribed; occasional OTC ibuprofen. Allergies: NKDA. Medical conditions: No chronic conditions reported. Denies history of seizures, head injury, or neurological conditions. Denies cardiovascular or respiratory conditions. Last physical exam: Approximately 8 months ago — PCP noted elevated blood pressure (138/86) attributed to stress; recommended lifestyle changes and follow-up. Client has not returned for follow-up. Sleep: Endorses significant sleep difficulties — difficulty initiating sleep, averaging 5 hours per night. Appetite: Mildly reduced; no significant weight change. Exercise: Runs 3x per week; notes exercise helps but has reduced frequency in recent months."
+          "id": "dimension1AcuteIntoxication",
+          "label": "Dimension 1: Acute Intoxication And/Or Withdrawal Potential",
+          "description": "ASAM Dimension 1 — intoxication and withdrawal risk",
+          "sampleContent": "Substance(s) used: Alcohol. Route of administration: Oral. Current signs of intoxication: None observed during the interview."
         },
         {
-          "id": "socialHistory",
-          "label": "Social History",
-          "description": "Family, relationships, education, employment",
-          "sampleContent": "Family of origin: Raised by both parents in Atlanta, GA. Younger of two siblings. Describes childhood as stable; close relationship with mother, somewhat distant relationship with father who he describes as \"hardworking but not emotionally expressive.\" Education: Bachelor's degree in Business Administration (University of Georgia, 2011). No disciplinary or academic history of concern. Employment: 8 years with current employer; promoted twice. Recent conflict with new supervisor is the primary identified stressor. Relationships: In a 2-year relationship with girlfriend (Carmen); relationship described as generally positive. They live separately; girlfriend has discussed moving in. Client has some ambivalence about this given current stress level. Social support: Describes a small but meaningful social network. Close friend group of 3-4 people; less frequent contact in recent months due to work stress. Legal history: None."
+          "id": "dimension2BiomedicalConditions",
+          "label": "Dimension 2: Biomedical Conditions & Complications",
+          "description": "ASAM Dimension 2 — biomedical status",
+          "sampleContent": "Current medical conditions: None reported. Surgeries/hospitalizations: History of appendectomy. Pregnancy status: Not pregnant; uses oral contraceptives."
         },
         {
-          "id": "mentalStatusExam",
-          "label": "Mental Status Exam",
-          "description": "Formal mental status examination findings",
-          "sampleContent": "Appearance: Well-groomed, appropriately dressed for the occasion. Makes good eye contact. Behavior/psychomotor: Calm, no psychomotor agitation or retardation observed. Some visible tension in jaw and shoulders. Speech: Normal rate, rhythm, and volume. Mood: \"Stressed and kind of stuck.\" Affect: Congruent with reported mood; mildly restricted range but appropriate. Thought process: Linear, goal-directed, and organized. Thought content: Preoccupied with workplace conflict and fears of job loss; no obsessions, compulsions, or paranoid ideation. No suicidal or homicidal ideation. Perceptual disturbances: Denied; none observed. Cognition: Alert and oriented x4. Memory grossly intact. Concentration mildly impaired by reported worry. Insight: Good — client demonstrates awareness of his avoidance patterns and their functional impact. Judgment: Good — client is making appropriate decisions and seeking treatment proactively."
+          "id": "dimension3EmotionalBehavioral",
+          "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications",
+          "description": "ASAM Dimension 3 — emotional/behavioral/cognitive status",
+          "sampleContent": "Active psychological conditions: Significant anxiety impacting functioning. Past psychiatric diagnoses: Some sort of anxiety disorder per prior counselor. Denies suicidal or homicidal ideation."
         },
         {
-          "id": "riskAssessment",
-          "label": "Risk Assessment",
+          "id": "dimension4ReadinessToChange",
+          "label": "Dimension 4: Readiness To Change",
+          "description": "ASAM Dimension 4 — motivation and readiness",
+          "sampleContent": "Internal motivation statements: \"I realize now that I'm not handling it as well as I thought I was\" and \"I want the help now.\" Change goals: To lessen anxiety and reduce alcohol consumption."
+        },
+        {
+          "id": "dimension5RelapsePotential",
+          "label": "Dimension 5: Relapse, Continued Use, Or Continued Problem Potential",
+          "description": "ASAM Dimension 5 — relapse and continued use risk",
+          "sampleContent": "Primary triggers: Social situations and feelings of anxiety. Coping skills: Primarily uses alcohol to cope. Last blackout: approximately one month ago."
+        },
+        {
+          "id": "dimension6RecoveryEnvironment",
+          "label": "Dimension 6: Recovery/Living Environment",
+          "description": "ASAM Dimension 6 — recovery environment",
+          "sampleContent": "Current living situation: University dorm during the week, parents' home on weekends. Supportive boyfriend of six months. Two close college friends available as support."
+        },
+        {
+          "id": "riskToSelfAndOthers",
+          "label": "Risk To Self And Others",
           "description": "Safety and risk evaluation",
-          "sampleContent": "Suicidal ideation: Denied — no current or historical suicidal ideation, intent, plan, or means. No passive death wish reported. Homicidal ideation: Denied. Self-harm: No history of non-suicidal self-injury. Substance misuse: Not a current concern. Risk level: Low. Protective factors: Strong social support (girlfriend, close friends, family), engaged in employment, proactively seeking treatment, good insight, no history of suicidal behavior, future-oriented thinking. No acute safety concerns identified. Safety planning not indicated at this time; client provided with crisis resources and instructed to reach out if concerns arise."
+          "sampleContent": "The client explicitly denies any history of suicidal ideation, plans, or intent. Also denies any history of homicidal ideation. Protective factors include future-oriented goals and a supportive relationship."
         },
         {
-          "id": "diagnosticImpression",
-          "label": "Diagnostic Impression",
-          "description": "Clinical diagnoses and formulation",
-          "sampleContent": "Primary diagnosis: Generalized Anxiety Disorder (F41.1) — Client meets criteria for excessive anxiety and worry occurring more days than not for at least 6 months, associated with difficulty controlling the worry, sleep disturbance, concentration difficulties, muscle tension, and irritability. Anxiety is causing significant impairment in occupational and social functioning. Secondary diagnosis: Adjustment Disorder with Depressed Mood (F43.21) — Secondary depressive symptoms are temporally linked to the workplace stressor and do not meet full criteria for Major Depressive Disorder at this time. Rule out: Major Depressive Disorder, single episode, mild — will monitor over the course of treatment. Formulation: Client's GAD symptoms appear to be longstanding, with recent workplace stressor serving as a significant precipitant. Avoidance behaviors are maintaining anxiety and impairing workplace functioning, creating a reinforcing cycle of stress and avoidance."
+          "id": "relationshipsSocialSupport",
+          "label": "Relationships And Social Support",
+          "description": "Relationship history and current social supports",
+          "sampleContent": "In a relationship of six months with a supportive boyfriend. Identifies two close college friends. Broader social circle associated with university party culture."
         },
         {
-          "id": "recommendations",
-          "label": "Recommendations",
-          "description": "Treatment recommendations and level of care",
-          "sampleContent": "Level of care: Outpatient individual therapy — weekly sessions. Treatment modality: Cognitive Behavioral Therapy (CBT) is the evidence-based intervention of choice for GAD and will be the primary treatment approach. Psychopharmacology: Not indicated at this time; client prefers to begin with therapy. If symptoms do not respond adequately within 8-10 weeks, referral to psychiatry for medication evaluation will be discussed. Behavioral goals: Graduated exposure to avoided workplace communications, sleep hygiene protocol, and behavioral activation for low mood. Monitoring: GAD-7 and PHQ-9 to be administered at intake and every 4 weeks to track symptom response. PCP coordination: Recommend follow-up with PCP regarding elevated blood pressure noted at last physical. Client consented to coordination of care release."
+          "id": "spiritualBeliefs",
+          "label": "Spiritual Beliefs",
+          "description": "Spiritual and religious background",
+          "sampleContent": "Client identifies as Catholic and reports a belief in God. Not actively practicing but states faith is \"there\" and identifies prayer as a potential resource."
+        },
+        {
+          "id": "familyCompositionDynamics",
+          "label": "Family Composition And Dynamics",
+          "description": "Family structure and relational dynamics",
+          "sampleContent": "Immediate family: mother, father, and one older sister. Relationship with parents strained, particularly with father. Sister is a successful doctor; client reports being unfavorably compared to her."
+        },
+        {
+          "id": "historyOfEmotionalAbuse",
+          "label": "History Of Emotional Abuse",
+          "description": "History of emotional or psychological abuse",
+          "sampleContent": "Client reports a history of significant emotional abuse from her father, including harsh and invalidating statements. Has become \"numb\" to the comments over time but reports they remain painful."
+        },
+        {
+          "id": "educationAndEmployment",
+          "label": "Education And Employment",
+          "description": "Educational background and current employment",
+          "sampleContent": "Senior in college pursuing a degree in education, goal of becoming a teacher. Anxiety and alcohol consequences negatively impacting grades; professors have confronted her about performance."
+        },
+        {
+          "id": "legalHistory",
+          "label": "Legal History",
+          "description": "Legal history and involvement",
+          "sampleContent": "One past incident at age 14-15: caught shoplifting with friends while under the influence of alcohol. Police and parents were involved. No subsequent legal issues."
+        },
+        {
+          "id": "mentalStatusExamination",
+          "label": "Mental Status Examination",
+          "description": "Formal mental status examination findings",
+          "sampleContent": "Cooperative and engaged. Mood euthymic with underlying anxiety. Speech clear, normal rate and volume. Thought process linear, logical, and goal-directed. No psychosis. Insight fair to good."
+        },
+        {
+          "id": "clientStrengths",
+          "label": "Client Strengths",
+          "description": "Client's identified strengths and protective factors",
+          "sampleContent": "Articulate, intelligent, and insightful. Highly motivated for treatment. Identifies as a hard worker with a supportive boyfriend and two close friends. Future-oriented with clear goals."
+        },
+        {
+          "id": "barriersToTreatment",
+          "label": "Barriers To Treatment",
+          "description": "Identified barriers and challenges to treatment engagement",
+          "sampleContent": "Long-standing pattern of using alcohol as a primary coping mechanism. History of emotional abuse and invalidation may present challenges. Distant family relationships may limit support."
+        },
+        {
+          "id": "clientGoalsForTreatment",
+          "label": "Client Goals For Treatment",
+          "description": "Client-identified goals for treatment",
+          "sampleContent": "1) Lessen the symptoms and impact of anxiety. 2) Reduce alcohol consumption and develop healthier coping strategies. 3) Successfully navigate final year of college and graduate."
+        },
+        {
+          "id": "interpretiveSummary",
+          "label": "Interpretive Summary",
+          "description": "Clinical formulation and interpretive summary",
+          "sampleContent": "The client is a 23-year-old female college senior presenting with long-standing anxiety and maladaptive alcohol use as a coping mechanism for social distress. Client is highly motivated and ready to engage in treatment."
         }
       ],
       "noteTypes": ["Assessment"]

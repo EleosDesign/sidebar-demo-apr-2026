@@ -35,6 +35,7 @@ const SESSION_LIST = [
   { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
   { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
   { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single', noteType: 'Anger Management Group', isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
+  { id: 'jacob-audio', ...daysAgo(3), name: 'Jacob Rosen',          time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'audio', noteType: 'Individual Audio',                     isActive: false, summary: 'Client discussed his relationship with his partner and the possibility of her moving back in. Explored codependency concerns in early recovery. Boundary setting and family therapy were discussed as next steps.' },
   { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true, noteType: 'SUD Group', isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
   { id: 'patricia',  ...daysAgo(3), name: 'Patricia Rodriguez',     time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'audio', specialty: 'psychiatry', noteType: 'Med Management', isActive: false, summary: 'Client reported increased anxiety following medication adjustment. Discussed somatic symptoms and their relationship to health anxiety. Introduced interoceptive exposure rationale. Client hesitant but willing to try graduated approach.' },
   { id: 'ashlyn',    ...daysAgo(4), name: 'Ashlyn Rivera',          time: '10:30 – 11:15 AM',   type: 'individual', sessionType: 'audio', noteType: 'Assessment',                          isActive: false, summary: 'Client discussed trauma-related avoidance. Identified two avoided situations linked to past trauma. Using CPT framework, began challenging stuck points around self-blame. Client tolerated emotional content well; no dissociation noted.' },
@@ -91,7 +92,7 @@ export default function ClinicianScene({ step, onNext }) {
     }
     const field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
     if (!field) return;
-    setNoteValues(prev => ({ ...prev, [field]: prev[field] ? prev[field] + '\n\n' + content : content }));
+    noteTypeCtx.updateNoteValue(field, prev => prev ? prev + '\n\n' + content : content);
     setHighlightedField(field);
     setTimeout(() => setHighlightedField(null), 1800);
   };
@@ -485,6 +486,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
+
+  // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
+  useEffect(() => {
+    if (ehrCtx?.lqaStatus === 'issues') {
+      ehrCtx.setChangedSinceAnalysis(true);
+    }
+  }, [noteTypeCtx?.noteValues]); // eslint-disable-line
+
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
@@ -789,7 +798,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Marcus Webb" sessionLabel="Apr 7, 2026, 10:00 – 10:45 AM" onAdvance={() => handleNavClick('activities')} />;
+    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || 'Marcus Webb'}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
@@ -3712,20 +3721,32 @@ const SUGGESTIONS_DATA = [
 // ── Individual audio (Psych) session suggestions ─────────────────────────────
 
 const PSYCH_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Session Focus', content: 'Client attended scheduled psychiatric follow-up. Reported stable mood overall with intermittent anxiety around sleep onset and family dynamics. Current medications tolerated without reported side effects.', type: 'text', showActions: true },
-    { field: 'Mental Status', chips: ['Alert & oriented', 'Cooperative', 'Euthymic mood', 'Intact insight'], type: 'chips' },
-    { field: 'Symptom Review', content: 'PHQ-9: 8 (mild). GAD-7: 11 (moderate). Sleep averaging 6–7 hrs/night, improved from baseline. Appetite stable. No SI/HI reported.', type: 'text' },
+  { section: 'Chief Complaint', cards: [
+    { field: 'Chief Complaint', content: 'Routine follow-up for medication management and to address ongoing stressors.', type: 'text', showActions: true },
   ]},
-  { section: 'Assessment', cards: [
-    { field: 'Progress', content: 'Client shows incremental improvement in depressive symptoms. Anxiety remains a primary treatment target. Coping strategies applied with moderate consistency between sessions.', type: 'text', showActions: true },
-    { field: 'Risk', chips: ['No SI/HI reported', 'Safety plan current', 'Low acute risk'], type: 'chips' },
-    { field: 'Clinical Impression', content: 'MDD, recurrent, moderate; GAD — both responding to combined pharmacotherapy and weekly psychotherapy. Prognosis favorable with continued engagement.', type: 'text' },
+  { section: 'History of Illness', cards: [
+    { field: 'History of Illness', content: 'Patient is a female who presents for a follow-up visit. She reports significant ongoing stress since the last visit. She was unable to find new housing due to high costs, describing the situation as "real expensive." Work remains "pretty stressful" as new hires are still in training and have not yet alleviated her workload. Her husband has returned from deployment, and the family is adjusting to having him home. The children are on summer break, which she describes as "super crazy." Patient reports her depression is a 6/10 and her anxiety is a 7/10. She identifies her anxiety as a trigger for smoking and reports it is exacerbated by her children screaming and by criticism from her boss, which causes her to "shut down" and engage in excessive worry. She continues to use marijuana a few times per week for stress and sleep, finding it calming. She avoids her prescribed sleep medication because it makes her feel "some kind of way." She reports sleeping 7-8 hours but still feels tired. The patient also reports recent use of non-prescribed pain medication for back pain, with use increasing from weekly to near-daily. Patient denies any suicidal or homicidal ideation, psychosis (seeing or hearing things), chest pain, shortness of breath, or nausea/vomiting.', type: 'text', showActions: true },
+  ]},
+  { section: 'Medication History and Side Effects', cards: [
+    { field: 'Medication History and Side Effects', content: 'Current medications discussed: Unspecified sleep medication (reported non-adherence), Sertraline (to be discontinued), non-prescribed pain medication (brought home by husband), marijuana. Medical issues discussed: Back pain. Patient reports that her unspecified sleep medication makes her feel "some kind of way," leading to non-adherence. She denies other adverse effects from current medications.', type: 'text', showActions: true },
+  ]},
+  { section: 'Family and Social History', cards: [
+    { field: 'Family and Social History', content: 'Patient reports ongoing stress related to being unable to find affordable housing. She is employed, but finds her job stressful. Her husband recently returned from deployment, and she notes it is good to have his help with their children, who are currently home for summer break.', type: 'text', showActions: true },
+  ]},
+  { section: 'Mental Status', cards: [
+    { field: 'Mental Status', content: 'Behavior: Cooperative with the interview, maintains good eye contact. No psychomotor agitation or retardation noted. Speech: Normal rate, rhythm, and volume. Coherent and articulate. Mood: Reports feeling "not too depressed" and "anxious." Rates depression a 6/10 and anxiety a 7/10. Affect: Congruent with reported mood, though somewhat constricted and notable for worry. Thought Process: Linear, logical, and goal-directed. Thought Content: Preoccupied with psychosocial stressors (housing, work, family). Reports excessive worry, particularly after negative interactions at work. Denies suicidal ideation, homicidal ideation, delusions, or paranoia. Insight/Judgment: Insight into stressors is fair. Judgment is impaired regarding her use of non-prescribed pain medication and other substances as coping mechanisms.', type: 'text', showActions: true },
+  ]},
+  { section: 'Interventions', cards: [
+    { field: 'Interventions', content: 'Psychoeducation was provided on the risks of using non-prescribed pain medication, including dependence and potential withdrawal, with strong recommendation to see her PCP. The various options for nicotine replacement therapy were discussed, with specific instructions on the proper use of nicotine gum (chew and park method). The psychiatrist also provided information on the potential side effects (nausea, headache) of the new antidepressant. Brief counseling on nutrition, including meal prepping and adequate hydration, was offered.', type: 'text', showActions: true },
+  ]},
+  { section: 'Therapeutic Interventions', cards: [
+    { field: 'Therapeutic Interventions', content: 'The psychiatrist utilized supportive psychotherapy to explore the patient\'s feelings about current life stressors. Motivational interviewing techniques were employed to assess her readiness to change her smoking habits and to address her use of non-prescribed pain medication. The patient engaged well in the discussion.', type: 'text', showActions: true },
+  ]},
+  { section: 'Summary', cards: [
+    { field: 'Summary', content: 'The patient continues to manage multiple psychosocial stressors, including housing instability, work pressure, and family adjustments following her husband\'s return from deployment. She reports significant anxiety, which appears to be a primary driver for her continued use of tobacco, marijuana, and alcohol, as well as recent escalating use of non-prescribed opioid pain medication. The treatment plan was adjusted to better target anxiety symptoms by switching her primary antidepressant and providing a PRN anxiolytic. Nicotine replacement therapy was initiated to support smoking cessation efforts, and she was strongly counseled to see her PCP for her back pain.', type: 'text', showActions: true },
   ]},
   { section: 'Plan', cards: [
-    { field: 'Medication', content: 'Continue sertraline 100mg daily. No dose adjustment at this time. Monitor for anxiety augmentation at follow-up.', type: 'text', showActions: true },
-    { field: 'Interventions', chips: ['CBT — cognitive restructuring', 'Sleep hygiene reinforcement', 'Family communication strategies'], type: 'chips' },
-    { field: 'Follow-up', content: 'Return in 4 weeks or sooner if symptoms worsen. Coordinate with therapist re: upcoming family stressor.', type: 'text' },
+    { field: 'Plan', content: '1. Discontinue Sertraline. 2. Start Citalopram 20 mg by mouth once daily to better target symptoms of anxiety and depression. 3. Start Hydroxyzine (Vistaril) 25 mg, take 1 to 2 tablets by mouth every 6 hours as needed for anxiety. 4. Start Nicotine gum 4 mg, chew 1 piece every hour as needed for cravings. Do not exceed 20 pieces in 24 hours. 5. Patient was strongly counseled to schedule an appointment with her primary care provider for evaluation of her back pain and to discontinue use of non-prescribed pain medication. She was advised of the risk of withdrawal. 6. Return to clinic in 4-6 weeks for follow-up to assess medication efficacy and tolerability.', type: 'text', showActions: true },
   ]},
 ];
 
@@ -3796,20 +3817,71 @@ const TREATMENT_PLAN_SUGGESTIONS_DATA = [
 // ── Assessment suggestions ────────────────────────────────────────────────────
 
 const ASSESSMENT_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Reason for Referral', content: 'Client referred for comprehensive psychological assessment to evaluate trauma-related symptoms, establish diagnosis, and inform treatment planning. Client reports history of repeated trauma and current avoidance behaviors impacting daily function.', type: 'text', showActions: true },
-    { field: 'Assessment Methods', chips: ['Clinical interview', 'PCL-5 (PTSD Checklist)', 'PHQ-9', 'GAD-7', 'Behavioral observations'], type: 'chips' },
-    { field: 'Symptom Presentation', content: 'Client endorses intrusive memories, avoidance of trauma-related cues, negative alterations in cognition and mood, and hypervigilance. PCL-5 score: 48 (above clinical threshold of 33). PHQ-9: 14 (moderate depression). GAD-7: 12 (moderate anxiety).', type: 'text' },
+  { section: 'Presenting Problem', cards: [
+    { field: 'Presenting Problem', content: 'The client is a 23-year-old female university student presenting for an initial assessment due to concerns about anxiety and alcohol use. She reports that her anxiety, which she describes as "nervousness," has been a long-standing issue since her early teens and is now impacting multiple areas of her life, including academics. She also identifies a pattern of drinking alcohol to cope with social anxiety, which has led to negative consequences such as blackouts and poor academic performance. The client states she is seeking help now because things have "not been fantastic" and she is worried they will "get worse."', type: 'text', showActions: true },
   ]},
-  { section: 'Assessment', cards: [
-    { field: 'Clinical Impressions', content: 'Presentation consistent with PTSD, chronic, with comorbid moderate depression. No evidence of psychosis or active SI. Cognitive functioning within normal limits. Strong therapeutic alliance observed; client engaged throughout assessment.', type: 'text', showActions: true },
-    { field: 'Diagnoses', chips: ['PTSD, Chronic (F43.10)', 'MDD, Recurrent, Moderate (F33.1)'], type: 'chips' },
-    { field: 'Functional Impact', content: 'Trauma-related avoidance significantly impacts occupational functioning (frequent absences), social engagement (isolation), and sleep (averaging 4–5 hrs/night with nightmares). ADLs generally maintained.', type: 'text' },
+  { section: 'Anxiety Symptoms And History', cards: [
+    { field: 'Anxiety Symptoms And History', content: 'The client reports experiencing symptoms of anxiety since approximately age 13 or 14. She describes these symptoms as a persistent "nervousness" related to various life stressors, including social situations, school, work, and graduating college. She currently rates her anxiety as a 6 out of 10. She reports the most recent peak in anxiety (10/10) occurred last weekend. When her anxiety is high, she sometimes experiences a low or "down" mood. The client feels her anxiety is "trickling into every area of her life now."', type: 'text', showActions: true },
   ]},
-  { section: 'Plan', cards: [
-    { field: 'Recommendations', content: 'Initiate Cognitive Processing Therapy (CPT) — 12-session protocol targeting stuck points related to trauma. Refer to psychiatry for evaluation of pharmacological support (SSRI). Coordinate with primary care regarding sleep disturbance.', type: 'text', showActions: true },
-    { field: 'Priority Areas', chips: ['Trauma processing (CPT)', 'Sleep intervention', 'Safety planning', 'Psychiatric evaluation'], type: 'chips' },
-    { field: 'Follow-up', content: 'Share assessment report with referring provider. Schedule intake for CPT within 2 weeks. Provide psychoeducation handout on PTSD and treatment rationale before next contact.', type: 'text' },
+  { section: 'Previous Mental Health Treatment', cards: [
+    { field: 'Previous Mental Health Treatment', content: 'The client has a history of brief mental health treatment. A few years ago, she saw a counselor for approximately five or six sessions and a psychiatrist once or twice. She states she was told she had "some sort of anxiety disorder," possibly a general one. The client reports that she was not "on board with the whole therapy thing at that point" and did not believe it would help, so she discontinued treatment. She now feels she is in a different state of mind and is ready to engage in and commit to therapy, stating, "I want the help now."', type: 'text', showActions: true },
+  ]},
+  { section: 'Alcohol Use History And Pattern', cards: [
+    { field: 'Alcohol Use History And Pattern', content: 'The client reports first using alcohol at age 14. Her use has progressed from social experimentation to a primary coping mechanism for anxiety. She states she drinks when going out with friends, and while it helps her "relax" and "have fun," she is concerned because she sometimes drinks more than intended, leading to negative consequences. These consequences include making "bad decisions," experiencing hangovers that impact her ability to attend or perform in her college classes, and occasional blackouts. The last reported blackout occurred approximately one month ago. She states that her drinking is more frequent now than when she was younger and is used as a "tool to get through the anxiety."', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 1: Acute Intoxication And/Or Withdrawal Potential', cards: [
+    { field: 'Dimension 1: Acute Intoxication And/Or Withdrawal Potential', content: 'Substance(s) used: Alcohol. Date & time of most-recent use: Not specified. Route of administration: Oral. Typical quantity/pattern: Reports drinking when going out, sometimes to excess, resulting in hangovers and occasional blackouts. Current signs of intoxication: None observed during the interview. History of withdrawal symptoms: Not assessed. Prior detox/withdrawal complications: Not assessed.', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 2: Biomedical Conditions & Complications', cards: [
+    { field: 'Dimension 2: Biomedical Conditions & Complications', content: 'Current medical conditions: None reported. Acute medical complaints: None reported. Chronic illnesses impacting care: None reported. Surgeries/hospitalizations: History of appendectomy. Infectious disease status (HIV/HBV/HCV): Not assessed. Pain issues: None reported. Pregnancy status: Not pregnant; the client reports using oral contraceptives.', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications', cards: [
+    { field: 'Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications', content: 'Active psychological / behavioral / emotional / cognitive conditions: the client reports significant anxiety, describing it as nervousness that impacts her functioning. Past psychiatric diagnoses: Reports being told she had "some sort of anxiety disorder" by a previous counselor. Reported or observed cognitive functioning: Appears intact; thought process is linear and organized. Reported self-harm or homicidal thoughts/behaviors: Denies any history of suicidal or homicidal ideation. Psychotropic medications & response: None currently or historically reported. Stabilizing factors: Reports a supportive boyfriend. Reported or observed management of ADLs: Appears to be managing ADLs without difficulty. Stated connection between current signs/symptoms and SUD: the client explicitly states she uses alcohol to manage her social anxiety symptoms, saying it helps her "relax and have fun."', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 4: Readiness To Change', cards: [
+    { field: 'Dimension 4: Readiness To Change', content: 'Internal motivation statements: "I realize now that I\'m not handling it as well as I thought I was," "It\'s affecting other areas of my life," and "I want the help now." External pressures (legal, family, work): University professors have confronted her about poor academic performance and showing up to class with a hangover. Change goals voiced by the client: To lessen her anxiety and to reduce her alcohol consumption. Confidence in the ability to change (0-10): Not explicitly rated. Importance of change (0-10): Not explicitly rated, but the client contrasts her current motivation with her past lack of readiness for treatment.', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 5: Relapse, Continued Use, Or Continued Problem Potential', cards: [
+    { field: 'Dimension 5: Relapse, Continued Use, Or Continued Problem Potential', content: 'Longest period of abstinence: Not specified, but reports periods of being "off and on" with her anxiety and drinking. The client\'s description of recent cravings or triggers: Identifies social situations and feelings of anxiety as primary triggers for drinking. Coping skills the client reports using: Primarily uses alcohol to cope with anxiety. Situations the client identifies as difficult or that precede use: Reports that when she tries to go out without drinking, she feels "uncomfortable," "tense," and "confused." The client\'s reported history of overdose or relapse: No overdose history reported; reports occasional blackouts, with the last one about a month ago. Consequences of use mentioned by the client (medical, legal, social): Poor academic performance, being confronted by professors, making "bad decisions," and hangovers. What the client says she knows about her personal triggers: Identifies social situations and anxiety as triggers.', type: 'text', showActions: true },
+  ]},
+  { section: 'Dimension 6: Recovery/Living Environment', cards: [
+    { field: 'Dimension 6: Recovery/Living Environment', content: 'Current living situation: Lives in a university dorm on campus and returns to her parents\' home most weekends. Supportive household members: Parents are aware of her anxiety and provide financial support. The client reports a supportive boyfriend of six months. Evidence of peer/social supports (sober or using): Reports having two close college friends she can rely on. Other social contacts are part of the "going out" and drinking environment. Employment/financial stability: Not currently employed consistently; is financially supported by her parents. Transportation access: Appears to have adequate transportation, traveling between campus and home regularly. Threats to safety: Reports a history of emotional abuse from her father, which causes distress.', type: 'text', showActions: true },
+  ]},
+  { section: 'Risk To Self And Others', cards: [
+    { field: 'Risk To Self And Others', content: 'The client explicitly denies any history of suicidal ideation, plans, or intent, stating "never" when asked. She also denies any history of homicidal ideation, stating she is a "nice person." No history of suicide attempts was reported. No self-harm behaviors were discussed. Protective factors include future-oriented goals (graduating, getting a job) and a supportive relationship with her boyfriend.', type: 'text', showActions: true },
+  ]},
+  { section: 'Relationships And Social Support', cards: [
+    { field: 'Relationships And Social Support', content: 'The client has been in a relationship with her boyfriend for six months, whom she describes as supportive and aware of her struggles with anxiety. She identifies two close friends from college whom she feels she can rely on. Her broader social circle is associated with a university party culture. Her relationship with her older sister is distant, described as a "Merry Christmas, Happy Easter kind of relationship."', type: 'text', showActions: true },
+  ]},
+  { section: 'Spiritual Beliefs', cards: [
+    { field: 'Spiritual Beliefs', content: 'The client identifies as Catholic and reports a belief in God. She does not consider herself to be actively practicing but states that her faith is "there." She identifies prayer as a potential resource she could draw upon for strength during treatment.', type: 'text', showActions: true },
+  ]},
+  { section: 'Family Composition And Dynamics', cards: [
+    { field: 'Family Composition And Dynamics', content: 'The client\'s immediate family consists of her mother, father, and one older sister. She resides on campus during the week and returns to her parents\' home on weekends. The relationship with her parents is strained, particularly with her father. Her relationship with her sister, a successful doctor, is described as distant and superficial. She reports a dynamic of being unfavorably compared to her sister by her father.', type: 'text', showActions: true },
+  ]},
+  { section: 'History Of Emotional Abuse', cards: [
+    { field: 'History Of Emotional Abuse', content: 'The client reports a history of significant emotional abuse from her father. She provided examples of harsh and invalidating statements he has made, such as "I can\'t believe you\'re my daughter" and telling her not to identify herself as her daughter in public. She states that this constant comparison to her "ideal" sister has been a source of significant distress and does not "foster a great relationship." She reports she has become "numb" to these comments over time, but they still feel "annoying" and painful.', type: 'text', showActions: true },
+  ]},
+  { section: 'Education And Employment', cards: [
+    { field: 'Education And Employment', content: 'The client is a senior in college pursuing a degree in education with the goal of becoming a teacher. Her academic performance is currently a source of stress, as her anxiety and the consequences of her alcohol use (e.g., hangovers, missing class) are negatively impacting her grades. She reports that her professors have begun to confront her about her performance. She has past work experience in babysitting and retail but is not working much currently due to her academic commitments.', type: 'text', showActions: true },
+  ]},
+  { section: 'Legal History', cards: [
+    { field: 'Legal History', content: 'The client reports one past incident of legal involvement at age 14 or 15. She was caught shoplifting with friends while under the influence of alcohol. The incident involved the police and her parents being called. She believes she may have a criminal record as a result of this event but reports no subsequent legal issues.', type: 'text', showActions: true },
+  ]},
+  { section: 'Mental Status Examination', cards: [
+    { field: 'Mental Status Examination', content: 'The client was cooperative and engaged throughout the interview. Mood appeared euthymic with underlying anxiety. Affect was congruent with the topics discussed and appropriate in range, though it became more constricted and she appeared sad when discussing her father\'s comments. Speech was clear, with a normal rate, rhythm, and volume. Thought process was consistently linear, logical, and goal-directed. There was no evidence of delusions, hallucinations, or other perceptual disturbances. Insight is assessed as fair to good; she demonstrates an awareness of her anxiety and problematic alcohol use and expresses a clear motivation for change. Judgment appears to be impaired when under the influence of alcohol, as evidenced by her reports of making "bad decisions," but was intact during the session.', type: 'text', showActions: true },
+  ]},
+  { section: 'Client Strengths', cards: [
+    { field: 'Client Strengths', content: 'The client demonstrates significant strengths, including being articulate, intelligent, and insightful about her presenting problems. She is highly motivated for treatment at this time, stating, "I\'m ready now." She identifies herself as a "hard worker" and has a supportive boyfriend and two close friends. She is future-oriented, with clear goals of graduating college and becoming a teacher.', type: 'text', showActions: true },
+  ]},
+  { section: 'Barriers To Treatment', cards: [
+    { field: 'Barriers To Treatment', content: 'Potential barriers include a long-standing pattern of using alcohol as a primary coping mechanism for anxiety. The history of emotional abuse and invalidation from her father may present challenges in developing self-worth and trust. Her distant relationship with her family may limit her sources of familial support.', type: 'text', showActions: true },
+  ]},
+  { section: 'Client Goals For Treatment', cards: [
+    { field: 'Client Goals For Treatment', content: 'The client identified three primary goals for treatment: 1) To lessen the symptoms and impact of her anxiety. 2) To reduce her alcohol consumption and develop healthier coping strategies. 3) To successfully navigate her final year of college and graduate.', type: 'text', showActions: true },
+  ]},
+  { section: 'Interpretive Summary', cards: [
+    { field: 'Interpretive Summary', content: 'The client is a 23-year-old female college senior presenting with symptoms of long-standing anxiety and a pattern of maladaptive alcohol use, which she identifies as a coping mechanism for social distress. These interconnected issues are causing significant impairment in her academic functioning and personal well-being, prompting her to seek services. A key contributing factor to her distress appears to be a history of paternal emotional invalidation and unfavorable comparisons to her sibling, which has likely impacted her self-concept. Although a previous, brief course of therapy was unsuccessful due to a stated lack of readiness, the client now presents as highly motivated and ready to engage in treatment. Her strengths include strong self-awareness, intelligence, and a supportive network that includes her boyfriend and close friends. Her stated goals are to reduce anxiety, moderate her drinking, and successfully complete her education. The focus of treatment will be to address these goals by developing healthier coping skills, exploring the function of her alcohol use, and processing the impact of her family dynamics on her current mental health.', type: 'text', showActions: true },
   ]},
 ];
 
@@ -3953,6 +4025,29 @@ const PROGRESS_NOTE_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Jacob Rosen audio session suggestions ────────────────────────────────────
+
+const JACOB_AUDIO_SUGGESTIONS_DATA = [
+  { section: 'Key Moments', cards: [
+    { field: 'Relationship & Living Situation', content: 'The therapist and client discussed the client\'s relationship with his partner, including their current living situation and the possibility of her moving back in.', type: 'text', showActions: true },
+    { field: 'Codependency & Early Recovery', content: 'The therapist shared concerns about the potential challenges of a codependent dynamic, especially during early recovery, and emphasized the importance of both the client and his partner maintaining their individual recovery.', type: 'text', showActions: true },
+  ]},
+  { section: 'Interventions', cards: [
+    { field: 'Boundary Setting', content: 'Client was encouraged to establish clear boundaries with his partner and explored what those boundaries might look like in practice, highlighting their importance for both his own well-being and that of his family.', type: 'text', showActions: true },
+    { field: 'Motivational Interviewing', content: 'Motivational interviewing techniques were used to strengthen the client\'s commitment to recovery and to support him in taking actionable steps toward his goals.', type: 'text', showActions: true },
+    { field: 'Psychoeducation', content: 'The therapist provided psychoeducation on the benefits of family sessions for couples in recovery, particularly in improving communication and relationship functioning.', type: 'text', showActions: true },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Engagement & Receptivity', content: 'The client appeared engaged, open, and receptive throughout the session. He demonstrated a clear commitment to his recovery and a willingness to take necessary steps to support both himself and his family.', type: 'text', showActions: true },
+    { field: 'Insight', content: 'The client showed insight into the importance of setting boundaries, particularly within his relationship, as a way to foster a more stable and healthy environment.', type: 'text', showActions: true },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Treatment & Sobriety', content: 'The client will continue participating in his current treatment and maintaining sobriety.', type: 'text', showActions: true },
+    { field: 'Boundaries', content: 'He will establish and uphold clear boundaries regarding his partner\'s potential move-in, with an emphasis on her commitment to treatment and sobriety.', type: 'text', showActions: true },
+    { field: 'Family Therapy', content: 'Additionally, the client will consider participating in family therapy sessions to further strengthen relationship dynamics and communication.', type: 'text', showActions: true },
+  ]},
+];
+
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
@@ -3965,6 +4060,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
     if (session.id === 'jake' || session.id === 'larry') return JAKE_CAROL_SUGGESTIONS_DATA;
+    if (session.id === 'jacob-audio') return JACOB_AUDIO_SUGGESTIONS_DATA;
     if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
     if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
     if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
@@ -3980,6 +4076,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
 
+  const isTextSession = session?.sessionType === 'text';
   // Tabs: coding tab only shown for individual audio sessions
   const TABS = isIndividualAudio ? ['suggestions', 'coding', 'insights'] : ['suggestions', 'insights'];
   const TAB_LABELS = { suggestions: 'Suggestions', insights: 'Insights', coding: 'Codes' };
@@ -3987,6 +4084,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
 
   const [activeTab, setActiveTab] = useState('suggestions'); // 'suggestions' | 'insights' | 'coding'
   const [activeSectionIdx, setActiveSectionIdx] = useState(0);
+  const [activeCardIdx, setActiveCardIdx] = useState(0);
   const [openSections, setOpenSections] = useState(new Set(data.map(s => s.section)));
   const [excluded, setExcluded] = useState(new Set());
   const [added, setAdded] = useState(new Set()); // tracks cards whose content was added to EHR
@@ -3994,12 +4092,25 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const scrollRef = useRef(null);
   const sectionRefs = useRef({});
+  const cardRefs = useRef({});
+
+  // Single-section datasets navigate card-by-card instead of section-by-section
+  const isSingleSection = data.length === 1;
+  const flatCards = isSingleSection ? data[0].cards : [];
 
   const scrollToSection = (idx) => {
     const section = data[idx]?.section;
     const el = sectionRefs.current[section];
     if (el && scrollRef.current) {
       scrollRef.current.scrollTo({ top: el.offsetTop - scrollRef.current.offsetTop, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToCard = (idx) => {
+    const field = flatCards[idx]?.field;
+    const el = cardRefs.current[field];
+    if (el && scrollRef.current) {
+      scrollRef.current.scrollTo({ top: el.offsetTop - scrollRef.current.offsetTop - 8, behavior: 'smooth' });
     }
   };
 
@@ -4059,7 +4170,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
       <div style={{ flex: 1, background: 'white', borderRadius: '16px 16px 0 0', boxShadow: SHADOW_EL16, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', flexShrink: 0, height: compactMode ? 34 : 42, borderBottom: '1px solid rgba(0,0,0,0.12)', background: 'white' }}>
+        <div style={{ display: isTextSession ? 'none' : 'flex', flexShrink: 0, height: compactMode ? 34 : 42, borderBottom: '1px solid rgba(0,0,0,0.12)', background: 'white' }}>
           {TABS.map(tab => (
             <div key={tab} onClick={() => setActiveTab(tab)}
               style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer' }}>
@@ -4085,24 +4196,49 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           </div>
         )}
 
-        {/* Section nav bar — Suggestions tab only */}
+        {/* Nav bar — Suggestions tab only */}
         {activeTab === 'suggestions' && <div style={{ flexShrink: 0, height: 48, background: '#EAEDFA', borderBottom: '1px solid rgba(33,33,33,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px' }}>
-          <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px' }}>{activeSectionIdx + 1} of {data.length}:</span>
-            <span style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', marginLeft: 3 }}>{currentSection.section}</span>
-          </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button onClick={() => { const next = Math.max(0, activeSectionIdx - 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === 0}
-              style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.5)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === 0 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === 0 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Prev
-            </button>
-            <button onClick={() => { const next = Math.min(data.length - 1, activeSectionIdx + 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === data.length - 1}
-              style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === data.length - 1 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === data.length - 1 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
-              Next
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-          </div>
+          {isSingleSection ? (
+            /* Card-level nav for single-section datasets */
+            <>
+              <div style={{ display: 'flex', gap: 2, alignItems: 'center', minWidth: 0, flex: 1, marginRight: 8 }}>
+                <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', flexShrink: 0 }}>{activeCardIdx + 1} of {flatCards.length}:</span>
+                <span style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', marginLeft: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{flatCards[activeCardIdx]?.field}</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+                <button onClick={() => { const next = Math.max(0, activeCardIdx - 1); setActiveCardIdx(next); scrollToCard(next); }} disabled={activeCardIdx === 0}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.5)', border: 'none', borderRadius: 4, cursor: activeCardIdx === 0 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeCardIdx === 0 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Prev
+                </button>
+                <button onClick={() => { const next = Math.min(flatCards.length - 1, activeCardIdx + 1); setActiveCardIdx(next); scrollToCard(next); }} disabled={activeCardIdx === flatCards.length - 1}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 4, cursor: activeCardIdx === flatCards.length - 1 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeCardIdx === flatCards.length - 1 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                  Next
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              </div>
+            </>
+          ) : (
+            /* Section-level nav for multi-section datasets */
+            <>
+              <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px' }}>{activeSectionIdx + 1} of {data.length}:</span>
+                <span style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', marginLeft: 3 }}>{currentSection.section}</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button onClick={() => { const next = Math.max(0, activeSectionIdx - 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === 0}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.5)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === 0 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === 0 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Prev
+                </button>
+                <button onClick={() => { const next = Math.min(data.length - 1, activeSectionIdx + 1); setActiveSectionIdx(next); scrollToSection(next); }} disabled={activeSectionIdx === data.length - 1}
+                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: 4, cursor: activeSectionIdx === data.length - 1 ? 'default' : 'pointer', ...P, fontSize: 12, fontWeight: 500, color: activeSectionIdx === data.length - 1 ? 'rgba(33,33,33,0.38)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                  Next
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              </div>
+            </>
+          )}
         </div>}
 
         {/* Scrollable sections — Suggestions tab only */}
@@ -4128,7 +4264,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                       const excludeKey = `${section}-${card.field}`;
                       const isExcluded = excluded.has(excludeKey);
                       return (
-                        <div key={card.field} style={{ background: 'white', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div key={card.field} ref={isSingleSection ? el => { cardRefs.current[card.field] = el; } : null} style={{ background: 'white', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                           {/* Row 1: label + exclude button (hidden when excluded) */}
                           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                             <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>{card.field}</span>
