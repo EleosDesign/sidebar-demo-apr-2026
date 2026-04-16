@@ -741,7 +741,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
         onBack={() => { setActivitiesSession(null); setPhase('sessions'); setClientName('Webb, Marcus'); }}
         onAddToNote={onAddToNote}
-        suggestionsData={noteTypeCtx?.suggestionsData}
         session={activitiesSession}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
         compactMode={compactMode}
