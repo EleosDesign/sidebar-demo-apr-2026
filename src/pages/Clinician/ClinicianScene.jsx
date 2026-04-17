@@ -150,7 +150,6 @@ export default function ClinicianScene({ step, onNext }) {
       <EhrFieldProvider>
         <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
         <EnhancePointerToolbarWrapper />
-        <EnhanceModeWatcher onOpenSidebar={() => { if (step === 0) onNext(); else setSidebarOpen(true); }} />
         {/* Demo controls tray — bottom-right, discrete but accessible */}
         <div style={{
           position: 'fixed', bottom: 20, right: 56, zIndex: 100,
@@ -374,22 +373,6 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
   );
 }
 
-// ── EnhanceModeWatcher — opens sidebar when Enhance is clicked ───────────────
-
-/**
- * Sits inside EhrFieldProvider so it can read enhanceModeField.
- * When a field enters enhance mode, opens the companion sidebar.
- */
-function EnhanceModeWatcher({ onOpenSidebar }) {
-  const ehrCtx = useEhrField();
-  useEffect(() => {
-    if (ehrCtx?.enhanceModeField) {
-      onOpenSidebar();
-    }
-  }, [ehrCtx?.enhanceModeField]); // eslint-disable-line
-  return null;
-}
-
 // ── EnhancePointerToolbar — global quality-check shield ──────────────────────
 
 function EnhancePointerToolbarWrapper() {
@@ -530,7 +513,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   }, [noteTypeCtx?.noteValues]); // eslint-disable-line
 
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
-  const [prevNavTab, setPrevNavTab] = useState('activities'); // tab to return to after enhance mode
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
@@ -730,14 +712,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   // Consume startTab prop — navigate to it once then clear
   useEffect(() => { if (startTab) { setNavTab(startTab); onStartTabConsumed?.(); } }, [startTab]);
 
-  // Switch to enhanced-text panel when user clicks the Enhance inline button
-  useEffect(() => {
-    if (ehrCtx?.enhanceModeField && navTab !== 'enhanced-text') {
-      setPrevNavTab(navTab);
-      setNavTab('enhanced-text');
-    }
-  }, [ehrCtx?.enhanceModeField]); // eslint-disable-line
-
   // Determine active nav icon
   const activeNav = step === 2 ? 'capture'
     : navTab === 'capture' ? 'capture'
@@ -843,20 +817,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
     if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} />;
-    if (navTab === 'enhanced-text') return (
-      <EnhancedTextPanel
-        originalText={ehrCtx?.enhanceModeText ?? ''}
-        fieldId={ehrCtx?.enhanceModeField ?? ''}
-        onUseText={(fieldId, text) => {
-          ehrCtx?.applyEnhancedText(fieldId, text);
-          setNavTab(prevNavTab);
-        }}
-        onDiscard={() => {
-          ehrCtx?.clearEnhanceMode();
-          setNavTab(prevNavTab);
-        }}
-      />
-    );
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || 'Marcus Webb'}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
@@ -5043,109 +5003,6 @@ function CodingPanel() {
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 28px' }}>
         <div style={{ position: 'sticky', top: 0, height: 16, background: 'var(--eleos-content-bg)', zIndex: 5, marginLeft: -16, marginRight: -16 }} />
         <CptCardList />
-      </div>
-    </div>
-  );
-}
-
-// ── Enhanced Text Panel ───────────────────────────────────────────────────────
-
-function generateEnhancedText(original) {
-  if (!original?.trim()) return 'No note content to enhance.';
-  let text = original.trim();
-  // Capitalise first letter of each sentence
-  text = text.replace(/(^|[.!?]\s+)([a-z])/g, (_, p1, p2) => p1 + p2.toUpperCase());
-  // Ensure ends with period
-  if (!/[.!?]$/.test(text)) text += '.';
-  // Add clinical closing sentence
-  text += ' Client demonstrated appropriate engagement and insight throughout the session. Clinician will continue to monitor progress and adjust interventions in accordance with the established treatment goals.';
-  return text;
-}
-
-function EnhancedTextPanel({ originalText, fieldId, onUseText, onDiscard }) {
-  const [phase, setPhase] = React.useState('loading'); // 'loading' | 'ready'
-  const [enhancedText, setEnhancedText] = React.useState('');
-  const P = { fontFamily: 'Poppins, sans-serif' };
-
-  React.useEffect(() => {
-    setPhase('loading');
-    const t = setTimeout(() => {
-      setEnhancedText(generateEnhancedText(originalText));
-      setPhase('ready');
-    }, 2200);
-    return () => clearTimeout(t);
-  }, [originalText]);
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      {/* Header */}
-      <div style={{ padding: '20px 20px 12px', borderBottom: '1px solid rgba(41,61,135,0.1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-          <span style={{ fontSize: 20 }}>✨</span>
-          <span style={{ ...P, fontSize: 16, fontWeight: 600, color: '#1a1a2e' }}>Enhance Note</span>
-        </div>
-        <p style={{ ...P, fontSize: 12, color: 'rgba(33,33,33,0.55)', margin: 0 }}>
-          AI will improve clarity and clinical language
-        </p>
-      </div>
-
-      {/* Content */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {/* Original */}
-        <div>
-          <div style={{ ...P, fontSize: 11, fontWeight: 600, color: '#999', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-            Original
-          </div>
-          <div style={{ background: '#f5f5f5', borderRadius: 8, padding: '12px 14px', fontSize: 13, color: '#555', lineHeight: 1.6, fontFamily: 'inherit' }}>
-            {originalText || <span style={{ fontStyle: 'italic', color: '#aaa' }}>No content</span>}
-          </div>
-        </div>
-
-        {/* Enhanced */}
-        <div>
-          <div style={{ ...P, fontSize: 11, fontWeight: 600, color: '#293d87', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-            Enhanced
-          </div>
-          {phase === 'loading' ? (
-            <div style={{ background: '#eaedfa', borderRadius: 8, padding: '24px 14px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 28, height: 28, border: '3px solid #afbbec', borderTopColor: '#293d87', borderRadius: '50%', animation: 'enhanceSpin 0.8s linear infinite' }} />
-              <span style={{ ...P, fontSize: 13, color: '#293d87', fontWeight: 500 }}>Enhancing with AI…</span>
-              <style>{`@keyframes enhanceSpin { to { transform: rotate(360deg); } }`}</style>
-            </div>
-          ) : (
-            <div style={{ background: '#eaedfa', borderRadius: 8, padding: '12px 14px', fontSize: 13, color: '#293d87', lineHeight: 1.6, fontFamily: 'inherit', border: '1px solid #c7cef0' }}>
-              {enhancedText}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div style={{ padding: '14px 20px', borderTop: '1px solid rgba(41,61,135,0.1)', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <button
-          disabled={phase === 'loading'}
-          onClick={() => phase === 'ready' && onUseText(fieldId, enhancedText)}
-          style={{
-            ...P,
-            width: '100%', padding: '12px', borderRadius: 10,
-            background: phase === 'loading' ? '#c7cef0' : '#293d87',
-            color: '#fff', border: 'none', cursor: phase === 'loading' ? 'not-allowed' : 'pointer',
-            fontSize: 14, fontWeight: 600, transition: 'background 0.15s',
-          }}
-        >
-          Use Enhanced Text
-        </button>
-        <button
-          onClick={onDiscard}
-          style={{
-            ...P,
-            width: '100%', padding: '10px', borderRadius: 10,
-            background: 'transparent', color: '#293d87', border: '1.5px solid #c7cef0',
-            cursor: 'pointer', fontSize: 13, fontWeight: 500,
-          }}
-        >
-          Discard
-        </button>
       </div>
     </div>
   );
