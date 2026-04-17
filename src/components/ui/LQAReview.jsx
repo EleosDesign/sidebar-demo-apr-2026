@@ -7,17 +7,41 @@ const OPEN_ITEMS = [
   { id: 0, title: 'Progress Mentioned',              detail: 'Note lacks specific progress documentation or goal indicators.' },
   { id: 1, title: 'Client Response to Intervention', detail: 'No client response documented after intervention.' },
   { id: 2, title: 'Compliant Plan',                  detail: 'Both criteria were not met: no next step or next appointment documented.' },
-  { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).' },
+  { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).', custom: true },
 ];
 
-const COMPLETED_ITEMS = ['Completeness', 'Uniqueness', 'Golden Thread', 'Intervention Used'];
+// 7 standard rules that passed
+const COMPLETED_ITEMS = [
+  { label: 'Completeness',       custom: false },
+  { label: 'Uniqueness',         custom: false },
+  { label: 'Golden Thread',      custom: false },
+  { label: 'Intervention Used',  custom: false },
+];
 
 const ALL_CLEAR_ITEMS = [
-  'Progress Mentioned', 'Client Response to Intervention', 'Compliant Plan', 'Service Code Match',
-  'Completeness', 'Uniqueness', 'Golden Thread', 'Intervention Used',
+  { label: 'Completeness',                   custom: false },
+  { label: 'Uniqueness',                     custom: false },
+  { label: 'Progress Mentioned',             custom: false },
+  { label: 'Golden Thread',                  custom: false },
+  { label: 'Intervention Used',              custom: false },
+  { label: 'Client Response to Intervention',custom: false },
+  { label: 'Compliant Plan',                 custom: false },
+  { label: 'Service Code Match',             custom: true  },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
+
+function CustomBadge() {
+  return (
+    <span style={{
+      fontSize: 10, fontWeight: 600, color: '#7c3aed', background: '#f3f0ff',
+      border: '1px solid #ddd6fe', borderRadius: 4, padding: '2px 6px',
+      fontFamily: "'Poppins',sans-serif", letterSpacing: '0.02em', whiteSpace: 'nowrap',
+    }}>
+      Custom Rule
+    </span>
+  );
+}
 
 function ItemCard({ item, onDismiss }) {
   const [hovered, setHovered] = useState(false);
@@ -27,11 +51,14 @@ function ItemCard({ item, onDismiss }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px 8px' }}>
-        <span style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>{item.title}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px 8px', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>{item.title}</span>
+          {item.custom && <CustomBadge />}
+        </div>
         <button
           onClick={() => onDismiss(item.id)}
-          style={{ fontSize: 12, fontWeight: 500, color: '#888', background: '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 9px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: hovered ? 1 : 0, transition: 'opacity 0.15s' }}
+          style={{ fontSize: 12, fontWeight: 500, color: '#888', background: '#f5f5f5', border: 'none', borderRadius: 6, padding: '3px 9px', cursor: 'pointer', fontFamily: "'Poppins',sans-serif", opacity: hovered ? 1 : 0, transition: 'opacity 0.15s', flexShrink: 0 }}
         >
           Dismiss
         </button>
@@ -43,7 +70,7 @@ function ItemCard({ item, onDismiss }) {
   );
 }
 
-function CheckItem({ label }) {
+function CheckItem({ label, custom }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, padding: '12px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
       <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#e8f8ee', border: '1.5px solid #4caf50', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -51,7 +78,8 @@ function CheckItem({ label }) {
           <path d="M5 13l4 4L19 7" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <span style={{ fontSize: 14, color: '#333', fontFamily: "'Poppins',sans-serif" }}>{label}</span>
+      <span style={{ fontSize: 14, color: '#333', fontFamily: "'Poppins',sans-serif", flex: 1 }}>{label}</span>
+      {custom && <CustomBadge />}
     </div>
   );
 }
@@ -240,7 +268,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
               </div>
               {completedExpanded && (
                 <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {COMPLETED_ITEMS.map((item, i) => <CheckItem key={i} label={item} />)}
+                  {COMPLETED_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
                 </div>
               )}
             </div>
@@ -269,7 +297,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
                 </svg>
               </div>
               <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {ALL_CLEAR_ITEMS.map((item, i) => <CheckItem key={i} label={item} />)}
+                {ALL_CLEAR_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
               </div>
             </div>
           </div>
