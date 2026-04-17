@@ -3053,7 +3053,7 @@ const TEXT_SUMMARY_BULLETS = [
   '• Meaningful progress noted toward treatment goal of improving emotional regulation and reducing anxiety symptoms.',
   '• Safety assessment completed — client denied suicidal or homicidal ideation and remains committed to safety plan.',
   '• Plan to continue weekly individual sessions; client will practice mindfulness and journaling exercises between sessions.',
-].join('\n');
+];
 
 function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
@@ -3064,7 +3064,30 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
   const [voiceSeconds, setVoiceSeconds] = useState(0);
   const voiceTimerRef = useRef(null);
   const [notes, setNotes] = useState('');
+  const [animating, setAnimating] = useState(false);
+  const animTimeoutsRef = useRef([]);
   const [generating, setGenerating] = useState(false);
+
+  // Clean up bullet animation timeouts on unmount
+  useEffect(() => () => animTimeoutsRef.current.forEach(clearTimeout), []);
+
+  const handleTextareaKeyDown = (e) => {
+    if (e.key === 'Enter' && notes.trim() === '' && !animating) {
+      e.preventDefault();
+      setAnimating(true);
+      animTimeoutsRef.current.forEach(clearTimeout);
+      animTimeoutsRef.current = [];
+      let accumulated = '';
+      TEXT_SUMMARY_BULLETS.forEach((bullet, i) => {
+        const t = setTimeout(() => {
+          accumulated += (i === 0 ? '' : '\n') + bullet;
+          setNotes(accumulated);
+          if (i === TEXT_SUMMARY_BULLETS.length - 1) setAnimating(false);
+        }, (i + 1) * 420);
+        animTimeoutsRef.current.push(t);
+      });
+    }
+  };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
 
@@ -3316,7 +3339,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                 {/* Text Summary */}
                 <button
                   className="capture-menu-row"
-                  onClick={() => { setShowCaptureDrawer(false); setNotes(TEXT_SUMMARY_BULLETS); setPhase('text'); }}
+                  onClick={() => { setShowCaptureDrawer(false); setPhase('text'); }}
                   style={{ background: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', width: '100%', textAlign: 'left' }}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
@@ -3650,9 +3673,11 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           </p>
           <textarea
             value={notes}
-            onChange={e => setNotes(e.target.value)}
-            placeholder={'Add info about the activity, like\n\nWhat you did with your client\nWhat their response was\nYour plans until and for your next activity'}
-            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: 'white', transition: 'border-color 0.15s' }}
+            onChange={e => { if (!animating) setNotes(e.target.value); }}
+            onKeyDown={handleTextareaKeyDown}
+            readOnly={animating}
+            placeholder={'Press Enter to auto-fill, or type your own summary…'}
+            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: animating ? '#fafbff' : 'white', transition: 'border-color 0.15s, background 0.2s' }}
           />
           <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', marginTop: 8, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
             {hasEnoughText ? 'Ready to generate suggestions.' : 'Add more info to generate suggestions.'}
