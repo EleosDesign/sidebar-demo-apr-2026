@@ -8,6 +8,11 @@ export function EhrFieldProvider({ children }) {
   const [lqaStatus, setLqaStatus] = useState('idle'); // 'idle' | 'loading' | 'issues'
   const [changedSinceAnalysis, setChangedSinceAnalysis] = useState(false);
 
+  // ── Enhance state ──────────────────────────────────────────────────────────
+  const [enhanceActive, setEnhanceActive] = useState(false);
+  const [enhanceField, setEnhanceField] = useState(null);  // which field is being enhanced
+  const [enhanceLoading, setEnhanceLoading] = useState(false);
+
   const analyzedSnapshotRef = useRef(null);
 
   // Mark dirty whenever fieldValues change after analysis completes
@@ -37,6 +42,16 @@ export function EhrFieldProvider({ children }) {
     }));
   };
 
+  /**
+   * Trigger the LQA quality-check flow from anywhere (e.g. after an AI enhance
+   * on the Plan field). No-ops if a check is already in flight.
+   */
+  const triggerQualityCheck = () => {
+    if (lqaStatus === 'loading') return;
+    setLqaStatus('loading');
+    setTimeout(() => setLqaStatus('issues'), 2800);
+  };
+
   return (
     <EhrFieldContext.Provider value={{
       activeField, setActiveField,
@@ -44,6 +59,11 @@ export function EhrFieldProvider({ children }) {
       appendToField,
       lqaStatus, setLqaStatus,
       changedSinceAnalysis, setChangedSinceAnalysis,
+      // enhance
+      enhanceActive, setEnhanceActive,
+      enhanceField, setEnhanceField,
+      enhanceLoading, setEnhanceLoading,
+      triggerQualityCheck,
     }}>
       {children}
     </EhrFieldContext.Provider>

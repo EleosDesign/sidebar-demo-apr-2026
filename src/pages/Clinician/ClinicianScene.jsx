@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
+import EnhancePointer from '../../components/enhance/EnhancePointer';
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
@@ -450,29 +451,45 @@ function NoteSection({ noteValues, onNoteChange, highlightedField }) {
 
   return (
     <div style={{ padding: '0 10px 12px' }}>
-      <NoteField label="Data/Goal:" height={80} value={noteValues['Data/Goal:']} onChange={v => handleChange('Data/Goal:', v)} onFocus={() => handleFocus('Data/Goal:')} highlighted={highlightedField === 'Data/Goal:'} />
-      <NoteField label="Intervention/Response:" height={72} value={noteValues['Intervention/Response:']} onChange={v => onNoteChange?.('Intervention/Response:', v)} highlighted={highlightedField === 'Intervention/Response:'} />
-      <NoteField label="Assessment/Level of Participation:" height={60} value={noteValues['Assessment/Level of Participation:']} onChange={v => handleChange('Assessment/Level of Participation:', v)} onFocus={() => handleFocus('Assessment/Level of Participation:')} highlighted={highlightedField === 'Assessment/Level of Participation:'} />
+      <NoteField label="Data/Goal:" fieldKey="data" height={80} value={noteValues['Data/Goal:']} onChange={v => handleChange('Data/Goal:', v)} onFocus={() => handleFocus('Data/Goal:')} highlighted={highlightedField === 'Data/Goal:'} />
+      <NoteField label="Intervention/Response:" fieldKey="intervention" height={72} value={noteValues['Intervention/Response:']} onChange={v => onNoteChange?.('Intervention/Response:', v)} highlighted={highlightedField === 'Intervention/Response:'} />
+      <NoteField label="Assessment/Level of Participation:" fieldKey="assessment" height={60} value={noteValues['Assessment/Level of Participation:']} onChange={v => handleChange('Assessment/Level of Participation:', v)} onFocus={() => handleFocus('Assessment/Level of Participation:')} highlighted={highlightedField === 'Assessment/Level of Participation:'} />
       <EHRDropdownGrid />
-      <NoteField label="Plan:" height={56} value={noteValues['Plan:']} onChange={v => handleChange('Plan:', v)} onFocus={() => handleFocus('Plan:')} highlighted={highlightedField === 'Plan:'} placeholder="Continue weekly individual therapy. Client to complete behavioral activation task before next session..." />
+      <NoteField label="Plan:" fieldKey="plan" height={56} value={noteValues['Plan:']} onChange={v => handleChange('Plan:', v)} onFocus={() => handleFocus('Plan:')} highlighted={highlightedField === 'Plan:'} placeholder="Continue weekly individual therapy. Client to complete behavioral activation task before next session..." />
     </div>
   );
 }
 
-function NoteField({ label, height, value = '', onChange, onFocus, placeholder, highlighted }) {
+function NoteField({ label, height, value = '', onChange, onFocus, placeholder, highlighted, fieldKey }) {
   const remaining = 30000 - value.length;
+  const ehrCtx = useEhrField();
+
+  const handleApply = (newValue) => onChange?.(newValue);
+
+  // Only the Plan field fires a quality check after enhancing
+  const handleQualityCheck = fieldKey === 'plan'
+    ? () => ehrCtx?.triggerQualityCheck?.()
+    : undefined;
+
   return (
     <div style={{ borderBottom: '1px solid #ddd', display: 'flex', transition: 'background 0.3s', background: highlighted ? '#fffde7' : 'transparent' }}>
       <div style={{ width: 200, padding: '6px 8px', color: '#333', borderRight: '1px solid #ddd', flexShrink: 0, fontSize: 11 }}>{label}</div>
       <div style={{ flex: 1, position: 'relative' }}>
-        <textarea
+        <EnhancePointer
           value={value}
-          onChange={e => onChange?.(e.target.value)}
-          onFocus={onFocus}
-          placeholder={placeholder || ''}
-          style={{ width: '100%', height, padding: '5px 6px', fontSize: 11, color: '#111', lineHeight: 1.5, resize: 'none', border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box' }}
-        />
-        <div style={{ position: 'absolute', bottom: 2, right: 6, color: '#e74c3c', fontSize: 10, pointerEvents: 'none' }}>* {remaining.toLocaleString()} Characters Left</div>
+          fieldKey={fieldKey}
+          onApply={handleApply}
+          onQualityCheck={handleQualityCheck}
+        >
+          <textarea
+            value={value}
+            onChange={e => onChange?.(e.target.value)}
+            onFocus={onFocus}
+            placeholder={placeholder || ''}
+            style={{ width: '100%', height, padding: '5px 6px', fontSize: 11, color: '#111', lineHeight: 1.5, resize: 'none', border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box' }}
+          />
+          <div style={{ position: 'absolute', bottom: 2, right: 6, color: '#e74c3c', fontSize: 10, pointerEvents: 'none' }}>* {remaining.toLocaleString()} Characters Left</div>
+        </EnhancePointer>
       </div>
     </div>
   );
