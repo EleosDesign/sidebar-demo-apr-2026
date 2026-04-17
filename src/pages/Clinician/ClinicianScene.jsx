@@ -3046,6 +3046,15 @@ function TagField({ label, selected, onChange }) {
   );
 }
 
+const TEXT_SUMMARY_BULLETS = [
+  '• Client attended and engaged in individual therapy session focused on coping strategies and emotional regulation.',
+  '• Therapist applied CBT techniques to identify and challenge negative thought patterns and cognitive distortions.',
+  '• Client demonstrated openness to exploring core beliefs contributing to current distress.',
+  '• Meaningful progress noted toward treatment goal of improving emotional regulation and reducing anxiety symptoms.',
+  '• Safety assessment completed — client denied suicidal or homicidal ideation and remains committed to safety plan.',
+  '• Plan to continue weekly individual sessions; client will practice mindfulness and journaling exercises between sessions.',
+].join('\n');
+
 function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
@@ -3307,7 +3316,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
                 {/* Text Summary */}
                 <button
                   className="capture-menu-row"
-                  onClick={() => { setShowCaptureDrawer(false); setPhase('text'); }}
+                  onClick={() => { setShowCaptureDrawer(false); setNotes(TEXT_SUMMARY_BULLETS); setPhase('text'); }}
                   style={{ background: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', width: '100%', textAlign: 'left' }}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
