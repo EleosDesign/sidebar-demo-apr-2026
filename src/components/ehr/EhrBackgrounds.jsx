@@ -3,7 +3,7 @@
  * Each component: position:absolute inset:0, accepts { noteValues, onNoteChange, highlightedField }
  * Patient: Webb, Marcus
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
@@ -53,6 +53,18 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
     });
   }, []); // eslint-disable-line
 
+  // Apply enhanced text from the sidebar back to the originating field
+  useEffect(() => {
+    if (!ehrField?.pendingApply) return;
+    const { fieldId, text } = ehrField.pendingApply;
+    if (sections.some(s => s.id === fieldId)) {
+      onNoteChange?.(fieldId, text);
+      const key = DAP_FIELD_MAP[fieldId];
+      if (key) ehrField.setFieldValues(prev => ({ ...prev, [key]: text }));
+      ehrField.clearPendingApply();
+    }
+  }, [ehrField?.pendingApply]); // eslint-disable-line
+
   const handleChange = (id, val) => {
     onNoteChange?.(id, val);
     // Keep EhrFieldContext.fieldValues in sync so LQA dirty-check works
@@ -89,7 +101,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
               {/* Inline enhance button — appears below the textarea on focus */}
               {isFocused && (
                 <div style={{ position: 'absolute', left: 8, bottom: -37, zIndex: 10 }}>
-                  <EnhanceInlineButton onClick={() => ehrField?.triggerQualityCheck?.()} />
+                  <EnhanceInlineButton onClick={() => ehrField?.triggerEnhanceMode?.(s.id, currentValue)} />
                 </div>
               )}
             </div>

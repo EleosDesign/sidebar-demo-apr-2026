@@ -8,10 +8,10 @@ export function EhrFieldProvider({ children }) {
   const [lqaStatus, setLqaStatus] = useState('idle'); // 'idle' | 'loading' | 'issues'
   const [changedSinceAnalysis, setChangedSinceAnalysis] = useState(false);
 
-  // ── Enhance state ──────────────────────────────────────────────────────────
-  const [enhanceActive, setEnhanceActive] = useState(false);
-  const [enhanceField, setEnhanceField] = useState(null);  // which field is being enhanced
-  const [enhanceLoading, setEnhanceLoading] = useState(false);
+  // ── Enhance mode state ─────────────────────────────────────────────────────
+  const [enhanceModeField, setEnhanceModeField] = useState(null);  // fieldId being enhanced
+  const [enhanceModeText, setEnhanceModeText] = useState('');       // original text
+  const [pendingApply, setPendingApply] = useState(null);           // { fieldId, text } to apply back
 
   const analyzedSnapshotRef = useRef(null);
 
@@ -43,14 +43,40 @@ export function EhrFieldProvider({ children }) {
   };
 
   /**
-   * Trigger the LQA quality-check flow from anywhere (e.g. after an AI enhance
-   * on the Plan field). No-ops if a check is already in flight.
+   * Trigger the LQA quality-check flow from anywhere.
+   * No-ops if a check is already in flight.
    */
   const triggerQualityCheck = () => {
     if (lqaStatus === 'loading') return;
     setLqaStatus('loading');
     setTimeout(() => setLqaStatus('issues'), 2800);
   };
+
+  /**
+   * Enter AI enhance mode for a specific field.
+   * Opens the companion sidebar to the 'enhanced-text' panel.
+   */
+  const triggerEnhanceMode = (fieldId, text) => {
+    setEnhanceModeField(fieldId);
+    setEnhanceModeText(text || '');
+  };
+
+  /** Exit enhance mode without applying changes. */
+  const clearEnhanceMode = () => {
+    setEnhanceModeField(null);
+    setEnhanceModeText('');
+  };
+
+  /**
+   * Apply enhanced text back to the originating field.
+   * StackedFields watches pendingApply and calls onNoteChange.
+   */
+  const applyEnhancedText = (fieldId, text) => {
+    setPendingApply({ fieldId, text });
+    clearEnhanceMode();
+  };
+
+  const clearPendingApply = () => setPendingApply(null);
 
   return (
     <EhrFieldContext.Provider value={{
@@ -59,10 +85,14 @@ export function EhrFieldProvider({ children }) {
       appendToField,
       lqaStatus, setLqaStatus,
       changedSinceAnalysis, setChangedSinceAnalysis,
-      // enhance
-      enhanceActive, setEnhanceActive,
-      enhanceField, setEnhanceField,
-      enhanceLoading, setEnhanceLoading,
+      // enhance mode
+      enhanceModeField,
+      enhanceModeText,
+      pendingApply,
+      triggerEnhanceMode,
+      clearEnhanceMode,
+      applyEnhancedText,
+      clearPendingApply,
       triggerQualityCheck,
     }}>
       {children}
