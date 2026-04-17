@@ -3676,7 +3676,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
             onChange={e => { if (!animating) setNotes(e.target.value); }}
             onKeyDown={handleTextareaKeyDown}
             readOnly={animating}
-            placeholder={'Press Enter to auto-fill, or type your own summary…'}
+            placeholder={'Add info about the activity, like\n\nWhat you did with your client\nWhat their response was\nYour plans until and for your next activity'}
             style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: animating ? '#fafbff' : 'white', transition: 'border-color 0.15s, background 0.2s' }}
           />
           <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', marginTop: 8, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
