@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
+import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
 // Maps note field IDs to EhrFieldContext keys for dirty-tracking.
@@ -30,6 +31,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   const noteTypeCtx = useNoteTypeContext();
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
+  const [focusedField, setFocusedField] = useState(null);
   const sections = noteTypeCtx?.sections ?? [
     { id: 'Data/Goal:',                         label: 'Data' },
     { id: 'Intervention/Response:',             label: 'Intervention/Response' },
@@ -62,26 +64,38 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
 
   return (
     <>
-      {sections.map(s => (
-        <div key={s.id} style={{ marginBottom: 22 }}>
-          <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
-          <textarea
-            value={noteValues[s.id] ?? ''}
-            onChange={e => handleChange(s.id, e.target.value)}
-            onFocus={() => setFocusedEhrField(s.id)}
-            onBlur={() => setFocusedEhrField(null)}
-            placeholder="Type here or use the cards on the right to build your note"
-            style={{
-              width: '100%', minHeight, padding: '10px 12px',
-              border: `1px solid ${borderColor}`, borderRadius,
-              resize: 'vertical', fontSize, color: '#333', fontFamily,
-              background: highlightedField === s.id ? '#fffde7' : bg,
-              outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
-              transition: 'background 0.3s',
-            }}
-          />
-        </div>
-      ))}
+      {sections.map(s => {
+        const currentValue = noteValues[s.id] ?? '';
+        const isFocused = focusedField === s.id;
+        return (
+          <div key={s.id} style={{ marginBottom: 22, paddingBottom: isFocused ? 10 : 0, transition: 'padding-bottom 0.15s' }}>
+            <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
+            <div style={{ position: 'relative' }}>
+              <textarea
+                value={currentValue}
+                onChange={e => handleChange(s.id, e.target.value)}
+                onFocus={() => { setFocusedEhrField(s.id); setTimeout(() => setFocusedField(s.id), 300); }}
+                onBlur={() => { setFocusedEhrField(null); setTimeout(() => setFocusedField(f => f === s.id ? null : f), 150); }}
+                placeholder="Type here or use the cards on the right to build your note"
+                style={{
+                  width: '100%', minHeight, padding: '10px 12px',
+                  border: `1px solid ${borderColor}`, borderRadius,
+                  resize: 'vertical', fontSize, color: '#333', fontFamily,
+                  background: highlightedField === s.id ? '#fffde7' : bg,
+                  outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
+                  transition: 'background 0.3s',
+                }}
+              />
+              {/* Inline enhance button — appears below the textarea on focus */}
+              {isFocused && (
+                <div style={{ position: 'absolute', left: 8, bottom: -37, zIndex: 10 }}>
+                  <EnhanceInlineButton onClick={() => ehrField?.triggerQualityCheck?.()} />
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
     </>
   );
 }

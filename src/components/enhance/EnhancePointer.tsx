@@ -1,194 +1,181 @@
-import React, { useState, useRef, useCallback } from 'react';
-import EnhanceInlineButton from './EnhanceInlineButton';
-import EnhancePointerToolbar, { EnhanceAction } from './EnhancePointerToolbar';
-
-// ── Demo AI transforms ────────────────────────────────────────────────────────
-
-const ENHANCE_SUFFIXES: Record<string, string> = {
-  data:        ' Client demonstrated adequate insight into presenting concerns and engaged actively in skill practice throughout the session.',
-  assessment:  ' Overall functional status remains consistent with treatment goals. Client is responding appropriately to current therapeutic interventions.',
-  plan:        ' Continue weekly individual therapy sessions. Client to practice identified coping strategies and log usage prior to next appointment.',
-  intervention:' Therapist utilized evidence-based techniques to address presenting concerns. Client verbalized understanding and expressed motivation to implement strategies.',
-  default:     ' Clinical documentation has been reviewed and updated to reflect session content accurately.',
-};
-
-function applyEnhance(value: string, fieldKey: string): string {
-  const trimmed = value.trimEnd();
-  const endsWithPunct = /[.!?]$/.test(trimmed);
-  const base = endsWithPunct ? trimmed : trimmed + '.';
-  const suffix = ENHANCE_SUFFIXES[fieldKey] ?? ENHANCE_SUFFIXES.default;
-  return base + suffix;
-}
-
-function applyExpand(value: string): string {
-  const trimmed = value.trimEnd();
-  const endsWithPunct = /[.!?]$/.test(trimmed);
-  const base = endsWithPunct ? trimmed : trimmed + '.';
-  return (
-    base +
-    '\n\nAdditional clinical observations: Client reported improvements since the previous session and expressed motivation to continue with the established treatment plan. No safety concerns identified at this time.'
-  );
-}
-
-function applyShorten(value: string): string {
-  const sentences = value
-    .replace(/\n+/g, ' ')
-    .split(/(?<=[.!?])\s+/)
-    .filter(Boolean);
-  const half = Math.max(1, Math.ceil(sentences.length / 2));
-  return sentences.slice(0, half).join(' ');
-}
-
-function applyFixGrammar(value: string): string {
-  let result = value.trimEnd();
-  // Capitalize first character
-  result = result.charAt(0).toUpperCase() + result.slice(1);
-  // Collapse multiple spaces
-  result = result.replace(/ {2,}/g, ' ');
-  // Ensure ends with period
-  if (result && !/[.!?]$/.test(result)) result += '.';
-  return result;
-}
-
-function applyAction(action: EnhanceAction, value: string, fieldKey: string): string {
-  switch (action) {
-    case 'enhance':    return applyEnhance(value, fieldKey);
-    case 'expand':     return applyExpand(value);
-    case 'shorten':    return applyShorten(value);
-    case 'fix-grammar': return applyFixGrammar(value);
-  }
-}
-
-// ── Component ─────────────────────────────────────────────────────────────────
+import React, { useEffect, useState } from 'react';
+import {
+  SHIELD_VIEWBOX, SHIELD_PATH, SHIELD_CHECK,
+  ARC_VIEWBOX, ARC_PATH,
+} from './svg-o7kqsvjwcs';
 
 interface EnhancePointerProps {
-  /** Current textarea value — button only appears when non-empty. */
-  value: string;
-  /** Logical field key (e.g. 'plan', 'data', 'assessment'). */
-  fieldKey?: string;
-  /** Called with the new value after an enhance action completes. */
-  onApply: (newValue: string) => void;
-  /**
-   * Optional callback triggered after an enhance completes.
-   * Wire this to `triggerQualityCheck()` for the Plan field.
-   */
-  onQualityCheck?: () => void;
-  children: React.ReactNode;
+  /** Number of outstanding quality items to show on the badge. */
+  outstandingCount?: number;
+  /** Whether to show the badge (only after first quality check). */
+  showBadge?: boolean;
+  /** Called when the user clicks the shield to check note quality. */
+  onCheckQuality?: () => void;
+  /** Tooltip text. */
+  tooltip?: string;
 }
 
 /**
- * Wrapper component that adds AI-enhance affordances to any textarea field.
+ * The quality-check shield icon used inside EnhancePointerToolbar.
  *
- * - Shows an EnhanceInlineButton when the field is hovered/focused with content.
- * - Clicking the button opens the EnhancePointerToolbar (portal) with 4 actions.
- * - Selected action runs a simulated AI transform, then calls onApply.
- * - If onQualityCheck is provided (Plan field), it fires after every enhance.
+ * Visual:
+ *   - Outer lavender circle (#afbbec), 44×44px
+ *   - Inner navy circle (#293d87) with white shield icon
+ *   - Spinning arc overlay for 3s on mount
+ *   - Optional badge showing outstanding item count (#8194e1)
+ *   - Tooltip "Check Note Quality" on hover
  */
 export default function EnhancePointer({
-  value,
-  fieldKey = 'default',
-  onApply,
-  onQualityCheck,
-  children,
+  outstandingCount = 0,
+  showBadge = false,
+  onCheckQuality,
+  tooltip = 'Check Note Quality',
 }: EnhancePointerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [spinning, setSpinning] = useState(true);
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const [toolbarOpen, setToolbarOpen] = useState(false);
-  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
-  const [activeAction, setActiveAction] = useState<EnhanceAction | null>(null);
-
-  const hasContent = value.trim().length > 0;
-  const buttonVisible = (hovered || focused || toolbarOpen) && hasContent;
-
-  const handleButtonClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    const btn = (e.currentTarget as HTMLElement);
-    setAnchorRect(btn.getBoundingClientRect());
-    setToolbarOpen(prev => !prev);
+  // Spin for 3 seconds on mount, then stop
+  useEffect(() => {
+    const t = setTimeout(() => setSpinning(false), 3000);
+    return () => clearTimeout(t);
   }, []);
-
-  const handleAction = useCallback(
-    (action: EnhanceAction) => {
-      if (activeAction) return; // already processing
-      setActiveAction(action);
-      setToolbarOpen(false);
-
-      setTimeout(() => {
-        const newValue = applyAction(action, value, fieldKey);
-        onApply(newValue);
-        setActiveAction(null);
-
-        // Fire quality-check hook (e.g. on Plan field)
-        if (action === 'enhance' || action === 'expand') {
-          onQualityCheck?.();
-        }
-      }, 1500);
-    },
-    [activeAction, value, fieldKey, onApply, onQualityCheck],
-  );
 
   return (
     <>
-      {/* Inject keyframe animations once */}
       <style>{`
-        @keyframes enhanceSpin {
+        @keyframes enhance-arc-spin {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
         }
-        @keyframes enhanceFadeIn {
-          from { opacity: 0; transform: translateY(-4px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes enhanceShimmer {
-          0%   { background-position: 200% center; }
-          100% { background-position: -200% center; }
+        @keyframes enhance-badge-in {
+          from { opacity: 0; transform: scale(0.6); }
+          to   { opacity: 1; transform: scale(1); }
         }
       `}</style>
 
-      <div
-        ref={containerRef}
-        style={{ position: 'relative', display: 'contents' }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onFocusCapture={() => setFocused(true)}
-        onBlurCapture={() => setTimeout(() => setFocused(false), 150)}
-      >
-        {children}
-
-        {/* Loading shimmer overlay — shown while an action is processing */}
-        {activeAction && (
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              borderRadius: 2,
-              background: 'linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.06) 50%, transparent 100%)',
-              backgroundSize: '200% 100%',
-              animation: 'enhanceShimmer 1.2s linear infinite',
-              pointerEvents: 'none',
-              zIndex: 8,
-            }}
-          />
+      <div style={{ position: 'relative', display: 'inline-flex' }}>
+        {/* Tooltip */}
+        {showTooltip && (
+          <div style={{
+            position: 'absolute',
+            bottom: 'calc(100% + 8px)',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(30,35,60,0.92)',
+            color: '#fff',
+            fontSize: 11,
+            fontWeight: 500,
+            padding: '4px 8px',
+            borderRadius: 5,
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}>
+            {tooltip}
+          </div>
         )}
 
-        <EnhanceInlineButton
-          visible={buttonVisible}
-          loading={activeAction !== null}
-          onClick={handleButtonClick}
-        />
-      </div>
+        {/* Main circle button */}
+        <button
+          aria-label={tooltip}
+          onMouseDown={e => e.preventDefault()}
+          onClick={onCheckQuality}
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          style={{
+            position: 'relative',
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: '#afbbec',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => {
+            setShowTooltip(true);
+            (e.currentTarget as HTMLButtonElement).style.background = '#9baade';
+          }}
+          onMouseLeave={e => {
+            setShowTooltip(false);
+            (e.currentTarget as HTMLButtonElement).style.background = '#afbbec';
+          }}
+        >
+          {/* Inner navy disc with shield */}
+          <div style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            background: '#293d87',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <svg
+              width="18"
+              height="18"
+              viewBox={SHIELD_VIEWBOX}
+              fill="none"
+            >
+              <path d={SHIELD_PATH} fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="1.5" strokeLinejoin="round" />
+              <path d={SHIELD_CHECK} stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
 
-      {toolbarOpen && (
-        <EnhancePointerToolbar
-          anchorRect={anchorRect}
-          onAction={handleAction}
-          onClose={() => setToolbarOpen(false)}
-          activeAction={activeAction}
-        />
-      )}
+          {/* Spinning arc overlay */}
+          {spinning && (
+            <svg
+              width="44"
+              height="44"
+              viewBox={ARC_VIEWBOX}
+              fill="none"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                animation: 'enhance-arc-spin 1s linear infinite',
+                pointerEvents: 'none',
+              }}
+            >
+              <path
+                d={ARC_PATH}
+                stroke="#293d87"
+                strokeWidth="3"
+                strokeLinecap="round"
+                fill="none"
+              />
+            </svg>
+          )}
+        </button>
+
+        {/* Badge */}
+        {showBadge && outstandingCount > 0 && (
+          <div style={{
+            position: 'absolute',
+            top: -4,
+            right: -4,
+            minWidth: 18,
+            height: 18,
+            background: '#8194e1',
+            borderRadius: 9,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 10,
+            fontWeight: 700,
+            color: '#fff',
+            padding: '0 4px',
+            boxSizing: 'border-box',
+            animation: 'enhance-badge-in 0.2s ease',
+            border: '1.5px solid #fff',
+          }}>
+            {outstandingCount}
+          </div>
+        )}
+      </div>
     </>
   );
 }

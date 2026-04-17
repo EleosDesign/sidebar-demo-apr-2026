@@ -1,86 +1,69 @@
 import React from 'react';
-import { SPARKLE_VIEWBOX, SPARKLE_PATHS } from './svg-efsgtmmfcy';
+import { STARS_VIEWBOX, STARS_PATHS } from './svg-efsgtmmfcy';
 
 interface EnhanceInlineButtonProps {
-  visible: boolean;
-  loading: boolean;
-  onClick: (e: React.MouseEvent) => void;
+  onClick?: () => void;
 }
 
 /**
- * Small sparkle pill button that appears in the top-right corner of a note
- * field when it has content and is hovered or focused. Clicking it opens the
- * EnhancePointerToolbar.
+ * Lavender sparkle button that appears BELOW a focused textarea.
+ * Matches the real Eleos enhance button:
+ *   - Background: #eaedfa (lavender)
+ *   - Accent/border: #293d87 (navy)
+ *   - Stars icon: #F9B534 (gold)
+ *   - Positioned absolute left-8px bottom-[-37px] by its parent
  */
-export default function EnhanceInlineButton({
-  visible,
-  loading,
-  onClick,
-}: EnhanceInlineButtonProps) {
+export default function EnhanceInlineButton({ onClick }: EnhanceInlineButtonProps) {
   return (
     <button
-      onMouseDown={e => e.preventDefault()} // keep textarea focus
+      aria-label="Enhance text"
+      onMouseDown={e => e.preventDefault()}
       onClick={onClick}
-      aria-label="AI Enhance"
       style={{
-        position: 'absolute',
-        top: 5,
-        right: 28, // sits left of the character counter
         display: 'flex',
         alignItems: 'center',
-        gap: 4,
-        padding: '3px 8px 3px 6px',
-        background: loading
-          ? 'linear-gradient(90deg, #2d4ccd, #7c3aed, #2d4ccd)'
-          : 'linear-gradient(135deg, #2d4ccd 0%, #7c3aed 100%)',
-        backgroundSize: loading ? '200% 100%' : '100% 100%',
-        border: 'none',
+        gap: 6,
+        padding: '6px 12px 6px 10px',
+        background: '#eaedfa',
+        border: '1.5px solid #293d87',
         borderRadius: 20,
-        cursor: loading ? 'default' : 'pointer',
-        fontSize: 10,
-        fontWeight: 600,
-        color: '#fff',
-        lineHeight: 1,
-        boxShadow: '0 1px 6px rgba(44,76,205,0.35)',
-        opacity: visible ? 1 : 0,
-        pointerEvents: visible ? 'auto' : 'none',
-        transition: 'opacity 0.15s ease, transform 0.15s ease',
-        transform: visible ? 'translateY(0)' : 'translateY(-3px)',
+        cursor: 'pointer',
+        boxShadow: [
+          '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
+          '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
+          '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
+          '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
+          '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
+        ].join(', '),
+        transition: 'opacity 0.15s',
+        userSelect: 'none',
         whiteSpace: 'nowrap',
-        zIndex: 10,
-        animation: loading ? 'enhanceShimmer 1.2s linear infinite' : 'none',
       }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.9'; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
     >
-      {loading ? (
-        /* spinner ring */
-        <svg
-          width="11"
-          height="11"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#fff"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          style={{ animation: 'enhanceSpin 0.8s linear infinite', flexShrink: 0 }}
-        >
-          <circle cx="12" cy="12" r="9" strokeOpacity="0.25" />
-          <path d="M12 3 A9 9 0 0 1 21 12" />
-        </svg>
-      ) : (
-        /* sparkle icon */
-        <svg
-          width="11"
-          height="11"
-          viewBox={SPARKLE_VIEWBOX}
-          fill="#fff"
-          style={{ flexShrink: 0 }}
-        >
-          {SPARKLE_PATHS.map((d, i) => (
-            <path key={i} d={d} />
-          ))}
-        </svg>
-      )}
-      {loading ? 'Enhancing…' : 'Enhance'}
+      {/* Gold stars icon */}
+      <svg
+        width="16"
+        height="16"
+        viewBox={STARS_VIEWBOX}
+        fill="#F9B534"
+        style={{ flexShrink: 0 }}
+      >
+        {STARS_PATHS.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </svg>
+      {/* Label */}
+      <span style={{
+        fontSize: 13,
+        fontWeight: 600,
+        color: '#293d87',
+        letterSpacing: '0.01em',
+        fontFamily: 'var(--font-family, inherit)',
+      }}>
+        Enhance
+      </span>
     </button>
   );
 }

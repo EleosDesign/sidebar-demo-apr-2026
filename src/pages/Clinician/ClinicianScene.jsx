@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
-import EnhancePointer from '../../components/enhance/EnhancePointer';
+import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolbar';
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
@@ -149,6 +149,7 @@ export default function ClinicianScene({ step, onNext }) {
       `}</style>
       <EhrFieldProvider>
         <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
+        <EnhancePointerToolbarWrapper />
         {/* Demo controls tray — bottom-right, discrete but accessible */}
         <div style={{
           position: 'fixed', bottom: 20, right: 56, zIndex: 100,
@@ -372,6 +373,21 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
   );
 }
 
+// ── EnhancePointerToolbar — global quality-check shield ──────────────────────
+
+function EnhancePointerToolbarWrapper() {
+  const { selectedEhr } = useEhrContext();
+  const ehrCtx = useEhrField();
+  return (
+    <EnhancePointerToolbar
+      selectedEhr={selectedEhr}
+      onCheckQuality={() => ehrCtx?.triggerQualityCheck?.()}
+      outstandingCount={ehrCtx?.lqaStatus === 'issues' ? 3 : 0}
+      showBadge={ehrCtx?.lqaStatus === 'issues'}
+    />
+  );
+}
+
 // ── EHR Background — context-driven dispatcher ───────────────────────────────
 
 function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField }) {
@@ -460,36 +476,21 @@ function NoteSection({ noteValues, onNoteChange, highlightedField }) {
   );
 }
 
-function NoteField({ label, height, value = '', onChange, onFocus, placeholder, highlighted, fieldKey }) {
+function NoteField({ label, height, value = '', onChange, onFocus, placeholder, highlighted }) {
   const remaining = 30000 - value.length;
-  const ehrCtx = useEhrField();
-
-  const handleApply = (newValue) => onChange?.(newValue);
-
-  // Only the Plan field fires a quality check after enhancing
-  const handleQualityCheck = fieldKey === 'plan'
-    ? () => ehrCtx?.triggerQualityCheck?.()
-    : undefined;
 
   return (
     <div style={{ borderBottom: '1px solid #ddd', display: 'flex', transition: 'background 0.3s', background: highlighted ? '#fffde7' : 'transparent' }}>
       <div style={{ width: 200, padding: '6px 8px', color: '#333', borderRight: '1px solid #ddd', flexShrink: 0, fontSize: 11 }}>{label}</div>
       <div style={{ flex: 1, position: 'relative' }}>
-        <EnhancePointer
+        <textarea
           value={value}
-          fieldKey={fieldKey}
-          onApply={handleApply}
-          onQualityCheck={handleQualityCheck}
-        >
-          <textarea
-            value={value}
-            onChange={e => onChange?.(e.target.value)}
-            onFocus={onFocus}
-            placeholder={placeholder || ''}
-            style={{ width: '100%', height, padding: '5px 6px', fontSize: 11, color: '#111', lineHeight: 1.5, resize: 'none', border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box' }}
-          />
-          <div style={{ position: 'absolute', bottom: 2, right: 6, color: '#e74c3c', fontSize: 10, pointerEvents: 'none' }}>* {remaining.toLocaleString()} Characters Left</div>
-        </EnhancePointer>
+          onChange={e => onChange?.(e.target.value)}
+          onFocus={onFocus}
+          placeholder={placeholder || ''}
+          style={{ width: '100%', height, padding: '5px 6px', fontSize: 11, color: '#111', lineHeight: 1.5, resize: 'none', border: 'none', outline: 'none', background: 'transparent', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box' }}
+        />
+        <div style={{ position: 'absolute', bottom: 2, right: 6, color: '#e74c3c', fontSize: 10, pointerEvents: 'none' }}>* {remaining.toLocaleString()} Characters Left</div>
       </div>
     </div>
   );

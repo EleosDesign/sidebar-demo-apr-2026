@@ -1,31 +1,20 @@
-/** Sparkle icon — 4-pointed star with two accent sparkles */
-
-export const SPARKLE_VIEWBOX = '0 0 24 24';
-
 /**
- * Large central 4-pointed sparkle star.
- * Renders as a sharp diamond-cross shape (not a polygon star).
+ * Stars / sparkle icon used in EnhanceInlineButton.
+ * Rendered gold (#F9B534) on the lavender button.
  */
-export const SPARKLE_LARGE_PATH =
-  'M12 2 L13.35 9.65 L21 11 L13.35 12.35 L12 20 L10.65 12.35 L3 11 L10.65 9.65 Z';
 
-/**
- * Small accent sparkle — upper right of the icon.
- */
-export const SPARKLE_SMALL_TR_PATH =
-  'M18.5 2.5 L19.1 4.9 L21.5 5.5 L19.1 6.1 L18.5 8.5 L17.9 6.1 L15.5 5.5 L17.9 4.9 Z';
+export const STARS_VIEWBOX = '0 0 24 24';
 
-/**
- * Small accent sparkle — lower left of the icon.
- */
-export const SPARKLE_SMALL_BL_PATH =
-  'M5.5 15.5 L6.0 17.5 L8.0 18 L6.0 18.5 L5.5 20.5 L5.0 18.5 L3.0 18 L5.0 17.5 Z';
+/** Large 4-pointed sparkle star (center) */
+export const STAR_LARGE =
+  'M12 2 L13.2 9.8 L21 11 L13.2 12.2 L12 20 L10.8 12.2 L3 11 L10.8 9.8 Z';
 
-/** Convenience array of all three sparkle paths in render order. */
-export const SPARKLE_PATHS = [
-  SPARKLE_LARGE_PATH,
-  SPARKLE_SMALL_TR_PATH,
-  SPARKLE_SMALL_BL_PATH,
-] as const;
+/** Small star — upper right */
+export const STAR_SM_TR =
+  'M18 3 L18.55 5.45 L21 6 L18.55 6.55 L18 9 L17.45 6.55 L15 6 L17.45 5.45 Z';
 
-export type SparklePath = (typeof SPARKLE_PATHS)[number];
+/** Small star — lower left */
+export const STAR_SM_BL =
+  'M6 15 L6.45 16.85 L8.3 17.3 L6.45 17.75 L6 19.6 L5.55 17.75 L3.7 17.3 L5.55 16.85 Z';
+
+export const STARS_PATHS = [STAR_LARGE, STAR_SM_TR, STAR_SM_BL] as const;
