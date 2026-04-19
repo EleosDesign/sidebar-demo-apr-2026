@@ -152,7 +152,7 @@ export default function ClinicianScene({ step, onNext }) {
         <EnhancePointerToolbarWrapper />
         {/* Demo controls tray — bottom-right, discrete but accessible */}
         <div style={{
-          position: 'fixed', bottom: 20, right: 56, zIndex: 100,
+          position: 'fixed', bottom: 20, right: 56, zIndex: 9,
           display: 'flex', gap: 4, alignItems: 'center',
           padding: '3px 4px',
           background: 'rgba(15,25,60,0.07)',

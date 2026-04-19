@@ -141,7 +141,7 @@ export default function EnhancePointerToolbar({
         position: 'fixed',
         top: pos.top,
         left: pos.left,
-        zIndex: 100,
+        zIndex: 9,   // below sidebar (zIndex: 10)
         animation: 'enhanceFadeIn 0.15s ease',
       }}
     >
