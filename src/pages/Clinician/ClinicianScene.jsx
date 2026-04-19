@@ -170,8 +170,8 @@ export default function ClinicianScene({ step, onNext }) {
           to   { transform: scale(0.04); opacity: 0; filter: blur(8px); }
         }
       `}</style>
-      <EhrFieldProvider>
-        <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
+      <EhrFieldProvider sidebarOpen={sidebarOpen}>
+        <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />
         {/* EnhancePointerToolbarWrapper removed — inline CTAs in StackedFields
             (Enhance button + LqaInlineCta) now cover the same functionality
             and the global toolbar was colliding with them visually */}
@@ -415,10 +415,10 @@ function EnhancePointerToolbarWrapper() {
 
 // ── EHR Background — context-driven dispatcher ───────────────────────────────
 
-function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField }) {
+function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField, sidebarOpen }) {
   const { selectedEhr } = useEhrContext();
   const Bg = EHR_BACKGROUNDS[selectedEhr] ?? EHR_BACKGROUNDS.welligent;
-  return <Bg noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} />;
+  return <Bg noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />;
 }
 
 function EHRDropdownGrid() {

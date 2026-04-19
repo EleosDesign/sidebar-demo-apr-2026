@@ -387,6 +387,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   const noteTypeCtx = useNoteTypeContext();
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
+  const sidebarOpen = ehrField?.sidebarOpen ?? false;
   const [focusedField, setFocusedField] = useState(null);
   const [enhancingField, setEnhancingField] = useState(null);
   const [tooltipField, setTooltipField] = useState(null);
@@ -486,8 +487,8 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 transition: 'background 0.3s',
               }}
             />
-            {/* Action strip — single flex row: buttons on left, tooltip card to their right */}
-            {(showStrip || isShowingTooltip) && (
+            {/* Action strip — hidden while sidebar is open; single flex row otherwise */}
+            {!sidebarOpen && (showStrip || isShowingTooltip) && (
               <div style={{
                 marginTop: 6,
                 display: 'flex',

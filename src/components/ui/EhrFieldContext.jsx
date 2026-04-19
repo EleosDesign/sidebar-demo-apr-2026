@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const EhrFieldContext = createContext(null);
 
-export function EhrFieldProvider({ children }) {
+export function EhrFieldProvider({ children, sidebarOpen = false }) {
   const [activeField, setActiveField] = useState(null);
   const [fieldValues, setFieldValues] = useState({ data: '', assessment: '', plan: '' });
   const [lqaStatus, setLqaStatus] = useState('idle'); // 'idle' | 'loading' | 'issues'
@@ -64,6 +64,7 @@ export function EhrFieldProvider({ children }) {
       enhanceField, setEnhanceField,
       enhanceLoading, setEnhanceLoading,
       triggerQualityCheck,
+      sidebarOpen,
     }}>
       {children}
     </EhrFieldContext.Provider>
