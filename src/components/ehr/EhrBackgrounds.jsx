@@ -3,7 +3,7 @@
  * Each component: position:absolute inset:0, accepts { noteValues, onNoteChange, highlightedField }
  * Patient: Webb, Marcus
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
@@ -24,6 +24,131 @@ const DAP_FIELD_MAP = {
   'Plan:': 'plan',
 };
 
+// ── Clinical text enhancer (mock AI) ─────────────────────────────────────────
+function buildEnhancedText(text) {
+  let s = text.trim();
+  if (!s) return s;
+  // Capitalize first character
+  s = s.charAt(0).toUpperCase() + s.slice(1);
+  // Ensure ends with sentence-ending punctuation
+  if (!/[.!?]$/.test(s)) s += '.';
+  // Capitalize after sentence-ending punctuation
+  s = s.replace(/([.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
+  // Clinical vocabulary substitutions
+  const subs = [
+    [/\bfeeling\b/g, 'experiencing'],
+    [/\bfeel\b/g, 'report'],
+    [/\bworried about\b/g, 'expressing concern regarding'],
+    [/\bproblem\b/g, 'presenting concern'],
+    [/\bstressed\b/g, 'demonstrating elevated stress'],
+    [/\bsaid\b/g, 'reported'],
+    [/\bgood\b/g, 'positive'],
+    [/\bhard time\b/g, 'difficulty'],
+    [/\bhelped\b/g, 'facilitated improvement in'],
+    [/\bwill try\b/g, 'agreed to attempt'],
+    [/\bwants to\b/g, 'expressed desire to'],
+    [/\btalked about\b/g, 'discussed'],
+    [/\bthings\b/g, 'areas of concern'],
+    [/\bokay\b/g, 'appropriate'],
+  ];
+  subs.forEach(([from, to]) => { s = s.replace(from, to); });
+  return s;
+}
+
+// ── Tooltip card shown after enhance completes ────────────────────────────────
+function EnhanceTooltip({ text, onUse, onDismiss }) {
+  return (
+    <div style={{
+      background: '#fff',
+      border: '1px solid #dde3f5',
+      borderRadius: 10,
+      padding: '12px 14px',
+      boxShadow: '0 4px 20px rgba(41,61,135,0.13)',
+      marginTop: 6,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#F9B534">
+          <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
+        </svg>
+        <span style={{
+          fontSize: 10, fontWeight: 700, color: '#293d87',
+          letterSpacing: '0.06em', textTransform: 'uppercase',
+          fontFamily: "'Poppins', sans-serif",
+        }}>
+          Suggested Enhancement
+        </span>
+      </div>
+      <p style={{
+        fontSize: 12, color: '#333', lineHeight: 1.6,
+        margin: '0 0 10px', fontFamily: "'Segoe UI', Arial, sans-serif",
+      }}>
+        {text}
+      </p>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          onMouseDown={e => e.preventDefault()}
+          onClick={onUse}
+          style={{
+            flex: 1, height: 28, background: '#293d87', color: '#fff',
+            border: 'none', borderRadius: 4, fontSize: 12, fontWeight: 600,
+            cursor: 'pointer', letterSpacing: '0.02em',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          Use this
+        </button>
+        <button
+          onMouseDown={e => e.preventDefault()}
+          onClick={onDismiss}
+          style={{
+            flex: 1, height: 28, background: 'none', color: '#666',
+            border: '1px solid #ccc', borderRadius: 4, fontSize: 12,
+            fontWeight: 500, cursor: 'pointer',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── LQA inline CTA — shown only on the last empty field ──────────────────────
+function LqaInlineCta({ onClick }) {
+  return (
+    <button
+      aria-label="Check note quality"
+      onMouseDown={e => e.preventDefault()}
+      onClick={onClick}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 6,
+        padding: '6px 12px 6px 10px',
+        background: '#2d4ccd', border: 'none', borderRadius: 20,
+        cursor: 'pointer',
+        boxShadow: '0px 2px 8px rgba(45,76,205,0.25)',
+        transition: 'opacity 0.15s', whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.opacity = '0.88'; }}
+      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        style={{ flexShrink: 0 }}
+      >
+        <path d="M9 11l3 3L22 4" />
+        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+      </svg>
+      <span style={{
+        fontSize: 13, fontWeight: 600, color: '#fff',
+        letterSpacing: '0.01em', fontFamily: 'var(--font-family, inherit)',
+      }}>
+        Check Note Quality
+      </span>
+    </button>
+  );
+}
+
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
@@ -32,12 +157,21 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const [focusedField, setFocusedField] = useState(null);
+  const [enhancingField, setEnhancingField] = useState(null);
+  const [tooltipField, setTooltipField] = useState(null);
+  const [tooltipText, setTooltipText] = useState('');
   const sections = noteTypeCtx?.sections ?? [
     { id: 'Data/Goal:',                         label: 'Data' },
     { id: 'Intervention/Response:',             label: 'Intervention/Response' },
     { id: 'Assessment/Level of Participation:', label: 'Assessment' },
     { id: 'Plan:',                              label: 'Plan' },
   ];
+
+  // Last section that still has no content → shows the LQA CTA when focused there
+  const lastEmptySectionId = useMemo(() => {
+    const found = [...sections].slice().reverse().find(s => !(noteValues[s.id] ?? '').trim());
+    return found?.id ?? null;
+  }, [sections, noteValues]); // eslint-disable-line
 
   // Seed fieldValues with existing note content on mount so the LQA snapshot
   // captures real text (not empty strings) when analysis first runs.
@@ -62,37 +196,79 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
     }
   };
 
+  const mockEnhance = (id, originalText) => {
+    setEnhancingField(id);
+    setTooltipField(null);
+    setTimeout(() => {
+      setEnhancingField(null);
+      setTooltipField(id);
+      setTooltipText(buildEnhancedText(originalText));
+    }, 1400);
+  };
+
+  const dismissTooltip = () => { setTooltipField(null); setTooltipText(''); };
+  const applyEnhanced = (id) => { handleChange(id, tooltipText); dismissTooltip(); };
+
   return (
     <>
       {sections.map(s => {
         const currentValue = noteValues[s.id] ?? '';
         const isFocused = focusedField === s.id;
+        const hasText = currentValue.trim().length > 0;
+        const isEnhancing = enhancingField === s.id;
+        const isShowingTooltip = tooltipField === s.id;
+        const isLastEmpty = lastEmptySectionId === s.id;
+
+        // Enhance button: only when focused AND (field has text OR currently enhancing)
+        const showEnhanceBtn = isFocused && (hasText || isEnhancing);
+        // LQA CTA: only when focused AND this is the last empty field AND no text
+        const showLqaCta = isFocused && isLastEmpty && !hasText;
+        // Action strip shows if there's a button to show, or tooltip is persisting
+        const showStrip = showEnhanceBtn || showLqaCta || isShowingTooltip;
+
         return (
-          <div key={s.id} style={{ marginBottom: 22, paddingBottom: isFocused ? 10 : 0, transition: 'padding-bottom 0.15s' }}>
+          <div key={s.id} style={{ marginBottom: 22 }}>
             <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
-            <div style={{ position: 'relative' }}>
-              <textarea
-                value={currentValue}
-                onChange={e => handleChange(s.id, e.target.value)}
-                onFocus={() => { setFocusedEhrField(s.id); setTimeout(() => setFocusedField(s.id), 300); }}
-                onBlur={() => { setFocusedEhrField(null); setTimeout(() => setFocusedField(f => f === s.id ? null : f), 150); }}
-                placeholder="Type here or use the cards on the right to build your note"
-                style={{
-                  width: '100%', minHeight, padding: '10px 12px',
-                  border: `1px solid ${borderColor}`, borderRadius,
-                  resize: 'vertical', fontSize, color: '#333', fontFamily,
-                  background: highlightedField === s.id ? '#fffde7' : bg,
-                  outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
-                  transition: 'background 0.3s',
-                }}
-              />
-              {/* Inline enhance button — appears below the textarea on focus */}
-              {isFocused && (
-                <div style={{ position: 'absolute', left: 8, bottom: -37, zIndex: 10 }}>
-                  <EnhanceInlineButton onClick={() => ehrField?.triggerQualityCheck?.()} />
-                </div>
-              )}
-            </div>
+            <textarea
+              value={currentValue}
+              onChange={e => handleChange(s.id, e.target.value)}
+              onFocus={() => { setFocusedEhrField(s.id); setTimeout(() => setFocusedField(s.id), 300); }}
+              onBlur={() => { setFocusedEhrField(null); setTimeout(() => setFocusedField(f => f === s.id ? null : f), 150); }}
+              placeholder="Type here or use the cards on the right to build your note"
+              style={{
+                width: '100%', minHeight, padding: '10px 12px',
+                border: `1px solid ${borderColor}`, borderRadius,
+                resize: 'vertical', fontSize, color: '#333', fontFamily,
+                background: highlightedField === s.id ? '#fffde7' : bg,
+                outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
+                transition: 'background 0.3s',
+              }}
+            />
+            {/* Action strip: Enhance button, LQA CTA, and/or tooltip card */}
+            {showStrip && (
+              <div style={{ marginTop: 6 }}>
+                {(showEnhanceBtn || showLqaCta) && (
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {showEnhanceBtn && (
+                      <EnhanceInlineButton
+                        loading={isEnhancing}
+                        onClick={() => mockEnhance(s.id, currentValue)}
+                      />
+                    )}
+                    {showLqaCta && (
+                      <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
+                    )}
+                  </div>
+                )}
+                {isShowingTooltip && (
+                  <EnhanceTooltip
+                    text={tooltipText}
+                    onUse={() => applyEnhanced(s.id)}
+                    onDismiss={dismissTooltip}
+                  />
+                )}
+              </div>
+            )}
           </div>
         );
       })}

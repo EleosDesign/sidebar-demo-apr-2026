@@ -40,6 +40,11 @@ ul, ol {
   list-style: none;
 }
 
+/* Spinner keyframe used by EnhanceInlineButton loading state */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;

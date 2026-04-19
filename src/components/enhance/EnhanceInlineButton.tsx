@@ -3,22 +3,24 @@ import { STARS_VIEWBOX, STARS_PATHS } from './svg-efsgtmmfcy';
 
 interface EnhanceInlineButtonProps {
   onClick?: () => void;
+  loading?: boolean;
 }
 
 /**
- * Lavender sparkle button that appears BELOW a focused textarea.
+ * Lavender sparkle button that appears below a focused textarea (in normal flow).
  * Matches the real Eleos enhance button:
  *   - Background: #eaedfa (lavender)
  *   - Accent/border: #293d87 (navy)
  *   - Stars icon: #F9B534 (gold)
- *   - Positioned absolute left-8px bottom-[-37px] by its parent
+ *   - loading=true shows a spinning icon and "Enhancing…" label
  */
-export default function EnhanceInlineButton({ onClick }: EnhanceInlineButtonProps) {
+export default function EnhanceInlineButton({ onClick, loading = false }: EnhanceInlineButtonProps) {
   return (
     <button
       aria-label="Enhance text"
       onMouseDown={e => e.preventDefault()}
-      onClick={onClick}
+      onClick={loading ? undefined : onClick}
+      disabled={loading}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -42,18 +44,28 @@ export default function EnhanceInlineButton({ onClick }: EnhanceInlineButtonProp
       onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.9'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
     >
-      {/* Gold stars icon */}
-      <svg
-        width="16"
-        height="16"
-        viewBox={STARS_VIEWBOX}
-        fill="#F9B534"
-        style={{ flexShrink: 0 }}
-      >
-        {STARS_PATHS.map((d, i) => (
-          <path key={i} d={d} />
-        ))}
-      </svg>
+      {/* Gold stars icon or spinner */}
+      {loading ? (
+        <svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="#293d87" strokeWidth="2.5" strokeLinecap="round"
+          style={{ flexShrink: 0, animation: 'spin 0.9s linear infinite' }}
+        >
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+        </svg>
+      ) : (
+        <svg
+          width="16"
+          height="16"
+          viewBox={STARS_VIEWBOX}
+          fill="#F9B534"
+          style={{ flexShrink: 0 }}
+        >
+          {STARS_PATHS.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </svg>
+      )}
       {/* Label */}
       <span style={{
         fontSize: 13,
@@ -61,8 +73,9 @@ export default function EnhanceInlineButton({ onClick }: EnhanceInlineButtonProp
         color: '#293d87',
         letterSpacing: '0.01em',
         fontFamily: 'var(--font-family, inherit)',
+        opacity: loading ? 0.6 : 1,
       }}>
-        Enhance
+        {loading ? 'Enhancing…' : 'Enhance'}
       </span>
     </button>
   );
