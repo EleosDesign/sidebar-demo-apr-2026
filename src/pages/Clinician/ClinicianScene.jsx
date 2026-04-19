@@ -153,7 +153,9 @@ export default function ClinicianScene({ step, onNext }) {
       `}</style>
       <EhrFieldProvider>
         <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} />
-        <EnhancePointerToolbarWrapper />
+        {/* EnhancePointerToolbarWrapper removed — inline CTAs in StackedFields
+            (Enhance button + LqaInlineCta) now cover the same functionality
+            and the global toolbar was colliding with them visually */}
         {/* Demo controls tray — bottom-right, discrete but accessible */}
         <div style={{
           position: 'fixed', bottom: 20, right: 56, zIndex: 9,
