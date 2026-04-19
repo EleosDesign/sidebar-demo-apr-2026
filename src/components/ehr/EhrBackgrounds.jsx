@@ -230,7 +230,53 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
   );
 }
 
-// LqaInlineCta replaced by EnhancePointer (imported above)
+// ── Inline launch button — shown on last field when still empty ───────────────
+// Visually matches EnhancePointer (same circle geometry) but opens the
+// Eleos sidebar on the Activities tab via a window custom event.
+function InlineLaunchButton() {
+  const [showTooltip, setShowTooltip] = useState(false);
+  return (
+    <div style={{ position: 'relative', display: 'inline-flex' }}>
+      {showTooltip && (
+        <div style={{
+          position: 'absolute', bottom: 'calc(100% + 8px)', left: 0,
+          background: 'rgba(30,35,60,0.92)', color: '#fff',
+          fontSize: 11, fontWeight: 500, padding: '4px 8px',
+          borderRadius: 5, whiteSpace: 'nowrap', pointerEvents: 'none', zIndex: 9,
+        }}>
+          Open Eleos
+        </div>
+      )}
+      <button
+        aria-label="Open Eleos"
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => window.dispatchEvent(new CustomEvent('eleos:openSidebar'))}
+        onMouseEnter={e => { setShowTooltip(true); (e.currentTarget).style.background = '#9baade'; }}
+        onMouseLeave={e => { setShowTooltip(false); (e.currentTarget).style.background = '#afbbec'; }}
+        style={{
+          width: 44, height: 44, borderRadius: '50%',
+          background: '#afbbec', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 0, transition: 'background 0.15s',
+        }}
+      >
+        <div style={{
+          width: 32, height: 32, borderRadius: '50%', background: '#293d87',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          {/* Activities / grid icon */}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+        </div>
+      </button>
+    </div>
+  );
+}
 
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
@@ -309,14 +355,14 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         const isEnhancing = enhancingField === s.id;
         const isShowingTooltip = tooltipField === s.id;
 
-        // Enhance button: focused, field has text (or loading), but NOT while tooltip is open
-        // (the tooltip IS the expanded CTA — they don't coexist)
+        // Enhance button: focused, field has text (or loading), NOT while tooltip is open
         const showEnhanceBtn = isFocused && (hasText || isEnhancing) && !isShowingTooltip;
-        // LQA CTA: focused on the last field OR last empty field, AND note has some content
-        const isLastOrLastEmpty = s.id === lastSectionId || s.id === lastEmptySectionId;
-        const showLqaCta = isFocused && isLastOrLastEmpty && noteHasContent;
-        // Action strip (in-flow) shows when buttons are visible
-        const showStrip = showEnhanceBtn || showLqaCta;
+        // LQA CTA: focused on the LAST section AND user has typed something in it
+        const showLqaCta = isFocused && s.id === lastSectionId && hasText;
+        // Launch button: focused on the last section AND it's still empty
+        const showLaunchBtn = isFocused && s.id === lastSectionId && !hasText;
+        // Action strip shows when any button is visible
+        const showStrip = showEnhanceBtn || showLqaCta || showLaunchBtn;
 
         return (
           <div key={s.id} style={{ marginBottom: 22, position: 'relative' }}>
@@ -349,8 +395,11 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                       />
                     )}
                     {showLqaCta && (
-                      <EnhancePointer onCheckQuality={() => ehrField?.triggerQualityCheck?.()} />
+                      <EnhancePointer
+                        onCheckQuality={() => window.dispatchEvent(new CustomEvent('eleos:openQuality'))}
+                      />
                     )}
+                    {showLaunchBtn && <InlineLaunchButton />}
                   </div>
                 )}
                 {/* Tooltip — opens upward, sized by its own content */}

@@ -109,6 +109,18 @@ export default function ClinicianScene({ step, onNext }) {
     if (step === 0) onNext(); else setSidebarOpen(true);
   };
 
+  // Listen for inline CTA events dispatched from EhrBackgrounds
+  useEffect(() => {
+    const onOpenQuality  = () => handleOpenQuality();
+    const onOpenSidebar  = () => handleLaunch();
+    window.addEventListener('eleos:openQuality',  onOpenQuality);
+    window.addEventListener('eleos:openSidebar',  onOpenSidebar);
+    return () => {
+      window.removeEventListener('eleos:openQuality',  onOpenQuality);
+      window.removeEventListener('eleos:openSidebar',  onOpenSidebar);
+    };
+  }, []); // eslint-disable-line
+
   // Sidebar bloom origin = center of the logo circle on screen
   const dotsOnRight = btnPos.x + 40 > window.innerWidth / 2;
   const originX = dotsOnRight ? btnPos.x + 28 : btnPos.x + 52;
