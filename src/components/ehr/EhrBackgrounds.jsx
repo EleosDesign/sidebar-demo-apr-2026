@@ -51,8 +51,8 @@ function buildEnhancedText(text) {
     .replace(/\bshe feels\b/gi, 'Client reports experiencing')
     .replace(/\bthey feel\b/gi, 'Client reports experiencing');
 
-  // ③ Clinical vocabulary substitutions
-  const subs = [
+  // ③ Casual vocabulary → clinical language
+  const casualSubs = [
     [/\bfeeling\b/g, 'experiencing'],
     [/\bfeelings\b/g, 'affective experiences'],
     [/\bemotion(s)?\b/g, 'emotional response'],
@@ -85,7 +85,68 @@ function buildEnhancedText(text) {
     [/\bfocused on\b/g, 'directed clinical attention toward'],
     [/\bworked on\b/g, 'targeted intervention toward'],
   ];
-  subs.forEach(([from, to]) => { s = s.replace(from, to); });
+  casualSubs.forEach(([from, to]) => { s = s.replace(from, to); });
+
+  // ④ Elevate already-clinical third-person language
+  //    Ordered specific → general so longer phrases match before their constituent words.
+  const snapshot = s;
+  const clinicalSubs = [
+    // Provider label
+    [/\b[Tt]he [Tt]herapist\b/g,          'Clinician'],
+    [/\b[Tt]herapist\b/g,                  'clinician'],
+    // Concern phrasing (specific first)
+    [/\bshared concerns? about\b/g,        'expressed clinical concern regarding'],
+    [/\bshared concerns?\b/g,              'expressed clinical concern'],
+    [/\bconcerns? about\b/g,               'concerns regarding'],
+    [/\bconcern about\b/g,                 'concern regarding'],
+    // Action verbs
+    [/\bemphasized\b/g,                    'reinforced'],
+    [/\bhighlighted\b/g,                   'brought clinical attention to'],
+    [/\bpointed out\b/g,                   'clinically identified'],
+    [/\baddressed\b/g,                     'targeted'],
+    [/\bprovided\b/g,                      'delivered'],
+    [/\bshared\b/g,                        'communicated'],
+    [/\bnoted\b/g,                         'clinically documented'],
+    // Importance / significance
+    [/\bimportance of\b/g,                 'clinical significance of'],
+    [/\bimportant\b/g,                     'clinically significant'],
+    // Challenges (specific compound first)
+    [/\bchallenges of\b/g,                 'barriers associated with'],
+    [/\bchallenges?\b/g,                   'barriers'],
+    [/\bdifficulties\b/g,                  'functional impairments'],
+    // Support person
+    [/\b(his|her|their) partner\b/g,       '$1 identified support person'],
+    [/\bpartner\b/g,                       'identified support person'],
+    // Recovery phrasing (specific first)
+    [/\bearly recovery\b/g,                'the early recovery phase'],
+    [/\bindividual recovery\b/g,           'independent recovery trajectory'],
+    [/\btheir recovery\b/g,                'their respective recovery trajectories'],
+    // Relational / clinical modifiers
+    [/\bdynamic\b/g,                       'relational dynamic'],
+    [/\bsymptoms\b/g,                      'symptomatology'],
+    // Behavior / commitment
+    [/\bmaintaining\b/g,                   'sustaining'],
+    [/\bmaintain\b/g,                      'sustain'],
+    [/\bagreed to\b/g,                     'verbally committed to'],
+    [/\bdemonstrated\b/g,                  'exhibited'],
+    // Outreach / support
+    [/\badditional support\b/g,            'supplemental clinical support'],
+    [/\breach out\b/g,                     'initiate contact'],
+    [/\bnavigates?\b/g,                    'continues to manage'],
+    // Forward-looking language
+    [/\bmoving forward\b/g,               'as part of the ongoing treatment plan'],
+    [/\bgoing forward\b/g,                'throughout the continued course of treatment'],
+    // Depressive language
+    [/\bdepressive symptomatology\b/g,    'endorsed depressive symptomatology'],
+  ];
+  clinicalSubs.forEach(([from, to]) => { s = s.replace(from, to); });
+
+  // ⑤ Fallback: if nothing changed (text was already maximally formal),
+  //    wrap with a documentation frame so the card always shows a difference.
+  if (s === snapshot) {
+    const lower = s.charAt(0).toLowerCase() + s.slice(1);
+    s = `Clinician documented that ${lower}`;
+  }
 
   return s;
 }
@@ -93,9 +154,15 @@ function buildEnhancedText(text) {
 // ── Enhance tooltip card — visual extension of the Enhance CTA ───────────────
 // Shares the CTA's lavender bg (#eaedfa) + navy border (#293d87).
 // Draggable via the header row.
+// Animated entrance (spring scale-in from button origin) and exit (fold-away).
 function EnhanceTooltip({ text, onUse, onDismiss }) {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [closing, setClosing] = useState(false);
   const dragRef = useRef(null);
+
+  // Trigger exit animation first, then call the real callback after it completes
+  const handleDismiss = () => { setClosing(true); setTimeout(onDismiss, 210); };
+  const handleUse    = () => { setClosing(true); setTimeout(onUse,    210); };
 
   const startDrag = (e) => {
     // Don't start a drag on the dismiss button
@@ -118,121 +185,150 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
   };
 
   return (
-    <div style={{
-      // ── CTA visual identity ──────────────────────────────────────
-      background: '#eaedfa',
-      border: '1.5px solid #293d87',
-      borderRadius: 16,
-      padding: '10px 12px',
-      display: 'flex', flexDirection: 'column', gap: 8,
-      boxShadow: [
-        '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
-        '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
-        '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
-        '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
-      ].join(', '),
-      // ── Sizing — wide enough for title on one line ───────────────
-      width: 'max-content',
-      minWidth: 260,
-      maxWidth: 420,
-      // ── Drag transform ───────────────────────────────────────────
-      transform: `translate(${offset.x}px, ${offset.y}px)`,
-      userSelect: 'none',
-    }}>
-      {/* ── Drag handle header ─────────────────────────────────────── */}
-      <div
-        onMouseDown={startDrag}
-        style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', gap: 8,
-          cursor: dragRef.current ? 'grabbing' : 'grab',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F9B534" style={{ flexShrink: 0 }}>
-            <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
-          </svg>
-          <span style={{
-            fontSize: 13, fontWeight: 600, color: '#293d87',
-            letterSpacing: '0.01em', whiteSpace: 'nowrap',
-            fontFamily: 'var(--font-family, inherit)',
-          }}>
-            Suggested Enhancement
-          </span>
-        </div>
-        <button
-          onMouseDown={e => { e.stopPropagation(); e.preventDefault(); }}
-          onClick={onDismiss}
-          aria-label="Dismiss"
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            padding: 4, color: '#293d87', opacity: 0.5,
-            display: 'flex', alignItems: 'center', flexShrink: 0,
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
+    <>
+      <style>{`
+        /* Card springs in from the Enhance button's top-left corner */
+        @keyframes enhanceCardIn {
+          0%   { opacity: 0; transform: scale(0.7) translateY(-10px); filter: blur(4px); }
+          60%  { filter: blur(0); }
+          100% { opacity: 1; transform: scale(1) translateY(0);      filter: blur(0); }
+        }
+        /* Card folds back toward the button on dismiss/use */
+        @keyframes enhanceCardOut {
+          0%   { opacity: 1; transform: scale(1)    translateY(0);   filter: blur(0); }
+          100% { opacity: 0; transform: scale(0.82) translateY(-6px); filter: blur(2px); }
+        }
+      `}</style>
 
-      {/* ── Enhanced text ─────────────────────────────────────────── */}
+      {/*
+        ── Two-layer structure:
+        •  Outer div  → entrance / exit animation  (transform-origin: top left = button position)
+        •  Inner div  → drag translate + card visuals  (never fights with animation keyframes)
+      */}
       <div style={{
-        background: 'rgba(255,255,255,0.55)',
-        borderRadius: 10, padding: '8px 10px',
+        transformOrigin: 'top left',
+        animation: closing
+          ? 'enhanceCardOut 0.21s cubic-bezier(0.4, 0, 0.8, 0.6) both'
+          : 'enhanceCardIn  0.40s cubic-bezier(0.34, 1.56, 0.64, 1) both',
       }}>
-        <p style={{
-          fontSize: 13, color: '#293d87', lineHeight: 1.55, margin: 0,
-          fontFamily: "'Segoe UI', Arial, sans-serif",
+        <div style={{
+          // ── CTA visual identity ──────────────────────────────────────
+          background: '#eaedfa',
+          border: '1.5px solid #293d87',
+          borderRadius: 16,
+          padding: '10px 12px',
+          display: 'flex', flexDirection: 'column', gap: 8,
+          boxShadow: [
+            '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
+            '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
+            '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
+            '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
+          ].join(', '),
+          // ── Sizing — wide enough for title on one line ───────────────
+          width: 'max-content',
+          minWidth: 260,
+          maxWidth: 420,
+          // ── Drag transform ───────────────────────────────────────────
+          transform: `translate(${offset.x}px, ${offset.y}px)`,
+          userSelect: 'none',
         }}>
-          {text}
-        </p>
-      </div>
+          {/* ── Drag handle header ─────────────────────────────────────── */}
+          <div
+            onMouseDown={startDrag}
+            style={{
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between', gap: 8,
+              cursor: dragRef.current ? 'grabbing' : 'grab',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#F9B534" style={{ flexShrink: 0 }}>
+                <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
+              </svg>
+              <span style={{
+                fontSize: 13, fontWeight: 600, color: '#293d87',
+                letterSpacing: '0.01em', whiteSpace: 'nowrap',
+                fontFamily: 'var(--font-family, inherit)',
+              }}>
+                Suggested Enhancement
+              </span>
+            </div>
+            <button
+              onMouseDown={e => { e.stopPropagation(); e.preventDefault(); }}
+              onClick={handleDismiss}
+              aria-label="Dismiss"
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: 4, color: '#293d87', opacity: 0.5,
+                display: 'flex', alignItems: 'center', flexShrink: 0,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
 
-      {/* ── Actions ───────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
-        <button
-          onMouseDown={e => e.preventDefault()}
-          onClick={onDismiss}
-          style={{
-            height: 26, padding: '0 10px',
-            background: 'none', border: 'none', borderRadius: 20,
-            cursor: 'pointer', fontSize: 12, fontWeight: 500,
-            color: '#293d87', opacity: 0.6,
-            fontFamily: 'var(--font-family, inherit)',
-          }}
-        >
-          Dismiss
-        </button>
-        <button
-          onMouseDown={e => e.preventDefault()}
-          onClick={onUse}
-          style={{
-            height: 26, padding: '0 12px',
-            background: '#293d87', border: 'none', borderRadius: 20,
-            cursor: 'pointer', fontSize: 12, fontWeight: 600,
-            color: '#eaedfa',
-            fontFamily: 'var(--font-family, inherit)',
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2.5"
-            strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-          Use this
-        </button>
+          {/* ── Enhanced text ─────────────────────────────────────────── */}
+          <div style={{
+            background: 'rgba(255,255,255,0.55)',
+            borderRadius: 10, padding: '8px 10px',
+          }}>
+            <p style={{
+              fontSize: 13, color: '#293d87', lineHeight: 1.55, margin: 0,
+              fontFamily: "'Segoe UI', Arial, sans-serif",
+            }}>
+              {text}
+            </p>
+          </div>
+
+          {/* ── Actions ───────────────────────────────────────────────── */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+            <button
+              onMouseDown={e => e.preventDefault()}
+              onClick={handleDismiss}
+              style={{
+                height: 26, padding: '0 10px',
+                background: 'none', border: 'none', borderRadius: 20,
+                cursor: 'pointer', fontSize: 12, fontWeight: 500,
+                color: '#293d87', opacity: 0.6,
+                fontFamily: 'var(--font-family, inherit)',
+              }}
+            >
+              Dismiss
+            </button>
+            <button
+              onMouseDown={e => e.preventDefault()}
+              onClick={handleUse}
+              style={{
+                height: 26, padding: '0 12px',
+                background: '#293d87', border: 'none', borderRadius: 20,
+                cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                color: '#eaedfa',
+                fontFamily: 'var(--font-family, inherit)',
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5"
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              Use this
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-// ── Inline launch button — shown on last field when still empty ───────────────
-// Visually matches EnhancePointer (same circle geometry) but opens the
-// Eleos sidebar on the Activities tab via a window custom event.
+
+// ── Inline launch button — shown on the last field when it's empty but the rest
+// of the note has content (i.e. the clinician has started writing but hasn't
+// filled the last section yet). Hidden when the entire note is blank.
 function InlineLaunchButton() {
   const [showTooltip, setShowTooltip] = useState(false);
   return (
@@ -258,13 +354,19 @@ function InlineLaunchButton() {
           background: '#afbbec', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: 0, transition: 'background 0.15s',
+          boxShadow: [
+            '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
+            '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
+            '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
+            '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
+            '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
+          ].join(', '),
         }}
       >
         <div style={{
           width: 32, height: 32, borderRadius: '50%', background: '#293d87',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          {/* Activities / grid icon */}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -359,8 +461,10 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         const showEnhanceBtn = isFocused && (hasText || isEnhancing) && !isShowingTooltip;
         // LQA CTA: focused on the LAST section AND user has typed something in it
         const showLqaCta = isFocused && s.id === lastSectionId && hasText;
-        // Launch button: focused on the last section AND it's still empty
-        const showLaunchBtn = isFocused && s.id === lastSectionId && !hasText;
+        // Launch button: last field is empty BUT at least one other field has content
+        // (hides when the entire note is blank — nothing to help with yet)
+        const noteHasSomeContent = Object.values(noteValues).some(v => (v ?? '').trim().length > 0);
+        const showLaunchBtn = isFocused && s.id === lastSectionId && !hasText && noteHasSomeContent;
         // Action strip shows when any button is visible
         const showStrip = showEnhanceBtn || showLqaCta || showLaunchBtn;
 
@@ -382,35 +486,29 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 transition: 'background 0.3s',
               }}
             />
-            {/* Action strip — also the anchor point for the upward-opening tooltip */}
+            {/* Action strip — single flex row: buttons on left, tooltip card to their right */}
             {(showStrip || isShowingTooltip) && (
-              <div style={{ marginTop: 6, position: 'relative' }}>
-                {/* Buttons row */}
-                {showStrip && (
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {showEnhanceBtn && (
-                      <EnhanceInlineButton
-                        loading={isEnhancing}
-                        onClick={() => mockEnhance(s.id, currentValue)}
-                      />
-                    )}
-                    {showLqaCta && (
-                      <EnhancePointer
-                        onCheckQuality={() => window.dispatchEvent(new CustomEvent('eleos:openQuality'))}
-                      />
-                    )}
-                    {showLaunchBtn && <InlineLaunchButton />}
-                  </div>
+              <div style={{
+                marginTop: 6,
+                display: 'flex',
+                gap: 8,
+                alignItems: 'flex-start',
+              }}>
+                {showLqaCta && (
+                  <EnhancePointer
+                    onCheckQuality={() => window.dispatchEvent(new CustomEvent('eleos:openQuality'))}
+                  />
                 )}
-                {/* Tooltip — opens DOWNWARD so the original textarea stays visible above */}
+                {showEnhanceBtn && (
+                  <EnhanceInlineButton
+                    loading={isEnhancing}
+                    onClick={() => mockEnhance(s.id, currentValue)}
+                  />
+                )}
+                {showLaunchBtn && <InlineLaunchButton />}
+                {/* Tooltip card — sits in the same row as the LQA circle */}
                 {isShowingTooltip && (
-                  <div style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '100%',
-                    marginTop: 6,
-                    zIndex: 9,   // below sidebar (zIndex: 10)
-                  }}>
+                  <div style={{ zIndex: 9 }}>
                     <EnhanceTooltip
                       text={tooltipText}
                       onUse={() => applyEnhanced(s.id)}

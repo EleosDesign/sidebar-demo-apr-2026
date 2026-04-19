@@ -94,6 +94,13 @@ export default function EnhancePointer({
             justifyContent: 'center',
             padding: 0,
             transition: 'background 0.15s',
+            boxShadow: [
+              '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
+              '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
+              '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
+              '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
+              '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
+            ].join(', '),
           }}
           onMouseEnter={e => {
             setShowTooltip(true);

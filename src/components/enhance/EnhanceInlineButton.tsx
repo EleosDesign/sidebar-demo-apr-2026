@@ -16,6 +16,17 @@ interface EnhanceInlineButtonProps {
  */
 export default function EnhanceInlineButton({ onClick, loading = false }: EnhanceInlineButtonProps) {
   return (
+    <>
+      <style>{`
+        @keyframes enhanceBtnShimmer {
+          0%   { background-position: 150% 0; }
+          100% { background-position: -150% 0; }
+        }
+        @keyframes enhanceBtnIn {
+          from { opacity: 0; transform: scale(0.85); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
     <button
       aria-label="Enhance text"
       onMouseDown={e => e.preventDefault()}
@@ -26,7 +37,15 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
         alignItems: 'center',
         gap: 6,
         padding: '6px 12px 6px 10px',
-        background: '#eaedfa',
+        // Shimmer sweep when loading; solid lavender otherwise
+        backgroundImage: loading
+          ? 'linear-gradient(90deg, #eaedfa 20%, #dde2f8 40%, #c9d0f2 50%, #dde2f8 60%, #eaedfa 80%)'
+          : 'none',
+        backgroundColor: '#eaedfa',
+        backgroundSize: '200% 100%',
+        animation: loading
+          ? 'enhanceBtnShimmer 1.4s ease-in-out infinite'
+          : 'enhanceBtnIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both',
         border: '1.5px solid #293d87',
         borderRadius: 20,
         cursor: 'pointer',
@@ -37,11 +56,11 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
           '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
           '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
         ].join(', '),
-        transition: 'opacity 0.15s',
+        transition: loading ? undefined : 'opacity 0.15s',
         userSelect: 'none',
         whiteSpace: 'nowrap',
       }}
-      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.9'; }}
+      onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.opacity = '0.9'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
     >
       {/* Gold stars icon or spinner */}
@@ -78,5 +97,6 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
         {loading ? 'Enhancing…' : 'Enhance'}
       </span>
     </button>
+    </>
   );
 }

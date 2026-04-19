@@ -9,7 +9,7 @@ export default function ClinicianPage() {
     <EhrProvider>
       <NoteTypeProvider>
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <ClinicianScene step={step} onNext={() => setStep(s => Math.min(s + 1, 2))} />
+          <ClinicianScene step={step} onNext={() => setStep(s => Math.min(s + 1, 1))} />
         </div>
       </NoteTypeProvider>
     </EhrProvider>

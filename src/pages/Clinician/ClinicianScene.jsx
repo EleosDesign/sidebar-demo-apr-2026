@@ -102,22 +102,29 @@ export default function ClinicianScene({ step, onNext }) {
 
   const handleCollapse = () => setIsClosing(true);
   const handleExitDone = () => { setIsClosing(false); setSidebarOpen(false); };
-  const handleLaunch   = () => { if (step === 0) onNext(); else setSidebarOpen(true); };
+  const handleLaunch   = () => { if (step === 0) onNext(); setSidebarOpen(true); };
 
   const handleOpenQuality = () => {
     setSidebarStartTab('quality');
-    if (step === 0) onNext(); else setSidebarOpen(true);
+    if (step === 0) onNext();
+    setSidebarOpen(true);
   };
+
+  // Keep refs so event listeners always call the latest handler (avoids stale closure)
+  const handleLaunchRef       = useRef(handleLaunch);
+  const handleOpenQualityRef  = useRef(handleOpenQuality);
+  useEffect(() => { handleLaunchRef.current = handleLaunch; });
+  useEffect(() => { handleOpenQualityRef.current = handleOpenQuality; });
 
   // Listen for inline CTA events dispatched from EhrBackgrounds
   useEffect(() => {
-    const onOpenQuality  = () => handleOpenQuality();
-    const onOpenSidebar  = () => handleLaunch();
-    window.addEventListener('eleos:openQuality',  onOpenQuality);
-    window.addEventListener('eleos:openSidebar',  onOpenSidebar);
+    const onOpenQuality = () => handleOpenQualityRef.current();
+    const onOpenSidebar = () => handleLaunchRef.current();
+    window.addEventListener('eleos:openQuality', onOpenQuality);
+    window.addEventListener('eleos:openSidebar', onOpenSidebar);
     return () => {
-      window.removeEventListener('eleos:openQuality',  onOpenQuality);
-      window.removeEventListener('eleos:openSidebar',  onOpenSidebar);
+      window.removeEventListener('eleos:openQuality', onOpenQuality);
+      window.removeEventListener('eleos:openSidebar', onOpenSidebar);
     };
   }, []); // eslint-disable-line
 
@@ -539,6 +546,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
   const [doneIds, setDoneIds] = useState(INITIAL_DONE_IDS);
   const [activitiesInitialTab, setActivitiesInitialTab] = useState('ehr'); // which tab MySessionsPanel opens on
+  const [autoRunQuality, setAutoRunQuality] = useState(false); // triggers immediate analysis when Quality tab opens
   // Sessions dynamically added from the Add Summary flow
   const [addedSessions, setAddedSessions] = useState([]);
   // Session currently being worked on in Add Summary (set when suggestions phase is reached)
@@ -728,12 +736,19 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   };
 
   // Consume startTab prop — navigate to it once then clear
-  useEffect(() => { if (startTab) { setNavTab(startTab); onStartTabConsumed?.(); } }, [startTab]);
+  useEffect(() => {
+    if (startTab) {
+      setNavTab(startTab);
+      if (startTab === 'quality') {
+        setAutoRunQuality(true); // signal LQAReview to enter analyzing state immediately
+        ehrCtx?.triggerQualityCheck?.();  // update lqaStatus in context (drives badge + pill)
+      }
+      onStartTabConsumed?.();
+    }
+  }, [startTab]); // eslint-disable-line
 
   // Determine active nav icon
-  const activeNav = step === 2 ? 'capture'
-    : navTab === 'capture' ? 'capture'
-    : navTab;
+  const activeNav = navTab;
 
   const renderPanel = () => {
     // Capture flow screens — only override when the user is on the capture tab
@@ -779,7 +794,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />
     );
 
-    if (step === 2) return <RecordingPanel ending={ending} onEndSession={() => setEnding(true)} />;
     if (navTab === 'capture') {
       return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
     }
@@ -834,7 +848,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} />;
+    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || 'Marcus Webb'}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}

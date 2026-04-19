@@ -86,7 +86,7 @@ function CheckItem({ label, custom }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM' }) {
+export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM', autoRunAnalysis = false, onAutoRunConsumed }) {
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
   const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
@@ -95,7 +95,9 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
   const filledCount = Object.values(fieldValues).filter(v => v.trim()).length;
   const mostFilled = filledCount >= 2;
 
+  // If opened via the inline LQA CTA, start straight in 'progress'; otherwise derive from saved status
   const [state, setState] = useState(() => {
+    if (autoRunAnalysis) return 'progress';
     if (lqaStatus === 'issues') return 'results';
     if (lqaStatus === 'loading') return 'progress';
     return 'idle';
@@ -106,6 +108,14 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
   const [openExpanded, setOpenExpanded] = useState(true);
   const [completedExpanded, setCompletedExpanded] = useState(false);
   const timerRef = useRef(null);
+
+  // If opened via the inline CTA, kick off analysis immediately on mount
+  useEffect(() => {
+    if (autoRunAnalysis) {
+      runAnalysis();
+      onAutoRunConsumed?.();
+    }
+  }, []); // eslint-disable-line — intentional: run only once on mount
 
   // Sync if lqaStatus changes while panel is open
   useEffect(() => {
