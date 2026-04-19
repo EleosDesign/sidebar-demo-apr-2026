@@ -402,13 +402,13 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                     {showLaunchBtn && <InlineLaunchButton />}
                   </div>
                 )}
-                {/* Tooltip — opens upward, sized by its own content */}
+                {/* Tooltip — opens DOWNWARD so the original textarea stays visible above */}
                 {isShowingTooltip && (
                   <div style={{
                     position: 'absolute',
                     left: 0,
-                    bottom: '100%',
-                    marginBottom: 6,
+                    top: '100%',
+                    marginTop: 6,
                     zIndex: 9,   // below sidebar (zIndex: 10)
                   }}>
                     <EnhanceTooltip
