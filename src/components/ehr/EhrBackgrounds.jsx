@@ -316,35 +316,41 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 transition: 'background 0.3s',
               }}
             />
-            {/* In-flow action strip: Enhance button and/or LQA CTA */}
-            {showStrip && (
-              <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
-                {showEnhanceBtn && (
-                  <EnhanceInlineButton
-                    loading={isEnhancing}
-                    onClick={() => mockEnhance(s.id, currentValue)}
-                  />
+            {/* Action strip — also the anchor point for the upward-opening tooltip */}
+            {(showStrip || isShowingTooltip) && (
+              <div style={{ marginTop: 6, position: 'relative' }}>
+                {/* Buttons row */}
+                {showStrip && (
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    {showEnhanceBtn && (
+                      <EnhanceInlineButton
+                        loading={isEnhancing}
+                        onClick={() => mockEnhance(s.id, currentValue)}
+                      />
+                    )}
+                    {showLqaCta && (
+                      <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
+                    )}
+                  </div>
                 )}
-                {showLqaCta && (
-                  <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
+                {/* Tooltip opens UPWARD from the Enhance button */}
+                {isShowingTooltip && (
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    bottom: '100%',
+                    marginBottom: 6,
+                    width: '25%',
+                    minWidth: 240,
+                    zIndex: 100,
+                  }}>
+                    <EnhanceTooltip
+                      text={tooltipText}
+                      onUse={() => applyEnhanced(s.id)}
+                      onDismiss={dismissTooltip}
+                    />
+                  </div>
                 )}
-              </div>
-            )}
-            {/* Floating tooltip card — absolutely positioned, overlaps content below */}
-            {isShowingTooltip && (
-              <div style={{
-                position: 'absolute',
-                left: 0,
-                width: '25%',
-                top: '100%',
-                marginTop: showStrip ? 4 : 8,
-                zIndex: 100,
-              }}>
-                <EnhanceTooltip
-                  text={tooltipText}
-                  onUse={() => applyEnhanced(s.id)}
-                  onDismiss={dismissTooltip}
-                />
               </div>
             )}
           </div>
