@@ -28,86 +28,150 @@ const DAP_FIELD_MAP = {
 function buildEnhancedText(text) {
   let s = text.trim();
   if (!s) return s;
-  // Capitalize first character
+
+  // ① Normalize: capitalize first character, ensure sentence-ending punctuation
   s = s.charAt(0).toUpperCase() + s.slice(1);
-  // Ensure ends with sentence-ending punctuation
   if (!/[.!?]$/.test(s)) s += '.';
-  // Capitalize after sentence-ending punctuation
   s = s.replace(/([.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
-  // Clinical vocabulary substitutions
+
+  // ② First-person → clinical third-person perspective
+  s = s
+    .replace(/\bI feel\b/gi, 'Client reports experiencing')
+    .replace(/\bI felt\b/gi, 'Client reported experiencing')
+    .replace(/\bI am\b/gi, 'Client presents as')
+    .replace(/\bI was\b/gi, 'Client reported being')
+    .replace(/\bI have\b/gi, 'Client endorses')
+    .replace(/\bI had\b/gi, 'Client reported having')
+    .replace(/\bI want\b/gi, 'Client expressed desire to')
+    .replace(/\bI think\b/gi, 'Client verbalized')
+    .replace(/\bwe discussed\b/gi, 'Clinician and client collaboratively explored')
+    .replace(/\bwe worked on\b/gi, 'Clinician and client focused on')
+    .replace(/\bhe feels\b/gi, 'Client reports experiencing')
+    .replace(/\bshe feels\b/gi, 'Client reports experiencing')
+    .replace(/\bthey feel\b/gi, 'Client reports experiencing');
+
+  // ③ Clinical vocabulary substitutions
   const subs = [
     [/\bfeeling\b/g, 'experiencing'],
-    [/\bfeel\b/g, 'report'],
-    [/\bworried about\b/g, 'expressing concern regarding'],
-    [/\bproblem\b/g, 'presenting concern'],
-    [/\bstressed\b/g, 'demonstrating elevated stress'],
+    [/\bfeelings\b/g, 'affective experiences'],
+    [/\bemotion(s)?\b/g, 'emotional response'],
+    [/\bworried about\b/g, 'expressing heightened concern regarding'],
+    [/\banxious\b/g, 'presenting with anxiety-related symptomatology'],
+    [/\bdepressed\b/g, 'endorsing depressive symptoms'],
+    [/\bproblem(s)?\b/g, 'presenting concern'],
+    [/\bstressed\b/g, 'demonstrating elevated stress responses'],
     [/\bsaid\b/g, 'reported'],
-    [/\bgood\b/g, 'positive'],
-    [/\bhard time\b/g, 'difficulty'],
-    [/\bhelped\b/g, 'facilitated improvement in'],
-    [/\bwill try\b/g, 'agreed to attempt'],
-    [/\bwants to\b/g, 'expressed desire to'],
-    [/\btalked about\b/g, 'discussed'],
-    [/\bthings\b/g, 'areas of concern'],
-    [/\bokay\b/g, 'appropriate'],
+    [/\bhard time\b/g, 'significant functional difficulty'],
+    [/\bstruggling\b/g, 'demonstrating difficulty with'],
+    [/\bhelped\b/g, 'facilitated measurable improvement in'],
+    [/\bwill try\b/g, 'verbally committed to attempting'],
+    [/\bwants to\b/g, 'expressed motivation to'],
+    [/\btalked about\b/g, 'verbally processed'],
+    [/\bdiscussed\b/g, 'collaboratively reviewed'],
+    [/\bokay\b/g, 'within functional limits'],
+    [/\bgood progress\b/g, 'clinically significant progress'],
+    [/\bimproving\b/g, 'demonstrating measurable improvement'],
+    [/\bcoping\b/g, 'employing adaptive coping strategies'],
+    [/\bgoal(s)?\b/g, 'therapeutic objective'],
+    [/\bsession\b/g, 'therapeutic encounter'],
+    [/\bupset\b/g, 'experiencing emotional dysregulation'],
+    [/\bthings\b/g, 'identified areas'],
+    [/\bstuff\b/g, 'identified concerns'],
+    [/\bnervous\b/g, 'demonstrating heightened arousal'],
+    [/\bsad\b/g, 'experiencing low mood'],
+    [/\banger\b/g, 'dysregulated affect'],
+    [/\bangry\b/g, 'presenting with affective dysregulation'],
+    [/\bfocused on\b/g, 'directed clinical attention toward'],
+    [/\bworked on\b/g, 'targeted intervention toward'],
   ];
   subs.forEach(([from, to]) => { s = s.replace(from, to); });
+
   return s;
 }
 
-// ── Tooltip card shown after enhance completes ────────────────────────────────
+// ── Floating tooltip card shown after enhance completes ───────────────────────
+// Styled to match the sidebar suggestion cards.
 function EnhanceTooltip({ text, onUse, onDismiss }) {
   return (
     <div style={{
       background: '#fff',
-      border: '1px solid #dde3f5',
-      borderRadius: 10,
-      padding: '12px 14px',
-      boxShadow: '0 4px 20px rgba(41,61,135,0.13)',
-      marginTop: 6,
+      border: '1px solid rgba(33,33,33,0.23)',
+      borderRadius: 8,
+      padding: 12,
+      display: 'flex', flexDirection: 'column', gap: 8,
+      boxShadow: '0 2px 1px -1px rgba(0,0,0,0.20), 0 1px 1px 0 rgba(0,0,0,0.07), 0 1px 3px 0 rgba(0,0,0,0.12)',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#F9B534">
-          <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
-        </svg>
-        <span style={{
-          fontSize: 10, fontWeight: 700, color: '#293d87',
-          letterSpacing: '0.06em', textTransform: 'uppercase',
-          fontFamily: "'Poppins', sans-serif",
-        }}>
-          Suggested Enhancement
-        </span>
-      </div>
-      <p style={{
-        fontSize: 12, color: '#333', lineHeight: 1.6,
-        margin: '0 0 10px', fontFamily: "'Segoe UI', Arial, sans-serif",
-      }}>
-        {text}
-      </p>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          onMouseDown={e => e.preventDefault()}
-          onClick={onUse}
-          style={{
-            flex: 1, height: 28, background: '#293d87', color: '#fff',
-            border: 'none', borderRadius: 4, fontSize: 12, fontWeight: 600,
-            cursor: 'pointer', letterSpacing: '0.02em',
+      {/* Header row — matches card field label row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#F9B534" style={{ flexShrink: 0 }}>
+            <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
+          </svg>
+          <span style={{
+            fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)',
+            lineHeight: 1.334, letterSpacing: '0.17px',
             fontFamily: "'Poppins', sans-serif",
-          }}
-        >
-          Use this
-        </button>
+          }}>
+            Suggested Enhancement
+          </span>
+        </div>
         <button
           onMouseDown={e => e.preventDefault()}
           onClick={onDismiss}
           style={{
-            flex: 1, height: 28, background: 'none', color: '#666',
-            border: '1px solid #ccc', borderRadius: 4, fontSize: 12,
-            fontWeight: 500, cursor: 'pointer',
-            fontFamily: "'Poppins', sans-serif",
+            background: 'none', border: 'none', cursor: 'pointer',
+            padding: 4, color: 'rgba(0,0,0,0.38)', lineHeight: 1,
+            display: 'flex', alignItems: 'center',
+          }}
+          aria-label="Dismiss"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      {/* Content box — matches #f4f6ff card content style */}
+      <div style={{ background: '#f4f6ff', borderRadius: 8, padding: 8 }}>
+        <p style={{
+          fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)',
+          lineHeight: 1.43, letterSpacing: '0.17px', margin: 0,
+          fontFamily: "'Segoe UI', Arial, sans-serif",
+        }}>
+          {text}
+        </p>
+      </div>
+      {/* Actions row — matches Add to Note / Copy pattern */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+        <button
+          onMouseDown={e => e.preventDefault()}
+          onClick={onDismiss}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            height: 24, padding: '0 6px',
+            background: 'none', border: 'none', borderRadius: 4,
+            cursor: 'pointer',
+            fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.54)',
+            letterSpacing: '0.16px', fontFamily: "'Poppins', sans-serif",
           }}
         >
           Dismiss
+        </button>
+        <button
+          onMouseDown={e => e.preventDefault()}
+          onClick={onUse}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            height: 24, padding: '0 6px',
+            background: 'none', border: 'none', borderRadius: 4,
+            cursor: 'pointer',
+            fontSize: 12, fontWeight: 500, color: '#2d4ccd',
+            letterSpacing: '0.16px', fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+          Use this
         </button>
       </div>
     </div>
@@ -167,7 +231,15 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
     { id: 'Plan:',                              label: 'Plan' },
   ];
 
-  // Last section that still has no content → shows the LQA CTA when focused there
+  // Whether any field has content (LQA CTA requires at least some note content)
+  const noteHasContent = useMemo(() =>
+    sections.some(s => (noteValues[s.id] ?? '').trim().length > 0),
+  [sections, noteValues]); // eslint-disable-line
+
+  // ID of the very last section in the list
+  const lastSectionId = sections[sections.length - 1]?.id ?? null;
+
+  // ID of the last (bottom-most) section that still has no content
   const lastEmptySectionId = useMemo(() => {
     const found = [...sections].slice().reverse().find(s => !(noteValues[s.id] ?? '').trim());
     return found?.id ?? null;
@@ -217,17 +289,17 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         const hasText = currentValue.trim().length > 0;
         const isEnhancing = enhancingField === s.id;
         const isShowingTooltip = tooltipField === s.id;
-        const isLastEmpty = lastEmptySectionId === s.id;
 
-        // Enhance button: only when focused AND (field has text OR currently enhancing)
+        // Enhance button: focused AND (field has text OR currently loading)
         const showEnhanceBtn = isFocused && (hasText || isEnhancing);
-        // LQA CTA: only when focused AND this is the last empty field AND no text
-        const showLqaCta = isFocused && isLastEmpty && !hasText;
-        // Action strip shows if there's a button to show, or tooltip is persisting
-        const showStrip = showEnhanceBtn || showLqaCta || isShowingTooltip;
+        // LQA CTA: focused on the last field OR last empty field, AND note has some content
+        const isLastOrLastEmpty = s.id === lastSectionId || s.id === lastEmptySectionId;
+        const showLqaCta = isFocused && isLastOrLastEmpty && noteHasContent;
+        // Action strip (in-flow) shows when buttons are visible
+        const showStrip = showEnhanceBtn || showLqaCta;
 
         return (
-          <div key={s.id} style={{ marginBottom: 22 }}>
+          <div key={s.id} style={{ marginBottom: 22, position: 'relative' }}>
             <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
             <textarea
               value={currentValue}
@@ -244,29 +316,35 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 transition: 'background 0.3s',
               }}
             />
-            {/* Action strip: Enhance button, LQA CTA, and/or tooltip card */}
+            {/* In-flow action strip: Enhance button and/or LQA CTA */}
             {showStrip && (
-              <div style={{ marginTop: 6 }}>
-                {(showEnhanceBtn || showLqaCta) && (
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    {showEnhanceBtn && (
-                      <EnhanceInlineButton
-                        loading={isEnhancing}
-                        onClick={() => mockEnhance(s.id, currentValue)}
-                      />
-                    )}
-                    {showLqaCta && (
-                      <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
-                    )}
-                  </div>
-                )}
-                {isShowingTooltip && (
-                  <EnhanceTooltip
-                    text={tooltipText}
-                    onUse={() => applyEnhanced(s.id)}
-                    onDismiss={dismissTooltip}
+              <div style={{ marginTop: 6, display: 'flex', gap: 8, alignItems: 'center' }}>
+                {showEnhanceBtn && (
+                  <EnhanceInlineButton
+                    loading={isEnhancing}
+                    onClick={() => mockEnhance(s.id, currentValue)}
                   />
                 )}
+                {showLqaCta && (
+                  <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
+                )}
+              </div>
+            )}
+            {/* Floating tooltip card — absolutely positioned, overlaps content below */}
+            {isShowingTooltip && (
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: '100%',
+                marginTop: showStrip ? 4 : 8,
+                zIndex: 100,
+              }}>
+                <EnhanceTooltip
+                  text={tooltipText}
+                  onUse={() => applyEnhanced(s.id)}
+                  onDismiss={dismissTooltip}
+                />
               </div>
             )}
           </div>
