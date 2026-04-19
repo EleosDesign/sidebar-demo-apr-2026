@@ -8,6 +8,7 @@ import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
+import EnhancePointer from '../enhance/EnhancePointer';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
 // Maps note field IDs to EhrFieldContext keys for dirty-tracking.
@@ -229,40 +230,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
   );
 }
 
-// ── LQA inline CTA — shown only on the last empty field ──────────────────────
-function LqaInlineCta({ onClick }) {
-  return (
-    <button
-      aria-label="Check note quality"
-      onMouseDown={e => e.preventDefault()}
-      onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '6px 12px 6px 10px',
-        background: '#2d4ccd', border: 'none', borderRadius: 20,
-        cursor: 'pointer',
-        boxShadow: '0px 2px 8px rgba(45,76,205,0.25)',
-        transition: 'opacity 0.15s', whiteSpace: 'nowrap',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.opacity = '0.88'; }}
-      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-    >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-        stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-        style={{ flexShrink: 0 }}
-      >
-        <path d="M9 11l3 3L22 4" />
-        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-      </svg>
-      <span style={{
-        fontSize: 13, fontWeight: 600, color: '#fff',
-        letterSpacing: '0.01em', fontFamily: 'var(--font-family, inherit)',
-      }}>
-        Check Note Quality
-      </span>
-    </button>
-  );
-}
+// LqaInlineCta replaced by EnhancePointer (imported above)
 
 function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
@@ -381,7 +349,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                       />
                     )}
                     {showLqaCta && (
-                      <LqaInlineCta onClick={() => ehrField?.triggerQualityCheck?.()} />
+                      <EnhancePointer onCheckQuality={() => ehrField?.triggerQualityCheck?.()} />
                     )}
                   </div>
                 )}
