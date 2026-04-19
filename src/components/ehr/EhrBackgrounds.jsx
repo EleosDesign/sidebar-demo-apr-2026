@@ -3,7 +3,7 @@
  * Each component: position:absolute inset:0, accepts { noteValues, onNoteChange, highlightedField }
  * Patient: Webb, Marcus
  */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
@@ -89,69 +89,118 @@ function buildEnhancedText(text) {
   return s;
 }
 
-// ── Floating tooltip card shown after enhance completes ───────────────────────
-// Styled to match the sidebar suggestion cards.
+// ── Enhance tooltip card — visual extension of the Enhance CTA ───────────────
+// Shares the CTA's lavender bg (#eaedfa) + navy border (#293d87).
+// Draggable via the header row.
 function EnhanceTooltip({ text, onUse, onDismiss }) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const dragRef = useRef(null);
+
+  const startDrag = (e) => {
+    // Don't start a drag on the dismiss button
+    if (e.target.closest('button')) return;
+    e.preventDefault();
+    dragRef.current = { mx: e.clientX, my: e.clientY, ox: offset.x, oy: offset.y };
+    const onMove = (ev) => {
+      setOffset({
+        x: dragRef.current.ox + ev.clientX - dragRef.current.mx,
+        y: dragRef.current.oy + ev.clientY - dragRef.current.my,
+      });
+    };
+    const onUp = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      dragRef.current = null;
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
+
   return (
     <div style={{
-      background: '#fff',
-      border: '1px solid rgba(33,33,33,0.23)',
-      borderRadius: 8,
-      padding: 12,
+      // ── CTA visual identity ──────────────────────────────────────
+      background: '#eaedfa',
+      border: '1.5px solid #293d87',
+      borderRadius: 16,
+      padding: '10px 12px',
       display: 'flex', flexDirection: 'column', gap: 8,
-      boxShadow: '0 2px 1px -1px rgba(0,0,0,0.20), 0 1px 1px 0 rgba(0,0,0,0.07), 0 1px 3px 0 rgba(0,0,0,0.12)',
+      boxShadow: [
+        '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
+        '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
+        '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
+        '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
+      ].join(', '),
+      // ── Sizing — wide enough for title on one line ───────────────
+      width: 'max-content',
+      minWidth: 260,
+      maxWidth: 420,
+      // ── Drag transform ───────────────────────────────────────────
+      transform: `translate(${offset.x}px, ${offset.y}px)`,
+      userSelect: 'none',
     }}>
-      {/* Header row — matches card field label row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="#F9B534" style={{ flexShrink: 0 }}>
+      {/* ── Drag handle header ─────────────────────────────────────── */}
+      <div
+        onMouseDown={startDrag}
+        style={{
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 8,
+          cursor: dragRef.current ? 'grabbing' : 'grab',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F9B534" style={{ flexShrink: 0 }}>
             <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
           </svg>
           <span style={{
-            fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)',
-            lineHeight: 1.334, letterSpacing: '0.17px',
-            fontFamily: "'Poppins', sans-serif",
+            fontSize: 13, fontWeight: 600, color: '#293d87',
+            letterSpacing: '0.01em', whiteSpace: 'nowrap',
+            fontFamily: 'var(--font-family, inherit)',
           }}>
             Suggested Enhancement
           </span>
         </div>
         <button
-          onMouseDown={e => e.preventDefault()}
+          onMouseDown={e => { e.stopPropagation(); e.preventDefault(); }}
           onClick={onDismiss}
+          aria-label="Dismiss"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            padding: 4, color: 'rgba(0,0,0,0.38)', lineHeight: 1,
-            display: 'flex', alignItems: 'center',
+            padding: 4, color: '#293d87', opacity: 0.5,
+            display: 'flex', alignItems: 'center', flexShrink: 0,
           }}
-          aria-label="Dismiss"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
-      {/* Content box — matches #f4f6ff card content style */}
-      <div style={{ background: '#f4f6ff', borderRadius: 8, padding: 8 }}>
+
+      {/* ── Enhanced text ─────────────────────────────────────────── */}
+      <div style={{
+        background: 'rgba(255,255,255,0.55)',
+        borderRadius: 10, padding: '8px 10px',
+      }}>
         <p style={{
-          fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)',
-          lineHeight: 1.43, letterSpacing: '0.17px', margin: 0,
+          fontSize: 13, color: '#293d87', lineHeight: 1.55, margin: 0,
           fontFamily: "'Segoe UI', Arial, sans-serif",
         }}>
           {text}
         </p>
       </div>
-      {/* Actions row — matches Add to Note / Copy pattern */}
+
+      {/* ── Actions ───────────────────────────────────────────────── */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
         <button
           onMouseDown={e => e.preventDefault()}
           onClick={onDismiss}
           style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            height: 24, padding: '0 6px',
-            background: 'none', border: 'none', borderRadius: 4,
-            cursor: 'pointer',
-            fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.54)',
-            letterSpacing: '0.16px', fontFamily: "'Poppins', sans-serif",
+            height: 26, padding: '0 10px',
+            background: 'none', border: 'none', borderRadius: 20,
+            cursor: 'pointer', fontSize: 12, fontWeight: 500,
+            color: '#293d87', opacity: 0.6,
+            fontFamily: 'var(--font-family, inherit)',
           }}
         >
           Dismiss
@@ -160,15 +209,17 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
           onMouseDown={e => e.preventDefault()}
           onClick={onUse}
           style={{
+            height: 26, padding: '0 12px',
+            background: '#293d87', border: 'none', borderRadius: 20,
+            cursor: 'pointer', fontSize: 12, fontWeight: 600,
+            color: '#eaedfa',
+            fontFamily: 'var(--font-family, inherit)',
             display: 'flex', alignItems: 'center', gap: 4,
-            height: 24, padding: '0 6px',
-            background: 'none', border: 'none', borderRadius: 4,
-            cursor: 'pointer',
-            fontSize: 12, fontWeight: 500, color: '#2d4ccd',
-            letterSpacing: '0.16px', fontFamily: "'Poppins', sans-serif",
           }}
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5"
+            strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6L9 17l-5-5" />
           </svg>
           Use this
@@ -290,8 +341,9 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         const isEnhancing = enhancingField === s.id;
         const isShowingTooltip = tooltipField === s.id;
 
-        // Enhance button: focused AND (field has text OR currently loading)
-        const showEnhanceBtn = isFocused && (hasText || isEnhancing);
+        // Enhance button: focused, field has text (or loading), but NOT while tooltip is open
+        // (the tooltip IS the expanded CTA — they don't coexist)
+        const showEnhanceBtn = isFocused && (hasText || isEnhancing) && !isShowingTooltip;
         // LQA CTA: focused on the last field OR last empty field, AND note has some content
         const isLastOrLastEmpty = s.id === lastSectionId || s.id === lastEmptySectionId;
         const showLqaCta = isFocused && isLastOrLastEmpty && noteHasContent;
@@ -333,15 +385,13 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                     )}
                   </div>
                 )}
-                {/* Tooltip opens UPWARD from the Enhance button */}
+                {/* Tooltip — opens upward, sized by its own content */}
                 {isShowingTooltip && (
                   <div style={{
                     position: 'absolute',
                     left: 0,
                     bottom: '100%',
                     marginBottom: 6,
-                    width: '25%',
-                    minWidth: 240,
                     zIndex: 100,
                   }}>
                     <EnhanceTooltip
