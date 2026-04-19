@@ -392,7 +392,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                     left: 0,
                     bottom: '100%',
                     marginBottom: 6,
-                    zIndex: 100,
+                    zIndex: 9,   // below sidebar (zIndex: 10)
                   }}>
                     <EnhanceTooltip
                       text={tooltipText}
