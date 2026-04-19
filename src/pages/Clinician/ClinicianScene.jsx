@@ -116,7 +116,11 @@ export default function ClinicianScene({ step, onNext }) {
   const sidebarOrigin = `${originX}px ${originY}px`;
 
   const sidebarWrapper = (anim, onEnd) => (
-    <div style={{ position: 'absolute', inset: 0, transformOrigin: sidebarOrigin, animation: anim, pointerEvents: 'none' }} onAnimationEnd={onEnd}>
+    // zIndex:10 is critical: the animation keeps transform:scale(1) applied via fill-mode:both,
+    // which creates a stacking context. Without an explicit z-index that context sits at z=auto(0)
+    // and loses to the portalled EnhancePointerToolbar (position:fixed, z=9 at root level).
+    // Setting zIndex:10 here explicitly lifts the entire sidebar above all EHR-level floats.
+    <div style={{ position: 'absolute', inset: 0, transformOrigin: sidebarOrigin, animation: anim, pointerEvents: 'none', zIndex: 10 }} onAnimationEnd={onEnd}>
       <EleosSidebar step={step} onNext={onNext} onCollapse={handleCollapse} initialPos={btnPos}
         savedState={sidebarSavedState.current}
         onSaveState={s => { sidebarSavedState.current = s; try { localStorage.setItem('eleos-sidebar-state', JSON.stringify(s)); } catch {} }}
