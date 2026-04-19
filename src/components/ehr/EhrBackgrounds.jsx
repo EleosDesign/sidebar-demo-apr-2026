@@ -335,7 +335,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
               <div style={{
                 position: 'absolute',
                 left: 0,
-                right: 0,
+                width: '25%',
                 top: '100%',
                 marginTop: showStrip ? 4 : 8,
                 zIndex: 100,
