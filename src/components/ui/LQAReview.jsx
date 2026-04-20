@@ -368,10 +368,33 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           </>
         )}
         {state === 'results' && resultsVariant === 'allClear' && (
-          <button onClick={onAdvance}
-            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
-            Mark as Submitted
-          </button>
+          <>
+            <button
+              onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
+              disabled={!changedSinceAnalysis}
+              style={{
+                width: '100%', height: 30, border: 'none', borderRadius: 4,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
+                transition: 'background 0.2s, color 0.2s',
+                ...(changedSinceAnalysis
+                  ? { background: '#2d4ccd', color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: 'rgba(45,76,205,0.12)', color: '#2d4ccd', cursor: 'not-allowed' }
+                ),
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Re-Run Analysis
+            </button>
+            {!changedSinceAnalysis && (
+              <div style={{ fontSize: 12, color: '#aaa', textAlign: 'center', fontFamily: "'Poppins',sans-serif" }}>
+                Edit your note to enable re-analysis
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
