@@ -4898,12 +4898,12 @@ const BadgePrimary = () => (
 );
 
 // Add-on CPT badge: #e8f5e9 bg, #388e3c text
-const BadgeAddOn = () => (
+const BadgeAddOn = ({ compactMode = false }) => (
   <div style={{ background: '#e8f5e9', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#388e3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
     </svg>
-    <span style={{ fontSize: 12, fontWeight: 500, color: '#388e3c', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>Add-On CPT Code</span>
+    <span style={{ fontSize: 12, fontWeight: 500, color: '#388e3c', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Add-On' : 'Add-On CPT Code'}</span>
   </div>
 );
 
@@ -5006,7 +5006,7 @@ function AddOnCptCard({ compactMode = false }) {
     <div style={cptCard}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={cptCodeLabel}>Code 90833</span>
-        <BadgeAddOn />
+        <BadgeAddOn compactMode={compactMode} />
       </div>
       {compactMode ? (
         /* Vertical layout — label + value on same row, stacked rows */
@@ -5039,12 +5039,12 @@ function AddOnCptCard({ compactMode = false }) {
   );
 }
 
-function InteractiveComplexityCptCard() {
+function InteractiveComplexityCptCard({ compactMode = false }) {
   return (
     <div style={cptCard}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={cptCodeLabel}>Code 90833</span>
-        <BadgeAddOn />
+        <BadgeAddOn compactMode={compactMode} />
       </div>
       <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={cptLabel}><IconLayers />Interactive Complexity</div>
@@ -5067,7 +5067,7 @@ function CptCardList({ compactMode = false }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <PrimaryCptCard />
         <AddOnCptCard compactMode={compactMode} />
-        <InteractiveComplexityCptCard />
+        <InteractiveComplexityCptCard compactMode={compactMode} />
       </div>
     </>
   );
