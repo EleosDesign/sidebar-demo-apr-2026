@@ -5094,38 +5094,10 @@ function AddOnCptCard({ compactMode = false }) {
 
 const IC_DEFAULT = 'Patient experiencing significant anxiety with co-occurring sleep disturbance and work-related stressors. Required coordination of care communication, management of treatment complications, and explanation of complex treatment plan. Interactive complexity added due to engagement of family member and need for cognitive reframing of treatment goals.';
 
-const IC_REASONS = [
-  'Family engagement',
-  'Care coordination',
-  'Treatment complications',
-  'Language barrier',
-  'Crisis management',
-  'Legal/guardian issues',
-];
-
 function InteractiveComplexityCptCard({ compactMode = false }) {
-  const [confirmed, setConfirmed]   = useState(true);
-  const [narrative, setNarrative]   = useState(IC_DEFAULT);
-  const [draftText, setDraftText]   = useState(IC_DEFAULT);
-  const [reasons, setReasons]       = useState(new Set(['Family engagement', 'Care coordination', 'Treatment complications']));
-  const [draftReasons, setDraftReasons] = useState(new Set(['Family engagement', 'Care coordination', 'Treatment complications']));
-
-  const toggleReason = (r) => setDraftReasons(prev => {
-    const next = new Set(prev);
-    next.has(r) ? next.delete(r) : next.add(r);
-    return next;
-  });
-
-  const handleConfirm = () => {
-    setNarrative(draftText);
-    setReasons(new Set(draftReasons));
-    setConfirmed(true);
-  };
-  const handleCancel = () => {
-    setDraftText(narrative);
-    setDraftReasons(new Set(reasons));
-    setConfirmed(true);
-  };
+  const [confirmed, setConfirmed] = useState(true);
+  const [narrative, setNarrative] = useState(IC_DEFAULT);
+  const [draft, setDraft]         = useState(IC_DEFAULT);
 
   return (
     <div style={cptCard}>
@@ -5138,45 +5110,25 @@ function InteractiveComplexityCptCard({ compactMode = false }) {
         <>
           <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={cptLabel}><IconLayers />Interactive Complexity</div>
-            {reasons.size > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 2 }}>
-                {[...reasons].map(r => (
-                  <span key={r} style={{ ...cptChipBase, ...cptChipActive, cursor: 'default', fontSize: 11, padding: '2px 8px' }}>{r}</span>
-                ))}
-              </div>
-            )}
             <p style={{ ...cptValue, margin: 0 }}>{narrative}</p>
           </div>
           <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
         </>
       ) : (
         <>
-          <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {/* Reason chips */}
-            <div>
-              <div style={{ ...cptLabel, marginBottom: 8 }}><IconLayers />Reason(s) for complexity</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                {IC_REASONS.map(r => (
-                  <button key={r} onClick={() => toggleReason(r)} style={{ ...cptChipBase, ...(draftReasons.has(r) ? cptChipActive : {}) }}>{r}</button>
-                ))}
-              </div>
-            </div>
-            <div style={cptDivider} />
-            {/* Narrative textarea */}
-            <div style={{ marginTop: 12 }}>
-              <div style={{ ...cptLabel, marginBottom: 8 }}><IconLayers />Clinical narrative</div>
-              <textarea
-                value={draftText}
-                onChange={e => setDraftText(e.target.value)}
-                rows={5}
-                style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 6, padding: '8px 10px', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.5, letterSpacing: '0.17px', outline: 'none' }}
-              />
-            </div>
+          <div style={{ ...cptPanel }}>
+            <div style={{ ...cptLabel, marginBottom: 8 }}><IconLayers />Interactive Complexity</div>
+            <textarea
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              rows={6}
+              style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 6, padding: '8px 10px', fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.5, letterSpacing: '0.17px', outline: 'none' }}
+            />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
-            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={handleCancel}>Cancel</button>
+            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => { setDraft(narrative); setConfirmed(true); }}>Cancel</button>
             <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-            <button style={cptEditBtn} onClick={handleConfirm}>Confirm</button>
+            <button style={cptEditBtn} onClick={() => { setNarrative(draft); setConfirmed(true); }}>Confirm</button>
           </div>
         </>
       )}
