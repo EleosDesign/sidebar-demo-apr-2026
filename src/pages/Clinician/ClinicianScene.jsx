@@ -3539,7 +3539,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
             </svg>
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <span style={{ ...P, fontSize: 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>{clientName}</span>
+            <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', lineHeight: 1.57 }}>{clientName}</span>
             <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', lineHeight: 1.66 }}>{sessionSubtitle}</span>
           </div>
           <FigmaUserAvatar />
@@ -3550,7 +3550,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           {isCountingDown ? (
             /* ── Countdown state ── */
             <>
-              <span style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center', animation: 'countTextIn 0.5s ease both' }}>
+              <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center', animation: 'countTextIn 0.5s ease both' }}>
                 Capture will start in
               </span>
               <div style={{ position: 'relative', width: 124, height: 124, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -3571,7 +3571,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           ) : voiceRecording ? (
             /* ── Active recording state ── */
             <>
-              <span style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center', lineHeight: 1.57 }}>
+              <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center', lineHeight: 1.57 }}>
                 Describe the activity<br/>in your own words
               </span>
               {/* Stop button with progress arc */}
@@ -3610,7 +3610,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           ) : (
             /* ── Idle state ── */
             <>
-              <span style={{ ...P, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center' }}>Press to start capturing</span>
+              <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center' }}>Press to start capturing</span>
               <button
                 onClick={startCountdown}
                 style={{ width: 124, height: 124, borderRadius: '50%', background: '#2d4ccd', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -3688,7 +3688,7 @@ function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGG
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', paddingBottom: 4 }}>
-          <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
+          <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
           <div style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}>{sessionSubtitle}</div>
         </div>
       </div>
@@ -6099,7 +6099,7 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px 6px' }}>
-          <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</div>
+          <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</div>
           <div style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}>{dateTime}</div>
         </div>
       </div>
@@ -6122,7 +6122,7 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
           <path d="M93.8684 28.8951L98.7676 39.0236L109.705 40.6441C109.985 40.6874 110.247 40.8088 110.463 40.9948C110.678 41.1808 110.839 41.424 110.926 41.6973C111.013 41.9706 111.024 42.2631 110.956 42.5422C110.889 42.8213 110.747 43.0759 110.546 43.2776L102.627 51.1199L104.493 62.1889C104.541 62.4734 104.51 62.7659 104.403 63.0334C104.297 63.3009 104.118 63.5328 103.889 63.7028C103.659 63.8729 103.387 63.9743 103.104 63.9957C102.821 64.0171 102.537 63.9576 102.285 63.824L92.5012 58.5282L82.717 63.7661C82.4652 63.8998 82.1816 63.9593 81.8982 63.9379C81.6149 63.9165 81.3431 63.815 81.1135 63.645C80.8839 63.4749 80.7057 63.243 80.599 62.9755C80.4923 62.708 80.4613 62.4155 80.5095 62.131L82.3894 51.062L74.4709 43.1907C74.2641 42.9915 74.117 42.7368 74.0467 42.4561C73.9763 42.1754 73.9857 41.8803 74.0736 41.6048C74.1615 41.3293 74.3244 41.0847 74.5434 40.8993C74.7624 40.714 75.0286 40.5954 75.3112 40.5573L86.249 38.9368L91.1482 28.8083C91.2831 28.5565 91.4841 28.3476 91.7289 28.2051C91.9736 28.0625 92.2526 27.9918 92.5346 28.0008C92.8166 28.0098 93.0906 28.0981 93.3261 28.256C93.5616 28.4139 93.7494 28.6352 93.8684 28.8951Z" fill="#FFC04C" stroke="#294355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ ...P, fontSize: 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px', marginBottom: 10 }}>Audio capture completed</div>
+          <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px', marginBottom: 10 }}>Audio capture completed</div>
           {showDescription && <div style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.57, letterSpacing: '0.17px', maxWidth: 280 }}>We're generating suggestions for you! They will be available shortly.</div>}
         </div>
       </div>
