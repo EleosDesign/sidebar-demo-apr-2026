@@ -5001,39 +5001,92 @@ function PrimaryCptCard({ compactMode = false }) {
 }
 
 function AddOnCptCard({ compactMode = false }) {
-  const columns = [['Start', '10:00 A.M.'], ['End', '10:30 A.M.'], ['Duration', '30 min']];
+  const [start, setStart]       = useState('10:00 A.M.');
+  const [end, setEnd]           = useState('10:30 A.M.');
+  const [confirmed, setConfirmed] = useState(true);
+
+  const START_OPTS = ['9:00 A.M.', '9:30 A.M.', '10:00 A.M.', '10:30 A.M.', '11:00 A.M.'];
+  const END_OPTS   = ['9:30 A.M.', '10:00 A.M.', '10:30 A.M.', '11:00 A.M.', '11:30 A.M.'];
+
+  const timeToMin = { '9:00 A.M.': 540, '9:30 A.M.': 570, '10:00 A.M.': 600, '10:30 A.M.': 630, '11:00 A.M.': 660, '11:30 A.M.': 690 };
+  const diffMin   = Math.max(0, (timeToMin[end] ?? 630) - (timeToMin[start] ?? 600));
+  const duration  = diffMin ? `${diffMin} min` : '—';
+
+  const columns = [['Start', start], ['End', end], ['Duration', duration]];
+
+  const TimeRow = () => compactMode ? (
+    <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {columns.map(([label, val], i) => (
+        <React.Fragment key={label}>
+          {i > 0 && <div style={{ height: 1, background: 'rgba(0,0,0,0.12)', margin: '6px 0' }} />}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ ...cptLabel, marginBottom: 0 }}><IconClock />{label}</div>
+            <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
+          </div>
+        </React.Fragment>
+      ))}
+    </div>
+  ) : (
+    <div style={{ ...cptPanel, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
+      {columns.map(([label, val], i) => (
+        <React.Fragment key={label}>
+          {i > 0 && <div style={{ width: 1, background: 'rgba(0,0,0,0.12)', margin: '0 12px', flexShrink: 0 }} />}
+          <div style={{ flex: 1 }}>
+            <div style={{ ...cptLabel, marginBottom: 6 }}><IconClock />{label}</div>
+            <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
+          </div>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+
   return (
     <div style={cptCard}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={cptCodeLabel}>Code 90833</span>
         <BadgeAddOn compactMode={compactMode} />
       </div>
-      {compactMode ? (
-        /* Vertical layout — label + value on same row, stacked rows */
-        <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
-          {columns.map(([label, val], i) => (
-            <React.Fragment key={label}>
-              {i > 0 && <div style={{ height: 1, background: 'rgba(0,0,0,0.12)', margin: '6px 0' }} />}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ ...cptLabel, marginBottom: 0 }}><IconClock />{label}</div>
-                <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
-              </div>
-            </React.Fragment>
-          ))}
-        </div>
+
+      {confirmed ? (
+        <>
+          <TimeRow />
+          <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
+        </>
       ) : (
-        /* Horizontal layout — three equal columns */
-        <div style={{ ...cptPanel, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
-          {columns.map(([label, val], i) => (
-            <React.Fragment key={label}>
-              {i > 0 && <div style={{ width: 1, background: 'rgba(0,0,0,0.12)', margin: '0 12px', flexShrink: 0 }} />}
-              <div style={{ flex: 1 }}>
-                <div style={{ ...cptLabel, marginBottom: 6 }}><IconClock />{label}</div>
-                <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
+        <>
+          <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {/* Start time */}
+            <div>
+              <div style={{ ...cptLabel, marginBottom: 8 }}><IconClock />Start Time</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                {START_OPTS.map(opt => (
+                  <button key={opt} onClick={() => setStart(opt)} style={{ ...cptChipBase, ...(start === opt ? cptChipActive : {}) }}>{opt}</button>
+                ))}
               </div>
-            </React.Fragment>
-          ))}
-        </div>
+            </div>
+            <div style={cptDivider} />
+            {/* End time */}
+            <div style={{ marginTop: 12 }}>
+              <div style={{ ...cptLabel, marginBottom: 8 }}><IconClock />End Time</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+                {END_OPTS.map(opt => (
+                  <button key={opt} onClick={() => setEnd(opt)} style={{ ...cptChipBase, ...(end === opt ? cptChipActive : {}) }}>{opt}</button>
+                ))}
+              </div>
+            </div>
+            <div style={cptDivider} />
+            {/* Derived duration */}
+            <div style={{ marginTop: 12 }}>
+              <div style={{ ...cptLabel, marginBottom: 4 }}><IconClock />Duration</div>
+              <p style={{ ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', margin: 0 }}>{duration}</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
+            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
+            <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
+            <button style={cptEditBtn} onClick={() => setConfirmed(true)}>Confirm</button>
+          </div>
+        </>
       )}
     </div>
   );
