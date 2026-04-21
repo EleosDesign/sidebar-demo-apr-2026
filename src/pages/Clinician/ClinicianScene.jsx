@@ -4897,13 +4897,13 @@ const BadgePrimary = ({ compactMode = false }) => (
   </div>
 );
 
-// Add-on CPT badge: #e8f5e9 bg, #388e3c text
+/// Add-on CPT badge: #ede7f6 bg, #6d3fcc text
 const BadgeAddOn = ({ compactMode = false }) => (
-  <div style={{ background: '#e8f5e9', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#388e3c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <div style={{ background: '#ede7f6', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6d3fcc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
     </svg>
-    <span style={{ fontSize: 12, fontWeight: 500, color: '#388e3c', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Add-On' : 'Add-On CPT Code'}</span>
+    <span style={{ fontSize: 12, fontWeight: 500, color: '#6d3fcc', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Add-On' : 'Add-On CPT Code'}</span>
   </div>
 );
 
