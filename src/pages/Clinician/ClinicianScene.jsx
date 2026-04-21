@@ -4276,7 +4276,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         {activeTab === 'coding' && (
           <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 28px' }}>
             <div style={{ position: 'sticky', top: 0, height: 16, background: 'white', zIndex: 5, marginLeft: -16, marginRight: -16 }} />
-            <CptCardList />
+            <CptCardList compactMode={compactMode} />
           </div>
         )}
 
@@ -5000,7 +5000,7 @@ function PrimaryCptCard() {
   );
 }
 
-function AddOnCptCard() {
+function AddOnCptCard({ compactMode = false }) {
   const columns = [['Start', '10:00 A.M.'], ['End', '10:30 A.M.'], ['Duration', '30 min']];
   return (
     <div style={cptCard}>
@@ -5008,17 +5008,33 @@ function AddOnCptCard() {
         <span style={cptCodeLabel}>Code 90833</span>
         <BadgeAddOn />
       </div>
-      <div style={{ ...cptPanel, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
-        {columns.map(([label, val], i) => (
-          <React.Fragment key={label}>
-            {i > 0 && <div style={{ width: 1, background: 'rgba(0,0,0,0.12)', margin: '0 12px', flexShrink: 0 }} />}
-            <div style={{ flex: 1 }}>
-              <div style={{ ...cptLabel, marginBottom: 6 }}><IconClock />{label}</div>
-              <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
+      {compactMode ? (
+        /* Vertical layout — label + value on same row, stacked rows */
+        <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {columns.map(([label, val], i) => (
+            <React.Fragment key={label}>
+              {i > 0 && <div style={{ height: 1, background: 'rgba(0,0,0,0.12)', margin: '6px 0' }} />}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ ...cptLabel, marginBottom: 0 }}><IconClock />{label}</div>
+                <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
+      ) : (
+        /* Horizontal layout — three equal columns */
+        <div style={{ ...cptPanel, display: 'flex', flexDirection: 'row', alignItems: 'stretch' }}>
+          {columns.map(([label, val], i) => (
+            <React.Fragment key={label}>
+              {i > 0 && <div style={{ width: 1, background: 'rgba(0,0,0,0.12)', margin: '0 12px', flexShrink: 0 }} />}
+              <div style={{ flex: 1 }}>
+                <div style={{ ...cptLabel, marginBottom: 6 }}><IconClock />{label}</div>
+                <p style={{ margin: 0, ...P_CPT, fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>{val}</p>
+              </div>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -5041,7 +5057,7 @@ function InteractiveComplexityCptCard() {
 }
 
 // Shared card list — used by both CodingPanel and the coding tab in SuggestionsPanel
-function CptCardList() {
+function CptCardList({ compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   return (
     <>
@@ -5050,7 +5066,7 @@ function CptCardList() {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <PrimaryCptCard />
-        <AddOnCptCard />
+        <AddOnCptCard compactMode={compactMode} />
         <InteractiveComplexityCptCard />
       </div>
     </>
