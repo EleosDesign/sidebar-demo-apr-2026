@@ -4888,12 +4888,12 @@ const cptEditBtn = { fontSize: 12, fontWeight: 500, color: '#2d4ccd', background
 const cptDivider = { height: 1, background: 'rgba(0,0,0,0.12)', margin: '8px 0' };
 
 // Primary CPT badge: #e3f2fd bg, #2d4ccd text
-const BadgePrimary = () => (
+const BadgePrimary = ({ compactMode = false }) => (
   <div style={{ background: '#e3f2fd', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
     </svg>
-    <span style={{ fontSize: 12, fontWeight: 500, color: '#2d4ccd', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>Primary CPT Code</span>
+    <span style={{ fontSize: 12, fontWeight: 500, color: '#2d4ccd', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Primary' : 'Primary CPT Code'}</span>
   </div>
 );
 
@@ -4907,7 +4907,7 @@ const BadgeAddOn = ({ compactMode = false }) => (
   </div>
 );
 
-function PrimaryCptCard() {
+function PrimaryCptCard({ compactMode = false }) {
   const [patient, setPatient] = useState('Established');
   const [location, setLocation] = useState('Outpatient/Office');
   const [complexity, setComplexity] = useState('Moderate');
@@ -4932,7 +4932,7 @@ function PrimaryCptCard() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span style={cptCodeLabel}>Code {getCptCode()}</span>
-        <BadgePrimary />
+        <BadgePrimary compactMode={compactMode} />
       </div>
 
       {confirmed ? (
@@ -5065,7 +5065,7 @@ function CptCardList({ compactMode = false }) {
         <span style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px' }}>CPT Codes</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <PrimaryCptCard />
+        <PrimaryCptCard compactMode={compactMode} />
         <AddOnCptCard compactMode={compactMode} />
         <InteractiveComplexityCptCard compactMode={compactMode} />
       </div>
