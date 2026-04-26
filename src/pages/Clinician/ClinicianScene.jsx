@@ -4375,7 +4375,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                           ref={isSingleSection ? el => { cardRefs.current[card.field] = el; } : null}
                           style={{ background: 'white', border: `1px solid ${isEditing ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8, transition: 'border-color 0.15s' }}
                         >
-                          {/* Row 1: label + action buttons */}
+                          {/* Row 1: label + Exclude (always visible; disabled while editing) */}
                           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                             <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>
                               {card.field}
@@ -4383,52 +4383,32 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                 <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: '#2d4ccd', background: '#eaedfa', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.3px', verticalAlign: 'middle' }}>Edited</span>
                               )}
                             </span>
-                            {!isExcluded && !isEditing && (
-                              /* Exclude button */
-                              <button onClick={() => toggleExclude(excludeKey)}
-                                style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                            {!isExcluded && (
+                              <button
+                                onClick={isEditing ? undefined : () => toggleExclude(excludeKey)}
+                                disabled={isEditing}
+                                style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: isEditing ? 'default' : 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: isEditing ? 'rgba(0,0,0,0.26)' : 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
                                 Exclude
                               </button>
                             )}
                           </div>
 
-                          {/* Row 2: content area */}
+                          {/* Row 2: content box — textarea when editing, styled box when reading */}
                           {isEditing ? (
-                            /* ── Edit mode ── */
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                              {/* Textarea — borderless, fills the content area; card border provides the blue outline */}
-                              <div style={{ position: 'relative' }}>
-                                <textarea
-                                  autoFocus
-                                  value={editDraft}
-                                  onChange={e => setEditDraft(e.target.value)}
-                                  rows={4}
-                                  style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', background: 'transparent', border: 'none', borderRadius: 0, padding: '0 28px 0 0', ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.17px', outline: 'none' }}
-                                />
-                                {/* Pencil icon stays visible in top-right during edit */}
-                                <div style={{ position: 'absolute', top: 0, right: 0, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(0,0,0,0.38)', pointerEvents: 'none' }}>
-                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 10.917V13H5.08304L11.2266 6.85641L9.14359 4.77336L3 10.917ZM12.8375 5.24552C13.0542 5.02888 13.0542 4.67893 12.8375 4.4623L11.5377 3.16248C11.3211 2.94584 10.9711 2.94584 10.7545 3.16248L9.73795 4.179L11.821 6.26205L12.8375 5.24552Z" fill="currentColor" fillOpacity="0.87"/>
-                                  </svg>
-                                </div>
-                              </div>
-                              {editDraft.trim() === '' && (
-                                <p style={{ ...P, fontSize: 12, color: '#e53935', margin: 0, letterSpacing: '0.17px' }}>Content cannot be empty — changes won't be saved.</p>
-                              )}
-                              {/* Cancel / Update */}
-                              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
-                                <button onClick={cancelEdit}
-                                  style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.1px', padding: '0 4px' }}>
-                                  Cancel
-                                </button>
-                                <span style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.2)', display: 'inline-block' }} />
-                                <button onClick={() => confirmEdit(excludeKey)}
-                                  disabled={!editDraft.trim()}
-                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: editDraft.trim() ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: editDraft.trim() ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                  Update
-                                </button>
+                            /* ── Edit mode: just the textarea + pencil ── */
+                            <div style={{ position: 'relative' }}>
+                              <textarea
+                                autoFocus
+                                value={editDraft}
+                                onChange={e => setEditDraft(e.target.value)}
+                                rows={4}
+                                style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', background: 'transparent', border: 'none', borderRadius: 0, padding: '0 28px 0 0', ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.17px', outline: 'none' }}
+                              />
+                              <div style={{ position: 'absolute', top: 0, right: 0, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(0,0,0,0.26)', pointerEvents: 'none' }}>
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M3 10.917V13H5.08304L11.2266 6.85641L9.14359 4.77336L3 10.917ZM12.8375 5.24552C13.0542 5.02888 13.0542 4.67893 12.8375 4.4623L11.5377 3.16248C11.3211 2.94584 10.9711 2.94584 10.7545 3.16248L9.73795 4.179L11.821 6.26205L12.8375 5.24552Z" fill="currentColor" fillOpacity="0.87"/>
+                                </svg>
                               </div>
                             </div>
                           ) : (
@@ -4513,6 +4493,28 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                   })()}
                                 </div>
                               )}
+                            </>
+                          )}
+
+                          {/* Row 3 (edit mode only): Cancel / Update — outside the content area */}
+                          {isEditing && (
+                            <>
+                              {editDraft.trim() === '' && (
+                                <p style={{ ...P, fontSize: 12, color: '#e53935', margin: 0, letterSpacing: '0.17px' }}>Content cannot be empty — changes won't be saved.</p>
+                              )}
+                              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                                <button onClick={cancelEdit}
+                                  style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.1px', padding: '0 4px' }}>
+                                  Cancel
+                                </button>
+                                <span style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.2)', display: 'inline-block' }} />
+                                <button onClick={() => confirmEdit(excludeKey)}
+                                  disabled={!editDraft.trim()}
+                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: editDraft.trim() ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: editDraft.trim() ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Update
+                                </button>
+                              </div>
                             </>
                           )}
                         </div>
