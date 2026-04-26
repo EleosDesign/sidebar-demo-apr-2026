@@ -4178,7 +4178,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const [editingKey, setEditingKey] = useState(null);        // excludeKey of card being edited
   const [editDraft, setEditDraft] = useState('');             // live textarea value
   const [editedContent, setEditedContent] = useState({});    // key → saved override text
-  const [hoveredKey, setHoveredKey] = useState(null);        // for hover-reveal of edit icon
+  const [hoveredEditKey, setHoveredEditKey] = useState(null); // for icon-button hover state
 
   const getCardContent = (key, original) => editedContent[key] ?? original;
 
@@ -4369,14 +4369,10 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                       const isEdited   = !!editedContent[excludeKey];
                       const displayContent = getCardContent(excludeKey, card.content);
                       const originalContent = card.content;
-                      const isHovered = hoveredKey === excludeKey;
-
                       return (
                         <div
                           key={card.field}
                           ref={isSingleSection ? el => { cardRefs.current[card.field] = el; } : null}
-                          onMouseEnter={() => setHoveredKey(excludeKey)}
-                          onMouseLeave={() => setHoveredKey(null)}
                           style={{ background: 'white', border: `1px solid ${isEditing ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8, transition: 'border-color 0.15s' }}
                         >
                           {/* Row 1: label + action buttons */}
@@ -4388,27 +4384,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                               )}
                             </span>
                             {!isExcluded && !isEditing && (
-                              <>
-                                {/* Edit button — visible on hover */}
-                                {(isHovered || isEdited) && card.type === 'text' && (
-                                  <button
-                                    onClick={() => startEdit(excludeKey, originalContent)}
-                                    title="Edit suggestion"
-                                    style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                    </svg>
-                                    Edit
-                                  </button>
-                                )}
-                                {/* Exclude button */}
-                                <button onClick={() => toggleExclude(excludeKey)}
-                                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                                  Exclude
-                                </button>
-                              </>
+                              /* Exclude button */
+                              <button onClick={() => toggleExclude(excludeKey)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                                Exclude
+                              </button>
                             )}
                           </div>
 
@@ -4453,8 +4434,21 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                             /* ── Normal / read-only mode ── */
                             <>
                               {card.type === 'text' && (
-                                <div style={{ background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8 }}>
-                                  <p style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: 0, textDecoration: isExcluded ? 'line-through' : 'none' }}>{displayContent}</p>
+                                <div style={{ position: 'relative', background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8 }}>
+                                  <p style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: 0, textDecoration: isExcluded ? 'line-through' : 'none', paddingRight: isExcluded ? 0 : 28 }}>{displayContent}</p>
+                                  {!isExcluded && (
+                                    <button
+                                      onClick={() => startEdit(excludeKey, originalContent)}
+                                      onMouseEnter={() => setHoveredEditKey(excludeKey)}
+                                      onMouseLeave={() => setHoveredEditKey(null)}
+                                      title="Edit suggestion"
+                                      style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredEditKey === excludeKey ? 'rgba(45,76,205,0.12)' : 'transparent', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#2d4ccd', transition: 'background 0.12s', padding: 0, flexShrink: 0 }}>
+                                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                      </svg>
+                                    </button>
+                                  )}
                                 </div>
                               )}
                               {card.type === 'chips' && (
