@@ -795,10 +795,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     );
 
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
     }
     if (navTab === 'activities') {
-      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
@@ -5806,7 +5806,7 @@ const CLIENT_OPTIONS = [
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
-function CaptureSessionPanel({ onCapture, onBack, initialClient = 'James Edwards', compactMode = false }) {
+function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
