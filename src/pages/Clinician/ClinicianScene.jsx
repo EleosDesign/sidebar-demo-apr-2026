@@ -4408,7 +4408,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                   e.target.style.height = e.target.scrollHeight + 'px';
                                 }}
                                 rows={1}
-                                style={{ width: '100%', boxSizing: 'border-box', resize: 'none', overflow: 'hidden', background: 'transparent', border: 'none', borderRadius: 0, padding: '0 24px 0 0', ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.17px', outline: 'none' }}
+                                style={{ width: '100%', boxSizing: 'border-box', resize: 'none', overflow: 'hidden', background: 'transparent', border: 'none', borderRadius: 0, padding: '0 24px 0 0', ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', outline: 'none' }}
                               />
                               <div style={{ position: 'absolute', top: 0, right: 0, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(0,0,0,0.26)', pointerEvents: 'none' }}>
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -4514,8 +4514,8 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                 </button>
                                 <span style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.2)', display: 'inline-block' }} />
                                 <button onClick={() => confirmEdit(excludeKey)}
-                                  disabled={!editDraft.trim()}
-                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: editDraft.trim() ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: editDraft.trim() ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
+                                  disabled={!editDraft.trim() || editDraft.trim() === displayContent.trim()}
+                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                   Update
                                 </button>
