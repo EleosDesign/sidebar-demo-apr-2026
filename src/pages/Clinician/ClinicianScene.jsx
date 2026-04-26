@@ -4443,9 +4443,8 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                       onMouseLeave={() => setHoveredEditKey(null)}
                                       title="Edit suggestion"
                                       style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredEditKey === excludeKey ? 'rgba(45,76,205,0.12)' : 'transparent', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#2d4ccd', transition: 'background 0.12s', padding: 0, flexShrink: 0 }}>
-                                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 10.917V13H5.08304L11.2266 6.85641L9.14359 4.77336L3 10.917ZM12.8375 5.24552C13.0542 5.02888 13.0542 4.67893 12.8375 4.4623L11.5377 3.16248C11.3211 2.94584 10.9711 2.94584 10.7545 3.16248L9.73795 4.179L11.821 6.26205L12.8375 5.24552Z" fill="currentColor" fillOpacity="0.87"/>
                                       </svg>
                                     </button>
                                   )}
