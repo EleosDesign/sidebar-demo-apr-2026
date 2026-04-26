@@ -850,7 +850,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
     if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
-      initialClient={captureSession.name || 'Marcus Webb'}
+      initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
       compactMode={compactMode}
@@ -3087,7 +3087,7 @@ const TEXT_SUMMARY_BULLETS = [
   '• Plan to continue weekly individual sessions; client will practice mindfulness and journaling exercises between sessions.',
 ];
 
-function AddSummaryPanel({ initialClient = 'Marcus Webb', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
+function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
