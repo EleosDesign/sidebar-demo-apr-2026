@@ -4401,7 +4401,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                             <div style={{ position: 'relative', border: '1.5px solid #2d4ccd', borderRadius: 8, padding: 8 }}>
                               <textarea
                                 autoFocus
-                                ref={el => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
+                                ref={el => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; el.setSelectionRange(el.value.length, el.value.length); } }}
                                 value={editDraft}
                                 onChange={e => {
                                   setEditDraft(e.target.value);
