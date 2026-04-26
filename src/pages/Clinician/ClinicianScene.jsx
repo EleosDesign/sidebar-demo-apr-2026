@@ -4186,11 +4186,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     setEditingKey(key);
     setEditDraft(getCardContent(key, content));
   };
-  const cancelEdit = () => { setEditingKey(null); setEditDraft(''); };
+  const cancelEdit = () => { setEditingKey(null); setEditDraft(''); setHoveredEditKey(null); };
   const confirmEdit = (key) => {
     if (editDraft.trim()) setEditedContent(prev => ({ ...prev, [key]: editDraft.trim() }));
     setEditingKey(null);
     setEditDraft('');
+    setHoveredEditKey(null);
   };
   const scrollRef = useRef(null);
   const sectionRefs = useRef({});
