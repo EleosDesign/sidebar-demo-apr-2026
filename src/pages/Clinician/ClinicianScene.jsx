@@ -4174,6 +4174,24 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const [added, setAdded] = useState(new Set()); // tracks cards whose content was added to EHR
   const [copied, setCopied] = useState(new Set()); // tracks cards whose content was copied
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  // ── Edit-suggestion state ──────────────────────────────────────────────────
+  const [editingKey, setEditingKey] = useState(null);        // excludeKey of card being edited
+  const [editDraft, setEditDraft] = useState('');             // live textarea value
+  const [editedContent, setEditedContent] = useState({});    // key → saved override text
+  const [hoveredKey, setHoveredKey] = useState(null);        // for hover-reveal of edit icon
+
+  const getCardContent = (key, original) => editedContent[key] ?? original;
+
+  const startEdit = (key, content) => {
+    setEditingKey(key);
+    setEditDraft(getCardContent(key, content));
+  };
+  const cancelEdit = () => { setEditingKey(null); setEditDraft(''); };
+  const confirmEdit = (key) => {
+    if (editDraft.trim()) setEditedContent(prev => ({ ...prev, [key]: editDraft.trim() }));
+    setEditingKey(null);
+    setEditDraft('');
+  };
   const scrollRef = useRef(null);
   const sectionRefs = useRef({});
   const cardRefs = useRef({});
@@ -4347,87 +4365,161 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                     {cards.map((card) => {
                       const excludeKey = `${section}-${card.field}`;
                       const isExcluded = excluded.has(excludeKey);
+                      const isEditing  = editingKey === excludeKey;
+                      const isEdited   = !!editedContent[excludeKey];
+                      const displayContent = getCardContent(excludeKey, card.content);
+                      const originalContent = card.content;
+                      const isHovered = hoveredKey === excludeKey;
+
                       return (
-                        <div key={card.field} ref={isSingleSection ? el => { cardRefs.current[card.field] = el; } : null} style={{ background: 'white', border: '1px solid rgba(33,33,33,0.23)', borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          {/* Row 1: label + exclude button (hidden when excluded) */}
-                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                            <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>{card.field}</span>
-                            {!isExcluded && (
-                              <button onClick={() => toggleExclude(excludeKey)}
-                                style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                                Exclude
-                              </button>
+                        <div
+                          key={card.field}
+                          ref={isSingleSection ? el => { cardRefs.current[card.field] = el; } : null}
+                          onMouseEnter={() => setHoveredKey(excludeKey)}
+                          onMouseLeave={() => setHoveredKey(null)}
+                          style={{ background: 'white', border: `1px solid ${isEditing ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8, transition: 'border-color 0.15s' }}
+                        >
+                          {/* Row 1: label + action buttons */}
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                            <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>
+                              {card.field}
+                              {isEdited && !isEditing && (
+                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: '#2d4ccd', background: '#eaedfa', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.3px', verticalAlign: 'middle' }}>Edited</span>
+                              )}
+                            </span>
+                            {!isExcluded && !isEditing && (
+                              <>
+                                {/* Edit button — visible on hover */}
+                                {(isHovered || isEdited) && card.type === 'text' && (
+                                  <button
+                                    onClick={() => startEdit(excludeKey, originalContent)}
+                                    title="Edit suggestion"
+                                    style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    Edit
+                                  </button>
+                                )}
+                                {/* Exclude button */}
+                                <button onClick={() => toggleExclude(excludeKey)}
+                                  style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: '0 6px', background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', flexShrink: 0, ...P, fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.16px' }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8"/><path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                                  Exclude
+                                </button>
+                              </>
                             )}
                           </div>
 
-                          {/* Row 2: content — grey + strikethrough when excluded */}
-                          {card.type === 'text' && (
-                            <div style={{ background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8 }}>
-                              <p style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: 0, textDecoration: isExcluded ? 'line-through' : 'none' }}>{card.content}</p>
+                          {/* Row 2: content area */}
+                          {isEditing ? (
+                            /* ── Edit mode ── */
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                              {/* Original reference — shown if content was already customised */}
+                              {displayContent !== originalContent && (
+                                <div style={{ background: '#fff8e1', borderRadius: 6, padding: '6px 8px', borderLeft: '3px solid #ffc107' }}>
+                                  <span style={{ ...P, fontSize: 11, fontWeight: 500, color: 'rgba(0,0,0,0.54)', letterSpacing: '0.3px', display: 'block', marginBottom: 2 }}>Original</span>
+                                  <p style={{ ...P, fontSize: 13, fontWeight: 400, color: 'rgba(0,0,0,0.54)', lineHeight: 1.43, margin: 0 }}>{originalContent}</p>
+                                </div>
+                              )}
+                              {/* Editable textarea */}
+                              <textarea
+                                autoFocus
+                                value={editDraft}
+                                onChange={e => setEditDraft(e.target.value)}
+                                rows={4}
+                                style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', background: '#f4f6ff', border: '1.5px solid #2d4ccd', borderRadius: 8, padding: 8, ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', outline: 'none' }}
+                              />
+                              {editDraft.trim() === '' && (
+                                <p style={{ ...P, fontSize: 12, color: '#e53935', margin: 0, letterSpacing: '0.17px' }}>Content cannot be empty — changes won't be saved.</p>
+                              )}
+                              {/* Cancel / Confirm Save */}
+                              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                                <button onClick={cancelEdit}
+                                  style={{ ...P, fontSize: 12, fontWeight: 500, color: '#8194e1', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '0.16px', padding: '0 4px' }}>
+                                  Cancel
+                                </button>
+                                <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
+                                <button onClick={() => confirmEdit(excludeKey)}
+                                  disabled={!editDraft.trim()}
+                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 12, fontWeight: 500, color: editDraft.trim() ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: editDraft.trim() ? 'pointer' : 'default', letterSpacing: '0.16px', padding: '0 4px' }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Save
+                                </button>
+                              </div>
                             </div>
-                          )}
-                          {card.type === 'chips' && (
-                            <div style={{ background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0 }}>
-                              {card.chips.map((chip, ci) => (
-                                <React.Fragment key={chip}>
-                                  <span style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', textDecoration: isExcluded ? 'line-through' : 'none' }}>{chip}</span>
-                                  {ci < card.chips.length - 1 && (
-                                    <span style={{ display: 'inline-block', width: 1, height: 16, background: 'rgba(0,0,0,0.12)', margin: '0 8px', verticalAlign: 'middle' }} />
-                                  )}
-                                </React.Fragment>
-                              ))}
-                            </div>
-                          )}
+                          ) : (
+                            /* ── Normal / read-only mode ── */
+                            <>
+                              {card.type === 'text' && (
+                                <div style={{ background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8 }}>
+                                  <p style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', margin: 0, textDecoration: isExcluded ? 'line-through' : 'none' }}>{displayContent}</p>
+                                </div>
+                              )}
+                              {card.type === 'chips' && (
+                                <div style={{ background: isExcluded ? '#f5f5f5' : '#f4f6ff', borderRadius: 8, padding: 8, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0 }}>
+                                  {card.chips.map((chip, ci) => (
+                                    <React.Fragment key={chip}>
+                                      <span style={{ ...P, fontSize: 14, fontWeight: 400, color: isExcluded ? 'rgba(0,0,0,0.38)' : 'rgba(0,0,0,0.87)', lineHeight: 1.43, letterSpacing: '0.17px', textDecoration: isExcluded ? 'line-through' : 'none' }}>{chip}</span>
+                                      {ci < card.chips.length - 1 && (
+                                        <span style={{ display: 'inline-block', width: 1, height: 16, background: 'rgba(0,0,0,0.12)', margin: '0 8px', verticalAlign: 'middle' }} />
+                                      )}
+                                    </React.Fragment>
+                                  ))}
+                                </div>
+                              )}
 
-                          {/* Row 3: Copy/Add actions (not excluded) OR full-width Undo Exclusion (excluded) */}
-                          {isExcluded ? (
-                            <button onClick={() => toggleExclude(excludeKey)}
-                              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, width: '100%', height: 24, padding: 6, background: '#eaedfa', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 7v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                              Undo Exclusion
-                            </button>
-                          ) : card.showActions && (
-                            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
-                              {/* Copy button */}
-                              <button onClick={() => {
-                                navigator.clipboard.writeText(card.content).catch(() => {});
-                                setCopied(prev => new Set(prev).add(excludeKey));
-                                setTimeout(() => setCopied(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
-                              }} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
-                                {copied.has(excludeKey) ? (
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                ) : (
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                                )}
-                                <span style={{ color: copied.has(excludeKey) ? '#22c55e' : '#2d4ccd' }}>{copied.has(excludeKey) ? 'Copied!' : 'Copy'}</span>
-                              </button>
-                              <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-                              {/* Add to EHR button */}
-                              {(() => {
-                                const isAdded = added.has(excludeKey);
-                                const canAdd = isAdded || !!focusedEhrField;
-                                return (
-                                  <button
-                                    onMouseDown={e => e.preventDefault()}
-                                    onClick={() => {
-                                      if (!canAdd) return;
-                                      onAddToNote?.(focusedEhrField ?? section, card.content, card.field);
-                                      setAdded(prev => new Set(prev).add(excludeKey));
-                                      setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
-                                    }}
-                                    style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: canAdd ? 'pointer' : 'default', ...P, fontSize: 12, fontWeight: 500, color: isAdded ? '#22c55e' : canAdd ? '#2d4ccd' : '#bbb', letterSpacing: '0.16px', transition: 'color 0.15s' }}
-                                  >
-                                    {isAdded ? (
+                              {/* Row 3: Copy/Add actions OR Undo Exclusion */}
+                              {isExcluded ? (
+                                <button onClick={() => toggleExclude(excludeKey)}
+                                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, width: '100%', height: 24, padding: 6, background: '#eaedfa', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 7v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Undo Exclusion
+                                </button>
+                              ) : card.showActions && (
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                                  {/* Copy button */}
+                                  <button onClick={() => {
+                                    navigator.clipboard.writeText(displayContent).catch(() => {});
+                                    setCopied(prev => new Set(prev).add(excludeKey));
+                                    setTimeout(() => setCopied(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
+                                  }} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
+                                    {copied.has(excludeKey) ? (
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                     ) : (
-                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
                                     )}
-                                    {isAdded ? 'Added!' : 'Add to EHR'}
+                                    <span style={{ color: copied.has(excludeKey) ? '#22c55e' : '#2d4ccd' }}>{copied.has(excludeKey) ? 'Copied!' : 'Copy'}</span>
                                   </button>
-                                );
-                              })()}
-                            </div>
+                                  <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
+                                  {/* Add to EHR button */}
+                                  {(() => {
+                                    const isAdded = added.has(excludeKey);
+                                    const canAdd = isAdded || !!focusedEhrField;
+                                    return (
+                                      <button
+                                        onMouseDown={e => e.preventDefault()}
+                                        onClick={() => {
+                                          if (!canAdd) return;
+                                          onAddToNote?.(focusedEhrField ?? section, displayContent, card.field);
+                                          setAdded(prev => new Set(prev).add(excludeKey));
+                                          setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
+                                        }}
+                                        style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: canAdd ? 'pointer' : 'default', ...P, fontSize: 12, fontWeight: 500, color: isAdded ? '#22c55e' : canAdd ? '#2d4ccd' : '#bbb', letterSpacing: '0.16px', transition: 'color 0.15s' }}
+                                      >
+                                        {isAdded ? (
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                        ) : (
+                                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+                                        )}
+                                        {isAdded ? 'Added!' : 'Add to EHR'}
+                                      </button>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       );
