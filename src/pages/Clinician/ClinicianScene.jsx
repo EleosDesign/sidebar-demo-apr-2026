@@ -541,7 +541,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
-  const [captureSession, setCaptureSession] = useState(() => savedState?.captureSession ?? { name: 'James Edwards', dateTime: 'Apr 2, 2026, 10:30 AM' });
+  const [captureSession, setCaptureSession] = useState(() => savedState?.captureSession ?? { name: '', dateTime: 'Apr 2, 2026, 10:30 AM' });
   const [activitiesSession, setActivitiesSession] = useState(null); // session selected for suggestions in activities flow
   // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
   const [doneIds, setDoneIds] = useState(INITIAL_DONE_IDS);
@@ -700,7 +700,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     // Only reset when step transitions TO 1 (not on initial mount from saved state)
     if (step === 1 && prevStep !== null && prevStep !== step) {
       setNavTab('activities'); setPhase('sessions'); setEnding(false);
-      setCapturePhase(null); setCaptureSession({ name: 'James Edwards', dateTime: 'Apr 2, 2026, 10:30 AM' });
+      setCapturePhase(null); setCaptureSession({ name: '', dateTime: 'Apr 2, 2026, 10:30 AM' });
     }
   }, [step]);
 
