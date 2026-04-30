@@ -547,6 +547,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   // ── Online / offline status ──────────────────────────────────────────────
   const [onlineStatus, setOnlineStatus] = useState(() => navigator.onLine ? 'online' : 'offline');
   const [manualOffline, setManualOffline] = useState(false);
+  const [statusDisplayMode, setStatusDisplayMode] = useState('A'); // 'A' | 'C'
   const syncTimerRef  = useRef(null);
   const clearTimerRef = useRef(null);
 
@@ -984,44 +985,88 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           compactMode={compactMode}
         />
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)', position: 'relative' }}>
-          {/* ── Offline / syncing banner ── */}
           <style>{`@keyframes eleo-spin { to { transform: rotate(360deg); } }`}</style>
-          {onlineStatus !== 'online' && (
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '0 14px', height: 32, flexShrink: 0,
-              background: onlineStatus === 'offline' ? '#fff3e0' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9',
-              borderBottom: `1px solid ${onlineStatus === 'offline' ? '#ffcc80' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7'}`,
-              transition: 'background 0.3s, border-color 0.3s',
-            }}>
-              {onlineStatus === 'offline' && (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                  <line x1="1" y1="1" x2="23" y2="23" stroke="#e65100" strokeWidth="1.8" strokeLinecap="round"/>
-                  <path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke="#e65100" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-              {onlineStatus === 'syncing' && (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}>
-                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#1565c0" strokeWidth="1.8" strokeOpacity="0.3"/>
-                  <path d="M21 12a9 9 0 00-9-9" stroke="#1565c0" strokeWidth="1.8" strokeLinecap="round"/>
-                </svg>
-              )}
-              {onlineStatus === 'synced' && (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                  <path d="M20 6L9 17l-5-5" stroke="#2e7d32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-              <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.15px',
-                color: onlineStatus === 'offline' ? '#e65100' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32' }}>
-                {onlineStatus === 'offline' ? 'Working offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced'}
-              </span>
-            </div>
-          )}
+
+          {/* ── Status indicator shared content ── */}
+          {(() => {
+            const isVisible = onlineStatus !== 'online';
+            const bg     = onlineStatus === 'offline' ? '#fff3e0' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9';
+            const border  = onlineStatus === 'offline' ? '#ffcc80' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7';
+            const color   = onlineStatus === 'offline' ? '#e65100' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32';
+            const label   = onlineStatus === 'offline' ? 'Working offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced';
+            const icon = onlineStatus === 'offline' ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+                <path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ) : onlineStatus === 'syncing' ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}>
+                <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="1.8" strokeOpacity="0.3"/>
+                <path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M20 6L9 17l-5-5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            );
+
+            /* ── Solution A: full-width overlay at the top, fades in/out ── */
+            const bannerA = (
+              <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20,
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '0 14px', height: 32,
+                background: bg, borderBottom: `1px solid ${border}`,
+                opacity: isVisible ? 1 : 0, pointerEvents: isVisible ? 'auto' : 'none',
+                transition: 'opacity 0.3s, background 0.3s, border-color 0.3s',
+              }}>
+                {icon}
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, color, letterSpacing: '0.15px' }}>{label}</span>
+              </div>
+            );
+
+            /* ── Solution C: pill snackbar at the bottom, slides up ── */
+            const bannerC = (
+              <div style={{
+                position: 'absolute', bottom: 48, left: 10, right: 10, zIndex: 20,
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '7px 12px', borderRadius: 20,
+                background: bg, border: `1px solid ${border}`,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.14)',
+                opacity: isVisible ? 1 : 0, pointerEvents: isVisible ? 'auto' : 'none',
+                transform: isVisible ? 'translateY(0)' : 'translateY(6px)',
+                transition: 'opacity 0.25s, transform 0.25s, background 0.3s, border-color 0.3s',
+              }}>
+                {icon}
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, color, letterSpacing: '0.15px' }}>{label}</span>
+              </div>
+            );
+
+            return statusDisplayMode === 'A' ? bannerA : bannerC;
+          })()}
+
           <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             {renderPanel()}
           </div>
 
-          {/* ── Prototype: offline/online toggle ── */}
+          {/* ── Prototype controls ── */}
+          {/* A / C mode selector */}
+          <div
+            onMouseDown={e => e.stopPropagation()}
+            style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 30, display: 'flex', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.15)', boxShadow: '0 1px 4px rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(4px)' }}
+          >
+            {['A', 'C'].map(mode => (
+              <button key={mode} onClick={e => { e.stopPropagation(); setStatusDisplayMode(mode); }}
+                style={{ padding: '4px 10px', border: 'none', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 600, letterSpacing: '0.3px', transition: 'background 0.15s, color 0.15s',
+                  background: statusDisplayMode === mode ? '#2d4ccd' : 'transparent',
+                  color: statusDisplayMode === mode ? 'white' : 'rgba(0,0,0,0.45)',
+                }}>
+                {mode}
+              </button>
+            ))}
+          </div>
+
+          {/* Online / offline toggle */}
           <button
             onMouseDown={e => e.stopPropagation()}
             onClick={e => { e.stopPropagation(); setManualOffline(o => !o); }}
