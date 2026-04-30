@@ -3766,41 +3766,55 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', paddingBottom: 4 }}>
-          {/* Name row — badge is anchored to its bottom edge */}
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
-            {/* ── Floating status badge — no layout shift ── */}
+          {/* Client name */}
+          <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
+          {/* Subtitle slot — date/time crossfades with status badge, no layout shift */}
+          <div style={{ position: 'relative', height: 26, marginTop: 3 }}>
+            {/* Date / time — fades out when status badge is active */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              opacity: onlineStatus === 'online' ? 1 : 0,
+              transform: `translateY(${onlineStatus === 'online' ? '0px' : '-4px'})`,
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              pointerEvents: onlineStatus === 'online' ? 'auto' : 'none',
+              ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px',
+            }}>{sessionSubtitle}</div>
+            {/* Status badge — fades in to replace date/time */}
             {(() => {
               const isVisible = onlineStatus !== 'online';
-              const bg    = onlineStatus === 'offline' ? '#fff3e0' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9';
-              const border = onlineStatus === 'offline' ? '#ffcc80' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7';
-              const color  = onlineStatus === 'offline' ? '#e65100' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32';
-              const label  = onlineStatus === 'offline' ? 'Working offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced';
+              const bg     = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9';
+              const border = onlineStatus === 'offline' ? '#f5c2c2' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7';
+              const color  = onlineStatus === 'offline' ? '#c62828' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32';
+              const label  = onlineStatus === 'offline' ? 'Working Offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced';
               const icon = onlineStatus === 'syncing'
-                ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" strokeOpacity="0.3"/><path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>
+                ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" strokeOpacity="0.3"/><path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>
                 : onlineStatus === 'synced'
-                ? <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><path d="M20 6L9 17l-5-5" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+                ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><path d="M20 6L9 17l-5-5" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
               return (
                 <div style={{
-                  position: 'absolute', left: '50%', top: '100%',
-                  transform: `translateX(-50%) translateY(${isVisible ? '6px' : '0px'})`,
-                  display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '5px 12px 5px 10px', borderRadius: 20,
-                  background: bg, border: `1px solid ${border}`,
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
-                  opacity: isVisible ? 1 : 0, pointerEvents: 'none',
-                  whiteSpace: 'nowrap',
-                  transition: 'opacity 0.25s, transform 0.25s, background 0.3s',
-                  zIndex: 10,
+                  position: 'absolute', inset: 0,
+                  display: 'flex', justifyContent: 'center', alignItems: 'center',
+                  opacity: isVisible ? 1 : 0,
+                  transform: `translateY(${isVisible ? '0px' : '4px'})`,
+                  transition: 'opacity 0.3s ease, transform 0.3s ease',
+                  pointerEvents: 'none',
                 }}>
-                  {icon}
-                  <span style={{ ...P, fontSize: 12, fontWeight: 500, color, letterSpacing: '0.2px' }}>{label}</span>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                    padding: '3px 10px 3px 8px', borderRadius: 20,
+                    background: bg, border: `1px solid ${border}`,
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {icon}
+                    <span style={{ ...P, fontSize: 12, fontWeight: 500, color, letterSpacing: '0.2px' }}>{label}</span>
+                  </div>
                 </div>
               );
             })()}
           </div>
-          <div style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}>{sessionSubtitle}</div>
         </div>
       </div>
 
