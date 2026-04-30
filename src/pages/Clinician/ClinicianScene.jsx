@@ -3768,19 +3768,18 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         <div style={{ textAlign: 'center', paddingBottom: 4 }}>
           {/* Client name */}
           <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
-          {/* Subtitle slot — date/time crossfades with status badge, no layout shift */}
-          <div style={{ position: 'relative', height: 26, marginTop: 3 }}>
-            {/* Date / time — fades out when status badge is active */}
+          {/* Subtitle slot — badge slides in from right and pushes date/time out left */}
+          <div style={{ position: 'relative', height: 26, marginTop: 3, overflow: 'hidden' }}>
+            {/* Date / time — slides out to the left when badge activates */}
             <div style={{
               position: 'absolute', inset: 0,
               display: 'flex', justifyContent: 'center', alignItems: 'center',
-              opacity: onlineStatus === 'online' ? 1 : 0,
-              transform: `translateY(${onlineStatus === 'online' ? '0px' : '-4px'})`,
-              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              transform: `translateX(${onlineStatus === 'online' ? '0%' : '-110%'})`,
+              transition: 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
               pointerEvents: onlineStatus === 'online' ? 'auto' : 'none',
               ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px',
             }}>{sessionSubtitle}</div>
-            {/* Status badge — fades in to replace date/time */}
+            {/* Status badge — slides in from the right */}
             {(() => {
               const isVisible = onlineStatus !== 'online';
               const bg     = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9';
@@ -3796,16 +3795,14 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                 <div style={{
                   position: 'absolute', inset: 0,
                   display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  opacity: isVisible ? 1 : 0,
-                  transform: `translateY(${isVisible ? '0px' : '4px'})`,
-                  transition: 'opacity 0.3s ease, transform 0.3s ease',
+                  transform: `translateX(${isVisible ? '0%' : '110%'})`,
+                  transition: 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
                   pointerEvents: 'none',
                 }}>
                   <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: 5,
                     padding: '3px 10px 3px 8px', borderRadius: 20,
                     background: bg, border: `1px solid ${border}`,
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
                     whiteSpace: 'nowrap',
                   }}>
                     {icon}
