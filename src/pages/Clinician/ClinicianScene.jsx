@@ -546,23 +546,37 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── Online / offline status ──────────────────────────────────────────────
   const [onlineStatus, setOnlineStatus] = useState(() => navigator.onLine ? 'online' : 'offline');
+  const [manualOffline, setManualOffline] = useState(false);
+  const syncTimerRef  = useRef(null);
+  const clearTimerRef = useRef(null);
+
+  const triggerGoOffline = () => {
+    clearTimeout(syncTimerRef.current); clearTimeout(clearTimerRef.current);
+    setOnlineStatus('offline');
+  };
+  const triggerGoOnline = () => {
+    setOnlineStatus('syncing');
+    syncTimerRef.current  = setTimeout(() => setOnlineStatus('synced'), 2000);
+    clearTimerRef.current = setTimeout(() => setOnlineStatus('online'),  3200);
+  };
+
+  // Real browser events
   useEffect(() => {
-    let syncTimer, clearedTimer;
-    const goOffline = () => { clearTimeout(syncTimer); clearTimeout(clearedTimer); setOnlineStatus('offline'); };
-    const goOnline  = () => {
-      setOnlineStatus('syncing');
-      syncTimer   = setTimeout(() => { setOnlineStatus('synced'); }, 2000);
-      clearedTimer = setTimeout(() => { setOnlineStatus('online'); }, 3200);
-    };
-    window.addEventListener('offline', goOffline);
-    window.addEventListener('online',  goOnline);
+    window.addEventListener('offline', triggerGoOffline);
+    window.addEventListener('online',  triggerGoOnline);
     return () => {
-      window.removeEventListener('offline', goOffline);
-      window.removeEventListener('online',  goOnline);
-      clearTimeout(syncTimer);
-      clearTimeout(clearedTimer);
+      window.removeEventListener('offline', triggerGoOffline);
+      window.removeEventListener('online',  triggerGoOnline);
+      clearTimeout(syncTimerRef.current);
+      clearTimeout(clearTimerRef.current);
     };
-  }, []);
+  }, []); // eslint-disable-line
+
+  // Manual toggle
+  useEffect(() => {
+    if (manualOffline) { triggerGoOffline(); }
+    else               { triggerGoOnline();  }
+  }, [manualOffline]); // eslint-disable-line
   // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
   const [doneIds, setDoneIds] = useState(INITIAL_DONE_IDS);
   const [activitiesInitialTab, setActivitiesInitialTab] = useState('ehr'); // which tab MySessionsPanel opens on
@@ -969,7 +983,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           onCollapse={onCollapse}
           compactMode={compactMode}
         />
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)' }}>
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)', position: 'relative' }}>
           {/* ── Offline / syncing banner ── */}
           <style>{`@keyframes eleo-spin { to { transform: rotate(360deg); } }`}</style>
           {onlineStatus !== 'online' && (
@@ -1006,6 +1020,43 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             {renderPanel()}
           </div>
+
+          {/* ── Prototype: offline/online toggle ── */}
+          <button
+            onMouseDown={e => e.stopPropagation()}
+            onClick={e => { e.stopPropagation(); setManualOffline(o => !o); }}
+            style={{
+              position: 'absolute', bottom: 10, right: 10, zIndex: 30,
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '4px 10px', borderRadius: 20,
+              border: `1px solid ${manualOffline ? '#ffcc80' : 'rgba(0,0,0,0.15)'}`,
+              background: manualOffline ? '#fff3e0' : 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(4px)',
+              cursor: 'pointer',
+              fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 500,
+              color: manualOffline ? '#e65100' : 'rgba(0,0,0,0.45)',
+              letterSpacing: '0.2px',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+              transition: 'all 0.2s',
+            }}
+          >
+            {manualOffline ? (
+              <>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                  <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Go online
+              </>
+            ) : (
+              <>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Go offline
+              </>
+            )}
+          </button>
         </div>
       </div>
 
