@@ -543,6 +543,26 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
   const [captureSession, setCaptureSession] = useState({ name: '', dateTime: 'Apr 2, 2026, 10:30 AM' });
   const [activitiesSession, setActivitiesSession] = useState(null); // session selected for suggestions in activities flow
+
+  // ── Online / offline status ──────────────────────────────────────────────
+  const [onlineStatus, setOnlineStatus] = useState(() => navigator.onLine ? 'online' : 'offline');
+  useEffect(() => {
+    let syncTimer, clearedTimer;
+    const goOffline = () => { clearTimeout(syncTimer); clearTimeout(clearedTimer); setOnlineStatus('offline'); };
+    const goOnline  = () => {
+      setOnlineStatus('syncing');
+      syncTimer   = setTimeout(() => { setOnlineStatus('synced'); }, 2000);
+      clearedTimer = setTimeout(() => { setOnlineStatus('online'); }, 3200);
+    };
+    window.addEventListener('offline', goOffline);
+    window.addEventListener('online',  goOnline);
+    return () => {
+      window.removeEventListener('offline', goOffline);
+      window.removeEventListener('online',  goOnline);
+      clearTimeout(syncTimer);
+      clearTimeout(clearedTimer);
+    };
+  }, []);
   // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
   const [doneIds, setDoneIds] = useState(INITIAL_DONE_IDS);
   const [activitiesInitialTab, setActivitiesInitialTab] = useState('ehr'); // which tab MySessionsPanel opens on
@@ -950,6 +970,39 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           compactMode={compactMode}
         />
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)' }}>
+          {/* ── Offline / syncing banner ── */}
+          <style>{`@keyframes eleo-spin { to { transform: rotate(360deg); } }`}</style>
+          {onlineStatus !== 'online' && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '0 14px', height: 32, flexShrink: 0,
+              background: onlineStatus === 'offline' ? '#fff3e0' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9',
+              borderBottom: `1px solid ${onlineStatus === 'offline' ? '#ffcc80' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7'}`,
+              transition: 'background 0.3s, border-color 0.3s',
+            }}>
+              {onlineStatus === 'offline' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                  <line x1="1" y1="1" x2="23" y2="23" stroke="#e65100" strokeWidth="1.8" strokeLinecap="round"/>
+                  <path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke="#e65100" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+              {onlineStatus === 'syncing' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}>
+                  <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#1565c0" strokeWidth="1.8" strokeOpacity="0.3"/>
+                  <path d="M21 12a9 9 0 00-9-9" stroke="#1565c0" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+              )}
+              {onlineStatus === 'synced' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M20 6L9 17l-5-5" stroke="#2e7d32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+              <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 12, fontWeight: 500, letterSpacing: '0.15px',
+                color: onlineStatus === 'offline' ? '#e65100' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32' }}>
+                {onlineStatus === 'offline' ? 'Working offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced'}
+              </span>
+            </div>
+          )}
           <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             {renderPanel()}
           </div>
@@ -3099,6 +3152,10 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   const [animating, setAnimating] = useState(false);
   const animTimeoutsRef = useRef([]);
   const [generating, setGenerating] = useState(false);
+  const [draftStatus, setDraftStatus] = useState(null); // null | 'saving' | 'saved'
+  const draftSaveTimer = useRef(null);
+  const draftSavedTimer = useRef(null);
+  const draftClearTimer = useRef(null);
 
   // Clean up bullet animation timeouts on unmount
   useEffect(() => () => animTimeoutsRef.current.forEach(clearTimeout), []);
@@ -3705,15 +3762,53 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           </p>
           <textarea
             value={notes}
-            onChange={e => { if (!animating) setNotes(e.target.value); }}
+            onChange={e => {
+              if (!animating) {
+                setNotes(e.target.value);
+                // Draft auto-save indicator — debounced 1.2 s after last keystroke
+                clearTimeout(draftSaveTimer.current);
+                clearTimeout(draftSavedTimer.current);
+                clearTimeout(draftClearTimer.current);
+                setDraftStatus(null);
+                draftSaveTimer.current = setTimeout(() => {
+                  setDraftStatus('saving');
+                  draftSavedTimer.current = setTimeout(() => {
+                    setDraftStatus('saved');
+                    draftClearTimer.current = setTimeout(() => setDraftStatus(null), 2000);
+                  }, 700);
+                }, 1200);
+              }
+            }}
             onKeyDown={handleTextareaKeyDown}
             readOnly={animating}
             placeholder={'Add info about the activity, like\n\nWhat you did with your client\nWhat their response was\nYour plans until and for your next activity'}
             style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: animating ? '#fafbff' : 'white', transition: 'border-color 0.15s, background 0.2s' }}
           />
-          <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', marginTop: 8, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
-            {hasEnoughText ? 'Ready to generate suggestions.' : 'Add more info to generate suggestions.'}
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, minHeight: 22 }}>
+            <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', margin: 0, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
+              {hasEnoughText ? 'Ready to generate suggestions.' : 'Add more info to generate suggestions.'}
+            </p>
+            {draftStatus && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+                {draftStatus === 'saving' ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center', flexShrink: 0 }}>
+                      <circle cx="12" cy="12" r="9" stroke="rgba(0,0,0,0.26)" strokeWidth="2"/>
+                      <path d="M12 3a9 9 0 019 9" stroke="rgba(0,0,0,0.38)" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span style={{ ...P, fontSize: 12, color: 'rgba(0,0,0,0.38)', letterSpacing: '0.15px' }}>Saving draft…</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                      <path d="M20 6L9 17l-5-5" stroke="#3e9987" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span style={{ ...P, fontSize: 12, color: '#3e9987', letterSpacing: '0.15px' }}>Draft saved</span>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Divider */}
