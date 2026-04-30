@@ -3775,7 +3775,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               position: 'absolute', inset: 0,
               display: 'flex', justifyContent: 'center', alignItems: 'center',
               transform: `translateX(${onlineStatus === 'online' ? '0%' : '-110%'})`,
-              transition: 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
               pointerEvents: onlineStatus === 'online' ? 'auto' : 'none',
               ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px',
             }}>{sessionSubtitle}</div>
@@ -3796,7 +3796,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                   position: 'absolute', inset: 0,
                   display: 'flex', justifyContent: 'center', alignItems: 'center',
                   transform: `translateX(${isVisible ? '0%' : '110%'})`,
-                  transition: 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
                   pointerEvents: 'none',
                 }}>
                   <div style={{
