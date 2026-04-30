@@ -3784,7 +3784,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               return (
                 <div style={{
                   position: 'absolute', left: '50%', top: '100%',
-                  transform: `translateX(-50%) translateY(${isVisible ? '-50%' : '-30%'})`,
+                  transform: `translateX(-50%) translateY(${isVisible ? '6px' : '0px'})`,
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '5px 12px 5px 10px', borderRadius: 20,
                   background: bg, border: `1px solid ${border}`,
