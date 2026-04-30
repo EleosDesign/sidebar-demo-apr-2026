@@ -3783,8 +3783,8 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                 : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
               return (
                 <div style={{
-                  position: 'absolute', left: '50%', top: 0,
-                  transform: `translateX(-50%) translateY(${isVisible ? '-100%' : '-80%'})`,
+                  position: 'absolute', left: '50%', top: '100%',
+                  transform: `translateX(-50%) translateY(${isVisible ? '-50%' : '-30%'})`,
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '5px 12px 5px 10px', borderRadius: 20,
                   background: bg, border: `1px solid ${border}`,
