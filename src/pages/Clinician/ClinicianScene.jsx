@@ -2918,7 +2918,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
 // ── Status Badge Slot ─────────────────────────────────────────────────────────
 // Shared header slot used by all panels.
 // • subtitle prop  → crossfade: subtitle slides up/out, badge rises from below
-// • no subtitle    → badge-only: slot expands from 0 → 26px when status is active
+// • no subtitle    → badge-only: fixed 26px slot always reserved; badge slides in/out via translateY
 function StatusBadgeSlot({ onlineStatus = 'online', subtitle = null, subtitleStyle = {} }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const isVisible = onlineStatus !== 'online';
@@ -2956,11 +2956,7 @@ function StatusBadgeSlot({ onlineStatus = 'online', subtitle = null, subtitleSty
     );
   }
   return (
-    <div style={{
-      height: isVisible ? 26 : 0, marginTop: isVisible ? 4 : 0,
-      overflow: 'hidden', width: '100%',
-      transition: 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    }}>
+    <div style={{ height: 26, marginTop: 4, overflow: 'hidden', width: '100%' }}>
       <div style={{
         height: 26, display: 'flex', justifyContent: 'center', alignItems: 'center',
         transform: `translateY(${isVisible ? '0%' : '110%'})`,
