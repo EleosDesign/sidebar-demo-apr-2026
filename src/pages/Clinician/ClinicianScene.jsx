@@ -825,14 +825,15 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onGoToActivities={() => { setCapturePhase(null); setActivitiesInitialTab('ehr'); setNavTab('activities'); setPhase('sessions'); }}
         onStartNew={() => { setCapturePhase(null); setPhase('form'); setCaptureSession({ name: '', dateTime: '' }); }}
         compactMode={compactMode}
+        onlineStatus={onlineStatus}
       />
     );
 
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} onlineStatus={onlineStatus} />;
     }
     if (navTab === 'activities') {
-      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} onlineStatus={onlineStatus} />;
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
@@ -842,6 +843,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
         compactMode={compactMode}
         sidebarW={sidebarW}
+        onlineStatus={onlineStatus}
         onAddedToEHR={() => {
           setDoneIds(prev => new Set([...prev, activitiesSession.id]));
           setActivitiesInitialTab('done');
@@ -857,6 +859,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
         onUndoDone={id => { setDoneIds(prev => { const n = new Set(prev); n.delete(id); return n; }); }}
         compactMode={compactMode}
+        onlineStatus={onlineStatus}
         onSelectSession={(session) => {
           setActivitiesSession(session);
           setPhase('suggestions');
@@ -881,7 +884,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         }}
       />;
     }
-    if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
+    if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} onlineStatus={onlineStatus} />;
     if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
@@ -1083,7 +1086,7 @@ const CLIENTS_LIST = [
   { id: 10, name: "Samuel Wright" },
 ];
 
-function ClientsPanel({ sidebarW = 467 }) {
+function ClientsPanel({ sidebarW = 467, onlineStatus = 'online' }) {
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
   const P = { fontFamily: 'Poppins, sans-serif' };
@@ -1127,10 +1130,11 @@ function ClientsPanel({ sidebarW = 467 }) {
         </div>
 
         {/* Bottom row: "My Clients" centered */}
-        <div style={{ padding: 10, textAlign: 'center' }}>
+        <div style={{ padding: '10px 10px 6px', textAlign: 'center' }}>
           <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
             My Clients
           </span>
+          <StatusBadgeSlot onlineStatus={onlineStatus} />
         </div>
       </div>
 
@@ -2911,6 +2915,61 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
   );
 }
 
+// ── Status Badge Slot ─────────────────────────────────────────────────────────
+// Shared header slot used by all panels.
+// • subtitle prop  → crossfade: subtitle slides up/out, badge rises from below
+// • no subtitle    → badge-only: slot expands from 0 → 26px when status is active
+function StatusBadgeSlot({ onlineStatus = 'online', subtitle = null, subtitleStyle = {} }) {
+  const P = { fontFamily: 'Poppins, sans-serif' };
+  const isVisible = onlineStatus !== 'online';
+  const bg    = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#eaedfa' : '#e8f5e9';
+  const color = onlineStatus === 'offline' ? '#b71c1c' : onlineStatus === 'syncing' ? '#2d4ccd' : '#2e7d32';
+  const label = onlineStatus === 'offline' ? 'Working Offline' : onlineStatus === 'syncing' ? 'Syncing' : '✓ Synced';
+  const icon  = onlineStatus === 'syncing'
+    ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" strokeOpacity="0.3"/><path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>
+    : onlineStatus === 'synced'
+    ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><path d="M20 6L9 17l-5-5" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+  const BadgePill = () => (
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px 3px 8px', borderRadius: 20, background: bg, whiteSpace: 'nowrap' }}>
+      {icon}
+      <span style={{ ...P, fontSize: 12, fontWeight: 500, color, letterSpacing: '0.2px' }}>{label}</span>
+    </div>
+  );
+  if (subtitle !== null) {
+    return (
+      <div style={{ position: 'relative', height: 26, marginTop: 3, overflow: 'hidden', width: '100%' }}>
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+          transform: `translateY(${isVisible ? '-110%' : '0%'})`,
+          transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+          pointerEvents: isVisible ? 'none' : 'auto',
+          ...P, ...subtitleStyle,
+        }}>{subtitle}</div>
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+          transform: `translateY(${isVisible ? '0%' : '110%'})`,
+          transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+          pointerEvents: 'none',
+        }}><BadgePill /></div>
+      </div>
+    );
+  }
+  return (
+    <div style={{
+      height: isVisible ? 26 : 0, marginTop: isVisible ? 4 : 0,
+      overflow: 'hidden', width: '100%',
+      transition: 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+    }}>
+      <div style={{
+        height: 26, display: 'flex', justifyContent: 'center', alignItems: 'center',
+        transform: `translateY(${isVisible ? '0%' : '110%'})`,
+        transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+      }}><BadgePill /></div>
+    </div>
+  );
+}
+
 // ── Add Summary Panel ─────────────────────────────────────────────────────────
 
 // Tag options per category (full list)
@@ -3243,10 +3302,11 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 8 }}>
             <FigmaUserAvatar />
           </div>
-          <div style={{ textAlign: 'center', paddingBottom: 6 }}>
+          <div style={{ textAlign: 'center', paddingBottom: 2 }}>
             <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>
               Add activity
             </span>
+            <StatusBadgeSlot onlineStatus={onlineStatus} />
           </div>
         </div>
 
@@ -3768,49 +3828,11 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         <div style={{ textAlign: 'center', paddingBottom: 4 }}>
           {/* Client name */}
           <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{sessionHeader}</div>
-          {/* Subtitle slot — badge slides in from right and pushes date/time out left */}
-          <div style={{ position: 'relative', height: 26, marginTop: 3, overflow: 'hidden' }}>
-            {/* Date / time — slides out to the left when badge activates */}
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', justifyContent: 'center', alignItems: 'center',
-              transform: `translateY(${onlineStatus === 'online' ? '0%' : '-110%'})`,
-              transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
-              pointerEvents: onlineStatus === 'online' ? 'auto' : 'none',
-              ...P, fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px',
-            }}>{sessionSubtitle}</div>
-            {/* Status badge — slides in from the right */}
-            {(() => {
-              const isVisible = onlineStatus !== 'online';
-              const bg     = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#eaedfa' : '#e8f5e9';
-              const color  = onlineStatus === 'offline' ? '#b71c1c' : onlineStatus === 'syncing' ? '#2d4ccd' : '#2e7d32';
-              const label  = onlineStatus === 'offline' ? 'Working Offline' : onlineStatus === 'syncing' ? 'Syncing' : '✓ Synced';
-              const icon = onlineStatus === 'syncing'
-                ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" strokeOpacity="0.3"/><path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>
-                : onlineStatus === 'synced'
-                ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><path d="M20 6L9 17l-5-5" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                : <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}><line x1="1" y1="1" x2="23" y2="23" stroke={color} strokeWidth="2" strokeLinecap="round"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M8.53 16.11a6 6 0 016.95 0M12 20h.01" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-              return (
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  transform: `translateY(${isVisible ? '0%' : '110%'})`,
-                  transition: 'transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
-                  pointerEvents: 'none',
-                }}>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 5,
-                    padding: '3px 10px 3px 8px', borderRadius: 20,
-                    background: bg,
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {icon}
-                    <span style={{ ...P, fontSize: 12, fontWeight: 500, color, letterSpacing: '0.2px' }}>{label}</span>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
+          <StatusBadgeSlot
+            onlineStatus={onlineStatus}
+            subtitle={sessionSubtitle}
+            subtitleStyle={{ fontSize: 14, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}
+          />
         </div>
       </div>
 
@@ -4293,7 +4315,7 @@ const JACOB_AUDIO_SUGGESTIONS_DATA = [
 
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
-function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
+function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467, onlineStatus = 'online' }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
 
@@ -4415,9 +4437,13 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'rgba(0,0,0,0.54)' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
             <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</span>
-            <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>
+            <StatusBadgeSlot
+              onlineStatus={onlineStatus}
+              subtitle={sessionSubtitle}
+              subtitleStyle={{ fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}
+            />
           </div>
           <FigmaUserAvatar />
         </div>
@@ -5757,7 +5783,7 @@ const INITIAL_DONE_IDS = new Set(MARKED_DONE_LIST.map(s => s.id));
 
 const MONTH_FULL = { Jan:'January', Feb:'February', Mar:'March', Apr:'April', May:'May', Jun:'June', Jul:'July', Aug:'August', Sep:'September', Oct:'October', Nov:'November', Dec:'December' };
 
-function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false }) {
+function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false, onlineStatus = 'online' }) {
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState('');
@@ -5799,8 +5825,9 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
         </div>
 
         {/* Panel title — centered, 18px SemiBold */}
-        <div style={{ textAlign: 'center', padding: '10px 16px' }}>
+        <div style={{ textAlign: 'center', padding: '10px 16px 6px' }}>
           <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px' }}>My Activities</span>
+          <StatusBadgeSlot onlineStatus={onlineStatus} />
         </div>
 
         {/* Search field — 47px tall, 12px padding, 20px icon, 8px gap */}
@@ -5965,7 +5992,7 @@ const CLIENT_OPTIONS = [
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
-function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false }) {
+function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false, onlineStatus = 'online' }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
@@ -6018,10 +6045,11 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           <div style={{ flex: 1 }} />
           <FigmaUserAvatar />
         </div>
-        <div style={{ textAlign: 'center', padding: '0 10px 10px' }}>
+        <div style={{ textAlign: 'center', padding: '0 10px 6px' }}>
           <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>
             Audio Capture
           </span>
+          <StatusBadgeSlot onlineStatus={onlineStatus} />
         </div>
       </div>
 
@@ -6420,7 +6448,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
 
 // ── Session End Panel ─────────────────────────────────────────────────────────
 
-function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew, compactMode = false }) {
+function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew, compactMode = false, onlineStatus = 'online' }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const containerRef = useRef(null);
@@ -6449,7 +6477,11 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px 6px' }}>
           <div style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: '#212121', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</div>
-          <div style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}>{dateTime}</div>
+          <StatusBadgeSlot
+            onlineStatus={onlineStatus}
+            subtitle={dateTime}
+            subtitleStyle={{ fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.6)', lineHeight: 1.43, letterSpacing: '0.15px' }}
+          />
         </div>
       </div>
 
