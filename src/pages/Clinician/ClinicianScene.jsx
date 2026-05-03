@@ -3782,10 +3782,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
             {/* Status badge — slides in from the right */}
             {(() => {
               const isVisible = onlineStatus !== 'online';
-              const bg     = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#e3f2fd' : '#e8f5e9';
-              const border = onlineStatus === 'offline' ? '#f5c2c2' : onlineStatus === 'syncing' ? '#90caf9' : '#a5d6a7';
-              const color  = onlineStatus === 'offline' ? '#c62828' : onlineStatus === 'syncing' ? '#1565c0' : '#2e7d32';
-              const label  = onlineStatus === 'offline' ? 'Working Offline' : onlineStatus === 'syncing' ? 'Syncing…' : '✓ Synced';
+              const bg     = onlineStatus === 'offline' ? '#fce8e8' : onlineStatus === 'syncing' ? '#eaedfa' : '#e8f5e9';
+              const color  = onlineStatus === 'offline' ? '#b71c1c' : onlineStatus === 'syncing' ? '#2d4ccd' : '#2e7d32';
+              const label  = onlineStatus === 'offline' ? 'Working Offline' : onlineStatus === 'syncing' ? 'Syncing' : '✓ Synced';
               const icon = onlineStatus === 'syncing'
                 ? <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, animation: 'eleo-spin 1s linear infinite', transformOrigin: 'center' }}><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke={color} strokeWidth="2" strokeOpacity="0.3"/><path d="M21 12a9 9 0 00-9-9" stroke={color} strokeWidth="2" strokeLinecap="round"/></svg>
                 : onlineStatus === 'synced'
@@ -3802,7 +3801,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                   <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: 5,
                     padding: '3px 10px 3px 8px', borderRadius: 20,
-                    background: bg, border: `1px solid ${border}`,
+                    background: bg,
                     whiteSpace: 'nowrap',
                   }}>
                     {icon}
