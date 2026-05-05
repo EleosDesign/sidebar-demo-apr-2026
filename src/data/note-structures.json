@@ -23,7 +23,11 @@
           "sampleContent": "The client will continue to engage in his current treatment and uphold his sobriety. The client will set boundaries for his girlfriend's move-in, emphasizing on commitment to treatment and sobriety. The client will engage in a potential family therapy session to further improve his relationship dynamics."
         }
       ],
-      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "usedBy": [
+        "Jake Carol",
+        "Jacob Rosen",
+        "Larry Quinn"
+      ],
       "ehrMapping": {
         "smartcare": {
           "data": "interventions",
@@ -61,7 +65,9 @@
           "sampleContent": "Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group."
         }
       ],
-      "usedBy": ["Calvin Murphy"],
+      "usedBy": [
+        "Calvin Murphy"
+      ],
       "featureFlag": "ENABLE_CALVIN_MURPHY",
       "ehrMapping": {
         "streamline": {
@@ -169,7 +175,9 @@
           "sampleContent": "1. Discontinue Sertraline. 2. Start Citalopram 20 mg by mouth once daily. 3. Start Hydroxyzine 25 mg as needed for anxiety. 4. Return to clinic in 4-6 weeks."
         }
       ],
-      "usedBy": ["Patricia Rodriguez"],
+      "usedBy": [
+        "Patricia Rodriguez"
+      ],
       "ehrSystem": "calmhsa-psych"
     },
     "CalAIMAssessment": {
@@ -184,7 +192,7 @@
             {
               "id": "dimension1",
               "label": "Dimension 1: Withdrawal Potential",
-              "sampleContent": "Alcohol use pattern: Reports drinking 3-4 nights per week, typically 4-6 drinks per occasion, with increased consumption at social events. Timeline: Began drinking socially in college (age 18); increase in frequency noted over the past 6 months. Last use: Yesterday evening (3 glasses of wine). CIWA score: 0 — no signs of active withdrawal. Reported withdrawal history: Denies history of withdrawal symptoms upon cessation."
+              "sampleContent": "Alcohol use pattern: Reports drinking 3-4 nights per week, typically 4-6 drinks per occasion, with increased consumption at social events. Timeline: Began drinking socially in college (age 18); increase in frequency noted over the past 6 months. Last use: Yesterday evening (3 glasses of wine). CIWA score: 0 \u2014 no signs of active withdrawal. Reported withdrawal history: Denies history of withdrawal symptoms upon cessation."
             },
             {
               "id": "dimension2",
@@ -199,12 +207,12 @@
             {
               "id": "dimension4",
               "label": "Dimension 4: Readiness To Change",
-              "sampleContent": "Stated reasons for seeking treatment now: the client expresses concern about her alcohol use interfering with her academic performance and mentions a recent incident of heavy drinking that upset her boyfriend. Interest level in engaging in treatment: Appears motivated; states she wants to \"get a handle on things\" before graduation. Identified strengths supporting change: High self-awareness, supportive relationship, academic goals. Stage of Change: Appears to be in the Preparation stage — recognizes the problem and is considering action. Barriers to change: May struggle with social situations where alcohol use is normalized; history of using alcohol as a coping tool."
+              "sampleContent": "Stated reasons for seeking treatment now: the client expresses concern about her alcohol use interfering with her academic performance and mentions a recent incident of heavy drinking that upset her boyfriend. Interest level in engaging in treatment: Appears motivated; states she wants to \"get a handle on things\" before graduation. Identified strengths supporting change: High self-awareness, supportive relationship, academic goals. Stage of Change: Appears to be in the Preparation stage \u2014 recognizes the problem and is considering action. Barriers to change: May struggle with social situations where alcohol use is normalized; history of using alcohol as a coping tool."
             },
             {
               "id": "dimension5",
               "label": "Dimension 5: Relapse / Continued Use / Continued Problem Potential",
-              "sampleContent": "Prior treatment history: Brief outpatient therapy in high school (approximately 4 sessions) — discontinued due to stated lack of readiness. History of SUD treatment: None reported. Longest period of sobriety/reduced use: Did not drink for 3 months during high school therapy; otherwise, no extended periods of abstinence. Previous relapse triggers: Social events, anxiety. Current relapse risk: Moderate to high, given continued use of alcohol as a primary coping mechanism and upcoming graduation-related stress."
+              "sampleContent": "Prior treatment history: Brief outpatient therapy in high school (approximately 4 sessions) \u2014 discontinued due to stated lack of readiness. History of SUD treatment: None reported. Longest period of sobriety/reduced use: Did not drink for 3 months during high school therapy; otherwise, no extended periods of abstinence. Previous relapse triggers: Social events, anxiety. Current relapse risk: Moderate to high, given continued use of alcohol as a primary coping mechanism and upcoming graduation-related stress."
             },
             {
               "id": "dimension6",
@@ -228,19 +236,19 @@
           "id": "domain3",
           "label": "Domain 3 - Substance Use History",
           "description": "History of alcohol and drug use",
-          "sampleContent": "Primary substance: Alcohol. Age of first use: 18 (college, socially). Current use pattern: 3-4 nights per week, 4-6 drinks per occasion; higher consumption at parties and social events. Secondary substances: Occasional marijuana use (1-2 times per month), denies other illicit drug use. Nicotine: Denies use. Previous attempts to cut down: Reports trying to reduce drinking twice in the past year — both attempts lasted less than 2 weeks. Family history of substance use: Father reported to have a heavy drinking history. Client's stated relationship between substance use and mental health: Uses alcohol specifically to manage social anxiety, stating \"it's the only thing that makes me feel normal at parties.\""
+          "sampleContent": "Primary substance: Alcohol. Age of first use: 18 (college, socially). Current use pattern: 3-4 nights per week, 4-6 drinks per occasion; higher consumption at parties and social events. Secondary substances: Occasional marijuana use (1-2 times per month), denies other illicit drug use. Nicotine: Denies use. Previous attempts to cut down: Reports trying to reduce drinking twice in the past year \u2014 both attempts lasted less than 2 weeks. Family history of substance use: Father reported to have a heavy drinking history. Client's stated relationship between substance use and mental health: Uses alcohol specifically to manage social anxiety, stating \"it's the only thing that makes me feel normal at parties.\""
         },
         {
           "id": "domain4",
           "label": "Domain 4 - ASAM Criteria",
           "description": "American Society of Addiction Medicine placement criteria assessment",
-          "sampleContent": "Dimension 1 (Withdrawal): No withdrawal symptoms present; CIWA score 0. Low risk for complicated withdrawal. Dimension 2 (Biomedical): No active medical conditions. No medications. Dimension 3 (Emotional/Behavioral): GAD symptoms present; no current psychiatric medications; thought process intact. Dimension 4 (Readiness to Change): Preparation stage; motivated by academic and relationship concerns. Dimension 5 (Relapse Potential): Moderate-high; alcohol as primary coping mechanism; limited alternative coping skills. Dimension 6 (Recovery Environment): Social environment supports continued use; limited sober social network. ASAM Recommended Level of Care: Level 1.0 — Outpatient Services. Rationale: Client is medically stable, motivated, and functioning adequately in daily life. Outpatient therapy with concurrent skills development and social support building is appropriate at this time."
+          "sampleContent": "Dimension 1 (Withdrawal): No withdrawal symptoms present; CIWA score 0. Low risk for complicated withdrawal. Dimension 2 (Biomedical): No active medical conditions. No medications. Dimension 3 (Emotional/Behavioral): GAD symptoms present; no current psychiatric medications; thought process intact. Dimension 4 (Readiness to Change): Preparation stage; motivated by academic and relationship concerns. Dimension 5 (Relapse Potential): Moderate-high; alcohol as primary coping mechanism; limited alternative coping skills. Dimension 6 (Recovery Environment): Social environment supports continued use; limited sober social network. ASAM Recommended Level of Care: Level 1.0 \u2014 Outpatient Services. Rationale: Client is medically stable, motivated, and functioning adequately in daily life. Outpatient therapy with concurrent skills development and social support building is appropriate at this time."
         },
         {
           "id": "domain5",
           "label": "Domain 5 - Risk Assessment",
           "description": "Safety assessment including suicide and violence risk",
-          "sampleContent": "Suicidal ideation: Denied — no current or historical suicidal ideation, intent, plan, or attempts. Homicidal ideation: Denied — no history of violent thoughts or behaviors toward others. Self-harm: Denied — no history of non-suicidal self-injury. Harm to property: Not reported. Acute safety risk: Low. Protective factors: Supportive relationship with boyfriend, academic goals, self-awareness, and help-seeking behavior. Safety plan: Not indicated at this time given low risk. Client agreed to contact clinician or crisis line if suicidal thoughts emerge. Emergency contacts verified."
+          "sampleContent": "Suicidal ideation: Denied \u2014 no current or historical suicidal ideation, intent, plan, or attempts. Homicidal ideation: Denied \u2014 no history of violent thoughts or behaviors toward others. Self-harm: Denied \u2014 no history of non-suicidal self-injury. Harm to property: Not reported. Acute safety risk: Low. Protective factors: Supportive relationship with boyfriend, academic goals, self-awareness, and help-seeking behavior. Safety plan: Not indicated at this time given low risk. Client agreed to contact clinician or crisis line if suicidal thoughts emerge. Emergency contacts verified."
         },
         {
           "id": "domain6",
@@ -271,7 +279,9 @@
           ]
         }
       ],
-      "usedBy": ["Ashlyn Rivera"],
+      "usedBy": [
+        "Ashlyn Rivera"
+      ],
       "ehrSystem": "calmhsa-psych",
       "ehrMapping": {
         "calmhsa": {
@@ -480,7 +490,10 @@
             }
           ],
           "ehrSystem": "smartscribe",
-          "usedBy": ["Anger Management Group", "SUD Group"]
+          "usedBy": [
+            "Anger Management Group",
+            "SUD Group"
+          ]
         }
       }
     },
@@ -503,27 +516,66 @@
               "id": "suicidality",
               "label": "Suicidality",
               "description": "Suicide risk assessment with ideation, intent, attempt, means, plan checkboxes and informed contacts",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied suicidal ideation, intent, plan, or means when directly asked. No passive death wish reported. No prior attempts in history. Risk assessed as low."
             },
             {
               "id": "harmToOthers",
               "label": "Harm to Others",
               "description": "Violence/harm to others risk assessment",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied any thoughts, intent, or plans to harm others. No history of violence or aggressive behavior reported. Duty to warn not indicated."
             },
             {
               "id": "harmToProperty",
               "label": "Harm to Property",
               "description": "Property destruction risk assessment",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied any ideation or intent to damage property. No history of property destruction noted."
             },
             {
@@ -572,7 +624,11 @@
           ]
         }
       ],
-      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "usedBy": [
+        "Jake Carol",
+        "Jacob Rosen",
+        "Larry Quinn"
+      ],
       "ehrSystem": "smartscribe",
       "qualityFeatures": [
         "Real-time field validation",
@@ -702,37 +758,37 @@
         {
           "id": "dimension1AcuteIntoxication",
           "label": "Dimension 1: Acute Intoxication And/Or Withdrawal Potential",
-          "description": "ASAM Dimension 1 — intoxication and withdrawal risk",
+          "description": "ASAM Dimension 1 \u2014 intoxication and withdrawal risk",
           "sampleContent": "Substance(s) used: Alcohol. Route of administration: Oral. Current signs of intoxication: None observed during the interview."
         },
         {
           "id": "dimension2BiomedicalConditions",
           "label": "Dimension 2: Biomedical Conditions & Complications",
-          "description": "ASAM Dimension 2 — biomedical status",
+          "description": "ASAM Dimension 2 \u2014 biomedical status",
           "sampleContent": "Current medical conditions: None reported. Surgeries/hospitalizations: History of appendectomy. Pregnancy status: Not pregnant; uses oral contraceptives."
         },
         {
           "id": "dimension3EmotionalBehavioral",
           "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications",
-          "description": "ASAM Dimension 3 — emotional/behavioral/cognitive status",
+          "description": "ASAM Dimension 3 \u2014 emotional/behavioral/cognitive status",
           "sampleContent": "Active psychological conditions: Significant anxiety impacting functioning. Past psychiatric diagnoses: Some sort of anxiety disorder per prior counselor. Denies suicidal or homicidal ideation."
         },
         {
           "id": "dimension4ReadinessToChange",
           "label": "Dimension 4: Readiness To Change",
-          "description": "ASAM Dimension 4 — motivation and readiness",
+          "description": "ASAM Dimension 4 \u2014 motivation and readiness",
           "sampleContent": "Internal motivation statements: \"I realize now that I'm not handling it as well as I thought I was\" and \"I want the help now.\" Change goals: To lessen anxiety and reduce alcohol consumption."
         },
         {
           "id": "dimension5RelapsePotential",
           "label": "Dimension 5: Relapse, Continued Use, Or Continued Problem Potential",
-          "description": "ASAM Dimension 5 — relapse and continued use risk",
+          "description": "ASAM Dimension 5 \u2014 relapse and continued use risk",
           "sampleContent": "Primary triggers: Social situations and feelings of anxiety. Coping skills: Primarily uses alcohol to cope. Last blackout: approximately one month ago."
         },
         {
           "id": "dimension6RecoveryEnvironment",
           "label": "Dimension 6: Recovery/Living Environment",
-          "description": "ASAM Dimension 6 — recovery environment",
+          "description": "ASAM Dimension 6 \u2014 recovery environment",
           "sampleContent": "Current living situation: University dorm during the week, parents' home on weekends. Supportive boyfriend of six months. Two close college friends available as support."
         },
         {
@@ -808,7 +864,9 @@
           "sampleContent": "The client is a 23-year-old female college senior presenting with long-standing anxiety and maladaptive alcohol use as a coping mechanism for social distress. Client is highly motivated and ready to engage in treatment."
         }
       ],
-      "noteTypes": ["Assessment"]
+      "noteTypes": [
+        "Assessment"
+      ]
     },
     "CrisisAssessment": {
       "name": "Crisis Assessment",
@@ -849,7 +907,7 @@
           "id": "mentalStatusExam",
           "label": "Mental Status Exam",
           "description": "Current mental status findings",
-          "sampleContent": "Appearance: Unable to assess directly (phone contact); voice tone and speech quality used as indicators. Behavior: Cooperative, engaged, and able to follow the conversation. Mild voice tremor consistent with distress. Speech: Normal rate; slightly pressured at the start of contact, slowed to normal as session progressed. Mood: \"Hopeless and scared.\" Affect: Distressed, congruent with reported mood. Thought process: Linear; mildly disorganized at start of contact, became more organized as rapport established. Thought content: Preoccupied with job loss and financial concerns; passive hopelessness; no SI/HI. No psychotic symptoms reported. Cognition: Appears intact; oriented to person, place, and situation. Insight: Good — client acknowledged his distress was acute and situational. Judgment: Adequate — client reached out for help and engaged in safety planning."
+          "sampleContent": "Appearance: Unable to assess directly (phone contact); voice tone and speech quality used as indicators. Behavior: Cooperative, engaged, and able to follow the conversation. Mild voice tremor consistent with distress. Speech: Normal rate; slightly pressured at the start of contact, slowed to normal as session progressed. Mood: \"Hopeless and scared.\" Affect: Distressed, congruent with reported mood. Thought process: Linear; mildly disorganized at start of contact, became more organized as rapport established. Thought content: Preoccupied with job loss and financial concerns; passive hopelessness; no SI/HI. No psychotic symptoms reported. Cognition: Appears intact; oriented to person, place, and situation. Insight: Good \u2014 client acknowledged his distress was acute and situational. Judgment: Adequate \u2014 client reached out for help and engaged in safety planning."
         },
         {
           "id": "collateralInformation",
@@ -880,10 +938,12 @@
           "id": "safetyPlan",
           "label": "Safety Plan",
           "description": "Crisis safety planning with client",
-          "sampleContent": "Warning signs: Escalating hopelessness, isolation, inability to identify any positive future outcomes, increased alcohol use. Coping strategies (internal): Grounding exercises (5-4-3-2-1), deep breathing, reviewing past examples of navigating difficult situations successfully. Social supports to contact: (1) Carmen (girlfriend) — primary contact this evening; (2) David (close friend); (3) Mother. Crisis resources: 988 Suicide and Crisis Lifeline; local emergency room. Means restriction: No identified lethal means; no further restriction needed at this time. Client verbalized understanding of the safety plan and agreed to follow it. Plan reviewed and confirmed before ending contact."
+          "sampleContent": "Warning signs: Escalating hopelessness, isolation, inability to identify any positive future outcomes, increased alcohol use. Coping strategies (internal): Grounding exercises (5-4-3-2-1), deep breathing, reviewing past examples of navigating difficult situations successfully. Social supports to contact: (1) Carmen (girlfriend) \u2014 primary contact this evening; (2) David (close friend); (3) Mother. Crisis resources: 988 Suicide and Crisis Lifeline; local emergency room. Means restriction: No identified lethal means; no further restriction needed at this time. Client verbalized understanding of the safety plan and agreed to follow it. Plan reviewed and confirmed before ending contact."
         }
       ],
-      "noteTypes": ["Crisis Assessment"]
+      "noteTypes": [
+        "Crisis Assessment"
+      ]
     },
     "IndividualAudio": {
       "name": "Individual Audio Session",
@@ -959,28 +1019,56 @@
           "id": "keyMoments",
           "label": "Key Moments",
           "description": "Significant moments and themes from the session",
-          "sampleContent": "A significant moment occurred when client connected his avoidance of the supervisor's emails to a broader pattern of avoiding conflict that he first noticed in his relationship with his father. This insight appeared to carry emotional weight — client paused and reflected before stating, \"I've been doing this my whole life, haven't I?\" The session also included a productive discussion about the difference between short-term relief from avoidance and long-term cost to his self-efficacy and workplace standing. Client identified that receiving the performance feedback publicly was a key trigger, noting that being criticized in front of colleagues felt \"humiliating in a way I can't easily shake.\""
+          "sampleContent": "A significant moment occurred when client connected his avoidance of the supervisor's emails to a broader pattern of avoiding conflict that he first noticed in his relationship with his father. This insight appeared to carry emotional weight \u2014 client paused and reflected before stating, \"I've been doing this my whole life, haven't I?\" The session also included a productive discussion about the difference between short-term relief from avoidance and long-term cost to his self-efficacy and workplace standing. Client identified that receiving the performance feedback publicly was a key trigger, noting that being criticized in front of colleagues felt \"humiliating in a way I can't easily shake.\""
         },
         {
           "id": "interventions",
           "label": "Interventions",
           "description": "Therapeutic interventions used during session",
-          "sampleContent": "Cognitive restructuring was used to examine the belief that \"if I respond to the email, I'll make the situation worse.\" Client was guided through an evidence-based analysis identifying both supporting and contradicting evidence. A behavioral activation exercise was introduced, starting with a low-barrier task — drafting (but not sending) a response email — to reduce the emotional stakes of re-engagement. Psychoeducation on the anxiety-avoidance maintenance cycle was provided, connecting theoretical framework to client's specific experience. Reflective listening and Socratic questioning were used throughout to support client self-discovery rather than directive advice-giving."
+          "sampleContent": "Cognitive restructuring was used to examine the belief that \"if I respond to the email, I'll make the situation worse.\" Client was guided through an evidence-based analysis identifying both supporting and contradicting evidence. A behavioral activation exercise was introduced, starting with a low-barrier task \u2014 drafting (but not sending) a response email \u2014 to reduce the emotional stakes of re-engagement. Psychoeducation on the anxiety-avoidance maintenance cycle was provided, connecting theoretical framework to client's specific experience. Reflective listening and Socratic questioning were used throughout to support client self-discovery rather than directive advice-giving."
         },
         {
           "id": "assessment",
           "label": "Assessment",
           "description": "Clinical assessment of presentation and progress",
-          "sampleContent": "Client demonstrated good engagement and improved affect compared to last session. He showed meaningful insight into the developmental roots of his avoidance pattern, suggesting readiness to explore this more deeply. GAD symptoms remain clinically significant (estimated GAD-7 in moderate range based on clinical observation); sleep continues to be disrupted. Mood has stabilized somewhat since last session — client reports fewer hours of worry per day. Behavioral avoidance remains the primary maintaining factor. No safety concerns. Overall, client is making meaningful progress consistent with early-stage CBT."
+          "sampleContent": "Client demonstrated good engagement and improved affect compared to last session. He showed meaningful insight into the developmental roots of his avoidance pattern, suggesting readiness to explore this more deeply. GAD symptoms remain clinically significant (estimated GAD-7 in moderate range based on clinical observation); sleep continues to be disrupted. Mood has stabilized somewhat since last session \u2014 client reports fewer hours of worry per day. Behavioral avoidance remains the primary maintaining factor. No safety concerns. Overall, client is making meaningful progress consistent with early-stage CBT."
         },
         {
           "id": "plan",
           "label": "Plan",
           "description": "Treatment plan and next steps",
-          "sampleContent": "Client will complete the behavioral activation task — draft a response email to supervisor — before next session, without sending it. Client will continue daily mood and anxiety log. Next session will review the email draft as a cognitive restructuring exercise and explore further steps toward re-engagement. Continue to build on the insight connecting avoidance patterns to early relational experiences. Administer GAD-7 and PHQ-9 at next session (week 4 assessment point). Consider introducing sleep restriction protocol if sleep continues to be impaired."
+          "sampleContent": "Client will complete the behavioral activation task \u2014 draft a response email to supervisor \u2014 before next session, without sending it. Client will continue daily mood and anxiety log. Next session will review the email draft as a cognitive restructuring exercise and explore further steps toward re-engagement. Continue to build on the insight connecting avoidance patterns to early relational experiences. Administer GAD-7 and PHQ-9 at next session (week 4 assessment point). Consider introducing sleep restriction protocol if sleep continues to be impaired."
         }
       ],
-      "noteTypes": ["Individual Note"]
+      "noteTypes": [
+        "Individual Note"
+      ]
+    },
+    "HospiceNote": {
+      "name": "Hospice Note",
+      "description": "Interdisciplinary visit note for hospice care, documenting clinical decline and comfort-focused goals",
+      "sections": [
+        {
+          "id": "clinicalObservations",
+          "label": "Clinical Observations",
+          "description": "Objective findings including physical changes, functional status, and vital sign trends",
+          "sampleContent": "Patient presented at scheduled visit. Caregiver reports patient sleeping 18\u201320 hours per day over the past week, a notable increase from prior visit. Weight not obtainable due to patient's inability to stand; caregiver notes clothing is looser. Patient was non-verbal during visit but responded to touch with facial grimacing. Skin intact; no new breakdown noted. Oral intake limited to sips of water only. Respiratory rate 22, oxygen saturation 88% on room air \u2014 down from 94% at last visit. Heart rate 98, irregular. Patient unable to reposition independently; required full assist for all ADLs. PPS score assessed at 20%, decreased from 30% at prior visit."
+        },
+        {
+          "id": "assessment",
+          "label": "Assessment",
+          "description": "Clinical assessment of disease progression and comfort status",
+          "sampleContent": "Patient continues to demonstrate clinical decline consistent with end-stage disease progression. Decreased consciousness, reduced oral intake, and drop in PPS score indicate patient is transitioning. Pain appears controlled based on non-verbal pain cues; no signs of respiratory distress at time of visit. Caregiver expressing increased emotional distress; education provided on signs of active dying and what to expect."
+        },
+        {
+          "id": "plan",
+          "label": "Plan",
+          "description": "Care plan updates, comfort interventions, and coordination of care",
+          "sampleContent": "Continue current comfort-focused medication regimen. Increase visit frequency to daily given transition status. Chaplain and social worker notified for bereavement support. Caregiver instructed on mouth care and positioning for comfort. Family meeting to be scheduled within 48 hours to discuss goals of care and anticipated timeline. RN to follow up with attending physician regarding medication adjustments if agitation develops."
+        }
+      ],
+      "usedBy": [],
+      "ehrMapping": {}
     }
   },
   "metadata": {
