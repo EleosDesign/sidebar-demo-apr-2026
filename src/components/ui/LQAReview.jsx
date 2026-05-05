@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useEhrField } from './EhrFieldContext.jsx';
 
-// ── Demo data ──────────────────────────────────────────────────────────────────
+// ── Standard BH demo data ──────────────────────────────────────────────────────
 
 const OPEN_ITEMS = [
   { id: 0, title: 'Progress Mentioned',              detail: 'Note lacks specific progress documentation or goal indicators.' },
@@ -10,7 +10,6 @@ const OPEN_ITEMS = [
   { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).', custom: true },
 ];
 
-// 7 standard rules that passed
 const COMPLETED_ITEMS = [
   { label: 'Completeness',       custom: false },
   { label: 'Uniqueness',         custom: false },
@@ -19,14 +18,48 @@ const COMPLETED_ITEMS = [
 ];
 
 const ALL_CLEAR_ITEMS = [
-  { label: 'Completeness',                   custom: false },
-  { label: 'Uniqueness',                     custom: false },
-  { label: 'Progress Mentioned',             custom: false },
-  { label: 'Golden Thread',                  custom: false },
-  { label: 'Intervention Used',              custom: false },
-  { label: 'Client Response to Intervention',custom: false },
-  { label: 'Compliant Plan',                 custom: false },
-  { label: 'Service Code Match',             custom: true  },
+  { label: 'Completeness',                    custom: false },
+  { label: 'Uniqueness',                      custom: false },
+  { label: 'Progress Mentioned',              custom: false },
+  { label: 'Golden Thread',                   custom: false },
+  { label: 'Intervention Used',               custom: false },
+  { label: 'Client Response to Intervention', custom: false },
+  { label: 'Compliant Plan',                  custom: false },
+  { label: 'Service Code Match',              custom: true  },
+];
+
+// ── Hospice demo data ──────────────────────────────────────────────────────────
+
+const HOSPICE_OPEN_ITEMS = [
+  {
+    id: 0,
+    title: 'Was Decline Documented?',
+    detail: 'To satisfy quality care and Medicare requirements, every note should capture objective evidence of deterioration. Missing documentation in one or more of the following areas:\n\n• Physical Changes — weight loss, decreased mid-arm circumference, or new skin breakdown.\n• Functional Decline — a drop in Palliative Performance Scale (PPS) score or a new inability to perform an Activity of Daily Living (ADL).\n• Neurological / Cognitive Shift — increased somnolence, new confusion, or decreased verbal communication.\n• Vital Sign Trends — changes in blood pressure, heart rate, or oxygen saturation indicating the body is slowing down.',
+    custom: true,
+  },
+  {
+    id: 1,
+    title: 'IDT Coordination',
+    detail: 'Note does not reference interdisciplinary team (IDT) communication or coordination. Medicare Conditions of Participation require documentation of IDT involvement in care planning for each visit.',
+  },
+];
+
+const HOSPICE_COMPLETED_ITEMS = [
+  { label: 'Completeness',                  custom: false },
+  { label: 'Uniqueness',                    custom: false },
+  { label: 'Golden Thread',                 custom: false },
+  { label: 'Comfort Goals Addressed',       custom: false },
+  { label: 'Patient / Caregiver Present',   custom: true  },
+];
+
+const HOSPICE_ALL_CLEAR_ITEMS = [
+  { label: 'Completeness',                  custom: false },
+  { label: 'Uniqueness',                    custom: false },
+  { label: 'Golden Thread',                 custom: false },
+  { label: 'Comfort Goals Addressed',       custom: false },
+  { label: 'Was Decline Documented?',       custom: true  },
+  { label: 'IDT Coordination',              custom: false },
+  { label: 'Patient / Caregiver Present',   custom: true  },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
@@ -86,7 +119,14 @@ function CheckItem({ label, custom }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM', autoRunAnalysis = false, onAutoRunConsumed }) {
+export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM', autoRunAnalysis = false, onAutoRunConsumed, variant = 'default' }) {
+  const isHospice = variant === 'hospice';
+
+  // Pick the right rule sets based on variant
+  const openItems       = isHospice ? HOSPICE_OPEN_ITEMS       : OPEN_ITEMS;
+  const completedItems  = isHospice ? HOSPICE_COMPLETED_ITEMS  : COMPLETED_ITEMS;
+  const allClearItems   = isHospice ? HOSPICE_ALL_CLEAR_ITEMS  : ALL_CLEAR_ITEMS;
+
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
   const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
@@ -123,7 +163,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
     if (lqaStatus === 'loading' && state === 'idle') setState('progress');
   }, [lqaStatus]); // eslint-disable-line
 
-  const visibleItems = OPEN_ITEMS.filter(item => !dismissed.includes(item.id));
+  const visibleItems = openItems.filter(item => !dismissed.includes(item.id));
 
   function runAnalysis() {
     setState('progress');
@@ -270,7 +310,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
               <div onClick={() => setCompletedExpanded(!completedExpanded)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', cursor: 'pointer', borderBottom: completedExpanded ? '1px solid #f0f0f0' : 'none' }}>
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>
-                  Completed <span>({COMPLETED_ITEMS.length})</span>
+                  Completed <span>({completedItems.length})</span>
                 </span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: completedExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -278,7 +318,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
               </div>
               {completedExpanded && (
                 <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {COMPLETED_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
+                  {completedItems.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
                 </div>
               )}
             </div>
@@ -301,13 +341,13 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #f0f0f0' }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({ALL_CLEAR_ITEMS.length})</span></span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({allClearItems.length})</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(180deg)', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {ALL_CLEAR_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
+                {allClearItems.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
               </div>
             </div>
           </div>
@@ -321,7 +361,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
             <div style={{
               height: '100%', borderRadius: 2,
               background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : 'linear-gradient(90deg, #2D4CCD, #7B8EE8)',
-              width: resultsVariant === 'allClear' ? '100%' : `${Math.round(COMPLETED_ITEMS.length / (COMPLETED_ITEMS.length + OPEN_ITEMS.length) * 100)}%`,
+              width: resultsVariant === 'allClear' ? '100%' : `${Math.round(completedItems.length / (completedItems.length + openItems.length) * 100)}%`,
               transition: 'width 0.5s ease, background 0.5s ease',
             }} />
           </div>
