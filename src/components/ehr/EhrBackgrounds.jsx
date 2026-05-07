@@ -2467,6 +2467,242 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// KANTIME (HCHB) — Hospice EHR
+// ═══════════════════════════════════════════════════════════════════════════════
+export function KantimeBg({ noteValues = {}, onNoteChange, highlightedField, sidebarOpen }) {
+  const { clientName } = useEhrContext();
+  const noteTypeCtx = useNoteTypeContext();
+
+  const visitSummaryId = noteTypeCtx?.sections?.find(s =>
+    s.id === 'visitSummary' || s.label === "Today's Visit Summary"
+  )?.id ?? 'visitSummary';
+
+  const visitSummaryValue = noteTypeCtx?.noteValues?.[visitSummaryId] ?? noteValues['visitSummary'] ?? '';
+
+  const handleChange = (val) => {
+    if (noteTypeCtx?.updateNoteValue) noteTypeCtx.updateNoteValue(visitSummaryId, val);
+    onNoteChange?.(visitSummaryId, val);
+  };
+
+  const isHighlighted = highlightedField === visitSummaryId;
+
+  const TABS = ['Patient Details', 'Hospice Eligibility', 'Patient Safety', 'Symptom Management', 'History', 'Psychosocial', 'Structure and Process of Care', 'Care Plan', 'Teaching and Care Coordination', 'Summary'];
+  const [activeTab, setActiveTab] = useState('Symptom Management');
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: 12, background: '#fff', overflow: 'hidden' }}>
+
+      {/* ── Browser chrome ── */}
+      <div style={{ background: '#e8e8e8', borderBottom: '1px solid #bbb', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: 5, marginRight: 6 }}>
+          {['#ff5f57','#febc2e','#28c840'].map((c, i) => (
+            <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />
+          ))}
+        </div>
+        <div style={{ flex: 1, background: '#fff', border: '1px solid #ccc', borderRadius: 3, padding: '2px 8px', fontSize: 11, color: '#333', maxWidth: 480 }}>
+          uat.kantimehealth.net/hp/Hospice/ui/notes
+        </div>
+      </div>
+
+      {/* ── Top tab navigation ── */}
+      <div style={{ background: '#dce9f5', borderBottom: '2px solid #5b8ec4', display: 'flex', flexWrap: 'nowrap', overflow: 'hidden', flexShrink: 0 }}>
+        {TABS.map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)} style={{
+            padding: '5px 10px', fontSize: 11, border: 'none', borderRight: '1px solid #9ab8d8',
+            background: activeTab === tab ? '#fff' : '#dce9f5',
+            color: activeTab === tab ? '#000' : '#1a3a6b',
+            fontWeight: activeTab === tab ? 600 : 400,
+            cursor: 'pointer', whiteSpace: 'nowrap',
+            borderBottom: activeTab === tab ? '2px solid #fff' : 'none',
+            marginBottom: activeTab === tab ? -2 : 0,
+          }}>{tab}</button>
+        ))}
+      </div>
+
+      {/* ── Sub-tabs ── */}
+      <div style={{ background: '#f0f4f8', borderBottom: '1px solid #c0cfde', display: 'flex', flexShrink: 0 }}>
+        {['Timesheet', 'HOPE Review'].map(sub => (
+          <button key={sub} style={{ padding: '3px 12px', fontSize: 11, border: '1px solid #a0b8ce', borderBottom: 'none', background: sub === 'HOPE Review' ? '#fff' : '#dce9f5', color: '#1a3a6b', cursor: 'pointer', marginRight: 2, marginTop: 2 }}>{sub}</button>
+        ))}
+      </div>
+
+      {/* ── Patient header ── */}
+      <div style={{ background: '#eaf2fb', borderBottom: '1px solid #b0cce0', padding: '3px 10px', display: 'flex', gap: 20, flexShrink: 0, fontSize: 11 }}>
+        <span><b>Patient:</b> {clientName}</span>
+        <span><b>MRN:</b> 453672</span>
+        <span><b>DOB:</b> 03/14/1942</span>
+        <span><b>Physician:</b> Dr. R. Alvarez</span>
+        <span><b>Visit Type:</b> Skilled Nursing Visit</span>
+      </div>
+
+      {/* ── Scrollable content ── */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 24px' }}>
+
+        {/* Vital Signs section */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#c8c8c8', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+            Vital Signs
+            <span style={{ fontSize: 10, color: '#c00', marginLeft: 2 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', display: 'flex', flexDirection: 'column', gap: 5, background: '#fafafa' }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', fontSize: 11, color: '#555' }}>
+              {['Temperature Refused','Pulse Refused','Respiratory Refused','O₂ saturation Refused','Blood Pressure Refused'].map(l => (
+                <label key={l} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> {l}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 100 }}>Temperature:</span>
+              <input readOnly style={{ width: 60, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>(°F)</span>
+              {['Oral','Axillary','Tympanic','Rectal','Temporal'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 100 }}>Respiratory rate:</span>
+              <input readOnly style={{ width: 60, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>(breaths/min)</span>
+              {['Regular','Irregular','Absent'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 100 }}>O₂ saturation:</span>
+              <span>At Room Air:</span>
+              <input readOnly style={{ width: 44, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>% With</span>
+              <input readOnly style={{ width: 44, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>Litre of O₂:</span>
+              <input readOnly style={{ width: 44, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>%</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 100 }}>Blood Pressure:</span>
+              <span>Right</span>
+              <input readOnly style={{ width: 40, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>/</span>
+              <input readOnly style={{ width: 40, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>Left</span>
+              <input readOnly style={{ width: 40, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>/</span>
+              <input readOnly style={{ width: 40, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              {['Lying','Sitting','Standing'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span style={{ width: 100, paddingTop: 2 }}>BP Comments:</span>
+              <textarea readOnly style={{ flex: 1, height: 36, border: '1px solid #5b8ec4', borderRadius: 2, padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+          </div>
+        </div>
+
+        {/* BMI / MAC section */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff4444' }}>*</span> BMI / MAC
+            <span style={{ fontSize: 10, marginLeft: 4, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', display: 'flex', flexDirection: 'column', gap: 5, background: '#fafafa' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 3, width: 40 }}><input type="checkbox" readOnly /> BMI:</label>
+              <span>Height Measured In:</span>
+              {['Centimeters','Inches'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <span>Height: <input readOnly style={{ width: 50, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} /></span>
+              <span>Weight: <input readOnly style={{ width: 50, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} /></span>
+            </div>
+            <div style={{ color: '#1a6ec0', fontWeight: 600, fontSize: 12 }}>Calculated BMI:</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 3, width: 40 }}><input type="checkbox" readOnly /> MAC:</label>
+              <span>MAC measured in:</span>
+              {['Centimeters','Inches'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>)}
+            </div>
+            <div style={{ background: '#eaf4e0', padding: '3px 8px', fontSize: 11, fontWeight: 600 }}>Preference For Next Visit</div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> BMI</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> MAC</label>
+              {['Right Side','Left Side','Both'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly /> {o}</label>)}
+            </div>
+          </div>
+        </div>
+
+        {/* Is Patient Impending Death */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#c8daea', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
+            <span>Is Patient Impending Death? <span style={{ color: '#2a7a2a', fontWeight: 400, fontSize: 11 }}>☑ Assessed, No issues found</span></span>
+            <span style={{ fontSize: 11, color: '#555' }}>IDG Problem : <input type="checkbox" readOnly /> New</span>
+          </div>
+          <div style={{ padding: '4px 12px', background: '#fafafa' }}>
+            <span style={{ fontSize: 11 }}>Comments:</span>
+            <textarea readOnly style={{ display: 'block', width: '100%', height: 48, border: '1px solid #ccc', borderRadius: 2, padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff', marginTop: 2 }} />
+          </div>
+        </div>
+
+        {/* Need For Caregiver Relief */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#c8daea', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
+            <span>Need For Caregiver Relief <span style={{ color: '#2a7a2a', fontWeight: 400, fontSize: 11 }}>☑ Assessed, No issues found</span></span>
+            <span style={{ fontSize: 11, color: '#555' }}>IDG Problem : <input type="checkbox" readOnly /> New</span>
+          </div>
+          <div style={{ padding: '4px 12px', background: '#fafafa' }}>
+            <span style={{ fontSize: 11 }}>Comments:</span>
+            <textarea readOnly style={{ display: 'block', width: '100%', height: 48, border: '1px solid #ccc', borderRadius: 2, padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff', marginTop: 2 }} />
+          </div>
+        </div>
+
+        {/* Today's Visit Summary — THE NARRATIVE FIELD */}
+        <div>
+          <div style={{ background: '#c8daea', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            Today's Visit Summary
+          </div>
+          <div style={{ padding: '4px 12px 8px', background: '#fafafa' }}>
+            <textarea
+              value={visitSummaryValue}
+              onChange={e => handleChange(e.target.value)}
+              placeholder="Document the visit summary here…"
+              style={{
+                display: 'block', width: '100%', height: 160,
+                border: isHighlighted ? '2px solid #2d4ccd' : '1px solid #5b8ec4',
+                borderRadius: 2, padding: '4px 6px', fontSize: 12,
+                resize: 'vertical', background: isHighlighted ? '#f0f4ff' : '#fff',
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                transition: 'border-color 0.2s, background 0.2s',
+                outline: 'none',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Signature section */}
+        <div style={{ padding: '6px 12px', borderTop: '1px solid #ccc', fontSize: 11, color: '#555' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#c00' }}>
+            <input type="checkbox" readOnly /> Visit is Signed by Patient/Patient Caregiver. (Note: Physical signature is required)
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#c00', marginTop: 3 }}>
+            <input type="checkbox" defaultChecked readOnly /> Patient/Patient Caregiver Unable to Sign. (Note: Patient Unable to Sign should be selected in the signature section)
+          </label>
+          <div style={{ fontWeight: 'bold', marginTop: 6 }}>Signatures</div>
+        </div>
+      </div>
+
+      {/* ── Bottom action bar ── */}
+      <div style={{ background: '#f0f0f0', borderTop: '1px solid #bbb', padding: '4px 8px', display: 'flex', gap: 4, flexShrink: 0, flexWrap: 'wrap' }}>
+        {['Submit','Unapprove','Compose','Print','Journal Notes','Phone Log','Patient/Caregiver Sign','Patient Complaints','Care Coordination','eFax'].map(btn => (
+          <button key={btn} style={{
+            padding: '3px 10px', fontSize: 11, border: '1px solid #999',
+            background: btn === 'Submit' ? '#3b6698' : '#e8e8e8',
+            color: btn === 'Submit' ? '#fff' : '#222',
+            borderRadius: 3, cursor: 'pointer', fontWeight: btn === 'Submit' ? 600 : 400,
+          }}>{btn}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // REGISTRY
 // ═══════════════════════════════════════════════════════════════════════════════
 export const EHR_BACKGROUNDS = {
@@ -2486,6 +2722,7 @@ export const EHR_BACKGROUNDS = {
   pce:          PCEBg,
   'eleos-lite': EleosLiteBg,
   streamline:   StreamlineBg,
+  kantime:      KantimeBg,
 };
 
 export const EHR_LABELS = {
@@ -2505,4 +2742,5 @@ export const EHR_LABELS = {
   pce:          'PCE',
   'eleos-lite': 'Eleos Lite',
   streamline:   'Streamline',
+  kantime:      'Kantime',
 };
