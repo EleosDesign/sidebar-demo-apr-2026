@@ -587,16 +587,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   });
   const [posY, setPosY] = useState(() => {
     if (savedState?.posY != null) return savedState.posY;
-    const initH = savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7);
-    if (!initialPos) return window.innerHeight - initH - G;
-    return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
+    return G;
   });
   const [side, setSide] = useState(() => {
     if (savedState?.side) return savedState.side;
     const x = initialPos ? Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x)) : G;
     return (x + (savedState?.sidebarW ?? 467) / 2) < window.innerWidth / 2 ? 'left' : 'right';
   });
-  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7));
+  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? (window.innerHeight - 2 * SIDEBAR_BOTTOM_GAP));
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isWidthResizing, setIsWidthResizing] = useState(false);
@@ -872,14 +870,20 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview
-      clientName={activitiesSession?.name ?? 'Larry Quinn'}
-      sessionLabel={activitiesSession ? `${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}` : 'Apr 15, 2026, 9:00 – 9:45 AM'}
-      onAdvance={() => handleNavClick('activities')}
-      autoRunAnalysis={autoRunQuality}
-      onAutoRunConsumed={() => setAutoRunQuality(false)}
-      variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'}
-    />;
+    if (navTab === 'quality') {
+      const isHospiceVariant = noteTypeCtx?.selectedNoteType === 'RoutineVisit';
+      const MONTH_ABBREVS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const today = new Date();
+      const defaultHospiceLabel = `${MONTH_ABBREVS[today.getMonth()]} ${today.getDate()}, 2026, 2:00 – 2:45 PM`;
+      return <LQAReview
+        clientName={activitiesSession?.name ?? (isHospiceVariant ? 'Jacob Rosen' : 'Larry Quinn')}
+        sessionLabel={activitiesSession ? `${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}` : (isHospiceVariant ? defaultHospiceLabel : 'Apr 15, 2026, 9:00 – 9:45 AM')}
+        onAdvance={() => handleNavClick('activities')}
+        autoRunAnalysis={autoRunQuality}
+        onAutoRunConsumed={() => setAutoRunQuality(false)}
+        variant={isHospiceVariant ? 'hospice' : 'default'}
+      />;
+    }
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
