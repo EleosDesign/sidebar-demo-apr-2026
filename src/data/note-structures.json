@@ -1046,28 +1046,60 @@
     },
     "HospiceNote": {
       "name": "Hospice Note",
-      "description": "Interdisciplinary visit note for hospice care, documenting clinical decline and comfort-focused goals",
+      "description": "Skilled nursing visit note for hospice care \u2014 all content routes to the Today's Visit Summary field in Kantime",
       "sections": [
         {
-          "id": "clinicalObservations",
-          "label": "Clinical Observations",
-          "description": "Objective findings including physical changes, functional status, and vital sign trends",
-          "sampleContent": "Patient presented at scheduled visit. Caregiver reports patient sleeping 18\u201320 hours per day over the past week, a notable increase from prior visit. Weight not obtainable due to patient's inability to stand; caregiver notes clothing is looser. Patient was non-verbal during visit but responded to touch with facial grimacing. Skin intact; no new breakdown noted. Oral intake limited to sips of water only. Respiratory rate 22, oxygen saturation 88% on room air \u2014 down from 94% at last visit. Heart rate 98, irregular. Patient unable to reposition independently; required full assist for all ADLs. PPS score assessed at 20%, decreased from 30% at prior visit."
+          "id": "comprehensiveAssessment",
+          "label": "Comprehensive Assessment",
+          "description": "Head-to-toe assessment documenting clinical decline and end-of-life trajectory",
+          "sampleContent": "Conducted comprehensive head-to-toe assessment. Patient presents with progressive decline consistent with end-of-life trajectory, including decreased oral intake, minimal verbal response, and increased work of breathing over the past 48 hours as reported by family."
         },
         {
-          "id": "assessment",
-          "label": "Assessment",
-          "description": "Clinical assessment of disease progression and comfort status",
-          "sampleContent": "Patient continues to demonstrate clinical decline consistent with end-stage disease progression. Decreased consciousness, reduced oral intake, and drop in PPS score indicate patient is transitioning. Pain appears controlled based on non-verbal pain cues; no signs of respiratory distress at time of visit. Caregiver expressing increased emotional distress; education provided on signs of active dying and what to expect."
+          "id": "physicalAssessment",
+          "label": "Physical Assessment",
+          "description": "Objective physical findings including vital signs and observable decline markers",
+          "sampleContent": "Physical assessment reveals cool extremities, delayed capillary refill, and peripheral edema, indicative of worsening congestive heart failure and poor perfusion."
         },
         {
-          "id": "plan",
-          "label": "Plan",
-          "description": "Care plan updates, comfort interventions, and coordination of care",
-          "sampleContent": "Continue current comfort-focused medication regimen. Increase visit frequency to daily given transition status. Chaplain and social worker notified for bereavement support. Caregiver instructed on mouth care and positioning for comfort. Family meeting to be scheduled within 48 hours to discuss goals of care and anticipated timeline. RN to follow up with attending physician regarding medication adjustments if agitation develops."
+          "id": "caregiver",
+          "label": "Caregiver",
+          "description": "Caregiver status, emotional state, and education provided",
+          "sampleContent": "Caregiver appears emotionally overwhelmed, expressing feelings of sadness related to patient death and uncertainty about patient's condition; tearful during visit."
+        },
+        {
+          "id": "repositionedPatient",
+          "label": "Repositioned Patient",
+          "description": "Comfort and positioning interventions performed during visit",
+          "sampleContent": "Repositioned patient for optimal comfort, respiratory ease and skin integrity using pillows to elevate upper body."
+        },
+        {
+          "id": "oralCare",
+          "label": "Oral Care",
+          "description": "Oral hygiene interventions and caregiver education",
+          "sampleContent": "Provided oral care with swabs to maintain mucosal integrity and reduce dryness; encouraged caregiver to continue mouth care between visits."
+        },
+        {
+          "id": "medicationReview",
+          "label": "Medication Review",
+          "description": "Medication administration review and caregiver education on comfort medications",
+          "sampleContent": "Reviewed medication administration with caregiver, including appropriate use of sublingual morphine for pain and lorazepam for dyspnea; reinforced non-pharmacologic interventions such as calming environment and fan use."
+        },
+        {
+          "id": "continueMonitoring",
+          "label": "Continue Monitoring",
+          "description": "Ongoing monitoring plan and visit frequency",
+          "sampleContent": "Maintain current hospice nursing visit schedule at twice weekly with PRN availability; continue to monitor for signs of decline, Transitioning, or active dying."
+        },
+        {
+          "id": "comfortCenteredCare",
+          "label": "Comfort-Centered Care",
+          "description": "Comfort-focused care plan and caregiver support instructions",
+          "sampleContent": "Encourage caregiver to administer medications as prescribed and to utilize 24/7 hospice support line as needed; reinforce focus on comfort-centered care."
         }
       ],
-      "usedBy": [],
+      "usedBy": [
+        "Jacob Rosen"
+      ],
       "ehrMapping": {}
     }
   },

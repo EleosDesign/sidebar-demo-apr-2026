@@ -70,6 +70,17 @@ export default function ClinicianScene({ step, onNext }) {
   );
   const [sidebarStartTab, setSidebarStartTab] = useState(null);
   const noteTypeCtx = useNoteTypeContext();
+  const { setSelectedEhr } = useEhrContext();
+
+  // Auto-switch EHR when note type changes
+  useEffect(() => {
+    if (noteTypeCtx?.selectedNoteType === 'HospiceNote') {
+      setSelectedEhr('kantime');
+    } else if (noteTypeCtx?.selectedNoteType) {
+      setSelectedEhr('welligent');
+    }
+  }, [noteTypeCtx?.selectedNoteType]); // eslint-disable-line
+
   const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
   const setNoteValues = (updater) => {
     if (!noteTypeCtx) return;
@@ -80,6 +91,13 @@ export default function ClinicianScene({ step, onNext }) {
   };
 
   const handleAddToNote = (section, content, cardField) => {
+    // Hospice notes: all content routes to the single visitSummary field
+    if (noteTypeCtx?.selectedNoteType === 'HospiceNote') {
+      noteTypeCtx.updateNoteValue('visitSummary', prev => prev ? prev + '\n\n' + content : content);
+      setHighlightedField('visitSummary');
+      setTimeout(() => setHighlightedField(null), 1800);
+      return;
+    }
     // Direct label/id match first
     let directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
     // Secondary: try the card's own field label (used when section is a group name like 'Progress Note')
