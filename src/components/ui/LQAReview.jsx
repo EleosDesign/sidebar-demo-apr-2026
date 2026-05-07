@@ -45,21 +45,21 @@ const HOSPICE_OPEN_ITEMS = [
 ];
 
 const HOSPICE_COMPLETED_ITEMS = [
-  { label: 'Completeness',                  custom: false },
-  { label: 'Uniqueness',                    custom: false },
-  { label: 'Golden Thread',                 custom: false },
-  { label: 'Comfort Goals Addressed',       custom: false },
-  { label: 'Patient / Caregiver Present',   custom: true  },
+  { label: 'Note Completeness',                          custom: false },
+  { label: 'Uniqueness',                                 custom: false },
+  { label: 'Plan of Care Alignment',                     custom: false },
+  { label: 'Interventions Used',                         custom: false },
+  { label: 'Patient/Caregiver Response to Intervention', custom: false },
 ];
 
 const HOSPICE_ALL_CLEAR_ITEMS = [
-  { label: 'Completeness',                  custom: false },
-  { label: 'Uniqueness',                    custom: false },
-  { label: 'Golden Thread',                 custom: false },
-  { label: 'Comfort Goals Addressed',       custom: false },
-  { label: 'Was Decline Documented?',       custom: true  },
-  { label: 'IDT Coordination',              custom: false },
-  { label: 'Patient / Caregiver Present',   custom: true  },
+  { label: 'Note Completeness',                          custom: false },
+  { label: 'Uniqueness',                                 custom: false },
+  { label: 'Plan of Care Alignment',                     custom: false },
+  { label: 'Interventions Used',                         custom: false },
+  { label: 'Patient/Caregiver Response to Intervention', custom: false },
+  { label: 'Was Decline Documented?',                    custom: true  },
+  { label: 'IDT Coordination',                           custom: false },
 ];
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
