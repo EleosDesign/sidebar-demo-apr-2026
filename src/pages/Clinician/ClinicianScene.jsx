@@ -48,7 +48,7 @@ export default function ClinicianScene({ step, onNext }) {
 
   // Auto-switch EHR when note type changes
   useEffect(() => {
-    if (noteTypeCtx?.selectedNoteType === 'HospiceNote') {
+    if (noteTypeCtx?.selectedNoteType === 'RoutineVisit') {
       setSelectedEhr('kantime');
     } else if (noteTypeCtx?.selectedNoteType) {
       setSelectedEhr('welligent');
@@ -66,7 +66,7 @@ export default function ClinicianScene({ step, onNext }) {
 
   const handleAddToNote = (section, content, cardField) => {
     // Hospice notes: all content routes to the single visitSummary field
-    if (noteTypeCtx?.selectedNoteType === 'HospiceNote') {
+    if (noteTypeCtx?.selectedNoteType === 'RoutineVisit') {
       noteTypeCtx.updateNoteValue('visitSummary', prev => prev ? prev + '\n\n' + content : content);
       setHighlightedField('visitSummary');
       setTimeout(() => setHighlightedField(null), 1800);
@@ -840,7 +840,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} variant={noteTypeCtx?.selectedNoteType === 'HospiceNote' ? 'hospice' : 'default'} />;
+    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}

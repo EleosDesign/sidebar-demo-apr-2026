@@ -1044,8 +1044,8 @@
         "Individual Note"
       ]
     },
-    "HospiceNote": {
-      "name": "Hospice Note",
+    "RoutineVisit": {
+      "name": "Routine Visit",
       "description": "Skilled nursing visit note for hospice care \u2014 all content routes to the Today's Visit Summary field in Kantime",
       "sections": [
         {
