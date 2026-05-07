@@ -31,7 +31,7 @@ function daysAgo(n) {
 const SESSION_LIST = [
   // ── New clients ──────────────────────────────────────────────────────────────
   { id: 'jake',      ...daysAgo(0), name: 'Jake Carol',             time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'audio',  noteType: 'Individual Audio',                  isActive: false, summary: 'Client discussed ongoing difficulties with interpersonal conflict at home. Identified triggers for reactive anger. Worked on pause-and-plan technique. Homework: log three instances of using the technique before next session.' },
-  { id: 'jacob',     ...daysAgo(0), name: 'Jacob Rosen',            time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Progress Note',                       isActive: false, summary: 'Session addressed depressive symptoms and low motivation. Client reported minimal engagement in previously enjoyed activities. Behavioral activation plan updated — added two low-effort pleasant activities for the week.' },
+  { id: 'jacob',     ...daysAgo(0), name: 'Jacob Rosen',            time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Routine Visit',                       isActive: false, summary: 'Routine hospice visit. Patient resting comfortably. Assessed pain and comfort levels. Caregiver present and engaged. Reviewed plan of care and medication compliance. Patient continues to decline per hospice trajectory.' },
   { id: 'larry',     ...daysAgo(1), name: 'Larry Quinn',            time: '9:00 – 9:45 AM',     type: 'individual', sessionType: 'audio', liveQA: true,  noteType: 'Individual Audio',           isActive: false, summary: 'Client presented with elevated anxiety related to upcoming retirement transition. Explored identity concerns and loss of structure. Began values clarification exercise; client to complete worksheet before next session.' },
   { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
   { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
@@ -853,6 +853,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const NOTE_TYPE_KEY_MAP = {
             'Individual Audio':      'IndividualAudio',
             'Progress Note':         'ProgressNote',
+            'Routine Visit':         'RoutineVisit',
             'Case Management':       'CaseManagement',
             'Treatment Plan':        'TreatmentPlan',
             'Med Management':        'PsychiatricMedical',
@@ -866,7 +867,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'} />;
+    if (navTab === 'quality')  return <LQAReview
+      clientName={activitiesSession?.name ?? 'Larry Quinn'}
+      sessionLabel={activitiesSession ? `${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}` : 'Apr 15, 2026, 9:00 – 9:45 AM'}
+      onAdvance={() => handleNavClick('activities')}
+      autoRunAnalysis={autoRunQuality}
+      onAutoRunConsumed={() => setAutoRunQuality(false)}
+      variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'}
+    />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
