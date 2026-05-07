@@ -169,7 +169,7 @@ export default function ClinicianScene({ step, onNext }) {
   );
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'visible' }}>
       <style>{`
         @keyframes lbPulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(41,61,135,0.55), 0 4px 16px rgba(41,61,135,0.4); }
@@ -664,6 +664,20 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     window.addEventListener('mouseup', onUp);
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, []);
+
+  // Keep sidebar in-view and full-height when the window resizes (e.g. going full-screen)
+  useEffect(() => {
+    const onResize = () => {
+      const newFullH = window.innerHeight - 2 * G;
+      // Always fill the full window height (demo behavior — no manual resize preference)
+      setSidebarH(newFullH);
+      setPosY(G);
+      // Clamp X so sidebar doesn't overflow horizontally
+      setPosX(x => Math.max(G, Math.min(window.innerWidth - sidebarWRef.current - G, x)));
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []); // eslint-disable-line
 
   const handleMouseDown = (e) => {
     // Don't start drag when clicking on any interactive element
