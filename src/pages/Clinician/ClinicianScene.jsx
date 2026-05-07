@@ -31,6 +31,37 @@ const DEMO_PROVIDER = { name: 'Tal Cohen', firstName: 'Tal' };
 const BTN_W = 80; // grip(24) + circle(56)
 const BTN_H = 56;
 
+// ── Date helpers ──────────────────────────────────────────────────────────────
+const MONTH_ABBREVS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function daysAgo(n) {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return { month: MONTH_ABBREVS[d.getMonth()], day: String(d.getDate()) };
+}
+
+// Sessions shown in the "My Sessions" list
+// New clients (today–4 days ago) appear first; existing clients follow (5–8 days ago)
+const SESSION_LIST = [
+  // ── New clients ──────────────────────────────────────────────────────────────
+  { id: 'jake',      ...daysAgo(0), name: 'Jake Carol',             time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'audio',  noteType: 'Individual Audio',                  isActive: false, summary: 'Client discussed ongoing difficulties with interpersonal conflict at home. Identified triggers for reactive anger. Worked on pause-and-plan technique. Homework: log three instances of using the technique before next session.' },
+  { id: 'jacob',     ...daysAgo(0), name: 'Jacob Rosen',            time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Routine Visit',                       isActive: false, summary: 'Routine hospice visit. Patient resting comfortably. Assessed pain and comfort levels. Caregiver present and engaged. Reviewed plan of care and medication compliance. Patient continues to decline per hospice trajectory.' },
+  { id: 'larry',     ...daysAgo(1), name: 'Larry Quinn',            time: '9:00 – 9:45 AM',     type: 'individual', sessionType: 'audio', liveQA: true,  noteType: 'Individual Audio',           isActive: false, summary: 'Client presented with elevated anxiety related to upcoming retirement transition. Explored identity concerns and loss of structure. Began values clarification exercise; client to complete worksheet before next session.' },
+  { id: 'calvin',    ...daysAgo(1), name: 'Calvin Murphy',          time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'text',  noteType: 'Case Management',                     isActive: false, summary: 'Follow-up on substance use triggers. Client reported one high-risk situation navigated successfully using HALT framework. Relapse prevention plan reinforced. Discussed building sober support network.' },
+  { id: 'trisha',    ...daysAgo(2), name: 'Trisha Platts',          time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'text',  noteType: 'Treatment Plan',                      isActive: false, summary: 'Client discussed grief process following loss of mother six months ago. Complicated grief indicators present. Introduced dual process model. Client receptive — agreed to alternate between loss-oriented and restoration-oriented coping strategies.' },
+  { id: 'anger-grp', ...daysAgo(2), name: 'Anger Management Group', time: '3:00 – 4:00 PM',     type: 'group',      sessionType: 'audio', groupSuggestions: 'single', noteType: 'Anger Management Group', isActive: false, summary: '7 members present. Reviewed cognitive restructuring techniques for anger triggers. Role-played de-escalation scenarios. Two members shared successful use of time-out strategy since last session. Group cohesion strong.' },
+  { id: 'jacob-audio', ...daysAgo(3), name: 'Jacob Rosen',          time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'audio', noteType: 'Individual Audio',                     isActive: false, summary: 'Client discussed his relationship with his partner and the possibility of her moving back in. Explored codependency concerns in early recovery. Boundary setting and family therapy were discussed as next steps.' },
+  { id: 'sud-grp',   ...daysAgo(3), name: 'SUD Group',              time: '10:00 – 11:00 AM',   type: 'group',      sessionType: 'audio', groupSuggestions: 'multiple', includesASAM: true, noteType: 'SUD Group', isActive: false, summary: '5 of 6 members attended. Topic: managing cravings in social settings. Members shared strategies including urge surfing and exit planning. One member disclosed a slip — group responded with support and non-judgment. Safety plan reviewed.' },
+  { id: 'patricia',  ...daysAgo(3), name: 'Patricia Rodriguez',     time: '1:00 – 1:45 PM',     type: 'individual', sessionType: 'audio', specialty: 'psychiatry', noteType: 'Med Management', isActive: false, summary: 'Client reported increased anxiety following medication adjustment. Discussed somatic symptoms and their relationship to health anxiety. Introduced interoceptive exposure rationale. Client hesitant but willing to try graduated approach.' },
+  { id: 'ashlyn',    ...daysAgo(4), name: 'Ashlyn Rivera',          time: '10:30 – 11:15 AM',   type: 'individual', sessionType: 'audio', noteType: 'Assessment',                          isActive: false, summary: 'Client discussed trauma-related avoidance. Identified two avoided situations linked to past trauma. Using CPT framework, began challenging stuck points around self-blame. Client tolerated emotional content well; no dissociation noted.' },
+  // ── Existing clients ─────────────────────────────────────────────────────────
+  { id: 'marcus',    ...daysAgo(5), name: 'Marcus Webb',            time: '10:00 – 10:45 AM',   type: 'individual', sessionType: 'text',                                                    isActive: true,  summary: 'Client reported significant work-related stress and anxiety around manager conflict. Avoidance patterns discussed; behavioral activation task assigned for the week.' },
+  { id: 'priya',     ...daysAgo(6), name: 'Priya Nair',             time: '2:00 – 2:45 PM',     type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Reviewed progress on sleep hygiene goals. Client reports improvement — averaging 7 hrs/night. Discussed upcoming family visit as potential stressor. Coping strategies reviewed.' },
+  { id: 'ryan',      ...daysAgo(6), name: 'Ryan Cho',               time: '4:00 – 4:45 PM',     type: 'individual', sessionType: 'text',                                                    isActive: false, summary: 'Session focused on distress tolerance skills. Client practiced TIPP technique in session. Reported two episodes of self-harm urges this week; safety plan reviewed and updated.' },
+  { id: 'carmen',    ...daysAgo(7), name: 'Carmen Vega',            time: '1:30 – 2:15 PM',     type: 'individual', sessionType: 'text',                                                    isActive: false, summary: 'Follow-up on exposure hierarchy progress. Client completed 3 of 5 planned exposures. Reported SUDS peak of 65, returning to 20 within 15 min. Strong progress noted.' },
+  { id: 'group-thu', ...daysAgo(8), name: 'Thursday AM Group',      time: '9:00 – 10:00 AM',    type: 'group',      sessionType: 'audio',                                                   isActive: false, summary: 'Group focused on interpersonal effectiveness. 6 of 8 members present. Discussion on boundary-setting in workplace relationships. Homework: identify one boundary to practice this week.' },
+  { id: 'aisha',     ...daysAgo(8), name: 'Aisha Monroe',           time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'audio',                                                   isActive: false, summary: 'Initial assessment session. Client presenting with moderate depression following recent job loss. PHQ-9 score: 14. Treatment goals established. Weekly CBT sessions recommended.' },
+];
+
 // ── Root ─────────────────────────────────────────────────────────────────────
 
 export default function ClinicianScene({ step, onNext }) {
@@ -827,6 +858,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const NOTE_TYPE_KEY_MAP = {
             'Individual Audio':      'IndividualAudio',
             'Progress Note':         'ProgressNote',
+            'Routine Visit':         'RoutineVisit',
             'Case Management':       'CaseManagement',
             'Treatment Plan':        'TreatmentPlan',
             'Med Management':        'PsychiatricMedical',
@@ -840,7 +872,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'} />;
+    if (navTab === 'quality')  return <LQAReview
+      clientName={activitiesSession?.name ?? 'Larry Quinn'}
+      sessionLabel={activitiesSession ? `${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}` : 'Apr 15, 2026, 9:00 – 9:45 AM'}
+      onAdvance={() => handleNavClick('activities')}
+      autoRunAnalysis={autoRunQuality}
+      onAutoRunConsumed={() => setAutoRunQuality(false)}
+      variant={noteTypeCtx?.selectedNoteType === 'RoutineVisit' ? 'hospice' : 'default'}
+    />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
