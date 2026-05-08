@@ -1052,49 +1052,49 @@
           "id": "comprehensiveAssessment",
           "label": "Comprehensive Assessment",
           "description": "Head-to-toe assessment documenting clinical decline and end-of-life trajectory",
-          "sampleContent": "Conducted comprehensive head-to-toe assessment. Patient presents with progressive decline consistent with end-of-life trajectory, including decreased oral intake, minimal verbal response, and increased work of breathing over the past 48 hours as reported by family."
+          "sampleContent": "Routine visit performed with patient. Patient is laying in bed comfortably, no s/s of pain or distress noted. Patient is bedbound and remains non-responsive during visit. The patient exhibits progressive decline, as evidenced by bedbound status, decreased responsiveness, sleeping more than 16 hours per day, limited verbage of 1-2 words, consistent use of morphine for comfort, increased temperature/heart rate/respiratory rate, decreased blood pressure/pulse ox, abnormal lung sounds, decreased bowel sounds and bowel movement frequency, decreased oral intake, bowel and bladder incontinence, full ADL assistance, and edema. This deterioration is consistent with continued progression of terminal disease and justifies continued hospice care."
         },
         {
           "id": "physicalAssessment",
           "label": "Physical Assessment",
           "description": "Objective physical findings including vital signs and observable decline markers",
-          "sampleContent": "Physical assessment reveals cool extremities, delayed capillary refill, and peripheral edema, indicative of worsening congestive heart failure and poor perfusion."
+          "sampleContent": "Physical assessment performed. VS- temperature, HR, and RR slightly elevated; BP and PO low. Apical heart rate taken. Heart sounds- RRR; Lung sounds diminished throughout, coarse lung sounds noted in bilateral lower lobes. BS- hypoactive in all 4 quadrants. +2 pitting edema noted in bilateral ankles. Patient is incontinent of urine and stool. Depends being utilized and changed by son regularly. Patient is full care for all ADLs. Skin assessment performed. No issues or reddened areas noted."
         },
         {
           "id": "caregiver",
           "label": "Caregiver",
           "description": "Caregiver status, emotional state, and education provided",
-          "sampleContent": "Caregiver appears emotionally overwhelmed, expressing feelings of sadness related to patient death and uncertainty about patient's condition; tearful during visit."
+          "sampleContent": "Patient's son and CG states patient is sleeping more than 16 hours per day and is minimally responsive; rarely verbalizes and, when he does, it is only 1-2 words. Son states patient appears comfortable much of the time. Discussion of the end of life/dying process had with son. Son verbalizes understanding of and comfort with the process: \"It's obviously hard to see dad like this, but he seems to be comfortable and I know it's all a part of the process.\" Son appears to be coping well and does not appear to be overwhelmed. He states he feels like he is getting enough sleep and takes a walk daily while his dad is napping and a neighbor is sitting with him. SW scheduled for a routine visit in 2 days. Son denies needs, further questions, or concerns at this time."
         },
         {
           "id": "repositionedPatient",
           "label": "Repositioned Patient",
           "description": "Comfort and positioning interventions performed during visit",
-          "sampleContent": "Repositioned patient for optimal comfort, respiratory ease and skin integrity using pillows to elevate upper body."
+          "sampleContent": "Son states he repositions patient every 2 hours during the day and every 4 hours at night to promote skin integrity and patient comfort."
         },
         {
           "id": "oralCare",
           "label": "Oral Care",
-          "description": "Oral hygiene interventions and caregiver education",
-          "sampleContent": "Provided oral care with swabs to maintain mucosal integrity and reduce dryness; encouraged caregiver to continue mouth care between visits."
+          "description": "Oral intake, bowel status, and caregiver education",
+          "sampleContent": "CG states patient is eating less than 25% of 1 meal per day and drinking little. RN explained that patient's body will still continue to break things down. CG states last BM was 3 days ago. Educated CG that constipation can cause discomfort and that patient is at increased risk for constipation due to morphine use and decreased mobility. RN encouraged son to call hospice if patient does not have BM in next 2 days so that RN can administer an enema to help prevent discomfort. Son states understanding and intention to do so."
         },
         {
           "id": "medicationReview",
           "label": "Medication Review",
           "description": "Medication administration review and caregiver education on comfort medications",
-          "sampleContent": "Reviewed medication administration with caregiver, including appropriate use of sublingual morphine for pain and lorazepam for dyspnea; reinforced non-pharmacologic interventions such as calming environment and fan use."
+          "sampleContent": "Patient requiring morphine 0.25ml SL every 4 hours routinely for comfort. Son states that if patient goes longer than 4 hours without medication, he starts to look restless, moving around in bed and moaning. RN discussed increasing morphine dose or trying a longer acting medication; son states he is comfortable with current regimen and does not wish to change at this time. RN encouraged son to notify hospice if patient starts becoming uncomfortable at less than 4 hours or if discomfort appears to worsen. Son verbalizes understanding and intention to do so."
         },
         {
           "id": "continueMonitoring",
           "label": "Continue Monitoring",
           "description": "Ongoing monitoring plan and visit frequency",
-          "sampleContent": "Maintain current hospice nursing visit schedule at twice weekly with PRN availability; continue to monitor for signs of decline, Transitioning, or active dying."
+          "sampleContent": "Nurse scheduled to visit again in 2 days and available as needed. Son was reminded of hospice 24/7 number and encouraged to call with any questions, concerns, or needs. He verbalizes understanding and intention to do so. Hospice IDT updated about patient and CG status. Message left for attending physician regarding patient status."
         },
         {
           "id": "comfortCenteredCare",
           "label": "Comfort-Centered Care",
-          "description": "Comfort-focused care plan and caregiver support instructions",
-          "sampleContent": "Encourage caregiver to administer medications as prescribed and to utilize 24/7 hospice support line as needed; reinforce focus on comfort-centered care."
+          "description": "Plan of care alignment and comfort-focused care documentation",
+          "sampleContent": "POC is consistent with the patient's disease process, terminal diagnosis, and stage of process. Includes continuing medication regimen as is at this time, and monitoring for regular bowel movements as well as skin integrity."
         }
       ],
       "usedBy": [
