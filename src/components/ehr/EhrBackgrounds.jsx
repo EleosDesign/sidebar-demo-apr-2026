@@ -2380,8 +2380,8 @@ export function KantimeBg({ noteValues = {}, onNoteChange, highlightedField, sid
 
   const isHighlighted = highlightedField === visitSummaryId;
 
-  const TABS = ['Patient Details', 'Hospice Eligibility', 'Patient Safety', 'Symptom Management', 'History', 'Psychosocial', 'Structure and Process of Care', 'Care Plan', 'Teaching and Care Coordination', 'Summary'];
-  const [activeTab, setActiveTab] = useState('Symptom Management');
+  const TABS = ['Clinical Note', 'History', 'Medication', 'Scales', 'Orders'];
+  const [activeTab, setActiveTab] = useState('Clinical Note');
 
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: 'Arial, Helvetica, sans-serif', fontSize: 12, background: '#fff', overflow: 'hidden' }}>
