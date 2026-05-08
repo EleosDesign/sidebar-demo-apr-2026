@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "mcp_tool",
+            "server": "Claude_Preview",
+            "tool": "preview_start",
+            "input": {
+              "name": "eleos-demo"
+            },
+            "statusMessage": "Starting preview…"
+          }
+        ]
+      }
+    ]
+  }
+}
