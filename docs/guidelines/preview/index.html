@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Git Guidelines · Eleos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --eleos-amber:    #D88100;
+    --eleos-gold:     #FFBD00;
+    --eleos-butter:   #FFF1D0;
+    --eleos-sun:      #FFD900;
+    --eleos-ink:      #293D86;
+    --eleos-blueberry:#526DAA;
+    --eleos-sky:      #D5ECFC;
+    --eleos-cornflower:#3A82DD;
+    --eleos-pine:     #3F8A89;
+    --eleos-tiel:     #80C7C7;
+    --eleos-mist:     #DCF6F0;
+    --eleos-blush:    #FF8D9F;
+    --eleos-petal:    #FFEDEA;
+    --eleos-slate:    #204457;
+    --eleos-midnight: #172C37;
+    --eleos-fog:      #A7BECA;
+    --eleos-paper:    #FAF7F1;
+    --eleos-white:    #FFFFFF;
+
+    --font-serif: 'Source Serif 4', 'Source Serif Pro', Georgia, serif;
+    --font-sans:  Poppins, ui-sans-serif, system-ui, sans-serif;
+    --font-ui:    Poppins, ui-sans-serif, system-ui, sans-serif;
+    --font-mono:  ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --stroke-hairline: rgba(41,61,134,0.15);
+    --shadow-card: 0 2px 0 0 #293D86;
+    --ease-out-soft: cubic-bezier(.2,.7,.2,1);
+
+    --fg-2: #3a3a50;
+    --fg-3: #6b6b80;
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;background:var(--eleos-paper)}
+  body{
+    font-family:var(--font-sans);
+    color:var(--eleos-ink);
+    -webkit-font-smoothing:antialiased;
+    text-wrap:pretty;
+  }
+  .page{
+    max-width:1180px;
+    margin:0 auto;
+    padding:48px 56px 96px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-bottom:24px;
+    border-bottom:1px solid var(--stroke-hairline);
+  }
+  .topbar img{height:30px}
+  .topbar .meta{
+    display:flex;gap:18px;align-items:center;
+    font-family:var(--font-ui);font-size:13px;color:var(--fg-3);
+  }
+  .topbar .meta .dot{width:6px;height:6px;border-radius:50%;background:var(--eleos-tiel);display:inline-block;margin-right:8px;vertical-align:middle}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    margin-top:40px;
+    display:grid;
+  }
+  .hero h1{
+    font-family:var(--font-serif);
+    font-weight:300;
+    font-size:clamp(52px, 7.2vw, 96px);
+    line-height:1.04;
+    letter-spacing:-0.02em;
+    margin:14px 0 16px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--eleos-amber);
+    font-weight:400;
+  }
+  .hero p.lede{
+    font-size:18px;
+    line-height:1.55;
+    color:var(--fg-2);
+    max-width:none;
+    margin:0;
+  }
+  .hero-art{
+    background:var(--eleos-butter);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:24px;
+    box-shadow:var(--shadow-card);
+    padding:24px;
+    aspect-ratio: 5/4;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-art::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 38%, rgba(255,217,0,.55), transparent 58%);
+    pointer-events:none;
+  }
+  .hero-art img{width:88%;height:auto;position:relative;z-index:1}
+
+  /* ---------- Eyebrow ---------- */
+  .eyebrow{
+    font-family:var(--font-ui);
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--eleos-ink);
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow .bar{width:24px;height:1.5px;background:var(--eleos-ink);display:inline-block}
+
+  /* ---------- Section header ---------- */
+  section{margin-top:72px}
+  section > .head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    margin-bottom:28px;gap:24px;
+  }
+  section h2{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:36px;
+    line-height:1.15;
+    letter-spacing:-0.015em;
+    margin:8px 0 0;
+  }
+  section h2 em{font-style:italic;color:var(--eleos-amber);font-weight:400}
+  section .head p{
+    font-size:15px;color:var(--fg-3);max-width:42ch;margin:0;
+  }
+
+  /* ---------- Core rules row ---------- */
+  .rules{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:16px;
+  }
+  .rule{
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:16px;
+    box-shadow:var(--shadow-card);
+    padding:18px 18px 22px;
+    position:relative;
+    min-height:148px;
+  }
+  .rule .num{
+    font-family:var(--font-serif);
+    font-style:italic;
+    font-weight:300;
+    font-size:42px;
+    line-height:1;
+    color:var(--eleos-amber);
+  }
+  .rule .num::after{
+    content:"";display:block;width:18px;height:2px;background:var(--eleos-ink);margin-top:8px;
+  }
+  .rule .t{
+    font-family:var(--font-sans);
+    font-weight:600;
+    font-size:14px;
+    line-height:1.35;
+    margin-top:14px;
+    color:var(--eleos-ink);
+  }
+  .rule .d{
+    font-family:var(--font-sans);
+    font-size:12.5px;
+    line-height:1.5;
+    color:var(--fg-3);
+    margin-top:6px;
+  }
+
+  /* ---------- Team switcher ---------- */
+  .switcher{
+    display:flex;gap:10px;flex-wrap:wrap;
+    margin-bottom:28px;
+  }
+  .switcher button{
+    font-family:var(--font-ui);
+    font-weight:500;
+    font-size:14px;
+    color:var(--eleos-ink);
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:999px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:transform 160ms var(--ease-out-soft), box-shadow 160ms var(--ease-out-soft), background 160ms;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .switcher button .swatch{
+    width:10px;height:10px;border-radius:50%;border:1.5px solid var(--eleos-ink);
+  }
+  .switcher button:hover{box-shadow:0 2px 0 var(--eleos-ink); transform:translateY(-1px)}
+  .switcher button.active{
+    background:var(--eleos-ink);color:var(--eleos-white);
+    box-shadow:0 2px 0 var(--eleos-midnight);
+  }
+  .switcher button.active .swatch{border-color:var(--eleos-white)}
+
+  /* color dots per team */
+  .swatch.designers{background:var(--eleos-blush)}
+  .swatch.sales{background:var(--eleos-gold)}
+  .swatch.developers{background:var(--eleos-tiel)}
+
+  .team-card{
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:24px;
+    box-shadow:var(--shadow-card);
+    padding:36px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:28px;
+    transition:background 280ms var(--ease-out-soft), opacity 220ms var(--ease-out-soft);
+  }
+  .team-card[hidden]{display:none !important;}
+  .team-card.is-entering{animation:teamFade 280ms var(--ease-out-soft) both;}
+  @keyframes teamFade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+  .team-card[data-team="designers"]{background:var(--eleos-petal)}
+  .team-card[data-team="sales"]{background:var(--eleos-butter)}
+  .team-card[data-team="developers"]{background:var(--eleos-mist)}
+
+  .team-head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .team-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-ui);font-size:12px;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;
+    background:var(--eleos-white);border:1.5px solid var(--eleos-ink);
+    border-radius:999px;padding:6px 12px;color:var(--eleos-ink);
+  }
+  .team-card h3{
+    font-family:var(--font-serif);
+    font-weight:600;
+    font-size:34px;
+    line-height:1.1;
+    letter-spacing:-0.01em;
+    margin:14px 0 10px;
+  }
+  .team-card .goal{
+    font-family:var(--font-sans);
+    font-size:16px;line-height:1.55;color:var(--fg-2);
+    margin:0 0 22px;
+    max-width:46ch;
+  }
+
+  .workflow{
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:16px;
+    padding:18px 20px;
+    margin-bottom:18px;
+  }
+  .workflow .label{
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    color:var(--eleos-ink);margin-bottom:10px;
+  }
+  .workflow ol{
+    margin:0;padding:0;list-style:none;
+    counter-reset:step;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .workflow ol li{
+    counter-increment:step;
+    display:grid;grid-template-columns:28px 1fr;column-gap:12px;row-gap:3px;
+    font-size:14px;line-height:1.5;color:var(--fg-2);
+  }
+  .workflow ol li::before{
+    content:counter(step);
+    grid-column:1;
+    font-family:var(--font-serif);
+    font-style:italic;font-weight:400;
+    color:var(--eleos-amber);
+    font-size:18px;line-height:1.3;
+  }
+  .workflow .quote{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    grid-column:1 / -1;
+    overflow-wrap:break-word;
+    word-break:break-word;
+    margin-top:1px;
+    padding-left:40px;
+  }
+  .workflow .quote-text{ flex:none; }
+  .workflow-copy-btn{
+    flex-shrink:0;
+    width:26px;height:26px;
+    border:1.5px solid var(--stroke-hairline);
+    border-radius:7px;
+    background:var(--eleos-paper);
+    cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    opacity:0;
+    transition:opacity 140ms, background 140ms, border-color 140ms;
+    vertical-align:middle;
+    position:relative;
+    top:-1px;
+  }
+  .workflow .quote:hover .workflow-copy-btn{ opacity:1; }
+  .workflow-copy-btn:hover{ background:var(--eleos-butter); border-color:var(--eleos-ink); }
+  .workflow-copy-btn svg{ width:13px;height:13px;stroke:var(--eleos-ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; }
+  .workflow-copy-btn.copied{ background:var(--eleos-mist); border-color:var(--eleos-pine); opacity:1; }
+  .workflow-copy-btn.copied svg{ stroke:var(--eleos-pine); }
+  .workflow code{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    background:var(--eleos-paper);
+    border:1px solid var(--stroke-hairline);
+    border-radius:6px;padding:1px 6px;
+    color:var(--eleos-ink);
+  }
+  .workflow .quote{
+    font-family:var(--font-serif);font-style:italic;color:var(--eleos-ink);
+  }
+
+  .know{
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .know-item{
+    display:grid;grid-template-columns:24px 1fr;gap:12px;
+    font-size:14px;line-height:1.5;color:var(--fg-2);
+  }
+  .know-item .marker{
+    width:18px;height:18px;border-radius:50%;
+    border:1.5px solid var(--eleos-ink);
+    background:var(--eleos-gold);
+    margin-top:2px;
+    flex:none;
+  }
+  .know-item.warn .marker{background:var(--eleos-blush)}
+  .know-item.tip .marker{background:var(--eleos-tiel)}
+  .know-item strong{color:var(--eleos-ink);font-weight:600}
+
+  .know-title{
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    color:var(--eleos-ink);margin-bottom:4px;
+  }
+
+  /* ---------- Branch table ---------- */
+  .branch-table{
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:20px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .branch-row{
+    display:grid;
+    grid-template-columns:0.8fr 1.2fr 1.4fr;
+    align-items:center;
+    padding:18px 24px;
+    border-top:1px solid var(--stroke-hairline);
+    gap:18px;
+  }
+  .branch-row.head{
+    background:var(--eleos-ink);color:var(--eleos-white);
+    border-top:none;
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    padding:14px 24px;
+  }
+  .branch-row .team{
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--font-sans);font-weight:600;font-size:15px;color:var(--eleos-ink);
+  }
+  .branch-row .pattern, .branch-row .example{
+    font-family:var(--font-mono);font-size:13.5px;color:var(--eleos-ink);
+  }
+  .branch-row .pattern .slash{color:var(--eleos-amber)}
+  .branch-row .example{color:var(--fg-2)}
+
+  /* ---------- Reviewing callout ---------- */
+  .review-callout{
+    margin-top:24px;
+    background:var(--eleos-mist);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:20px;
+    padding:24px 28px;
+    display:grid;
+    grid-template-columns:1.1fr 1.4fr;
+    grid-template-rows:auto auto 1fr auto;
+    column-gap:32px;
+    row-gap:4px;
+    align-items:start;
+  }
+  .review-prompts{
+    grid-column:1 / -1;
+    grid-row:4;
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px solid var(--stroke-hairline);
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .review-prompts .rp-label{
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    color:var(--eleos-ink);margin-bottom:2px;
+  }
+  .review-prompt{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:10px;
+    padding:10px 14px;
+  }
+  .review-prompt .rp-text{
+    font-family:var(--font-serif);
+    font-style:italic;font-size:15px;line-height:1.35;
+    color:var(--eleos-ink);flex:1;
+  }
+  .review-prompt .rp-text::before{content:"\201C";color:var(--eleos-amber);margin-right:2px}
+  .review-prompt .rp-text::after{content:"\201D";color:var(--eleos-amber);margin-left:2px}
+  .rp-copy-btn{
+    flex-shrink:0;
+    width:26px;height:26px;
+    border:1.5px solid var(--stroke-hairline);
+    border-radius:7px;
+    background:var(--eleos-paper);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;
+    transition:opacity 140ms,background 140ms,border-color 140ms;
+  }
+  .review-prompt:hover .rp-copy-btn{opacity:1;}
+  .rp-copy-btn:hover{background:var(--eleos-butter);border-color:var(--eleos-ink);}
+  .rp-copy-btn svg{width:13px;height:13px;stroke:var(--eleos-ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .rp-copy-btn.copied{background:var(--eleos-mist);border-color:var(--eleos-pine);opacity:1;}
+  .rp-copy-btn.copied svg{stroke:var(--eleos-pine);}
+  .review-callout h4{
+    font-family:var(--font-serif);font-weight:600;
+    font-size:24px;line-height:1.2;
+    margin:6px 0 8px;
+  }
+  .review-callout h4 em{font-style:italic;color:var(--eleos-amber);font-weight:400}
+  .review-callout p{font-size:14px;line-height:1.55;color:var(--fg-2);margin:0}
+  .checks{
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .check{
+    display:grid;grid-template-columns:22px 1fr;gap:10px;
+    font-size:14px;line-height:1.5;color:var(--eleos-ink);
+  }
+  .check .box{
+    width:18px;height:18px;border-radius:5px;
+    border:1.5px solid var(--eleos-ink);
+    background:var(--eleos-white);
+    margin-top:2px;
+    position:relative;
+  }
+  .check .box::after{
+    content:"";position:absolute;inset:3px 3px 4px 3px;
+    border-left:2px solid var(--eleos-amber);
+    border-bottom:2px solid var(--eleos-amber);
+    transform:rotate(-45deg) translate(1px,-1px);
+  }
+
+  /* ---------- Quick reference (prompts) ---------- */
+  .prompts{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+  }
+  .prompt .ask{
+    text-wrap:pretty;
+    overflow-wrap:normal;
+    word-break:normal;
+    hyphens:none;
+  }
+  .prompt .ask code{
+    white-space:nowrap;
+  }
+  .prompt{
+    background:var(--eleos-white);
+    border:1.5px solid var(--eleos-ink);
+    border-radius:16px;
+    padding:18px 20px 18px;
+    box-shadow:var(--shadow-card);
+    display:grid;
+    grid-template-columns:1fr;gap:8px;
+    transition:transform 160ms var(--ease-out-soft), box-shadow 160ms var(--ease-out-soft);
+    cursor:pointer;
+    position:relative;
+  }
+  .copy-btn{
+    position:absolute;
+    top:12px;right:12px;
+    width:28px;height:28px;
+    border:1.5px solid var(--stroke-hairline);
+    border-radius:8px;
+    background:var(--eleos-paper);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;
+    transition:opacity 140ms, background 140ms, border-color 140ms;
+    flex-shrink:0;
+  }
+  .prompt:hover .copy-btn{ opacity:1; }
+  .copy-btn:hover{ background:var(--eleos-butter); border-color:var(--eleos-ink); }
+  .copy-btn svg{ width:14px;height:14px;stroke:var(--eleos-ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; }
+  .copy-btn.copied{ background:var(--eleos-mist); border-color:var(--eleos-pine); opacity:1; }
+  .copy-btn.copied svg{ stroke:var(--eleos-pine); }
+  .prompt:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 0 var(--eleos-ink);
+  }
+  .prompt .task{
+    font-family:var(--font-ui);font-size:11px;font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;
+    color:var(--eleos-amber);
+  }
+  .prompt .ask{
+    font-family:var(--font-serif);
+    font-style:italic;font-weight:400;
+    font-size:18px;line-height:1.35;
+    color:var(--eleos-ink);
+  }
+  .prompt .ask::before{content:"“";color:var(--eleos-amber);margin-right:2px}
+  .prompt .ask::after{content:"”";color:var(--eleos-amber);margin-left:2px}
+
+  /* ---------- Footer banner ---------- */
+  .footer-banner{
+    margin-top:72px;
+    background:var(--eleos-ink);
+    color:var(--eleos-white);
+    border-radius:24px;
+    padding:36px 40px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:32px;
+    align-items:center;
+  }
+  .footer-banner h3{
+    font-family:var(--font-serif);font-weight:300;
+    font-size:30px;line-height:1.15;letter-spacing:-0.01em;
+    margin:0 0 8px;
+    color:var(--eleos-white);
+  }
+  .footer-banner h3 em{font-style:italic;color:var(--eleos-gold);font-weight:400}
+  .footer-banner p{
+    margin:0;color:#cdd6e8;font-size:15px;line-height:1.55;max-width:64ch;
+  }
+  .footer-banner .signoff{
+    font-family:var(--font-serif);font-style:italic;font-size:18px;
+    color:var(--eleos-gold);text-align:right;
+    border-left:1px solid rgba(255,255,255,.18);
+    padding-left:32px;
+  }
+
+  /* ---------- Doc footer ---------- */
+  .doc-footer{
+    margin-top:32px;
+    display:flex;justify-content:space-between;
+    font-family:var(--font-ui);font-size:12px;color:var(--fg-3);
+  }
+
+  /* ============================================================
+     Tweak-driven states
+     - data-voice: whispered | signature | vivid
+     - data-mood:  clinic | studio | boardroom
+     - data-warmth: humane | minimal
+     ============================================================ */
+
+  /* VOICE — controls how the italic "punch word" reads */
+  /* whispered: italic stays, color drops to navy — quiet confidence */
+  html[data-voice="whispered"] .hero h1 em,
+  html[data-voice="whispered"] section h2 em,
+  html[data-voice="whispered"] .review-callout h4 em,
+  html[data-voice="whispered"] .footer-banner h3 em,
+  html[data-voice="whispered"] .team-card h3 em{
+    color:var(--eleos-ink);
+    font-weight:300;
+  }
+  html[data-voice="whispered"] .rule .num,
+  html[data-voice="whispered"] .workflow ol li::before,
+  html[data-voice="whispered"] .branch-row .pattern .slash{
+    color:var(--eleos-blueberry);
+  }
+  html[data-voice="whispered"] .prompt .ask::before,
+  html[data-voice="whispered"] .prompt .ask::after,
+  html[data-voice="whispered"] .prompt .task{
+    color:var(--eleos-blueberry);
+  }
+
+  /* vivid: italic gets a thick gold highlighter sweep */
+  html[data-voice="vivid"] .hero h1 em,
+  html[data-voice="vivid"] section h2 em,
+  html[data-voice="vivid"] .review-callout h4 em,
+  html[data-voice="vivid"] .team-card h3 em{
+    color:var(--eleos-ink);
+    font-weight:400;
+    background-image:linear-gradient(180deg, transparent 60%, var(--eleos-sun) 60%, var(--eleos-sun) 92%, transparent 92%);
+    padding:0 .12em;
+    box-decoration-break:clone;
+    -webkit-box-decoration-break:clone;
+  }
+  html[data-voice="vivid"] .footer-banner h3 em{
+    color:var(--eleos-midnight);
+    background-image:linear-gradient(180deg, transparent 60%, var(--eleos-sun) 60%, var(--eleos-sun) 92%, transparent 92%);
+    padding:0 .12em;
+  }
+  html[data-voice="vivid"] .rule .num,
+  html[data-voice="vivid"] .workflow ol li::before{
+    color:var(--eleos-amber);
+    text-shadow:0 0 0 var(--eleos-amber);
+  }
+
+  /* MOOD — recolors plates / surfaces */
+  /* studio: cool monochrome — every pastel becomes mist */
+  html[data-mood="studio"]{ background:var(--eleos-mist); }
+  html[data-mood="studio"] body{ background:var(--eleos-mist); }
+  html[data-mood="studio"] .hero-art{ background:var(--eleos-white); }
+  html[data-mood="studio"] .hero-art::before{
+    background:radial-gradient(circle at 50% 38%, rgba(128,199,199,.55), transparent 58%);
+  }
+  html[data-mood="studio"] .team-card[data-team="designers"],
+  html[data-mood="studio"] .team-card[data-team="sales"],
+  html[data-mood="studio"] .team-card[data-team="developers"]{
+    background:var(--eleos-white);
+  }
+  html[data-mood="studio"] .review-callout{ background:var(--eleos-white); }
+  html[data-mood="studio"] .rule{ background:var(--eleos-mist); }
+  html[data-mood="studio"] .prompt{ background:var(--eleos-mist); }
+  html[data-mood="studio"] .branch-table{ background:var(--eleos-mist); }
+  html[data-mood="studio"] .switcher button.active{
+    background:var(--eleos-pine); box-shadow:0 2px 0 var(--eleos-midnight);
+  }
+
+  /* boardroom: dark, gold accents, after-hours */
+  html[data-mood="boardroom"]{ background:var(--eleos-midnight); }
+  html[data-mood="boardroom"] body{ background:var(--eleos-midnight); color:#E6ECF7; }
+  html[data-mood="boardroom"] .topbar{ border-bottom-color:rgba(255,255,255,.12); }
+  html[data-mood="boardroom"] .topbar img{ filter:invert(1) hue-rotate(180deg) brightness(1.4); }
+  html[data-mood="boardroom"] .topbar .meta,
+  html[data-mood="boardroom"] section .head p,
+  html[data-mood="boardroom"] .doc-footer{ color:#A7BECA; }
+  html[data-mood="boardroom"] .hero h1,
+  html[data-mood="boardroom"] section h2,
+  html[data-mood="boardroom"] .team-card h3,
+  html[data-mood="boardroom"] .review-callout h4{ color:#F4E9CC; }
+  html[data-mood="boardroom"] .hero p.lede,
+  html[data-mood="boardroom"] .rule .d,
+  html[data-mood="boardroom"] .team-card .goal,
+  html[data-mood="boardroom"] .workflow ol li,
+  html[data-mood="boardroom"] .know-item,
+  html[data-mood="boardroom"] .check{ color:#C7D2E5; }
+  html[data-mood="boardroom"] .rule .t,
+  html[data-mood="boardroom"] .know-item strong,
+  html[data-mood="boardroom"] .check{ color:#F4E9CC; }
+  html[data-mood="boardroom"] .eyebrow,
+  html[data-mood="boardroom"] .eyebrow .bar{ color:var(--eleos-gold); }
+  html[data-mood="boardroom"] .eyebrow .bar{ background:var(--eleos-gold); }
+  html[data-mood="boardroom"] .rule,
+  html[data-mood="boardroom"] .prompt,
+  html[data-mood="boardroom"] .branch-table,
+  html[data-mood="boardroom"] .review-callout,
+  html[data-mood="boardroom"] .workflow,
+  html[data-mood="boardroom"] .team-card,
+  html[data-mood="boardroom"] .hero-art,
+  html[data-mood="boardroom"] .switcher button{
+    background:#1F3344;
+    border-color:rgba(255,189,0,.45);
+    box-shadow:0 2px 0 rgba(255,189,0,.35);
+    color:#E6ECF7;
+  }
+  html[data-mood="boardroom"] .team-card[data-team="designers"]{ background:#2A2335; }
+  html[data-mood="boardroom"] .team-card[data-team="sales"]{ background:#3A2F18; }
+  html[data-mood="boardroom"] .team-card[data-team="developers"]{ background:#1B3535; }
+  html[data-mood="boardroom"] .branch-row{ border-top-color:rgba(255,255,255,.08); }
+  html[data-mood="boardroom"] .branch-row.head{ background:#0F1E2B; color:var(--eleos-gold); }
+  html[data-mood="boardroom"] .branch-row .team,
+  html[data-mood="boardroom"] .branch-row .pattern{ color:#F4E9CC; }
+  html[data-mood="boardroom"] .branch-row .example{ color:#A7BECA; }
+  html[data-mood="boardroom"] .team-tag{
+    background:rgba(255,255,255,.08); color:#F4E9CC; border-color:rgba(255,189,0,.45);
+  }
+  html[data-mood="boardroom"] .switcher button{ color:#F4E9CC; }
+  html[data-mood="boardroom"] .switcher button.active{
+    background:var(--eleos-gold); color:var(--eleos-midnight);
+    box-shadow:0 2px 0 #B8830A;
+  }
+  html[data-mood="boardroom"] .workflow{ background:rgba(0,0,0,.18); border-color:rgba(255,189,0,.3); box-shadow:none; }
+  html[data-mood="boardroom"] .workflow code,
+  html[data-mood="boardroom"] .hero p.lede code{
+    background:rgba(255,189,0,.12); border-color:rgba(255,189,0,.3); color:var(--eleos-gold);
+  }
+  html[data-mood="boardroom"] .hero-art{ background:#1F3344; }
+  html[data-mood="boardroom"] .hero-art::before{
+    background:radial-gradient(circle at 50% 38%, rgba(255,189,0,.35), transparent 60%);
+  }
+  html[data-mood="boardroom"] .hero-art img{ filter:brightness(1.05) saturate(.7); }
+  html[data-mood="boardroom"] .footer-banner{ background:#0F1E2B; }
+  html[data-mood="boardroom"] .check .box{ background:rgba(0,0,0,.2); border-color:var(--eleos-gold); }
+  html[data-mood="boardroom"] .prompt .ask{ color:#F4E9CC; }
+  html[data-mood="boardroom"] .num,
+  html[data-mood="boardroom"] .rule .num,
+  html[data-mood="boardroom"] .workflow ol li::before,
+  html[data-mood="boardroom"] .prompt .task,
+  html[data-mood="boardroom"] .prompt .ask::before,
+  html[data-mood="boardroom"] .prompt .ask::after{
+    color:var(--eleos-gold);
+  }
+  html[data-mood="boardroom"][data-voice="vivid"] .hero h1 em,
+  html[data-mood="boardroom"][data-voice="vivid"] section h2 em,
+  html[data-mood="boardroom"][data-voice="vivid"] .review-callout h4 em,
+  html[data-mood="boardroom"][data-voice="vivid"] .team-card h3 em{
+    color:var(--eleos-midnight);
+  }
+
+  /* WARMTH — humane vs minimal */
+  html[data-warmth="minimal"] .hero-art{ display:none; }
+  html[data-warmth="minimal"] .hero{ grid-template-columns:1fr; gap:0; max-width:880px; }
+  html[data-warmth="minimal"] .hero h1{ font-size:clamp(36px, 4vw, 52px); }
+  html[data-warmth="minimal"] .rule,
+  html[data-warmth="minimal"] .branch-table,
+  html[data-warmth="minimal"] .prompt,
+  html[data-warmth="minimal"] .team-card,
+  html[data-warmth="minimal"] .review-callout{
+    box-shadow:none;
+    border-radius:10px;
+  }
+  html[data-warmth="minimal"] .switcher button,
+  html[data-warmth="minimal"] .switcher button.active{
+    box-shadow:none;
+    border-radius:6px;
+  }
+  html[data-warmth="minimal"] .switcher button{ border-radius:6px; }
+  html[data-warmth="minimal"] section{ margin-top:56px; }
+  html[data-warmth="minimal"] section h2{ font-size:28px; font-family:var(--font-sans); font-weight:600; letter-spacing:0; }
+  html[data-warmth="minimal"] .team-card h3{ font-size:24px; font-family:var(--font-sans); font-weight:600; letter-spacing:0; }
+  html[data-warmth="minimal"] .review-callout h4{ font-size:20px; font-family:var(--font-sans); font-weight:600; }
+  html[data-warmth="minimal"] .footer-banner{ border-radius:10px; padding:24px 28px; }
+  html[data-warmth="minimal"] .footer-banner h3{ font-family:var(--font-sans); font-weight:500; font-size:22px; }
+  html[data-warmth="minimal"] .rule .num{ font-family:var(--font-sans); font-style:normal; font-size:24px; font-weight:600; }
+  html[data-warmth="minimal"] .rule .num::after{ display:none; }
+  html[data-warmth="minimal"] .workflow ol li::before{ font-family:var(--font-sans); font-style:normal; font-size:14px; font-weight:600; }
+  html[data-warmth="minimal"] .prompt .ask{ font-family:var(--font-sans); font-style:normal; font-size:15px; }
+  html[data-warmth="minimal"] .prompt .ask::before,
+  html[data-warmth="minimal"] .prompt .ask::after{ display:none; }
+  html[data-warmth="minimal"] .signoff{ display:none; }
+  html[data-warmth="minimal"] .footer-banner{ grid-template-columns:1fr; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr}
+    .rules{grid-template-columns:repeat(2,1fr)}
+    .team-card{grid-template-columns:1fr}
+    .branch-row{grid-template-columns:1fr; gap:6px}
+    .branch-row.head{display:none}
+    .prompts{grid-template-columns:1fr}
+    .review-callout{grid-template-columns:1fr}
+    .footer-banner{grid-template-columns:1fr}
+    .footer-banner .signoff{border-left:none;border-top:1px solid rgba(255,255,255,.18);padding:16px 0 0;text-align:left}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <img src="assets/logo/eleos-logo-dark.svg" alt="Eleos">
+    <div class="meta">
+      <span><span class="dot"></span>Engineering · Internal</span>
+      <span>v1.0 · April 2026</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div>
+      <span class="eyebrow"><span class="bar"></span>Internal handbook · One-pager</span>
+      <h1>Git, the <em>shared</em> way.<br>One main, zero surprises.</h1>
+      <p class="lede">This repository is shared across <strong>Designers &amp; PMs</strong>, <strong>Sales</strong>, and <strong>Developers</strong>. Each team has its own workflow, but everyone follows the same core rules to keep <code style="font-family:var(--font-mono);background:var(--eleos-butter);border:1px solid var(--stroke-hairline);border-radius:5px;padding:1px 6px;">main</code> stable and demo-ready at all times.</p>
+      <p class="lede" style="margin-top:14px;">All Git operations are done through <strong>Claude Code</strong> — no terminal commands required.</p>
+    </div>
+  </div>
+
+  <!-- Core Rules -->
+  <section>
+    <div class="head" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div>
+        <span class="eyebrow"><span class="bar"></span>The five</span>
+        <h2>Core rules <em>everyone</em> follows.</h2>
+      </div>
+      <p style="max-width:none;">Memorize these. They're what keep <code style="font-family:var(--font-mono);background:var(--eleos-butter);border:1px solid var(--stroke-hairline);border-radius:5px;padding:1px 6px;">main</code> calm while three teams work in parallel.</p>
+    </div>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="num">01</div>
+        <div class="t">Never push directly to main.</div>
+        <div class="d">All changes go through a Pull Request.</div>
+      </div>
+      <div class="rule">
+        <div class="num">02</div>
+        <div class="t">Start from the latest main.</div>
+        <div class="d">Sync before branching so you're not on stale code.</div>
+      </div>
+      <div class="rule">
+        <div class="num">03</div>
+        <div class="t">Keep branches short-lived.</div>
+        <div class="d">One branch per task. Merge or discard when done.</div>
+      </div>
+      <div class="rule">
+        <div class="num">04</div>
+        <div class="t">Write a one-line PR description.</div>
+        <div class="d">A sentence on intent helps reviewers move fast.</div>
+      </div>
+      <div class="rule">
+        <div class="num">05</div>
+        <div class="t">One dev approval to merge.</div>
+        <div class="d">Tag a developer; they sign off, you ship.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick reference (moved up — relevant for everyone) -->
+  <section>
+    <div class="head" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div>
+        <span class="eyebrow"><span class="bar"></span>Quick reference</span>
+        <h2>Useful Claude Code <em>prompts.</em></h2>
+      </div>
+      <p style="max-width:none;">Copy these verbatim. Specific phrasing helps Claude Code do the right thing the first time.</p>
+    </div>
+
+    <div class="prompts">
+      <div class="prompt">
+        <button class="copy-btn" aria-label="Copy prompt"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/></svg></button>
+        <div class="task">Start new work</div>
+        <div class="ask">Create a new branch called <code style="font-family:var(--font-mono);font-style:normal;color:var(--eleos-amber)">[name]</code> from main</div>
+      </div>
+      <div class="prompt">
+        <button class="copy-btn" aria-label="Copy prompt"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/></svg></button>
+        <div class="task">Sync with latest main</div>
+        <div class="ask">Sync my branch with the latest main</div>
+      </div>
+      <div class="prompt">
+        <button class="copy-btn" aria-label="Copy prompt"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/></svg></button>
+        <div class="task">Submit for review</div>
+        <div class="ask">Open a pull request for this branch</div>
+      </div>
+      <div class="prompt">
+        <button class="copy-btn" aria-label="Copy prompt"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/></svg></button>
+        <div class="task">Where am I?</div>
+        <div class="ask">What branch am I on?</div>
+      </div>
+      <div class="prompt" style="grid-column:span 2;">
+        <button class="copy-btn" aria-label="Copy prompt"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/></svg></button>
+        <div class="task">Discard work and start over</div>
+        <div class="ask">Delete my current branch and start fresh from main</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Branch Naming -->
+  <section>
+    <div class="head" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div>
+        <span class="eyebrow"><span class="bar"></span>Branch naming</span>
+        <h2>Name branches so they <em>tell their own story.</em></h2>
+      </div>
+      <p style="max-width:none;">A glance at the prefix should answer: who owns this, and what's it for?</p>
+    </div>
+
+    <div class="branch-table">
+      <div class="branch-row head">
+        <div>Team</div>
+        <div>Pattern</div>
+        <div>Example</div>
+      </div>
+      <div class="branch-row">
+        <div class="team"><span class="swatch designers" style="display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--eleos-ink)"></span>Designers &amp; PMs</div>
+        <div class="pattern">prototype<span class="slash">/</span>short-description</div>
+        <div class="example">prototype/new-onboarding-flow</div>
+      </div>
+      <div class="branch-row">
+        <div class="team"><span class="swatch sales" style="display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--eleos-ink)"></span>Sales</div>
+        <div class="pattern">demo<span class="slash">/</span>short-description</div>
+        <div class="example">demo/q2-enterprise-pitch</div>
+      </div>
+      <div class="branch-row">
+        <div class="team"><span class="swatch developers" style="display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--eleos-ink)"></span>Developers</div>
+        <div class="pattern">feat<span class="slash">/</span>… &nbsp; or &nbsp; fix<span class="slash">/</span>…</div>
+        <div class="example">feat/salesforce-integration</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Per-team workflows (switcher) -->
+  <section>
+    <div class="head" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div>
+        <span class="eyebrow"><span class="bar"></span>Per-team playbook</span>
+        <h2>Pick your team. <em>Read your lane.</em></h2>
+      </div>
+      <p style="max-width:none;">Same repo, three jobs. Click a tab to see the workflow for your team.</p>
+    </div>
+
+    <div class="switcher" id="switcher">
+      <button data-target="designers" class="active"><span class="swatch designers"></span>Designers &amp; PMs</button>
+      <button data-target="sales"><span class="swatch sales"></span>Sales</button>
+      <button data-target="developers"><span class="swatch developers"></span>Developers</button>
+    </div>
+
+    <!-- DESIGNERS -->
+    <div class="team-card" data-team="designers" id="team-designers">
+      <div>
+        <div class="team-head">
+          <span class="team-tag"><span class="swatch designers" style="width:8px;height:8px;border-radius:50%"></span>Designers &amp; PMs</span>
+        </div>
+        <h3>Prototype upcoming features <em>without</em> stepping on Sales or Devs.</h3>
+        <p class="goal">Your branch is your sandbox. Experiment freely — main is protected, and the work you ship for review is exactly the work you mean to ship.</p>
+
+        <div class="workflow">
+          <div class="label">Workflow</div>
+          <ol>
+            <li>Ask Claude Code: <span class="quote">"Create a new branch called <code>prototype/[your-feature-name]</code> from main."</span></li>
+            <li>Make your changes — Claude Code handles the code.</li>
+            <li>When ready for feedback: <span class="quote">"Open a pull request for this branch."</span></li>
+            <li>Add a one-line description of what the prototype is exploring.</li>
+            <li>Tag a dev to review.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div>
+        <div class="know-title">Things to know</div>
+        <div class="know">
+          <div class="know-item tip">
+            <span class="marker"></span>
+            <div><strong>Your branch is your sandbox</strong> — feel free to experiment.</div>
+          </div>
+          <div class="know-item">
+            <span class="marker"></span>
+            <div>Need a fix from <code>main</code>? Ask Claude Code: <em>"Sync my branch with the latest main."</em></div>
+          </div>
+          <div class="know-item warn">
+            <span class="marker"></span>
+            <div>Don't worry about breaking things on your branch — that's what it's for. <strong>Main is protected.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SALES -->
+    <div class="team-card" data-team="sales" id="team-sales" hidden>
+      <div>
+        <div class="team-head">
+          <span class="team-tag"><span class="swatch sales" style="width:8px;height:8px;border-radius:50%"></span>Sales</span>
+        </div>
+        <h3>Maintain a clean, <em>impressive</em> demo that's always ready to present.</h3>
+        <p class="goal">A prospect should never see anything you didn't choose to show. Branch the demo, control the surface area, sync before you walk in the room.</p>
+
+        <div class="workflow">
+          <div class="label">Workflow</div>
+          <ol>
+            <li>Ask Claude Code: <span class="quote">"Create a new branch called <code>demo/[demo-name]</code> from main."</span></li>
+            <li>Make any customizations needed for the demo.</li>
+            <li>When ready: <span class="quote">"Open a pull request for this branch."</span></li>
+            <li>Add a one-line description (e.g., "Customized for Q2 enterprise pitch — added placeholder org data").</li>
+            <li>Tag a dev to review before presenting.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div>
+        <div class="know-title">Things to know</div>
+        <div class="know">
+          <div class="know-item tip">
+            <span class="marker"></span>
+            <div>For <strong>recurring demos</strong>, you can reuse a branch — just sync it with main before each presentation.</div>
+          </div>
+          <div class="know-item">
+            <span class="marker"></span>
+            <div>Custom look for one prospect? <strong>Create a new branch</strong> rather than modifying an existing demo branch.</div>
+          </div>
+          <div class="know-item warn">
+            <span class="marker"></span>
+            <div><strong>Never demo directly from <code>main</code></strong> — always present from your own branch so you control what's shown.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEVELOPERS -->
+    <div class="team-card" data-team="developers" id="team-developers" hidden>
+      <div>
+        <div class="team-head">
+          <span class="team-tag"><span class="swatch developers" style="width:8px;height:8px;border-radius:50%"></span>Developers</span>
+        </div>
+        <h3>Ship features and fixes — <em>keep</em> main stable for everyone else.</h3>
+        <p class="goal">You build it, you review it, you keep the standard. Non-dev PRs need a quick sanity check, not a deep code review.</p>
+
+        <div class="workflow">
+          <div class="label">Workflow</div>
+          <ol>
+            <li>Branch off main: <span class="quote"><code>feat/your-feature</code> or <code>fix/your-fix</code></span></li>
+            <li>Build and test.</li>
+            <li>Open a PR, get one peer approval, merge.</li>
+            <li>After merging, let the other teams know if they should sync their branches.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div>
+        <div class="know-title">Reviewing non-dev PRs</div>
+        <div class="know">
+          <div class="know-item tip">
+            <span class="marker"></span>
+            <div>Quick sanity check, not a deep review — <strong>5 minutes or less</strong> for most non-dev PRs.</div>
+          </div>
+          <div class="know-item">
+            <span class="marker"></span>
+            <div>Does it do what the description says?</div>
+          </div>
+          <div class="know-item">
+            <span class="marker"></span>
+            <div>Does it break anything in main or other active branches?</div>
+          </div>
+          <div class="know-item warn">
+            <span class="marker"></span>
+            <div>Is there anything that would <strong>embarrass us</strong> in a demo or presentation?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviewing callout -->
+    <div class="review-callout">
+      <span class="eyebrow" style="grid-column:1;grid-row:1"><span class="bar"></span>For reviewers</span>
+      <h4 style="grid-column:1;grid-row:2">Five minutes <em>is enough</em>.</h4>
+      <p style="grid-column:1;grid-row:3">You're not deep-reviewing prototype code or demo tweaks. You're catching the few things that actually matter — described behavior, blast radius, public-facing risk.</p>
+      <div class="checks" style="grid-column:2;grid-row:3;align-self:start">
+        <div class="check"><span class="box"></span><div>Does it do what the description says?</div></div>
+        <div class="check"><span class="box"></span><div>Does it break anything in <code>main</code> or other active branches?</div></div>
+        <div class="check"><span class="box"></span><div>Is there anything that would embarrass us in a demo or presentation?</div></div>
+      </div>
+      <div class="review-prompts">
+        <div class="rp-label">Ask Claude Code to help review</div>
+        <div class="review-prompt">
+          <span class="rp-text">Summarize what changed in this branch compared to main</span>
+          <button class="rp-copy-btn" aria-label="Copy command"></button>
+        </div>
+        <div class="review-prompt">
+          <span class="rp-text">Does this branch do what the PR description says?</span>
+          <button class="rp-copy-btn" aria-label="Copy command"></button>
+        </div>
+        <div class="review-prompt">
+          <span class="rp-text">Check if this branch breaks anything in main or other active branches</span>
+          <button class="rp-copy-btn" aria-label="Copy command"></button>
+        </div>
+        <div class="review-prompt">
+          <span class="rp-text">Are there any changes here that could embarrass us in a demo?</span>
+          <button class="rp-copy-btn" aria-label="Copy command"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer banner -->
+  <div class="footer-banner">
+    <div>
+      <span class="eyebrow" style="color:var(--eleos-gold)"><span class="bar" style="background:var(--eleos-gold)"></span>Questions?</span>
+      <h3>If you're unsure, <em>ask before pushing.</em></h3>
+      <p>It's much easier to fix something before it's in a PR than after. Drop a question to your team mate or ask Claude Code first.</p>
+    </div>
+    <div class="signoff">If you care,<br>we care.</div>
+  </div>
+
+  <div class="doc-footer">
+    <div>Eleos Health · Engineering Handbook</div>
+    <div>Owner: Platform · Last updated April 2026</div>
+  </div>
+</div>
+
+<div id="tweaks-root"></div>
+
+<script>
+  (function(){
+    function init(){
+      const switcher = document.getElementById('switcher');
+      if (!switcher) return;
+      const buttons = switcher.querySelectorAll('button');
+      const teams = ['designers','sales','developers'];
+      function show(target){
+        buttons.forEach(b => b.classList.toggle('active', b.dataset.target === target));
+        teams.forEach(t => {
+          const el = document.getElementById('team-' + t);
+          if (!el) return;
+          const shouldShow = (t === target);
+          el.hidden = !shouldShow;
+          if (shouldShow) {
+            el.classList.remove('is-entering');
+            // restart the entry animation
+            void el.offsetWidth;
+            el.classList.add('is-entering');
+          }
+        });
+      }
+      buttons.forEach(b => {
+        b.addEventListener('click', () => show(b.dataset.target));
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" data-presets="react">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "voice": "signature",
+    "mood": "clinic",
+    "warmth": "humane"
+  }/*EDITMODE-END*/;
+
+  function applyTweaks(t){
+    const html = document.documentElement;
+    html.dataset.voice  = t.voice;
+    html.dataset.mood   = t.mood;
+    html.dataset.warmth = t.warmth;
+  }
+  applyTweaks(TWEAK_DEFAULTS);
+
+  function TweaksApp(){
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    React.useEffect(() => { applyTweaks(t); }, [t]);
+    return (
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Voice" />
+        <TweakRadio
+          label="Italic punch"
+          value={t.voice}
+          options={[
+            {value:'whispered', label:'Quiet'},
+            {value:'signature', label:'Signature'},
+            {value:'vivid',     label:'Highlit'},
+          ]}
+          onChange={(v)=>setTweak('voice', v)} />
+        <TweakSection label="Mood" />
+        <TweakRadio
+          label="Surface palette"
+          value={t.mood}
+          options={[
+            {value:'clinic',    label:'Clinic'},
+            {value:'studio',    label:'Studio'},
+            {value:'boardroom', label:'After-hours'},
+          ]}
+          onChange={(v)=>setTweak('mood', v)} />
+        <TweakSection label="Warmth" />
+        <TweakRadio
+          label="Document feel"
+          value={t.warmth}
+          options={[
+            {value:'humane',  label:'Humane'},
+            {value:'minimal', label:'Memo'},
+          ]}
+          onChange={(v)=>setTweak('warmth', v)} />
+      </TweaksPanel>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<TweaksApp/>);
+</script>
+
+<script>
+  const CLIPBOARD_ICON = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const CHECK_ICON    = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--eleos-pine);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  function copyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.innerHTML = CLIPBOARD_ICON;
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const text = btn.closest('.prompt').querySelector('.ask').innerText;
+      copyText(text);
+      btn.classList.add('copied');
+      btn.innerHTML = CHECK_ICON;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = CLIPBOARD_ICON;
+      }, 1500);
+    });
+  });
+
+  // Review prompt copy buttons
+  const RP_CLIP = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const RP_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.querySelectorAll('.rp-copy-btn').forEach(btn => {
+    btn.innerHTML = RP_CLIP;
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const text = btn.closest('.review-prompt').querySelector('.rp-text').innerText;
+      copyText(text);
+      btn.classList.add('copied');
+      btn.innerHTML = RP_CHECK;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = RP_CLIP;
+      }, 1500);
+    });
+  });
+
+  // Workflow quote copy buttons
+  const WF_CLIP = '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const WF_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  document.querySelectorAll('.workflow .quote').forEach(quote => {
+    // Wrap existing content in a span so flex layout works
+    const wrapper = document.createElement('span');
+    wrapper.className = 'quote-text';
+    wrapper.innerHTML = quote.innerHTML;
+    quote.innerHTML = '';
+    quote.appendChild(wrapper);
+
+    // Add copy button
+    const btn = document.createElement('button');
+    btn.className = 'workflow-copy-btn';
+    btn.setAttribute('aria-label', 'Copy command');
+    btn.innerHTML = WF_CLIP;
+    quote.appendChild(btn);
+
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      copyText(wrapper.innerText);
+      btn.classList.add('copied');
+      btn.innerHTML = WF_CHECK;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = WF_CLIP;
+      }, 1500);
+    });
+  });
+</script>
+</body>
+</html>
