@@ -2522,27 +2522,457 @@ export function KantimeBg({ noteValues = {}, onNoteChange, highlightedField, sid
           </div>
         </div>
 
-        {/* Is Patient Impending Death */}
+        {/* ── J0050 -- Death is Imminent ── */}
         <div style={{ borderBottom: '1px solid #ccc' }}>
-          <div style={{ background: '#c8daea', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
-            <span>Is Patient Impending Death? <span style={{ color: '#2a7a2a', fontWeight: 400, fontSize: 11 }}>☑ Assessed, No issues found</span></span>
-            <span style={{ fontSize: 11, color: '#555' }}>IDG Problem : <input type="checkbox" readOnly /> New</span>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J0050 -- Death is Imminent
           </div>
-          <div style={{ padding: '4px 12px', background: '#fafafa' }}>
-            <span style={{ fontSize: 11 }}>Comments:</span>
-            <textarea readOnly style={{ display: 'block', width: '100%', height: 48, border: '1px solid #ccc', borderRadius: 2, padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff', marginTop: 2 }} />
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>At the time of this assessment and based on your clinical assessment, does the patient appear to have a life expectancy of 3 days or less?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0050" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0050" /> 1. Yes</label>
           </div>
         </div>
 
-        {/* Need For Caregiver Relief */}
+        {/* ── J0900 -- Pain Screening ── */}
         <div style={{ borderBottom: '1px solid #ccc' }}>
-          <div style={{ background: '#c8daea', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
-            <span>Need For Caregiver Relief <span style={{ color: '#2a7a2a', fontWeight: 400, fontSize: 11 }}>☑ Assessed, No issues found</span></span>
-            <span style={{ fontSize: 11, color: '#555' }}>IDG Problem : <input type="checkbox" readOnly /> New</span>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J0900 -- Pain Screening <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
           </div>
-          <div style={{ padding: '4px 12px', background: '#fafafa' }}>
-            <span style={{ fontSize: 11 }}>Comments:</span>
-            <textarea readOnly style={{ display: 'block', width: '100%', height: 48, border: '1px solid #ccc', borderRadius: 2, padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff', marginTop: 2 }} />
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was the patient screened for pain?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0900a" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0900a" /> 1. Yes</label>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span style={{ paddingTop: 2 }}>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 36, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date of first screening for pain:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+              <span style={{ color: '#555' }}>📅</span>
+            </div>
+            <div style={{ fontWeight: 600 }}>*C. The patient's pain severity was:</div>
+            {['0. None','1. Mild','2. Moderate','3. Severe','9. Pain not rated'].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0900c" /> {o}</label>
+            ))}
+            <div style={{ fontWeight: 600 }}>*D. Type of standardized pain screening tool used:</div>
+            {['1. Numeric','2. Verbal descriptor','3. Patient Visual (e.g. Wong Baker Pain Screening Tool)','4. Staff observation','9. No Standardized tool used'].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0900d" /> {o}</label>
+            ))}
+          </div>
+        </div>
+
+        {/* ── J0905 -- Pain Active Problem ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J0905 -- Pain Active Problem <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>Is pain an active problem for the patient?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0905" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0905" /> 1. Yes</label>
+          </div>
+        </div>
+
+        {/* ── J0910 -- Comprehensive Pain Assessment ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <span style={{ color: '#ff8080' }}>*</span> J0910 -- Comprehensive Pain Assessment <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+            <span style={{ fontWeight: 400, fontSize: 10, background: 'rgba(0,0,0,0.15)', padding: '1px 5px', borderRadius: 2 }}>☑ Assessed, No issues found</span>
+            <button style={{ fontSize: 10, padding: '1px 6px', background: '#3b6698', color: '#fff', border: 'none', borderRadius: 2, cursor: 'default' }}>Pain Details</button>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 2, fontWeight: 400, fontSize: 10 }}><input type="checkbox" readOnly /> Non Verbal</label>
+            <span style={{ fontWeight: 400, fontSize: 10 }}>* IDG Problem: <input type="checkbox" readOnly /> Yes <input type="checkbox" readOnly /> No</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontWeight: 600 }}>Pain Scale:</span>
+              {['Wong-Baker','FLACC','PainAD','Numeric/Casual Reading'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <span>Is patient experiencing pain?</span>
+              {['Yes','No','Controlled With Medication'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910pain" /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <span>Is patient's pain intractable?</span>
+              {['Yes','No'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910int" /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <span>Is Patient uncomfortable due to pain?</span>
+              {['Yes','No'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910unc" /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              {['Patient Self Reported','Communication Barrier','Patient age is less than 18','Patient Caregiver Reported'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span>How often is breakthrough medication required?</span>
+              {['Never','Less than daily','1 time a day','2-3 times a day','More than 3 times a day','NA'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910freq" /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, flexWrap: 'wrap' }}>
+              <span>Is current pain control medication adequate?</span>
+              {['Yes','No','NA'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910adq" /> {o}</label>)}
+              <span>If No, Specify</span>
+              <textarea readOnly style={{ width: 180, height: 32, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span>Is Physician/Provider Notified?</span>
+              {['Yes','No','NA'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="j0910phys" /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span>Additional symptom associated with pain:</span>
+              {['Nausea','Vomiting','Other','None'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>)}
+              {o => o === 'Other' && <input readOnly style={{ width: 80, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span>Impact of pain on quality of life:</span>
+              {['Sleeping','Functioning','Appetite','Mood','Other','None'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span>Pain ESAS Reading:</span>
+              <select disabled style={{ fontSize: 11, padding: '1px 4px', border: '1px solid #aaa' }}><option>Select</option></select>
+              <span>Acceptable Limit:</span>
+              <select disabled style={{ fontSize: 11, padding: '1px 4px', border: '1px solid #aaa' }}><option>Select</option></select>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> Unable to Report Pain</label>
+              <span>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 32, border: '1px solid #5b8ec4', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div>Current Pain Management and Effectiveness</div>
+            <textarea readOnly style={{ width: '100%', height: 44, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+          </div>
+        </div>
+
+        {/* ── J0915 -- Neuropathic Pain ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J0915 -- Neuropathic Pain
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>Does the patient have neuropathic pain (e.g., pain with burning, tingling, pins and needles, hypersensitivity to touch)?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0915" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j0915" /> 1. Yes</label>
+          </div>
+        </div>
+
+        {/* ── J2030 -- Screening for Shortness of Breath ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J2030 -- Screening for Shortness of Breath <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was the patient screened for shortness of breath?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2030a" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2030a" /> 1. Yes</label>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 36, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date of first screening for shortness of breath:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+            </div>
+            <div style={{ fontWeight: 600 }}>*C. Did the screening indicate the patient had shortness of breath?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2030c" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2030c" /> 1. Yes</label>
+          </div>
+        </div>
+
+        {/* ── Respiratory Status ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#c8c8c8', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+            Respiratory Status
+            <span style={{ fontWeight: 400, fontSize: 10, color: '#2a7a2a' }}>☑ Assessed, No issues found</span>
+            <span style={{ fontSize: 10, color: '#c00', marginLeft: 'auto' }}>* IDG Problem: <input type="checkbox" readOnly /> Yes <input type="checkbox" readOnly /> No</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span>Respiratory:</span>
+              {['WNL','Tachypnea','Bradypnea','Apnea','Dyspnea with minimal exertion','Dyspnea at rest','Cheyne-Stokes Respiration','Hyperventilation','Accessory Muscles used','Terminal Secretions'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <span>Breathing:</span>
+              {['Shallow','Irregular','Labored','Unlabored'].map(o => (
+                <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> SOB/Dyspnea:</label>
+              <div style={{ paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {['Current SOB gets:','Best SOB gets:','Worst SOB gets:'].map(label => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ width: 110 }}>{label}</span>
+                    <select disabled style={{ fontSize: 11, padding: '1px 4px', border: '1px solid #aaa', width: 80 }}><option></option></select>
+                    <span>(based on Borg Scale)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span>SOB ESAS Reading:</span>
+              <select disabled style={{ fontSize: 11, padding: '1px 4px', border: '1px solid #aaa' }}><option>Select</option></select>
+              <span>Acceptable Limit:</span>
+              <select disabled style={{ fontSize: 11, padding: '1px 4px', border: '1px solid #aaa' }}><option>Select</option></select>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> Unable to Report SOB</label>
+              <span>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 32, border: '1px solid #5b8ec4', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> Patient on Supplement Oxygen</label>
+              <span>O₂ @:</span>
+              <input readOnly style={{ width: 50, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>LPM</span>
+              {['PRN','Continuous','QHS'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="respO2" /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> Oxygen to be ordered at</label>
+              <input readOnly style={{ width: 44, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11 }} />
+              <span>L/min</span>
+              {['PRN','Continuous via','Nasal Cannula','Mask'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="respO2ord" /> {o}</label>)}
+            </div>
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> Lung Sounds:</label>
+              <div style={{ paddingLeft: 16, display: 'grid', gridTemplateColumns: '60px 1fr 1fr 1fr', gap: '3px 8px', marginTop: 3 }}>
+                <span style={{ fontStyle: 'italic' }}>Anterior:</span>
+                {[['Right Upper','Right Lower','Right Middle'],['Left Upper','Left Lower','']].map((row, ri) => (
+                  row.map((cell, ci) => cell ? (
+                    <div key={`a-${ri}-${ci}`} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <span style={{ whiteSpace: 'nowrap' }}>{cell}:</span>
+                      <select disabled style={{ fontSize: 10, border: '1px solid #aaa', flex: 1 }}><option>--Select--</option></select>
+                    </div>
+                  ) : <div key={`a-${ri}-${ci}`} />)
+                ))}
+                <span style={{ fontStyle: 'italic' }}>Posterior:</span>
+                {[['Right Upper','Right Lower','Right Middle'],['Left Upper','Left Lower','']].map((row, ri) => (
+                  row.map((cell, ci) => cell ? (
+                    <div key={`p-${ri}-${ci}`} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                      <span style={{ whiteSpace: 'nowrap' }}>{cell}:</span>
+                      <select disabled style={{ fontSize: 10, border: '1px solid #aaa', flex: 1 }}><option>--Select--</option></select>
+                    </div>
+                  ) : <div key={`p-${ri}-${ci}`} />)
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span>Does the Patient have Tracheostomy?</span>
+              {['Yes','No'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="trach" /> {o}</label>)}
+              <span>Who Manages?</span>
+              {['RN','family/Caregiver'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="checkbox" readOnly /> {o}</label>)}
+            </div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <span>Cough:</span>
+              {['Productive','Non-Productive'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="cough" /> {o}</label>)}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Respiratory Treatment ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#3b6698', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            Respiratory Treatment
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {['Bilevel positive airway pressure','Nebulizer','Continuous positive airway pressure','None of the above'].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> {o}</label>
+            ))}
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span>Intermittent Treatments:</span>
+              {['No','Yes'].map(o => <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}><input type="radio" readOnly name="respTreat" /> {o}</label>)}
+              <span>If Yes, explain:</span>
+              <input readOnly style={{ flex: 1, border: '1px solid #aaa', padding: '1px 4px', fontSize: 11, minWidth: 120 }} placeholder="Comments" />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginTop: 2 }}>
+              <span style={{ width: 140 }}>Eyes/Ear/Nose/Throat:</span>
+              <textarea readOnly style={{ flex: 1, height: 44, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} placeholder="Comments" />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span style={{ width: 140 }}>Comments:</span>
+              <textarea readOnly style={{ flex: 1, height: 44, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} placeholder="Comments" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── J2040 -- Treatment for Shortness of Breath ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J2040 -- Treatment for Shortness of Breath <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was treatment for shortness of breath initiated?</div>
+            {['0. No','1. No, patient declined treatments offered','2. Yes'].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2040a" /> {o}</label>
+            ))}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 36, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date treatment for shortness of breath initiated:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── J2050 -- Symptom Impact Screening ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J2050 -- Symptom Impact Screening
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was a symptom impact screening completed?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2050a" /> 0. No --Skip to M1190, Skin Conditions</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="j2050a" /> 1. Yes</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date of symptom impact screening:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── J2051 -- Symptom Impact ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> J2051 -- Symptom Impact
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div>Over the past 2 days, how has the patient been affected by each of the following symptoms? Base this on your clinical assessment (including input from patient and/or caregiver). Symptoms may impact multiple patient activities including but not limited to, sleep, concentration, day-to-day activities, or ability to interact with others.</div>
+            <div style={{ fontWeight: 600, marginTop: 2 }}>Coding:</div>
+            <div style={{ paddingLeft: 12, display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <div><b>0.</b> Not at all – symptom does not affect the patient, including symptoms well-controlled with current treatment</div>
+              <div><b>1.</b> Slight</div>
+              <div><b>2.</b> Moderate</div>
+              <div><b>3.</b> Severe</div>
+              <div><b>9.</b> Not applicable (the patient is not experiencing the symptom)</div>
+            </div>
+            <table style={{ borderCollapse: 'collapse', marginTop: 4 }}>
+              <tbody>
+                {[
+                  'A. Pain','B. Shortness of Breath','C. Anxiety','D. Nausea',
+                  'E. Vomiting','F. Diarrhea','G. Constipation','H. Agitation'
+                ].map((symptom, i) => (
+                  <tr key={symptom} style={{ background: i % 2 === 0 ? '#eef4e8' : '#fff' }}>
+                    <td style={{ padding: '3px 8px', width: 140 }}>{symptom}:</td>
+                    <td style={{ padding: '3px 0' }}>
+                      <div style={{ display: 'flex', gap: 14 }}>
+                        {['0.Not at all','1.Slight','2.Moderate','3.Severe','9.Not Applicable'].map(o => (
+                          <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <input type="radio" readOnly name={`j2051-${i}`} /> {o}
+                          </label>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ── M1190 -- Skin Conditions ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> M1190 -- Skin Conditions
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>Does the patient have one or more skin conditions?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="m1190" /> 0. No -- Skip to N0500, Scheduled Opioid</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="m1190" /> 1. Yes</label>
+          </div>
+        </div>
+
+        {/* ── M1195 -- Types of Skin Conditions ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> M1195 -- Types of Skin Conditions
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>Indicate which following skin conditions were identified at the time of this assessment.</div>
+            <div style={{ fontWeight: 600 }}>↓ Check all that apply</div>
+            {[
+              'A. Diabetic foot ulcer(s)',
+              'B. Open lesion(s) other than ulcers, rash, or skin tear (cancer lesions)',
+              'C. Pressure Ulcer(s)/Injuries',
+              'D. Rash(es)',
+              'E. Skin tear(s)',
+              'F. Surgical wound(s)',
+              'G. Ulcers other than diabetic or pressure ulcers (e.g., venous stasis ulcer, Kennedy ulcer)',
+              'H. Moisture Associated Skin Damage (MASD)',
+              'Z. None of the above were present',
+            ].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> {o}</label>
+            ))}
+          </div>
+        </div>
+
+        {/* ── M1200 -- Skin and ulcer/Injury Treatments ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12 }}>
+            <span style={{ color: '#ff8080' }}>*</span> M1200 -- Skin and ulcer/Injury Treatments
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div>Indicate the interventions or treatments in place at the time of this assessment.</div>
+            <div style={{ fontWeight: 600 }}>↓ Check all that apply</div>
+            {[
+              'A. Pressure reducing device for chair',
+              'B. Pressure reducing device for bed',
+              'C. Turning/repositioning program',
+              'D. Nutrition or hydration intervention to manage skin problems',
+              'E. Pressure ulcer/injury care',
+              'F. Surgical wound care',
+              'G. Application of nonsurgical dressings (with or without topical medications) other than to feet',
+              'H. Application of ointments/medications other than to feet',
+              'I. Application of dressings to feet (with or without topical medications)',
+              'J. Incontinence Management',
+              'Z. None of the above were provided',
+            ].map(o => (
+              <label key={o} style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="checkbox" readOnly /> {o}</label>
+            ))}
+          </div>
+        </div>
+
+        {/* ── N0500 -- Scheduled Opioid ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> N0500 -- Scheduled Opioid <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was a scheduled opioid initiated or continued?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="n0500a" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="n0500a" /> 1. Yes</label>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+              <span>Reason:</span>
+              <textarea readOnly style={{ flex: 1, height: 36, border: '1px solid #ccc', padding: '2px 4px', fontSize: 11, resize: 'none', background: '#fff' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date scheduled opioid initiated or continued:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── N510 -- PRN Opioid ── */}
+        <div style={{ borderBottom: '1px solid #ccc' }}>
+          <div style={{ background: '#7a9e5a', color: '#fff', padding: '3px 8px', fontWeight: 'bold', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span style={{ color: '#ff8080' }}>*</span> N510 -- PRN Opioid <span style={{ fontSize: 10, opacity: 0.85 }}>✎</span>
+          </div>
+          <div style={{ padding: '6px 12px', background: '#fafafa', fontSize: 11, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div style={{ fontWeight: 600 }}>A. Was a PRN opioid used in the past 5 days?</div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="n510a" /> 0. No</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 3 }}><input type="radio" readOnly name="n510a" /> 1. Yes</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 600 }}>B. Date PRN opioid last used:</span>
+              <span style={{ border: '1px solid #aaa', padding: '1px 6px', background: '#fff' }}>2/26/2026</span>
+            </div>
           </div>
         </div>
 

@@ -4176,6 +4176,35 @@ const JACOB_AUDIO_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Routine Visit (hospice) suggestions ──────────────────────────────────────
+
+const ROUTINE_VISIT_SUGGESTIONS_DATA = [
+  { section: 'Comprehensive Assessment', cards: [
+    { field: 'Comprehensive Assessment', content: 'Routine visit performed with patient. Patient is laying in bed comfortably, no s/s of pain or distress noted. Patient is bedbound and remains non-responsive during visit. The patient exhibits progressive decline, as evidenced by bedbound status, decreased responsiveness, sleeping more than 16 hours per day, limited verbage of 1-2 words, consistent use of morphine for comfort, increased temperature/heart rate/respiratory rate, decreased blood pressure/pulse ox, abnormal lung sounds, decreased bowel sounds and bowel movement frequency, decreased oral intake, bowel and bladder incontinence, full ADL assistance, and edema. This deterioration is consistent with continued progression of terminal disease and justifies continued hospice care.', type: 'text', showActions: true },
+  ]},
+  { section: 'Physical Assessment', cards: [
+    { field: 'Physical Assessment', content: 'Physical assessment performed. VS- temperature, HR, and RR slightly elevated; BP and PO low. Apical heart rate taken. Heart sounds- RRR; Lung sounds diminished throughout, coarse lung sounds noted in bilateral lower lobes. BS- hypoactive in all 4 quadrants. +2 pitting edema noted in bilateral ankles. Patient is incontinent of urine and stool. Depends being utilized and changed by son regularly. Patient is full care for all ADLs. Skin assessment performed. No issues or reddened areas noted.', type: 'text', showActions: true },
+  ]},
+  { section: 'Caregiver', cards: [
+    { field: 'Caregiver', content: "Patient's son and CG states patient is sleeping more than 16 hours per day and is minimally responsive; rarely verbalizes and, when he does, it is only 1-2 words. Son states patient appears comfortable much of the time. Discussion of the end of life/dying process had with son. Son verbalizes understanding of and comfort with the process: \"It's obviously hard to see dad like this, but he seems to be comfortable and I know it's all a part of the process.\" Son appears to be coping well and does not appear to be overwhelmed. He states he feels like he is getting enough sleep and takes a walk daily while his dad is napping and a neighbor is sitting with him. SW scheduled for a routine visit in 2 days. Son denies needs, further questions, or concerns at this time.", type: 'text', showActions: true },
+  ]},
+  { section: 'Repositioned Patient', cards: [
+    { field: 'Repositioned Patient', content: 'Son states he repositions patient every 2 hours during the day and every 4 hours at night to promote skin integrity and patient comfort.', type: 'text', showActions: true },
+  ]},
+  { section: 'Oral Care', cards: [
+    { field: 'Oral Care', content: "CG states patient is eating less than 25% of 1 meal per day and drinking little. RN explained that patient's body will still continue to break things down. CG states last BM was 3 days ago. Educated CG that constipation can cause discomfort and that patient is at increased risk for constipation due to morphine use and decreased mobility. RN encouraged son to call hospice if patient does not have BM in next 2 days so that RN can administer an enema to help prevent discomfort. Son states understanding and intention to do so.", type: 'text', showActions: true },
+  ]},
+  { section: 'Medication Review', cards: [
+    { field: 'Medication Review', content: 'Patient requiring morphine 0.25ml SL every 4 hours routinely for comfort. Son states that if patient goes longer than 4 hours without medication, he starts to look restless, moving around in bed and moaning. RN discussed increasing morphine dose or trying a longer acting medication; son states he is comfortable with current regimen and does not wish to change at this time. RN encouraged son to notify hospice if patient starts becoming uncomfortable at less than 4 hours or if discomfort appears to worsen. Son verbalizes understanding and intention to do so.', type: 'text', showActions: true },
+  ]},
+  { section: 'Continue Monitoring', cards: [
+    { field: 'Continue Monitoring', content: 'Nurse scheduled to visit again in 2 days and available as needed. Son was reminded of hospice 24/7 number and encouraged to call with any questions, concerns, or needs. He verbalizes understanding and intention to do so. Hospice IDT updated about patient and CG status. Message left for attending physician regarding patient status.', type: 'text', showActions: true },
+  ]},
+  { section: 'Comfort-Centered Care', cards: [
+    { field: 'Comfort-Centered Care', content: "POC is consistent with the patient's disease process, terminal diagnosis, and stage of process. Includes continuing medication regimen as is at this time, and monitoring for regular bowel movements as well as skin integrity.", type: 'text', showActions: true },
+  ]},
+];
+
 // ── Suggestions Panel ─────────────────────────────────────────────────────────
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
@@ -4196,6 +4225,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;
     if (session.noteType === 'Treatment Plan') return TREATMENT_PLAN_SUGGESTIONS_DATA;
     if (session.noteType === 'Progress Note') return PROGRESS_NOTE_SUGGESTIONS_DATA;
+    if (session.noteType === 'Routine Visit') return ROUTINE_VISIT_SUGGESTIONS_DATA;
     if (session.type === 'group' && session.includesASAM) return GROUP_ASAM_SUGGESTIONS_DATA;
     if (session.type === 'group') return GROUP_SINGLE_SUGGESTIONS_DATA;
     return SUGGESTIONS_DATA;
