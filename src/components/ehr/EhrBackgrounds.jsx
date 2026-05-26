@@ -2413,12 +2413,6 @@ export function KantimeBg({ noteValues = {}, onNoteChange, highlightedField, sid
         ))}
       </div>
 
-      {/* ── Sub-tabs ── */}
-      <div style={{ background: '#f0f4f8', borderBottom: '1px solid #c0cfde', display: 'flex', flexShrink: 0 }}>
-        {['Timesheet', 'HOPE Review'].map(sub => (
-          <button key={sub} style={{ padding: '3px 12px', fontSize: 11, border: '1px solid #a0b8ce', borderBottom: 'none', background: sub === 'HOPE Review' ? '#fff' : '#dce9f5', color: '#1a3a6b', cursor: 'pointer', marginRight: 2, marginTop: 2 }}>{sub}</button>
-        ))}
-      </div>
 
       {/* ── Patient header ── */}
       <div style={{ background: '#eaf2fb', borderBottom: '1px solid #b0cce0', padding: '3px 10px', display: 'flex', gap: 20, flexShrink: 0, fontSize: 11 }}>
