@@ -299,6 +299,19 @@ export const LARRY_QUINN_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── Larry Quinn DAP suggestions (shown when "Use My EHR Note Headers" is ON) ──
+export const LARRY_QUINN_DAP_DATA = [
+  { section: 'Data', cards: [
+    { field: 'Data', content: "The therapist and client discussed the client's relationship with his partner, including their current living situation and the possibility of her moving back in. The therapist shared concerns about the potential challenges of a codependent dynamic, especially during early recovery. Therapist placed emphasis on the importance of both the client and his partner maintaining their individual recovery, noting that this would support both their personal well-being and the health of their relationship. Client was encouraged to establish clear boundaries with his partner and explored what those boundaries might look like in practice, highlighting their importance for both his own well-being and that of his family. Motivational interviewing techniques were used to strengthen the client's commitment to recovery and to support him in taking actionable steps toward his goals. The therapist also provided psychoeducation on the benefits of family sessions for couples in recovery, particularly in improving communication and relationship functioning.", type: 'text', showActions: true },
+  ]},
+  { section: 'Assessment', cards: [
+    { field: 'Assessment', content: "The client appeared engaged, open, and receptive throughout the session. He demonstrated a clear commitment to his recovery and a willingness to take necessary steps to support both himself and his family. The client showed insight into the importance of setting boundaries, particularly within his relationship, as a way to foster a more stable and healthy environment.", type: 'text', showActions: true },
+  ]},
+  { section: 'Plan', cards: [
+    { field: 'Plan', content: "The client will continue participating in his current treatment and maintaining sobriety. He will establish and uphold clear boundaries regarding his partner's potential move-in, with an emphasis on her commitment to treatment and sobriety. Additionally, the client will consider participating in family therapy sessions to further strengthen relationship dynamics and communication.", type: 'text', showActions: true },
+  ]},
+];
+
 // ── Progress Note suggestions (Jacob Rosen case management) ───────────────────
 export const PROGRESS_NOTE_SUGGESTIONS_DATA = [
   { section: 'Progress Note', cards: [
