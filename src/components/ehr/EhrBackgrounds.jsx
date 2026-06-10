@@ -1725,46 +1725,151 @@ export function KipuBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
+  const [hoveredNav, setHoveredNav] = React.useState(null);
+  const activeNav = 'Charts';
+
+  const initials = clientName
+    ? clientName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : 'CT';
+
   const navItems = [
-    { label: 'Search Client', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-    { label: 'Home', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
-    { label: 'Favorites', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
-    { label: 'Census', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg> },
-    { label: 'Charts', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><circle cx="9" cy="7" r="3"/><path d="M2 20c0-3 3-5 7-5s7 2 7 5"/><circle cx="19" cy="9" r="2"/><path d="M19 14c2 0 4 1.5 4 3"/></svg> },
-    { label: 'Administration', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><circle cx="19" cy="8" r="2.5"/><path d="M23 8a2.5 2.5 0 0 0-2.5-2.5"/></svg> },
-    { label: 'Reports', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg> },
-    { label: 'Print', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8c8d8" strokeWidth="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> },
+    { label: 'Home',           icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
+    { label: 'Favorites',      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, arrow: true },
+    { label: 'Census',         icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, arrow: true },
+    { label: 'Charts',         icon: <svg width="16" height="16" viewBox="0 0 20 19" fill="currentColor"><path fillRule="evenodd" clipRule="evenodd" d="M2 0a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V5.154a2 2 0 0 0-2-2h-6.142a2 2 0 0 1-1.45-.622L8.592.622A2 2 0 0 0 7.142 0H2Zm5.5 6.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm3.5 2a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm.883 3.5c.413.46.734 1.01.931 1.626l.196.61A2.477 2.477 0 0 1 12.92 16h2.708a1 1 0 0 0 .952-1.305l-.195-.611A3 3 0 0 0 13.529 12h-1.646Zm-8.269 2.084A3 3 0 0 1 6.471 12H8.53a3 3 0 0 1 2.857 2.084l.196.61A1 1 0 0 1 10.629 16H4.371a1 1 0 0 1-.952-1.305l.195-.611Z"/></svg>, arrow: true },
+    { label: 'Administration', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>, arrow: true },
+    { label: 'Reports',        icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg> },
   ];
+
+  const printItem = { label: 'Print', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> };
+
+  function navStyle(label) {
+    const isActive = label === activeNav;
+    const isHovered = hoveredNav === label;
+    return {
+      display: 'flex', alignItems: 'center', gap: 16,
+      padding: '10px 16px 10px 20px',
+      cursor: 'pointer', fontSize: 14, userSelect: 'none',
+      borderLeft: isActive ? '4px solid #63e5cd' : '4px solid transparent',
+      color: isActive ? '#63e5cd' : (isHovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.65)'),
+      fontWeight: isActive ? 500 : 400,
+      background: isActive && isHovered ? 'rgba(99,229,205,0.1)' : (isHovered && !isActive ? 'rgba(255,255,255,0.07)' : 'transparent'),
+      transition: 'background 0.15s, color 0.15s',
+    };
+  }
 
   return (
     <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Dark header */}
-      <div style={{ background: '#162030', padding: '10px 18px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-        <svg width="36" height="28" viewBox="0 0 36 28">
-          <rect x="0" y="2" width="36" height="5" rx="2.5" fill="#fff"/>
-          <rect x="0" y="11" width="28" height="5" rx="2.5" fill="#fff"/>
-          <rect x="0" y="20" width="20" height="5" rx="2.5" fill="#fff"/>
-        </svg>
+      {/* Header — 52px, #0f2e40 matching source */}
+      <div style={{ background: '#0f2e40', height: 52, display: 'flex', alignItems: 'center', flexShrink: 0, padding: '0 0 0 0' }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 16px', height: '100%' }}>
+          <img src="/foothold-logo.png" alt="Foothold" height="21" width="66" style={{ display: 'block' }} />
+        </div>
+        <div style={{ flex: 1 }} />
+        {/* Right nav */}
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          {/* Calendar */}
+          <button style={{ background: 'none', border: 'none', color: '#fff', padding: '0 16px', height: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </button>
+          {/* Messages with badge */}
+          <button style={{ background: 'none', border: 'none', color: '#fff', padding: '0 16px', height: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, position: 'relative' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style={{ background: '#f65152', color: '#fff', fontSize: 11, fontWeight: 600, borderRadius: 10, padding: '1px 5px', lineHeight: 1.4 }}>2</span>
+          </button>
+          {/* Help */}
+          <button style={{ background: 'none', border: 'none', color: '#fff', padding: '0 16px', height: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Help</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5l3.5 3.5 3.5-3.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+          {/* Separator */}
+          <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.3)', margin: '0 4px' }} />
+          {/* User */}
+          <button style={{ background: 'none', border: 'none', color: '#fff', padding: '0 16px', height: '100%', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#b33771', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: '#fff', flexShrink: 0 }}>TC</div>
+            <span>Tal Cohen</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5l3.5 3.5 3.5-3.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+        </div>
       </div>
       {/* Content */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Left sidebar */}
-        <div style={{ width: 240, background: '#1e2d40', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+        {/* Left sidebar — #0f2e40 to match header */}
+        <div style={{ width: 240, background: '#0f2e40', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+          {/* Search button */}
+          <button
+            style={{ display: 'flex', alignItems: 'center', gap: 8, width: 'calc(100% - 16px)', margin: '10px 8px 6px', padding: '8px 12px', background: 'rgba(255,255,255,0.07)', border: 'none', borderRadius: 4, color: 'rgba(255,255,255,0.65)', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.13)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span style={{ flex: 1, textAlign: 'left' }}>Search Client</span>
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5l3.5 3.5-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          </button>
+          {/* Nav items */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {navItems.map(item => (
-              <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 20px', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.06)', color: '#c8dae8' }}>
+              <div
+                key={item.label}
+                style={navStyle(item.label)}
+                onMouseEnter={() => setHoveredNav(item.label)}
+                onMouseLeave={() => setHoveredNav(null)}
+              >
                 {item.icon}
-                <span style={{ fontSize: 14 }}>{item.label}</span>
+                <span style={{ flex: 1 }}>{item.label}</span>
+                {item.arrow && (
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M4.5 2.5l3.5 3.5-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                )}
               </div>
             ))}
           </div>
-          <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-            <div style={{ fontSize: 11, color: '#6a8aa8', lineHeight: 1.5 }}>04/10/2026 9:17 AM EST</div>
-            <div style={{ fontSize: 11, color: '#6a8aa8' }}>Foothold © 2026</div>
+          {/* Bottom: Print + footer */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            <div
+              style={navStyle(printItem.label)}
+              onMouseEnter={() => setHoveredNav(printItem.label)}
+              onMouseLeave={() => setHoveredNav(null)}
+            >
+              {printItem.icon}
+              <span>{printItem.label}</span>
+            </div>
+            <div style={{ padding: '8px 20px 14px', fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5 }}>
+              <div>04/10/2026 9:17 AM EST</div>
+              <div>Foothold Technology © 2026</div>
+            </div>
           </div>
         </div>
-        {/* Main */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#fff' }}>
+        {/* Right column: client nav + breadcrumbs + main */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Client nav bar */}
+          <div style={{ display: 'flex', alignItems: 'center', padding: '8px 24px', borderBottom: '1px solid #e8e8e8', background: '#fff', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#2f7bed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 600, color: '#fff', flexShrink: 0 }}>{initials}</div>
+              <span style={{ fontSize: 18, fontWeight: 600, color: '#0f2e40' }}>{clientName || 'Select a Client'}</span>
+            </div>
+            <div style={{ marginLeft: 'auto', display: 'flex' }}>
+              <button style={{ background: '#fff', border: '1px solid #c3cbcf', padding: '6px 16px', fontSize: 13, cursor: 'pointer', borderRadius: '4px 0 0 4px', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', color: '#0f2e40' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#009e8b" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Client Info
+              </button>
+              <button style={{ background: '#fff', border: '1px solid #c3cbcf', borderLeft: 'none', padding: '6px 16px', fontSize: 13, cursor: 'pointer', borderRadius: '0 4px 4px 0', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', color: '#0f2e40' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#009e8b" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Go To
+              </button>
+            </div>
+          </div>
+          {/* Breadcrumbs */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 24px', borderBottom: '1px solid #e8e8e8', background: '#fff', fontSize: 12, flexShrink: 0 }}>
+            <a href="#" onClick={e => e.preventDefault()} style={{ color: '#0f2e40', textDecoration: 'none' }}>Home</a>
+            <span style={{ fontSize: 10, color: '#0f2e40' }}>›</span>
+            <a href="#" onClick={e => e.preventDefault()} style={{ color: '#0f2e40', textDecoration: 'none' }}>Charts</a>
+            <span style={{ fontSize: 10, color: '#0f2e40' }}>›</span>
+            <a href="#" onClick={e => e.preventDefault()} style={{ color: '#009e8b', fontWeight: 500, textDecoration: 'none' }}>Progress Note</a>
+          </div>
+          {/* Main content — unchanged */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', background: '#fff' }}>
           <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a2a3a', margin: '0 0 16px 0' }}>Hi Eleos!</h1>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#1e3a6e', color: '#fff', borderRadius: 6, padding: '6px 14px', marginBottom: 24, fontSize: 13, fontWeight: 600 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -1805,8 +1910,9 @@ export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) 
               <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#d0dae8' minHeight={150} borderRadius={5} />
             </div>
           </div>
-        </div>
-      </div>
+          </div>{/* end main content */}
+        </div>{/* end right column */}
+      </div>{/* end content row */}
     </div>
   );
 }
