@@ -10,6 +10,8 @@ import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
+import UserMenu from '../../components/ui/UserMenu.jsx';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
 import { CLIENTS_LIST, CLIENT_OPTIONS } from '../../data/clients.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
@@ -17,8 +19,9 @@ import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
   CASE_MGMT_SUGGESTIONS_DATA, TREATMENT_PLAN_SUGGESTIONS_DATA, ASSESSMENT_SUGGESTIONS_DATA,
   ANGER_GROUP_SUGGESTIONS_DATA, GROUP_SINGLE_SUGGESTIONS_DATA, SUD_GROUP_SUGGESTIONS_DATA,
-  GROUP_ASAM_SUGGESTIONS_DATA, LARRY_QUINN_SUGGESTIONS_DATA, PROGRESS_NOTE_SUGGESTIONS_DATA,
-  JACOB_AUDIO_SUGGESTIONS_DATA, TAG_OPTIONS, TAG_FILTERS, TEXT_SUMMARY_BULLETS,
+  GROUP_ASAM_SUGGESTIONS_DATA, LARRY_QUINN_SUGGESTIONS_DATA, LARRY_QUINN_DAP_DATA,
+  PROGRESS_NOTE_SUGGESTIONS_DATA, JACOB_AUDIO_SUGGESTIONS_DATA,
+  TAG_OPTIONS, TAG_FILTERS, TEXT_SUMMARY_BULLETS,
 } from '../../data/suggestions.js';
 
 const BAR_DELAYS = [0, 0.18, 0.09, 0.27, 0.36];
@@ -3707,13 +3710,14 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
+  const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
 
   // Resolve which dataset to use — NoteTypeContext override takes priority,
   // then session-based selection, then default.
   const resolvedData = (() => {
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
-    if (session.id === 'larry') return LARRY_QUINN_SUGGESTIONS_DATA;
+    if (session.id === 'larry') return useEhrNoteHeaders ? LARRY_QUINN_DAP_DATA : LARRY_QUINN_SUGGESTIONS_DATA;
     if (session.id === 'jacob-audio') return JACOB_AUDIO_SUGGESTIONS_DATA;
     if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
     if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
@@ -3949,7 +3953,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                           {/* Row 1: label + Exclude (always visible; disabled while editing) */}
                           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                             <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>
-                              {card.field}
+                              {card.field !== section ? card.field : null}
                               {isEdited && !isEditing && (
                                 <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: '#2d4ccd', background: '#eaedfa', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.3px', verticalAlign: 'middle' }}>Edited</span>
                               )}
@@ -6102,21 +6106,7 @@ function CardChevron({ open }) {
 // ── Figma-accurate shared helpers ─────────────────────────────────────────────
 
 function FigmaUserAvatar() {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'default' }}>
-      {/* Exact from _Top-Header/_Header/User.svg — 25×24, avatar circle + person icon + online dot */}
-      <svg width="25" height="24" viewBox="0 0 25 24" fill="none">
-        <rect width="24" height="24" rx="12" fill="#EAEDFA"/>
-        <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill="#2D4CCD"/>
-        <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill="#2D4CCD"/>
-        <circle cx="22" cy="4" r="3" fill="#46BC9E"/>
-      </svg>
-      {/* Chevron */}
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M2.5 4.5l3.5 3.5 3.5-3.5" stroke="#424242" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </div>
-  );
+  return <UserMenu />;
 }
 
 function FigmaSearchIcon({ size = 18 }) {
