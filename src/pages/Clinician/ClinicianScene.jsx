@@ -4332,12 +4332,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</span>
-            <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>
+            {clientName !== 'Ryan Cho' && <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>}
           </div>
           <FigmaUserAvatar />
         </div>
         {clientName === 'Ryan Cho' && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <div style={{ marginTop: 8 }}>
             <DurationPill />
           </div>
         )}
