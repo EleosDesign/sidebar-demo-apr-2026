@@ -1,27 +1,60 @@
-/* ── DurationPill animations ─────────────────────────────────────────────── */
+/* ── DurationPill ── */
 
-@keyframes durIconEnter {
-  0%   { opacity: 0; transform: scale(0) rotate(-180deg); }
-  60%  { transform: scale(1.2) rotate(10deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+.duration-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #EAEDFA;
+  border: 0.5px solid #8194E1;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
-@keyframes durStarMain {
-  0%,  100% { transform: scale(1)    rotate(0deg); }
-  50%        { transform: scale(1.15) rotate(8deg); }
+.pill-text-track {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
-@keyframes durStarTwinkle1 {
-  0%,  100% { opacity: 0.6; }
-  50%        { opacity: 0.1; }
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-@keyframes durStarTwinkle2 {
-  0%,  100% { opacity: 0.4; }
-  50%        { opacity: 0.1; }
+.pill-text-inner {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee 14s linear infinite;
 }
 
-@keyframes shimmerText {
-  0%   { background-position: 0%   center; }
-  100% { background-position: 200% center; }
+.duration-pill:hover .pill-text-inner {
+  animation-play-state: paused;
+}
+
+.pill-segment-bold {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2D4CCD;
+  font-family: 'Poppins', sans-serif;
+}
+
+.pill-separator {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2D4CCD;
+  font-family: 'Poppins', sans-serif;
+}
+
+.pill-segment-regular {
+  font-size: 12px;
+  font-weight: 400;
+  color: #2D4CCD;
+  font-family: 'Poppins', sans-serif;
 }

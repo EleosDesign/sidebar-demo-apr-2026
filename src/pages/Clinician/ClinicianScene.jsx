@@ -4332,12 +4332,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
           </button>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 600, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>{clientName}</span>
-            <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>
+            {clientName !== 'Ryan Cho' && <span style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', lineHeight: 1.66, letterSpacing: '0.4px' }}>{sessionSubtitle}</span>}
           </div>
           <FigmaUserAvatar />
         </div>
         {clientName === 'Ryan Cho' && (
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+          <div style={{ marginTop: 8 }}>
             <DurationPill />
           </div>
         )}
@@ -5035,6 +5035,232 @@ const IconClock = () => (
     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
   </svg>
 );
+const IconBar = () => (
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+    <rect x="1.5" y="8" width="3" height="6" rx="0.5" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2"/>
+    <rect x="6.5" y="5" width="3" height="9" rx="0.5" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2"/>
+    <rect x="11.5" y="2" width="3" height="12" rx="0.5" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2"/>
+  </svg>
+);
+const IconSearch = () => (
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+    <circle cx="7" cy="7" r="4.5" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2"/>
+    <path d="M10.5 10.5L14 14" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinecap="round"/>
+  </svg>
+);
+const IconShieldMdm = () => (
+  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+    <path d="M8 2L3 4.5V8c0 3 2.5 5 5 6 2.5-1 5-3 5-6V4.5L8 2Z" stroke="rgba(0,0,0,0.5)" strokeWidth="1.2" strokeLinejoin="round"/>
+  </svg>
+);
+const IconChevron = ({ open }) => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0, transition: 'transform 0.18s ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+    <path d="M2.5 4.5L6 8L9.5 4.5" stroke="rgba(0,0,0,0.4)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+// ── MDM Coding helpers ────────────────────────────────────────────────────────
+const MDM_LEVELS = ['Minimal/None', 'Limited', 'Moderate', 'Extensive'];
+const PATIENT_OPTS = ['Established', 'New'];
+const LOCATION_OPTS = ['Outpatient/Office', 'Home/Residential'];
+
+function deriveMdmOverall(p, d, r) {
+  const idx = v => MDM_LEVELS.indexOf(v);
+  const sorted = [idx(p), idx(d), idx(r)].sort((a, b) => a - b);
+  return MDM_LEVELS[sorted[1]];
+}
+
+function deriveCptCode(patient, location, mdm) {
+  const C = {
+    'Outpatient/Office': {
+      Established: { 'Minimal/None': '99211', Limited: '99212', Moderate: '99213', Extensive: '99214' },
+      New:         { 'Minimal/None': '99202', Limited: '99202', Moderate: '99203', Extensive: '99204' },
+    },
+    'Home/Residential': {
+      Established: { 'Minimal/None': '99347', Limited: '99348', Moderate: '99349', Extensive: '99350' },
+      New:         { 'Minimal/None': '99341', Limited: '99342', Moderate: '99343', Extensive: '99345' },
+    },
+  };
+  return C[location]?.[patient]?.[mdm] || '99213';
+}
+
+const MDM_J = {
+  patient: {
+    Established: 'Prior visit history confirms this is a returning patient — new patient evaluation criteria do not apply.',
+    New: 'No prior visit history was found at this practice. New patient evaluation criteria and codes are required.',
+  },
+  location: {
+    'Outpatient/Office': 'Documentation reflects an in-person visit at the clinic address. Home visit modifiers are not applicable.',
+    'Home/Residential': 'Service documentation reflects care delivered at the patient\'s home or residential setting.',
+  },
+  problems:   'Two active chronic conditions required active management with recent treatment changes. Multiple chronic conditions with exacerbation qualify as Moderate complexity.',
+  dataReview: 'External records reviewed and independent follow-up labs ordered and reviewed. Meets the Moderate threshold for data review.',
+  risk:       'New prescription drug management with monitoring qualifies this encounter for Moderate risk.',
+};
+
+// ValuePill — always blue (no conditional color coding by MDM level)
+function MdmValuePill({ val, pending }) {
+  return (
+    <span style={{
+      background: pending ? 'rgb(254,243,199)' : 'rgb(227,242,253)',
+      color:      pending ? 'rgb(146,64,14)'   : '#2d4ccd',
+      fontSize: 11.5, fontWeight: 600, borderRadius: 4,
+      padding: '2px 8px', flexShrink: 0,
+      fontFamily: 'Poppins, sans-serif',
+      transition: 'all 0.15s ease',
+    }}>{val}</span>
+  );
+}
+
+function MdmJustBlock({ text }) {
+  return (
+    <div style={{ background: 'rgb(227,242,253)', borderRadius: 8, padding: '9px 11px', marginBottom: 10 }}>
+      <p style={{ margin: 0, fontSize: 11.5, color: '#2d4ccd', lineHeight: 1.6, fontFamily: 'Poppins, sans-serif' }}>{text}</p>
+    </div>
+  );
+}
+
+const MDM_CORRECTION_REASONS = [
+  { id: 'wrong_context', label: 'Wrong context' },
+  { id: 'missing_info',  label: 'Missing docs'  },
+  { id: 'ai_error',      label: 'AI error'      },
+  { id: 'other',         label: 'Other'         },
+];
+
+function MdmReasonPrompt({ pendingValue, onConfirm }) {
+  const [sel, setSel] = useState(null);
+  return (
+    <div style={{ marginTop: 8, padding: '10px 11px', background: 'rgb(249,250,251)', border: '1px solid rgb(229,231,235)', borderRadius: 8 }}>
+      <p style={{ margin: '0 0 7px', fontSize: 10, fontWeight: 600, color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'Poppins, sans-serif' }}>What went wrong?</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginBottom: 9 }}>
+        {MDM_CORRECTION_REASONS.map(r => (
+          <button key={r.id} onClick={() => setSel(r.id)} style={{
+            padding: '4px 11px', borderRadius: 999, fontSize: 11, fontFamily: 'Poppins, sans-serif',
+            fontWeight: sel === r.id ? 600 : 400, cursor: 'pointer',
+            background: sel === r.id ? '#2d4ccd' : 'white',
+            color: sel === r.id ? 'white' : 'rgba(0,0,0,0.87)',
+            border: `1.5px solid ${sel === r.id ? '#2d4ccd' : 'rgb(209,213,219)'}`,
+            transition: 'all 0.12s ease',
+          }}>{r.label}</button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+        <button onClick={() => onConfirm(pendingValue, null)} style={{ background: 'none', border: 'none', fontSize: 11, color: 'rgba(0,0,0,0.5)', fontFamily: 'Poppins, sans-serif', cursor: 'pointer', textDecoration: 'underline' }}>Skip</button>
+        <button onClick={() => { if (sel) onConfirm(pendingValue, sel); }} style={{ padding: '4px 13px', borderRadius: 999, fontSize: 11, fontWeight: 600, fontFamily: 'Poppins, sans-serif', cursor: sel ? 'pointer' : 'not-allowed', background: sel ? '#2d4ccd' : 'rgb(229,231,235)', color: sel ? 'white' : 'rgba(0,0,0,0.5)', border: 'none', transition: 'all 0.12s ease' }}>Submit</button>
+      </div>
+    </div>
+  );
+}
+
+// Factor row — resting state with expand/collapse and inline correction. Pencil always visible.
+function MdmFactorRow({ icon, label, value, justification, expanded, onToggle, overridden, onChange }) {
+  const [pend, setPend] = useState(null);
+  const [showR, setShowR] = useState(false);
+  const disp = showR ? pend : value;
+
+  const handleChip = v => { if (v !== value) { setPend(v); setShowR(true); } };
+  const handleConfirm = (nv, r) => { onChange(nv, r); setPend(null); setShowR(false); };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          {icon}
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: showR ? '#2d4ccd' : 'rgba(0,0,0,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <MdmValuePill val={disp} pending={showR} />
+          {!showR && (
+            <button onClick={() => handleChip(value)} title={`Override ${label}`}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 3px', display: 'flex', alignItems: 'center', borderRadius: 4, color: '#2d4ccd' }}>
+              <IconPencil />
+            </button>
+          )}
+          <button onClick={onToggle} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 2px', display: 'flex', alignItems: 'center', borderRadius: 4 }}>
+            <IconChevron open={expanded} />
+          </button>
+        </div>
+      </div>
+      {expanded && (
+        <div style={{ padding: '0 12px 10px' }}>
+          <MdmJustBlock text={overridden ? `User selected ${value}.` : justification} />
+        </div>
+      )}
+      {showR && pend && (
+        <div style={{ padding: '0 12px 10px' }}>
+          <MdmReasonPrompt pendingValue={pend} onConfirm={handleConfirm} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Patient / Location row — inline pencil always visible
+function MdmInlineRow({ icon, label, value, options, justification, overridden, onChange }) {
+  const [unlocked, setUnlocked] = useState(false);
+  const [pend, setPend] = useState(null);
+  const [showR, setShowR] = useState(false);
+  const disp = showR ? pend : value;
+
+  const handleChip = v => { if (v !== value) { setPend(v); setShowR(true); setUnlocked(false); } };
+  const handleConfirm = (nv, r) => { onChange(nv, r); setPend(null); setShowR(false); setUnlocked(false); };
+
+  return (
+    <div style={{ padding: '13px 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          {icon}
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: (unlocked || showR) ? '#2d4ccd' : 'rgba(0,0,0,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <MdmValuePill val={disp} pending={showR} />
+          {!unlocked && !showR && (
+            <button onClick={() => setUnlocked(true)} title={`Override ${label}`}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 3px', display: 'flex', alignItems: 'center', borderRadius: 4, color: '#2d4ccd' }}>
+              <IconPencil />
+            </button>
+          )}
+        </div>
+      </div>
+      {!unlocked && !showR && (
+        <p style={{ margin: 0, fontSize: 12, color: overridden ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.87)', lineHeight: 1.65, fontStyle: overridden ? 'italic' : 'normal', fontFamily: 'Poppins, sans-serif' }}>
+          {overridden ? `User selected ${value}.` : justification}
+        </p>
+      )}
+      {unlocked && !showR && (
+        <>
+          <MdmJustBlock text={justification} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {options.map(o => (
+              <button key={o} onClick={() => handleChip(o)} style={{ ...cptChipBase, ...(o === value ? cptChipActive : {}) }}>{o}</button>
+            ))}
+          </div>
+        </>
+      )}
+      {showR && pend && <MdmReasonPrompt pendingValue={pend} onConfirm={handleConfirm} />}
+    </div>
+  );
+}
+
+// Factor row in full edit mode
+function MdmFactorRowEdit({ icon, label, value, onChange }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px 6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          {icon}
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: 'rgba(0,0,0,0.87)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+        </div>
+        <MdmValuePill val={value} />
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '0 12px 10px' }}>
+        {MDM_LEVELS.map(o => (
+          <button key={o} onClick={() => onChange(o)} style={{ ...cptChipBase, ...(value === o ? cptChipActive : {}) }}>{o}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ── Shared CPT card primitives ────────────────────────────────────────────────
 const P_CPT = { fontFamily: 'Poppins, sans-serif' };
@@ -5076,93 +5302,166 @@ const BadgeAddOn = ({ compactMode = false }) => (
 );
 
 function PrimaryCptCard({ compactMode = false }) {
-  const [patient, setPatient] = useState('Established');
-  const [location, setLocation] = useState('Outpatient/Office');
-  const [complexity, setComplexity] = useState('Moderate');
-  const [confirmed, setConfirmed] = useState(true);
+  const [patient,    setPatient]    = useState('Established');
+  const [location,   setLocation]   = useState('Outpatient/Office');
+  const [problems,   setProblems]   = useState('Moderate');
+  const [dataReview, setDataReview] = useState('Moderate');
+  const [risk,       setRisk]       = useState('Moderate');
+  const [tmp,        setTmp]        = useState({ patient: 'Established', location: 'Outpatient/Office', problems: 'Moderate', dataReview: 'Moderate', risk: 'Moderate' });
+  const [overridden, setOverridden] = useState({ patient: false, location: false, problems: false, dataReview: false, risk: false });
+  const [expanded,   setExpanded]   = useState({ problems: false, dataReview: false, risk: false });
+  const [isEditing,  setIsEditing]  = useState(false);
 
-  const getCptCode = () => {
-    if (complexity === 'Extensive')    return '99215';
-    if (complexity === 'Moderate')     return '99214';
-    if (complexity === 'Limited')      return '99213';
-    return '99212';
+  const toggleExp = k => setExpanded(p => ({ ...p, [k]: !p[k] }));
+  const overall    = deriveMdmOverall(problems, dataReview, risk);
+  const tmpOverall = deriveMdmOverall(tmp.problems, tmp.dataReview, tmp.risk);
+  const cptCode    = deriveCptCode(patient, location, overall);
+
+  const handleCorrection = (key, nv) => {
+    if (key === 'patient')    setPatient(nv);
+    if (key === 'location')   setLocation(nv);
+    if (key === 'problems')   setProblems(nv);
+    if (key === 'dataReview') setDataReview(nv);
+    if (key === 'risk')       setRisk(nv);
+    setOverridden(p => ({ ...p, [key]: true }));
   };
 
-  const complexityText = {
-    Moderate:       'Moderate medical decision-making complexity. Patient presented for ongoing anxiety management and CBT work.',
-    Extensive:      'High complexity with extensive medical decision-making. Multiple chronic conditions requiring active management.',
-    Limited:        'Limited complexity. Amount and/or complexity of data reviewed and analyzed is limited.',
-    'Minimal/None': 'Minimal complexity with straightforward medical decision making.',
+  const startEdit = () => { setTmp({ patient, location, problems, dataReview, risk }); setIsEditing(true); };
+  const cancel    = () => setIsEditing(false);
+  const confirm   = () => {
+    setPatient(tmp.patient); setLocation(tmp.location);
+    setProblems(tmp.problems); setDataReview(tmp.dataReview); setRisk(tmp.risk);
+    const defaults = { patient: 'Established', location: 'Outpatient/Office', problems: 'Moderate', dataReview: 'Moderate', risk: 'Moderate' };
+    setOverridden({
+      patient:    tmp.patient    !== defaults.patient,
+      location:   tmp.location   !== defaults.location,
+      problems:   tmp.problems   !== defaults.problems,
+      dataReview: tmp.dataReview !== defaults.dataReview,
+      risk:       tmp.risk       !== defaults.risk,
+    });
+    setIsEditing(false);
   };
+
+  const factors = [
+    { key: 'problems',   label: 'Problems',    icon: <IconBar /> },
+    { key: 'dataReview', label: 'Data Review', icon: <IconSearch /> },
+    { key: 'risk',       label: 'Risk',        icon: <IconShieldMdm /> },
+  ];
 
   return (
     <div style={cptCard}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={cptCodeLabel}>Code {getCptCode()}</span>
+        <span style={cptCodeLabel}>Code {cptCode}</span>
         <BadgePrimary compactMode={compactMode} />
       </div>
 
-      {confirmed ? (
-        <>
-          <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div>
-              <div style={cptLabel}><IconUser />Patient</div>
-              <span style={cptValue}>{patient === 'Established' ? 'Patient is established and not new to the practice.' : 'Patient is new to the practice.'}</span>
+      {/* Inner lavender panel */}
+      <div style={{ background: '#f4f6ff', borderRadius: 9, overflow: 'hidden' }}>
+
+        {/* Patient */}
+        {isEditing ? (
+          <div style={{ padding: '13px 14px', borderBottom: '1px solid rgb(235,237,244)', background: 'white' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 7 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <IconUser />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: '#2d4ccd', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Patient</span>
+              </div>
+              <MdmValuePill val={tmp.patient} />
             </div>
-            <div style={cptDivider} />
-            <div>
-              <div style={cptLabel}><IconMapPin />Location</div>
-              <span style={cptValue}>Service was provided in an {location === 'Outpatient/Office' ? 'outpatient/office' : 'home/residential'} setting.</span>
-            </div>
-            <div style={cptDivider} />
-            <div>
-              <div style={cptLabel}><IconLayers />Complexity</div>
-              <span style={cptValue}>{complexityText[complexity]}</span>
+            <MdmJustBlock text={MDM_J.patient[patient]} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {PATIENT_OPTS.map(o => <button key={o} onClick={() => setTmp(t => ({ ...t, patient: o }))} style={{ ...cptChipBase, ...(tmp.patient === o ? cptChipActive : {}) }}>{o}</button>)}
             </div>
           </div>
-          <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
-        </>
+        ) : (
+          <div style={{ borderBottom: '1px solid rgb(235,237,244)' }}>
+            <MdmInlineRow icon={<IconUser />} label="Patient" value={patient} options={PATIENT_OPTS}
+              justification={MDM_J.patient[patient]} overridden={overridden.patient}
+              onChange={nv => handleCorrection('patient', nv)} />
+          </div>
+        )}
+
+        {/* Location */}
+        {isEditing ? (
+          <div style={{ padding: '13px 14px', borderBottom: '1px solid rgb(235,237,244)', background: 'white' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 7 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <IconMapPin />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: '#2d4ccd', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Location</span>
+              </div>
+              <MdmValuePill val={tmp.location} />
+            </div>
+            <MdmJustBlock text={MDM_J.location[location]} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {LOCATION_OPTS.map(o => <button key={o} onClick={() => setTmp(t => ({ ...t, location: o }))} style={{ ...cptChipBase, ...(tmp.location === o ? cptChipActive : {}) }}>{o}</button>)}
+            </div>
+          </div>
+        ) : (
+          <div style={{ borderBottom: '1px solid rgb(235,237,244)' }}>
+            <MdmInlineRow icon={<IconMapPin />} label="Location" value={location} options={LOCATION_OPTS}
+              justification={MDM_J.location[location]} overridden={overridden.location}
+              onChange={nv => handleCorrection('location', nv)} />
+          </div>
+        )}
+
+        {/* MDM */}
+        {isEditing ? (
+          <div style={{ padding: '11px 14px 13px', background: 'white' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <IconBar />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: '#2d4ccd', textTransform: 'uppercase', letterSpacing: '0.06em' }}>MDM</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <MdmValuePill val={tmpOverall} />
+                <span style={{ fontSize: 10.5, color: 'rgba(0,0,0,0.4)', fontStyle: 'italic', fontFamily: 'Poppins, sans-serif' }}>derived</span>
+              </div>
+            </div>
+            <div style={{ border: '1px solid rgba(33,33,33,0.15)', borderRadius: 8, overflow: 'hidden' }}>
+              {factors.map(({ key, label, icon }, i) => (
+                <div key={key}>
+                  <MdmFactorRowEdit icon={icon} label={label} value={tmp[key]} onChange={v => setTmp(t => ({ ...t, [key]: v }))} />
+                  {i < 2 && <div style={{ height: 1, background: 'rgb(235,237,244)', margin: '0 14px' }} />}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ padding: '11px 14px 13px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <IconBar />
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 10.5, color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>MDM</span>
+              </div>
+              <MdmValuePill val={overall} />
+            </div>
+            <div style={{ border: '1px solid rgba(33,33,33,0.15)', borderRadius: 8, overflow: 'hidden', background: 'white' }}>
+              {factors.map(({ key, label, icon }, i) => (
+                <div key={key}>
+                  <MdmFactorRow icon={icon} label={label}
+                    value={{ problems, dataReview, risk }[key]}
+                    justification={MDM_J[key]}
+                    expanded={expanded[key]} onToggle={() => toggleExp(key)}
+                    overridden={overridden[key]}
+                    onChange={nv => handleCorrection(key, nv)} />
+                  {i < 2 && <div style={{ height: 1, background: 'rgb(235,237,244)', margin: '0 14px' }} />}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      {isEditing ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 11, paddingTop: 10, borderTop: '1px solid rgba(0,0,0,0.12)' }}>
+          <button onClick={cancel} style={{ background: 'none', border: 'none', color: 'rgba(0,0,0,0.4)', fontSize: 12, fontWeight: 500, fontFamily: 'Poppins, sans-serif', cursor: 'pointer' }}>Cancel</button>
+          <div style={{ width: 1, height: 13, background: 'rgba(0,0,0,0.12)' }} />
+          <button onClick={confirm} style={{ background: 'none', border: 'none', color: '#2d4ccd', fontSize: 12, fontWeight: 700, fontFamily: 'Poppins, sans-serif', cursor: 'pointer' }}>Confirm</button>
+        </div>
       ) : (
-        <>
-          <div style={{ ...cptPanel, display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {/* Patient */}
-            <div>
-              <div style={{ ...cptLabel, marginBottom: 8 }}><IconUser />Patient</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                {['Established', 'New'].map(opt => (
-                  <button key={opt} onClick={() => setPatient(opt)} style={{ ...cptChipBase, ...(patient === opt ? cptChipActive : {}) }}>{opt}</button>
-                ))}
-              </div>
-            </div>
-            <div style={cptDivider} />
-            {/* Location */}
-            <div style={{ marginTop: 12 }}>
-              <div style={{ ...cptLabel, marginBottom: 8 }}><IconMapPin />Location</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                {['Home/Residential', 'Outpatient/Office'].map(opt => (
-                  <button key={opt} onClick={() => setLocation(opt)} style={{ ...cptChipBase, ...(location === opt ? cptChipActive : {}) }}>{opt}</button>
-                ))}
-              </div>
-            </div>
-            <div style={cptDivider} />
-            {/* Complexity */}
-            <div style={{ marginTop: 12 }}>
-              <div style={{ ...cptLabel, marginBottom: 4 }}><IconLayers />Complexity</div>
-              <p style={{ ...P_CPT, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', margin: '0 0 8px' }}>What level of data was reviewed and analyzed?</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {['Minimal/None', 'Limited', 'Moderate', 'Extensive'].map(opt => (
-                  <button key={opt} onClick={() => setComplexity(opt)} style={{ ...cptChipBase, ...(complexity === opt ? cptChipActive : {}) }}>{opt}</button>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
-            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
-            <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-            <button style={cptEditBtn} onClick={() => setConfirmed(true)}>Confirm</button>
-          </div>
-        </>
+        <button style={cptEditBtn} onClick={startEdit}><IconPencil />Edit Data</button>
       )}
     </div>
   );
