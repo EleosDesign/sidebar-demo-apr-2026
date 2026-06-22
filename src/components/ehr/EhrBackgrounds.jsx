@@ -1309,6 +1309,7 @@ export function InsyncBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 7. CARELOGIC
 // ═══════════════════════════════════════════════════════════════════════════════
 export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeNav, setActiveNav] = useState('Favorites');
   const [activeSide, setActiveSide] = useState('Individual Behavioral Health Counseling Note');
   const navItems = ['Favorites', 'Schedule', 'Front Desk', 'Point of Entry', 'Client', 'Employee', 'Administration', 'Billing/AR', 'BI', 'MY ALERTS'];
@@ -1318,36 +1319,28 @@ export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) 
     <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
       {/* Thin purple bar */}
       <div style={{ height: 5, background: '#4a1278', flexShrink: 0 }} />
+
       {/* Header */}
-      <div style={{ background: '#8aacc8', display: 'flex', alignItems: 'center', padding: '8px 16px', gap: 14, flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          <svg width="40" height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="18" fill="#3db882"/>
-            <circle cx="20" cy="20" r="10" fill="none" stroke="#fff" strokeWidth="3"/>
-            <circle cx="20" cy="20" r="4" fill="#fff"/>
-            <circle cx="28" cy="12" r="5" fill="#3db882" stroke="#fff" strokeWidth="2.5"/>
-          </svg>
-          <div>
-            <div style={{ fontWeight: 400, fontSize: 13.5, color: '#fff' }}>QUALI<strong>FACTS</strong>™</div>
-            <div style={{ fontSize: 12, color: '#d0eee8', fontWeight: 500 }}>carelogic</div>
-          </div>
-        </div>
-        <div style={{ position: 'relative', flex: '0 0 270px' }}>
+      <div style={{ background: '#8aacc8', display: 'flex', alignItems: 'center', padding: '6px 16px', gap: 14, flexShrink: 0, minHeight: 56 }}>
+        {/* Logo — white background panel so the PNG renders correctly against the blue-gray header */}
+        <img src="/qualifacts-carelogic-logo.png" alt="Qualifacts Carelogic" style={{ height: 34, width: 'auto', display: 'block', mixBlendMode: 'multiply' }} />
+        {/* Client search */}
+        <div style={{ position: 'relative', flex: '0 0 260px' }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.2" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input placeholder="Client Search" style={{ width: '100%', padding: '7px 10px 7px 30px', border: 'none', borderRadius: 4, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} />
+          <input placeholder="Client Search" style={{ width: '100%', padding: '7px 10px 7px 30px', border: 'none', borderRadius: 4, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} readOnly />
         </div>
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {/* Bell */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="1.8" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          {/* Home */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="1.8" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          {/* Email */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
-          {/* Logout */}
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        {/* Right-side icons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18, color: '#1a2b5e' }}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+          <span style={{ fontSize: 12, color: '#fff', fontWeight: 500 }}>Training, Eleos (25291)</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <div style={{ background: '#c0392b', color: '#fff', borderRadius: 3, padding: '2px 8px', fontSize: 11, fontWeight: 700 }}>PRODUCTION</div>
         </div>
       </div>
+
       {/* Nav bar */}
       <div style={{ background: '#a8bfd4', display: 'flex', alignItems: 'stretch', flexShrink: 0, borderBottom: '1px solid #8aacc8' }}>
         <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '0 10px', display: 'flex', alignItems: 'center' }}>
@@ -1356,8 +1349,8 @@ export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) 
         {navItems.map(item => (
           <button key={item} onClick={() => setActiveNav(item)} style={{
             background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 13px', fontSize: 13,
-            fontWeight: activeNav === item ? 600 : 400,
-            color: item === 'MY ALERTS' ? '#c83800' : '#1a2b5e',
+            fontWeight: activeNav === item ? 700 : 400,
+            color: item === 'MY ALERTS' ? '#c0392b' : '#1a2b5e',
             borderBottom: activeNav === item ? '3px solid #1a2b5e' : '3px solid transparent',
             whiteSpace: 'nowrap', flexShrink: 0,
           }}>{item}</button>
@@ -1365,37 +1358,46 @@ export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) 
         <div style={{ flex: 1 }} />
         <button style={{ background: '#1a2b5e', color: '#fff', border: 'none', cursor: 'pointer', padding: '0 18px', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>Return to Schedule</button>
       </div>
-      {/* Content */}
+
+      {/* Body */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         {/* Left sidebar */}
-        <div style={{ width: 196, background: '#b4c8d8', borderRight: '1px solid #8aacc8', flexShrink: 0, overflowY: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', padding: '9px 10px', borderBottom: '1px solid #9ab4c8' }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="2.5" style={{ marginRight: 6 }}><polyline points="15 18 9 12 15 6"/></svg>
-            <span style={{ fontSize: 12.5, fontWeight: 700, color: '#1a2b5e', lineHeight: 1.3 }}>Clinical Progress Note (OBH)</span>
+        <div style={{ width: 200, background: '#b4c8d8', borderRight: '1px solid #8aacc8', flexShrink: 0, overflowY: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', padding: '9px 10px', borderBottom: '1px solid #9ab4c8', gap: 5 }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#1a2b5e" strokeWidth="2.5" style={{ marginTop: 2, flexShrink: 0 }}><polyline points="15 18 9 12 15 6"/></svg>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#1a2b5e', lineHeight: 1.3 }}>Clinical Progress Note (OBH)</span>
+          </div>
+          <div style={{ padding: '6px 10px 4px', fontSize: 11.5, color: '#1a2b5e', borderBottom: '1px solid #9ab4c8' }}>
+            {clientName}<br />
+            <span style={{ color: '#3a5a80' }}>5/25/2009</span>
           </div>
           {sideItems.map(item => (
             <div key={item} onClick={() => setActiveSide(item)} style={{
-              padding: '9px 10px 9px 18px', fontSize: 13, color: '#1a2b5e', cursor: 'pointer',
-              background: activeSide === item ? 'rgba(26,43,94,0.1)' : 'transparent',
-              borderBottom: '1px solid rgba(255,255,255,0.35)',
+              padding: '9px 10px 9px 16px', fontSize: 13, color: '#1a2b5e', cursor: 'pointer',
+              background: activeSide === item ? 'rgba(26,43,94,0.12)' : 'transparent',
+              borderBottom: '1px solid rgba(255,255,255,0.4)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              fontWeight: activeSide === item ? 600 : 400,
             }}>
               <span>{item}</span>
-              {activeSide === item && <span style={{ fontSize: 9, color: '#1a2b5e' }}>▶</span>}
+              {activeSide === item && <svg width="8" height="12" viewBox="0 0 8 12"><polyline points="1 1 7 6 1 11" fill="none" stroke="#1a2b5e" strokeWidth="1.8"/></svg>}
             </div>
           ))}
-          <div style={{ height: 8 }} />
-          <div style={{ padding: '8px 10px 6px 18px', borderTop: '1px solid #9ab4c8' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1a2b5e' }}>Document List</span>
+          <div style={{ borderTop: '1px solid #9ab4c8', marginTop: 4 }}>
+            <div style={{ padding: '8px 10px 4px 16px', fontSize: 13, fontWeight: 700, color: '#1a2b5e' }}>Document List</div>
           </div>
         </div>
-        {/* Note + right panel */}
+
+        {/* Main content */}
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          <div style={{ flex: '0 0 60%', overflowY: 'auto', padding: '16px 22px', background: '#fff' }}>
-            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#888' fontSize={13} borderColor='#ccc' minHeight={180} borderRadius={5} />
+          {/* Note area */}
+          <div style={{ flex: '0 0 62%', overflowY: 'auto', padding: '18px 24px', background: '#fff' }}>
+            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField}
+              labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={170} borderRadius={4} />
           </div>
-          <div style={{ width: 1, background: '#d8d8d8', flexShrink: 0 }} />
-          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ width: 1, background: '#dde1e7', flexShrink: 0 }} />
+          {/* Right panel placeholder */}
+          <div style={{ flex: 1, background: '#f0f4f8' }} />
         </div>
       </div>
     </div>
@@ -2459,7 +2461,7 @@ export const EHR_LABELS = {
   echo:         'Echo',
   credible:     'Credible',
   insync:       'Insync',
-  carlogic:     'Carelogic',
+  carlogic:     'Qualifacts Carelogic',
   myevolve:     'myEvolv',
   myavatar:     'myAvatar',
   kipu:         'Kipu',
