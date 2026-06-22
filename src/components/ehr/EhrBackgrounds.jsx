@@ -9,6 +9,8 @@ import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 import EnhancePointer from '../enhance/EnhancePointer';
+import insyncDashboard from '../../assets/insync-dashboard.png';
+import insyncNote from '../../assets/insync-note.png';
 
 // ── Shared stacked textarea renderer ─────────────────────────────────────────
 // Maps note field IDs to EhrFieldContext keys for dirty-tracking.
@@ -1182,160 +1184,75 @@ export function CredibleBg({ noteValues = {}, onNoteChange, highlightedField }) 
 // 6. INSYNC
 // ═══════════════════════════════════════════════════════════════════════════════
 export function InsyncBg({ noteValues = {}, onNoteChange, highlightedField }) {
-  const { clientName } = useEhrContext();
-  const [activeTab, setActiveTab] = useState('Session Progress Note');
-  const sideIcons = [
-    <svg key="a" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-    <svg key="b" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>,
-    <svg key="c" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="7" r="3"/><path d="M2 20c0-3 3-5 7-5s7 2 7 5"/><circle cx="19" cy="9" r="2"/><path d="M19 14c2 0 4 1.5 4 3"/></svg>,
-    <svg key="d" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
-    <svg key="e" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
-    <svg key="f" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-    <svg key="g" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
-    <svg key="h" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="19" y1="14" x2="19" y2="20"/><line x1="16" y1="17" x2="22" y2="17"/></svg>,
-    <svg key="i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>,
-    <svg key="j" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a6a84" strokeWidth="1.8" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
-  ];
-  const toolbarIcons = [
-    { bg: '#4a9fd4', icon: 'bookmark' }, { bg: '#4a9fd4', icon: 'print' },
-    { bg: '#e87c3e', icon: 'attach' },   { bg: '#3aad6e', icon: 'cal' },
-    { bg: '#4a9fd4', icon: 'person' },   { bg: '#e84a4a', icon: 'flag' },
-    { bg: '#7a6aad', icon: 'shield' },   { bg: '#7a8a9a', icon: 'person' },
-    { bg: '#3ab8d4', icon: 'cam' },      { bg: '#7a8a9a', icon: 'refresh' },
-    { bg: '#3aad6e', icon: 'down' },     { bg: '#4a9fd4', icon: 'up' },
-    { bg: '#7a8a9a', icon: 'list' },     { bg: '#3ab8d4', icon: 'grid' },
-  ];
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Purple accent bar */}
-      <div style={{ height: 6, background: '#4a1278', flexShrink: 0 }} />
-      {/* Main header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px', background: '#fff', borderBottom: '1px solid #e8e8e8', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#1c2e72', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ color: '#fff', fontWeight: 900, fontSize: 17, fontFamily: 'Georgia,serif', lineHeight: 1 }}>Q</span>
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 13.5, color: '#1c2e72', letterSpacing: '0.06em' }}>QUALIFACTS</div>
-            <div style={{ fontSize: 12, color: '#3a9fd4', fontWeight: 600, letterSpacing: '0.02em' }}>insync</div>
-          </div>
-        </div>
-        <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, border: '1px solid #ddd', borderRadius: 5, padding: '5px 10px', cursor: 'pointer' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-            <span style={{ fontSize: 12.5, color: '#333' }}>Test Provider (Prescri...</span>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2.2"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </div>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#f5f5f5' }}>
+
+      {/* Layer 1 — Dashboard background (ref: 1771×942px) */}
+      <img
+        src={insyncDashboard}
+        alt=""
+        style={{
+          position: 'absolute',
+          top: '-9.02%', left: '-0.28%',
+          width: '100.56%', height: '109.02%',
+          objectFit: 'fill', pointerEvents: 'none', userSelect: 'none',
+        }}
+      />
+
+      {/* Purple header bar patches */}
+      <div style={{ position: 'absolute', left: 0, top: '0.85%', width: '18.01%', height: '2.65%', background: '#382866' }} />
+      <div style={{ position: 'absolute', left: '91.13%', top: '0.74%', width: '8.75%', height: '2.65%', background: '#382866' }} />
+
+      {/* Layer 2 — Note of Session overlay */}
+      <div style={{ position: 'absolute', left: '2.88%', top: '10.83%', width: '96.72%', height: '85.77%', overflow: 'hidden' }}>
+        <img
+          src={insyncNote}
+          alt=""
+          style={{
+            position: 'absolute',
+            top: '-5.74%', left: 0,
+            width: '100%', height: '110.73%',
+            objectFit: 'fill', pointerEvents: 'none', userSelect: 'none',
+          }}
+        />
       </div>
-      {/* Sub-header: Note of Session */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '6px 14px', background: '#fff', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 28, height: 28, background: '#3a6fc4', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </div>
-          <span style={{ fontWeight: 700, fontSize: 14, color: '#1a2540' }}>Note of Session</span>
-          <div style={{ width: 22, height: 22, borderRadius: 3, background: '#f0f4f8', border: '1px solid #dde4ee', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          </div>
-        </div>
-        <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {toolbarIcons.map((ic, i) => (
-            <div key={i} style={{ width: 22, height: 22, borderRadius: 3, background: ic.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-                {ic.icon === 'bookmark' && <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>}
-                {ic.icon === 'print' && <><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></>}
-                {ic.icon === 'attach' && <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>}
-                {ic.icon === 'cal' && <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>}
-                {ic.icon === 'person' && <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>}
-                {ic.icon === 'flag' && <><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></>}
-                {ic.icon === 'shield' && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>}
-                {ic.icon === 'cam' && <><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></>}
-                {ic.icon === 'refresh' && <><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></>}
-                {ic.icon === 'down' && <polyline points="6 9 12 15 18 9"/>}
-                {ic.icon === 'up' && <polyline points="18 15 12 9 6 15"/>}
-                {ic.icon === 'list' && <><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></>}
-                {ic.icon === 'grid' && <><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></>}
-              </svg>
-            </div>
-          ))}
-        </div>
+
+      {/* Tab bar patches */}
+      <div style={{ position: 'absolute', left: '7.17%', top: '15.60%', width: '13.21%', height: '2.34%', background: '#fff5dd' }} />
+      <div style={{ position: 'absolute', left: '19.31%', top: '15.60%', width: '1.75%', height: '2.34%', background: '#fff5dd' }} />
+      <div style={{ position: 'absolute', left: '39.07%', top: '15.60%', width: '7.85%', height: '2.02%', background: '#e8e8f2' }} />
+
+      {/* Three yellow dots decoration */}
+      <div style={{ position: 'absolute', top: '29.52%', right: '2.5%', bottom: '68.16%', left: '97.12%' }}>
+        <svg style={{ display: 'block', width: '100%', height: '100%' }} fill="none" viewBox="0 0 6.66675 23.7731">
+          <ellipse cx="3.33334" cy="3.05655" fill="#F6CF7E" rx="3.33333" ry="3.05655" />
+          <ellipse cx="3.33341" cy="11.8866" fill="#F6CF7E" rx="3.33333" ry="3.05655" />
+          <ellipse cx="3.33341" cy="20.7166" fill="#F6CF7E" rx="3.33333" ry="3.05655" />
+        </svg>
       </div>
-      {/* Content row */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Left icon sidebar */}
-        <div style={{ width: 44, background: '#fff', borderRight: '1px solid #e8edf5', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8, gap: 1, flexShrink: 0 }}>
-          {sideIcons.map((icon, i) => (
-            <button key={i} style={{ background: 'transparent', border: 'none', cursor: 'pointer', width: 40, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
-              {icon}
-            </button>
-          ))}
-          <div style={{ flex: 1 }} />
-          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#888', fontSize: 13, padding: '8px 0', marginBottom: 8 }}>»</button>
-        </div>
-        {/* Main content */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          {/* Patient bar */}
-          <div style={{ background: '#fffde7', borderBottom: '1px solid #e8e4c0', padding: '5px 14px', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-            <div style={{ flex: '0 0 340px', height: 22, background: '#fff', border: '1px solid #ddd', borderRadius: 3, fontSize: 12, color: '#333', display: 'flex', alignItems: 'center', padding: '0 8px' }}>{clientName}</div>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <div style={{ flex: 1 }} />
-            <div style={{ width: 28, height: 28, background: '#3aafd4', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            </div>
-            <div style={{ flex: 1 }} />
-            <div style={{ width: 28, height: 28, background: '#f0f4f8', border: '1px solid #ddd', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            </div>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.2"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          {/* Notes area */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, cursor: 'pointer' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2.2"><polyline points="6 9 12 15 18 9"/></svg>
-              <span style={{ fontWeight: 600, fontSize: 13, color: '#222' }}>General Notes</span>
-            </div>
-            {/* Tabs row */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16, gap: 0 }}>
-              <button style={{ padding: '4px 7px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#777', fontSize: 14 }}>‹</button>
-              {['Session Progress Note', 'Service'].map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                  padding: '5px 14px', cursor: 'pointer', fontSize: 13, marginRight: 3,
-                  background: activeTab === tab ? '#fff' : 'transparent',
-                  color: activeTab === tab ? '#1a2540' : '#666',
-                  fontWeight: activeTab === tab ? 600 : 400,
-                  border: activeTab === tab ? '1px solid #d0dae8' : '1px solid transparent',
-                  borderRadius: 4, boxShadow: activeTab === tab ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                }}>{tab}</button>
-              ))}
-              <button style={{ padding: '4px 7px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#777', fontSize: 14 }}>›</button>
-              <div style={{ flex: 1 }} />
-              <button style={{ background: '#fff', border: '1px solid #d0dae8', borderRadius: 3, padding: '4px 7px', cursor: 'pointer', marginLeft: 4 }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              </button>
-              <button style={{ background: '#fff', border: '1px solid #d0dae8', borderRadius: 3, padding: '4px 7px', cursor: 'pointer', marginLeft: 4 }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </button>
-            </div>
-            {/* Note fields + divider */}
-            <div style={{ display: 'flex', gap: 0, minHeight: 500 }}>
-              <div style={{ flex: '0 0 53%', paddingRight: 22 }}>
-                <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField}
-                  labelColor='#555' labelWeight={500} fontSize={13} borderColor='#d0d8e4' minHeight={175} borderRadius={5} />
-              </div>
-              <div style={{ width: 1, background: '#d8e0ea', flexShrink: 0 }} />
-              <div style={{ flex: 1 }} />
-            </div>
-          </div>
-        </div>
+
+      {/* White note canvas — covers the note form area */}
+      <div style={{ position: 'absolute', left: '4.01%', top: '29.83%', width: '95.09%', height: '70.17%', background: '#fff' }} />
+
+      {/* StackedFields — sits within the white canvas */}
+      <div style={{
+        position: 'absolute',
+        left: '4.01%', top: '29.83%',
+        width: '58%', height: '70.17%',
+        overflowY: 'auto',
+        padding: '18px 24px',
+        boxSizing: 'border-box',
+      }}>
+        <StackedFields
+          noteValues={noteValues}
+          onNoteChange={onNoteChange}
+          highlightedField={highlightedField}
+          labelColor='#555'
+          fontSize={13}
+          borderColor='#d0d8e4'
+          minHeight={160}
+          borderRadius={5}
+        />
       </div>
     </div>
   );
