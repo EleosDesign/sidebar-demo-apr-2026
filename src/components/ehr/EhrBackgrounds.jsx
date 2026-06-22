@@ -4,7 +4,7 @@
  * Patient: Webb, Marcus
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
@@ -1017,8 +1017,50 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 4. ECHO (echoVantage)
 // ═══════════════════════════════════════════════════════════════════════════════
+const ECHO_NAV_ITEMS = [
+  {
+    label: 'Vantage Point', active: false,
+    icon: <path key="a" d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z"/>,
+  },
+  {
+    label: 'Clients', active: true,
+    icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
+  },
+  {
+    label: 'Families', active: false,
+    icon: <><path key="a" d="M9 11.3C10.4 11.3 11.5 10.1 11.5 8.6S10.4 6 9 6 6.5 7.2 6.5 8.6 7.6 11.3 9 11.3zM9 13c-2.3 0-7 1.2-7 3.5V18h14v-1.5c0-2.3-4.7-3.5-7-3.5zm6.5-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.5 2.1c-.5-.1-1-.2-1.5-.2-.7 0-1.4.1-2 .3.9.8 1.5 1.8 1.5 3.3V18H23v-1.5c0-2-3.1-3.1-6-3.4z"/></>,
+  },
+  {
+    label: 'Labs', active: false,
+    icon: <path key="a" d="M19.8 18.4L14 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81H9.05c-.42 0-.65.48-.39.81L10 6.5v4.17L4.2 18.4c-.49.66-.02 1.6.8 1.6h14c.82 0 1.29-.94.8-1.6zM8 16l3.5-4.86V6h1v5.14L16 16H8z"/>,
+  },
+  {
+    label: 'Groups', active: false,
+    icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
+  },
+  {
+    label: 'Eligibility', active: false,
+    icon: <path key="a" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>,
+  },
+  {
+    label: 'Services', active: false,
+    icon: <path key="a" d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>,
+  },
+  {
+    label: 'Client Payments', active: false,
+    icon: <path key="a" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>,
+  },
+  {
+    label: 'Forms', active: false,
+    icon: <path key="a" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>,
+  },
+];
+
 export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
+  const { selectedNoteType } = useNoteTypeContext();
+  const noteTypeLabel = useMemo(() => NOTE_TYPE_LIST.find(t => t.id === selectedNoteType)?.label ?? selectedNoteType, [selectedNoteType]);
+  const sessionDate = useMemo(() => new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), []);
   const [hoveredNav, setHoveredNav] = useState(null);
   const [hoveredIcon, setHoveredIcon] = useState(null);
 
@@ -1031,45 +1073,6 @@ export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const LABEL_BLUE  = '#015595';
   const BODY_TEXT   = '#323333';
   const AVATAR_BLUE = '#1f74b4';
-
-  const navItems = [
-    {
-      label: 'Vantage Point', active: false,
-      icon: <path key="a" d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z"/>,
-    },
-    {
-      label: 'Clients', active: true,
-      icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
-    },
-    {
-      label: 'Families', active: false,
-      icon: <><path key="a" d="M9 11.3C10.4 11.3 11.5 10.1 11.5 8.6S10.4 6 9 6 6.5 7.2 6.5 8.6 7.6 11.3 9 11.3zM9 13c-2.3 0-7 1.2-7 3.5V18h14v-1.5c0-2.3-4.7-3.5-7-3.5zm6.5-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.5 2.1c-.5-.1-1-.2-1.5-.2-.7 0-1.4.1-2 .3.9.8 1.5 1.8 1.5 3.3V18H23v-1.5c0-2-3.1-3.1-6-3.4z"/></>,
-    },
-    {
-      label: 'Labs', active: false,
-      icon: <path key="a" d="M19.8 18.4L14 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81H9.05c-.42 0-.65.48-.39.81L10 6.5v4.17L4.2 18.4c-.49.66-.02 1.6.8 1.6h14c.82 0 1.29-.94.8-1.6zM8 16l3.5-4.86V6h1v5.14L16 16H8z"/>,
-    },
-    {
-      label: 'Groups', active: false,
-      icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
-    },
-    {
-      label: 'Eligibility', active: false,
-      icon: <path key="a" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>,
-    },
-    {
-      label: 'Services', active: false,
-      icon: <path key="a" d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>,
-    },
-    {
-      label: 'Client Payments', active: false,
-      icon: <path key="a" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>,
-    },
-    {
-      label: 'Forms', active: false,
-      icon: <path key="a" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>,
-    },
-  ];
 
   return (
     <div style={{ position: 'absolute', inset: 0, fontFamily: "'Open Sans', Verdana, Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -1117,7 +1120,7 @@ export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
 
         {/* ── Left navigation sidebar ── */}
         <div style={{ width: 175, background: SIDEBAR_BG, display: 'flex', flexDirection: 'column', flexShrink: 0, overflowX: 'hidden', overflowY: 'auto' }}>
-          {navItems.map(item => {
+          {ECHO_NAV_ITEMS.map(item => {
             const isHovered = hoveredNav === item.label;
             return (
               <div
@@ -1168,8 +1171,8 @@ export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
               flexShrink: 0,
             }}>
               <div>
-                <div style={{ fontSize: 17, fontWeight: 400, color: BODY_TEXT, margin: 0 }}>Individual Progress Note</div>
-                <div style={{ fontSize: 11, color: '#676868', marginTop: 2 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                <div style={{ fontSize: 17, fontWeight: 400, color: BODY_TEXT, margin: 0 }}>{noteTypeLabel}</div>
+                <div style={{ fontSize: 11, color: '#676868', marginTop: 2 }}>{clientName} · Individual Therapy · {sessionDate}</div>
               </div>
               <div style={{ flex: 1 }} />
               <div style={{ display: 'flex', gap: 6 }}>
