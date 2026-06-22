@@ -857,101 +857,147 @@ export function QualifactsBg({ noteValues = {}, onNoteChange, highlightedField }
 // ═══════════════════════════════════════════════════════════════════════════════
 export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
-  const [activeNav, setActiveNav] = useState('Clients');
-  const SIDEBAR = '#3d5a73';
-  const SIDEBAR_ACTIVE = '#2c4860';
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+
+  const SIDEBAR = '#2d4b64';
+  const SIDEBAR_ACTIVE = '#385e7e';
+
   const navItems = [
-    { label: 'Clients',     paths: [<path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>, <path key="b" d="M9 7a4 4 0 100 8 4 4 0 000-8z"/>, <path key="c" d="M23 21v-2a4 4 0 00-3-3.87"/>, <path key="d" d="M16 3.13a4 4 0 010 7.75"/>] },
-    { label: 'Scheduling',  paths: [<rect key="a" x="3" y="4" width="18" height="18" rx="2"/>, <line key="b" x1="16" y1="2" x2="16" y2="6"/>, <line key="c" x1="8" y1="2" x2="8" y2="6"/>, <line key="d" x1="3" y1="10" x2="21" y2="10"/>] },
-    { label: 'Foster Care', paths: [<path key="a" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>] },
-    { label: 'Reporting',   paths: [<line key="a" x1="18" y1="20" x2="18" y2="10"/>, <line key="b" x1="12" y1="20" x2="12" y2="4"/>, <line key="c" x1="6" y1="20" x2="6" y2="14"/>] },
-    { label: 'RX',          paths: [<path key="a" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>, <path key="b" d="M14 2v6h6"/>, <line key="c" x1="16" y1="13" x2="8" y2="13"/>, <line key="d" x1="16" y1="17" x2="8" y2="17"/>] },
+    { label: 'Clients',      paths: [<path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>, <path key="b" d="M9 7a4 4 0 100 8 4 4 0 000-8z"/>, <path key="c" d="M23 21v-2a4 4 0 00-3-3.87"/>, <path key="d" d="M16 3.13a4 4 0 010 7.75"/>] },
+    { label: 'Scheduling',   paths: [<rect key="a" x="3" y="4" width="18" height="18" rx="2"/>, <line key="b" x1="16" y1="2" x2="16" y2="6"/>, <line key="c" x1="8" y1="2" x2="8" y2="6"/>, <line key="d" x1="3" y1="10" x2="21" y2="10"/>] },
+    { label: 'Foster Care',  paths: [<path key="a" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>] },
+    { label: 'Reporting',    paths: [<line key="a" x1="18" y1="20" x2="18" y2="10"/>, <line key="b" x1="12" y1="20" x2="12" y2="4"/>, <line key="c" x1="6" y1="20" x2="6" y2="14"/>] },
+    { label: 'RX',           paths: [<path key="a" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>, <path key="b" d="M14 2v6h6"/>, <line key="c" x1="16" y1="13" x2="8" y2="13"/>, <line key="d" x1="16" y1="17" x2="8" y2="17"/>] },
   ];
+
+  const rightIcons = [
+    { key: 'calendar', badge: null,  paths: [<rect key="a" x="3" y="4" width="18" height="18" rx="2"/>, <line key="b" x1="16" y1="2" x2="16" y2="6"/>, <line key="c" x1="8" y1="2" x2="8" y2="6"/>, <line key="d" x1="3" y1="10" x2="21" y2="10"/>] },
+    { key: 'grid',     badge: null,  paths: [<rect key="a" x="3" y="3" width="7" height="7"/>, <rect key="b" x="14" y="3" width="7" height="7"/>, <rect key="c" x="3" y="14" width="7" height="7"/>, <rect key="d" x="14" y="14" width="7" height="7"/>] },
+    { key: 'list',     badge: null,  paths: [<line key="a" x1="8" y1="6" x2="21" y2="6"/>, <line key="b" x1="8" y1="12" x2="21" y2="12"/>, <line key="c" x1="8" y1="18" x2="21" y2="18"/>, <line key="d" x1="3" y1="6" x2="3.01" y2="6"/>, <line key="e" x1="3" y1="12" x2="3.01" y2="12"/>, <line key="f" x1="3" y1="18" x2="3.01" y2="18"/>] },
+    { key: 'users',    badge: '5',   paths: [<path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>, <circle key="b" cx="9" cy="7" r="4"/>, <path key="c" d="M23 21v-2a4 4 0 00-3-3.87"/>, <path key="d" d="M16 3.13a4 4 0 010 7.75"/>] },
+    { key: 'person',   badge: null,  paths: [<path key="a" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>, <circle key="b" cx="12" cy="7" r="4"/>] },
+  ];
+
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", fontSize: 13, display: 'flex', overflow: 'hidden' }}>
-      {/* Sidebar */}
-      <div style={{ width: 215, background: SIDEBAR, display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', overflow: 'hidden', fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", fontSize: 13 }}>
+
+      {/* ── Sidebar ── */}
+      <div style={{ width: 195, background: SIDEBAR, display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+
         {/* Logo */}
-        <div style={{ padding: '18px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 22, fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>Arize</span>
-            <svg width="22" height="22" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 10-12h-7z" fill="#f5c518" stroke="#f5c518" strokeWidth="0.5" strokeLinejoin="round"/></svg>
+        <div style={{ height: 52, display: 'flex', alignItems: 'center', padding: '0 16px', gap: 8, borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+          <span style={{ color: '#fff', fontSize: 20, fontWeight: 700, letterSpacing: '-0.3px' }}>Arize</span>
+          {/* Stylised bird mark */}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style={{ opacity: 0.92 }}>
+            <path d="M22 3C19 2.5 15 4.5 13 8C10.5 6 7.5 5.5 5 6.5C7.5 8.5 9.5 11.5 9 15C11 14 14 12.5 16 9C16.5 12 16 15 14.5 17.5C17.5 15.5 20.5 12 22 3Z"/>
+          </svg>
+        </div>
+
+        {/* Clinician avatar (no name) + active client */}
+        <div style={{ padding: '10px 16px 12px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
+          <div style={{ marginBottom: 8, opacity: 0.6 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div style={{ marginBottom: 5 }}>
+            <span style={{ background: '#27ae60', color: '#fff', fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 10 }}>Active</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.88)', fontSize: 13 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ flexShrink: 0 }}>
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{clientName}</span>
           </div>
         </div>
-        {/* Profile section */}
-        <div style={{ padding: '12px 18px 14px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ marginBottom: 10 }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.6" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ background: '#27ae60', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10 }}>Active:</span>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="1.7" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-        </div>
+
         {/* Nav */}
-        <nav style={{ flex: 1, overflowY: 'auto', paddingTop: 4 }}>
-          {navItems.map(item => {
-            const isActive = activeNav === item.label;
+        <nav style={{ flex: 1, paddingTop: 2 }}>
+          {navItems.map((item) => {
+            const isActive = item.label === 'Clients';
+            const isHovered = hoveredNav === item.label;
             return (
-              <button key={item.label} onClick={() => setActiveNav(item.label)} style={{
-                display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '11px 20px',
-                border: 'none', borderLeft: isActive ? '3px solid #f5c518' : '3px solid transparent',
-                background: isActive ? SIDEBAR_ACTIVE : 'transparent', cursor: 'pointer', textAlign: 'left',
-                color: isActive ? '#fff' : 'rgba(255,255,255,0.78)', fontSize: 15, fontWeight: isActive ? 600 : 400,
-              }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: isActive ? 1 : 0.8, flexShrink: 0 }}>
+              <div
+                key={item.label}
+                onMouseEnter={() => setHoveredNav(item.label)}
+                onMouseLeave={() => setHoveredNav(null)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 11,
+                  padding: '10px 16px 10px 13px',
+                  borderLeft: isActive ? '3px solid rgba(255,255,255,0.7)' : '3px solid transparent',
+                  background: isActive ? SIDEBAR_ACTIVE : isHovered ? 'rgba(255,255,255,0.09)' : 'transparent',
+                  color: isActive ? '#fff' : 'rgba(255,255,255,0.78)',
+                  fontSize: 14, fontWeight: isActive ? 500 : 400,
+                  cursor: 'default',
+                  transition: 'background 0.14s ease',
+                  userSelect: 'none',
+                }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                   {item.paths}
                 </svg>
                 {item.label}
-              </button>
+              </div>
             );
           })}
         </nav>
       </div>
-      {/* Main */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
+
+      {/* ── Main area ── */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
         {/* Top bar */}
-        <div style={{ background: '#fff', borderBottom: '1px solid #e2e6ea', display: 'flex', alignItems: 'center', height: 50, flexShrink: 0, padding: '0 16px', gap: 10 }}>
-          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: SIDEBAR, padding: '4px 2px', display: 'flex', alignItems: 'center' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          </button>
-          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cdd3da', borderRadius: 5, overflow: 'hidden', flex: '0 0 400px' }}>
-            <input placeholder="Global Search...." style={{ flex: 1, border: 'none', outline: 'none', padding: '8px 14px', fontSize: 14, color: '#333', background: '#fff' }} />
-            <button style={{ background: SIDEBAR, border: 'none', cursor: 'pointer', padding: '8px 14px', display: 'flex', alignItems: 'center' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
+        <div style={{ height: 50, background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', padding: '0 14px', gap: 10, flexShrink: 0 }}>
+          {/* Back button */}
+          <div
+            onMouseEnter={() => setHoveredIcon('back')}
+            onMouseLeave={() => setHoveredIcon(null)}
+            style={{ width: 30, height: 30, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === 'back' ? '#edf2f7' : 'transparent', cursor: 'default', flexShrink: 0, transition: 'background 0.14s' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
           </div>
+
+          {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #cbd5e0', borderRadius: 4, overflow: 'hidden', flex: '0 0 310px' }}>
+            <input
+              placeholder="Global Search..."
+              readOnly
+              style={{ flex: 1, border: 'none', outline: 'none', padding: '7px 12px', fontSize: 13, color: '#666', background: '#fff', cursor: 'default' }}
+            />
+            <div style={{ background: SIDEBAR, padding: '7px 11px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+          </div>
+
           <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {/* Calendar */}
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: 4, display: 'flex', alignItems: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </button>
-            {/* Email + badge */}
-            <div style={{ position: 'relative' }}>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: 4, display: 'flex', alignItems: 'center' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              </button>
-              <span style={{ position: 'absolute', top: 1, right: 1, background: '#e53e3e', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: '50%', width: 13, height: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, pointerEvents: 'none' }}>5</span>
-            </div>
-            {/* List */}
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: 4, display: 'flex', alignItems: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            </button>
-            {/* Users + badge */}
-            <div style={{ position: 'relative' }}>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: 4, display: 'flex', alignItems: 'center' }}>
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-              </button>
-              <span style={{ position: 'absolute', top: 1, right: 1, background: '#e53e3e', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: '50%', width: 13, height: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, pointerEvents: 'none' }}>5</span>
-            </div>
-            {/* User */}
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '5px', borderRadius: 4, display: 'flex', alignItems: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </button>
+
+          {/* Right icon buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {rightIcons.map(icon => (
+              <div key={icon.key} style={{ position: 'relative' }}>
+                <div
+                  onMouseEnter={() => setHoveredIcon(icon.key)}
+                  onMouseLeave={() => setHoveredIcon(null)}
+                  style={{ width: 32, height: 32, borderRadius: 5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === icon.key ? '#edf2f7' : 'transparent', cursor: 'default', transition: 'background 0.14s' }}
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                    {icon.paths}
+                  </svg>
+                </div>
+                {icon.badge && (
+                  <span style={{ position: 'absolute', top: 3, right: 3, background: '#e53e3e', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: '50%', width: 13, height: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1, pointerEvents: 'none' }}>{icon.badge}</span>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-        {/* Content */}
+
+        {/* Note content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '22px 30px 80px', background: '#fff' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString()}</div>
           <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#444' fontSize={13} borderColor='#d0d7de' minHeight={165} borderRadius={6} />
@@ -960,6 +1006,7 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
             <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 600, border: 'none', borderRadius: 5, background: SIDEBAR, color: '#fff', cursor: 'pointer' }}>Submit Note</button>
           </div>
         </div>
+
       </div>
     </div>
   );

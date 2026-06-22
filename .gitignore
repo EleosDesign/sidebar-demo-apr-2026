@@ -7,3 +7,4 @@ dist/
 .claude/
 !.claude/settings.json
 CLAUDE.md
+.vercel
