@@ -920,9 +920,7 @@ export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) 
       {/* Header */}
       <div style={{ background: '#8aacc8', display: 'flex', alignItems: 'center', padding: '6px 16px', gap: 14, flexShrink: 0, minHeight: 56 }}>
         {/* Logo — white background panel so the PNG renders correctly against the blue-gray header */}
-        <div style={{ background: '#fff', borderRadius: 4, padding: '4px 10px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-          <img src={qualifactsLogo} alt="Qualifacts Carelogic" style={{ height: 34, width: 'auto', display: 'block' }} />
-        </div>
+        <img src={qualifactsLogo} alt="Qualifacts Carelogic" style={{ height: 34, width: 'auto', display: 'block', mixBlendMode: 'multiply' }} />
         {/* Client search */}
         <div style={{ position: 'relative', flex: '0 0 260px' }}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.2" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
