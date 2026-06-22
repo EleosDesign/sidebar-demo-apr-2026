@@ -4,7 +4,7 @@
  * Patient: Webb, Marcus
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
@@ -1017,92 +1017,199 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 4. ECHO (echoVantage)
 // ═══════════════════════════════════════════════════════════════════════════════
+const ECHO_NAV_ITEMS = [
+  {
+    label: 'Vantage Point', active: false,
+    icon: <path key="a" d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z"/>,
+  },
+  {
+    label: 'Clients', active: true,
+    icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
+  },
+  {
+    label: 'Families', active: false,
+    icon: <><path key="a" d="M9 11.3C10.4 11.3 11.5 10.1 11.5 8.6S10.4 6 9 6 6.5 7.2 6.5 8.6 7.6 11.3 9 11.3zM9 13c-2.3 0-7 1.2-7 3.5V18h14v-1.5c0-2.3-4.7-3.5-7-3.5zm6.5-2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.5 2.1c-.5-.1-1-.2-1.5-.2-.7 0-1.4.1-2 .3.9.8 1.5 1.8 1.5 3.3V18H23v-1.5c0-2-3.1-3.1-6-3.4z"/></>,
+  },
+  {
+    label: 'Labs', active: false,
+    icon: <path key="a" d="M19.8 18.4L14 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81H9.05c-.42 0-.65.48-.39.81L10 6.5v4.17L4.2 18.4c-.49.66-.02 1.6.8 1.6h14c.82 0 1.29-.94.8-1.6zM8 16l3.5-4.86V6h1v5.14L16 16H8z"/>,
+  },
+  {
+    label: 'Groups', active: false,
+    icon: <path key="a" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>,
+  },
+  {
+    label: 'Eligibility', active: false,
+    icon: <path key="a" d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>,
+  },
+  {
+    label: 'Services', active: false,
+    icon: <path key="a" d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>,
+  },
+  {
+    label: 'Client Payments', active: false,
+    icon: <path key="a" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>,
+  },
+  {
+    label: 'Forms', active: false,
+    icon: <path key="a" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>,
+  },
+];
+
 export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
-  const [activeTab, setActiveTab] = useState('DATA/INTERVENTION');
-  const tabs = ['GOALS/OBJECTIVES', 'DATA/INTERVENTION'];
-  const sideIcons = [
-    <><rect key="a" x="3" y="3" width="7" height="7"/><rect key="b" x="14" y="3" width="7" height="7"/><rect key="c" x="3" y="14" width="7" height="7"/><rect key="d" x="14" y="14" width="7" height="7"/></>,
-    <><path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><path key="b" d="M9 7a4 4 0 100 8 4 4 0 000-8z"/><path key="c" d="M23 21v-2a4 4 0 00-3-3.87"/><path key="d" d="M16 3.13a4 4 0 010 7.75"/></>,
-    <><path key="a" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle key="b" cx="12" cy="7" r="4"/></>,
-    <><path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><path key="b" d="M9 7a4 4 0 100 8 4 4 0 000-8z"/></>,
-    <><rect key="a" x="3" y="3" width="18" height="18" rx="1"/><line key="b" x1="3" y1="9" x2="21" y2="9"/><line key="c" x1="9" y1="21" x2="9" y2="9"/></>,
-    <><line key="a" x1="18" y1="20" x2="18" y2="10"/><line key="b" x1="12" y1="20" x2="12" y2="4"/><line key="c" x1="6" y1="20" x2="6" y2="14"/></>,
-    <><circle key="a" cx="12" cy="12" r="3"/><path key="b" d="M19.07 4.93a10 10 0 010 14.14"/><path key="c" d="M4.93 4.93a10 10 0 000 14.14"/></>,
-  ];
+  const { selectedNoteType } = useNoteTypeContext();
+  const noteTypeLabel = useMemo(() => NOTE_TYPE_LIST.find(t => t.id === selectedNoteType)?.label ?? selectedNoteType, [selectedNoteType]);
+  const sessionDate = useMemo(() => new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), []);
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+
+  const SIDEBAR_BG  = '#323333';
+  const ICON_BLUE   = '#4aabf7';
+  const ORANGE      = '#ff680d';
+  const ACTIVE_BG   = 'rgba(255,255,255,0.165)';
+  const HEADER_BG   = '#eff0f0';
+  const HEADER_BORD = '#d7d8d8';
+  const LABEL_BLUE  = '#015595';
+  const BODY_TEXT   = '#323333';
+  const AVATAR_BLUE = '#1f74b4';
+
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      {/* Dark brown header */}
-      <div style={{ background: '#3a3028', display: 'flex', alignItems: 'center', height: 42, flexShrink: 0, padding: '0 14px 0 10px', gap: 10, zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 24, height: 24, borderRadius: 4, background: '#c8a96e', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="13" height="13" viewBox="0 0 14 14"><path d="M7 1L13 7L7 13L1 7Z" fill="#3a3028"/></svg>
-          </div>
-          <span style={{ color: '#e8ddd0', fontSize: 14, fontWeight: 600, letterSpacing: '0.02em' }}>echoVantage</span>
-        </div>
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Open Sans', Verdana, Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+      {/* ── Orange top header ── */}
+      <div style={{ height: 50, background: ORANGE, display: 'flex', alignItems: 'center', padding: '0 8px', flexShrink: 0 }}>
+        <img src="/echovantage-logo.png" style={{ height: 28, objectFit: 'contain', objectPosition: 'left center', flexShrink: 0, marginLeft: 4 }} alt="echoVantage" draggable={false} />
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          {[
-            <path key="u" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 7a4 4 0 100 8 4 4 0 000-8z"/>,
-            <><path key="a" d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path key="b" d="M13.73 21a2 2 0 01-3.46 0"/></>,
-            <><path key="a" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline key="b" points="22 6 12 13 2 6"/></>,
-            <><rect key="a" x="2" y="3" width="20" height="14"/><line key="b" x1="8" y1="21" x2="16" y2="21"/><line key="c" x1="12" y1="17" x2="12" y2="21"/></>,
-            <><circle key="a" cx="12" cy="12" r="10"/><path key="b" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line key="c" x1="12" y1="17" x2="12.01" y2="17"/></>,
-          ].map((p, i) => (
-            <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '3px 6px', display: 'flex', alignItems: 'center' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{p}</svg>
-            </button>
-          ))}
-          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginLeft: 4 }}>Elana Scribe</span>
-          <div style={{ background: '#2255a4', color: '#fff', borderRadius: 3, padding: '2px 9px', fontSize: 12, fontWeight: 700, marginLeft: 6 }}>37</div>
+        {[
+          { key: 'alerts',  vb: '0 0 24 24', d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16.5c-.83 0-1.5-.67-1.5-1.5h3c0 .83-.67 1.5-1.5 1.5zm5-2.5H7v-1l1-1v-2.61C8 9.27 9.03 7.47 11 7v-.5c0-.57.43-1 1-1s1 .43 1 1V7c1.97.47 3 2.28 3 4.39V14l1 1v1z' },
+          { key: 'reports', vb: '0 0 20 20', d: 'M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10zm5-9.019V15h-2.009v-4.019H15zM10.981 5v10H9.019V5h1.962zM7.009 15V7.991H5V15h2.009z' },
+          { key: 'help',    vb: '0 0 20 20', d: 'M10 0C4.48 0 0 4.48 0 10s4.48 10 10 10 10-4.48 10-10S15.52 0 10 0zm1 17H9v-2h2v2zm2.07-7.75l-.9.92C11.45 10.9 11 11.5 11 13H9v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H6c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' },
+        ].map(({ key, vb, d }) => (
+          <div key={key}
+            onMouseEnter={() => setHoveredIcon(key)}
+            onMouseLeave={() => setHoveredIcon(null)}
+            style={{ width: 34, height: 34, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === key ? 'rgba(0,0,0,0.15)' : 'transparent', cursor: 'default', transition: 'background 0.14s ease' }}
+          >
+            <svg width="20" height="20" viewBox={vb} fill="white"><path fillRule="nonzero" d={d}/></svg>
+          </div>
+        ))}
+        {/* User chip */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: '0 4px', borderRadius: 16, background: 'rgba(255,255,255,0.18)', padding: '0 10px 0 0', height: 32, cursor: 'default' }}>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', background: AVATAR_BLUE, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 7, flexShrink: 0 }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </div>
+          <span style={{ fontSize: 13, color: '#fff', fontWeight: 500, whiteSpace: 'nowrap' }}>Eleos Service</span>
+        </div>
+        {/* Logout */}
+        <div
+          onMouseEnter={() => setHoveredIcon('logout')}
+          onMouseLeave={() => setHoveredIcon(null)}
+          style={{ width: 34, height: 34, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === 'logout' ? 'rgba(0,0,0,0.15)' : 'transparent', cursor: 'default', transition: 'background 0.14s ease' }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
         </div>
       </div>
-      {/* Body */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Icon sidebar */}
-        <div style={{ width: 44, background: '#4a3e34', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8, gap: 2, flexShrink: 0 }}>
-          {sideIcons.map((icon, i) => (
-            <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.55)', padding: '8px 0', width: '100%', display: 'flex', justifyContent: 'center' }}>
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
-            </button>
-          ))}
+
+      {/* ── Main row: sidebar + content ── */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* ── Left navigation sidebar ── */}
+        <div style={{ width: 175, background: SIDEBAR_BG, display: 'flex', flexDirection: 'column', flexShrink: 0, overflowX: 'hidden', overflowY: 'auto' }}>
+          {ECHO_NAV_ITEMS.map(item => {
+            const isHovered = hoveredNav === item.label;
+            return (
+              <div
+                key={item.label}
+                onMouseEnter={() => setHoveredNav(item.label)}
+                onMouseLeave={() => setHoveredNav(null)}
+                style={{
+                  display: 'flex', alignItems: 'center', minHeight: 50, minWidth: 175,
+                  background: item.active || isHovered ? ACTIVE_BG : 'transparent',
+                  cursor: 'default', transition: 'background 0.14s ease', userSelect: 'none',
+                }}
+              >
+                <div style={{ width: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill={item.active ? ORANGE : ICON_BLUE}>
+                    {item.icon}
+                  </svg>
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>{item.label}</span>
+              </div>
+            );
+          })}
         </div>
-        {/* Dark bg + white panel */}
-        <div style={{ flex: 1, background: '#5c4f45', overflowY: 'auto', position: 'relative', display: 'flex' }}>
-          <div style={{ flex: 1, background: '#fff', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-            {/* SIGN / SEND / X row */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 20, padding: '13px 24px 12px', flexShrink: 0 }}>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, color: '#555', fontSize: 13, fontWeight: 500 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#777" strokeWidth="2.2" strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                SIGN
-              </button>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, color: '#2255a4', fontSize: 13, fontWeight: 500 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2255a4" strokeWidth="2.2" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                SEND
-              </button>
-              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e05c2a', fontSize: 22, lineHeight: 1, padding: 0 }}>✕</button>
+
+        {/* ── Content area ── */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+          {/* Breadcrumb bar */}
+          <div style={{ background: HEADER_BG, borderBottom: `1px solid ${HEADER_BORD}`, height: 50, display: 'flex', alignItems: 'center', padding: '0 15px', flexShrink: 0, gap: 8 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={LABEL_BLUE} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <span style={{ color: LABEL_BLUE, fontSize: 13 }}>Clients</span>
+            <span style={{ color: '#888', fontSize: 13 }}>/</span>
+            <span style={{ color: LABEL_BLUE, fontSize: 13, fontWeight: 600 }}>{clientName}</span>
+            <span style={{ color: '#888', fontSize: 13 }}>/</span>
+            <span style={{ color: BODY_TEXT, fontSize: 13 }}>Encounters</span>
+          </div>
+
+          {/* Note form area */}
+          <div style={{ flex: 1, overflowY: 'auto', background: '#fff', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Form header — orange left-border accent */}
+            <div style={{
+              padding: '12px 15px 12px 10px', background: HEADER_BG,
+              display: 'flex', alignItems: 'center',
+              borderBottom: `1px solid ${HEADER_BORD}`,
+              borderLeft: `5px solid ${ORANGE}`,
+              flexShrink: 0,
+            }}>
+              <div>
+                <div style={{ fontSize: 17, fontWeight: 400, color: BODY_TEXT, margin: 0 }}>{noteTypeLabel}</div>
+                <div style={{ fontSize: 11, color: '#676868', marginTop: 2 }}>{clientName} · Individual Therapy · {sessionDate}</div>
+              </div>
+              <div style={{ flex: 1 }} />
+              <div style={{ display: 'flex', gap: 6 }}>
+                {[
+                  { k: 'save',   label: 'Save',   stroke: '#555', icon: <polyline key="a" points="20 6 9 17 4 12"/> },
+                  { k: 'cancel', label: 'Cancel', stroke: '#888', icon: <><line key="a" x1="18" y1="6" x2="6" y2="18"/><line key="b" x1="6" y1="6" x2="18" y2="18"/></> },
+                  { k: 'delete', label: 'Delete', stroke: '#888', icon: <><polyline key="a" points="3 6 5 6 21 6"/><path key="b" d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></> },
+                ].map(({ k, label, stroke, icon }) => (
+                  <button key={k}
+                    onMouseEnter={() => setHoveredIcon(k)}
+                    onMouseLeave={() => setHoveredIcon(null)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 4, padding: '4px 10px',
+                      background: hoveredIcon === k ? '#e4e5e5' : HEADER_BG,
+                      border: `1px solid ${HEADER_BORD}`, borderRadius: 3,
+                      fontSize: 11, fontWeight: 600, color: '#555',
+                      cursor: 'default', transition: 'background 0.14s ease',
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
-            {/* Patient info */}
-            <div style={{ padding: '4px 24px 12px' }}>
-              <div style={{ fontSize: 19, fontWeight: 700, color: '#1a1a1a', marginBottom: 2 }}>00032414 {clientName}</div>
-              <div style={{ fontSize: 12, color: '#888' }}>Individual Progress Note</div>
-            </div>
-            {/* Tabs */}
-            <div style={{ display: 'flex', borderBottom: '1px solid #e0e0e0', padding: '0 24px' }}>
-              {tabs.map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                  background: 'none', border: 'none', cursor: 'pointer', padding: '9px 16px',
-                  fontSize: 12, fontWeight: 600, letterSpacing: '0.05em',
-                  color: activeTab === tab ? '#1a2fbe' : '#999',
-                  borderBottom: activeTab === tab ? '2px solid #1a2fbe' : '2px solid transparent',
-                  marginBottom: '-1px',
-                }}>{tab}</button>
-              ))}
-            </div>
+
             {/* Note fields */}
-            <div style={{ padding: '22px 24px 60px', flex: 1 }}>
-              <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#ccc' minHeight={170} borderRadius={5} />
+            <div style={{ padding: '18px 24px 80px', flex: 1, width: '62%' }}>
+              <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor={LABEL_BLUE} fontSize={13} borderColor={HEADER_BORD} minHeight={165} borderRadius={3} />
             </div>
+
+            {/* Bottom action bar */}
+            <div style={{ position: 'sticky', bottom: 0, background: '#fff', borderTop: `1px solid ${HEADER_BORD}`, minHeight: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 24px', gap: 12, flexShrink: 0 }}>
+              <button style={{ padding: '7px 20px', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', border: `1px solid ${HEADER_BORD}`, borderRadius: 3, background: '#fff', color: '#555', cursor: 'pointer', letterSpacing: '0.03em' }}>Clear Fields</button>
+              <button style={{ padding: '7px 20px', fontSize: 13, fontWeight: 600, textTransform: 'uppercase', border: 'none', borderRadius: 3, background: ORANGE, color: '#fff', cursor: 'pointer', letterSpacing: '0.03em' }}>Submit Note</button>
+            </div>
+
           </div>
         </div>
       </div>
