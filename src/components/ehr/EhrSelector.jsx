@@ -7,7 +7,7 @@ const EHR_LIST = [
   { id: 'qualifacts', label: 'Qualifacts' },
   { id: 'arize',      label: 'Arize' },
   { id: 'echo',       label: 'Echo' },
-  { id: 'credible',   label: 'Credible' },
+  { id: 'credible',   label: 'Qualifacts Credible' },
   { id: 'insync',     label: 'Insync' },
   { id: 'carlogic',   label: 'Carelogic' },
   { id: 'myevolve',   label: 'myEvolv' },

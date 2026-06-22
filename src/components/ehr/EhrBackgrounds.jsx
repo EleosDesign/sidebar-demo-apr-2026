@@ -1115,113 +1115,142 @@ export function EchoBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 export function CredibleBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
-  const [activeIndex, setActiveIndex] = useState('Narrative');
-  const leftLinks = [
-    { icon: '🗒️', label: 'Chart Documents' },
-    { icon: '💳', label: 'Eligibility/Insurance' },
-    { icon: '❤️', label: 'Health/PHCP Info' },
-    { icon: '📄', label: 'Latest Clinical Documents' },
-    { icon: '📊', label: 'Quality Measures' },
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const [hoveredTab, setHoveredTab] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+
+  const BRAND_PURPLE = '#3d2b8e';
+  const TOP_STRIP    = '#1a0848';
+  const HOVER_BG     = 'rgba(61,43,142,0.08)';
+
+  const navTabs = ['Home', 'Client', 'Employee', 'Schedule', 'Service', 'Inpatient', 'Admin', 'Billing', 'Reports', 'Forms'];
+
+  // Each item: label + inline SVG children
+  const sidebarItems = [
+    { label: 'Claims',        paths: [<path key="a" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>, <polyline key="b" points="14 2 14 8 20 8"/>, <line key="c" x1="16" y1="13" x2="8" y2="13"/>, <line key="d" x1="16" y1="17" x2="8" y2="17"/>] },
+    { label: 'Bed Assign',    paths: [<rect key="a" x="2" y="9" width="20" height="11" rx="2"/>, <path key="b" d="M2 14h20"/>, <path key="c" d="M6 9V7a1 1 0 011-1h3a1 1 0 011 1v2"/>] },
+    { label: 'Amendments',    paths: [<path key="a" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>, <path key="b" d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>] },
+    { label: 'Credible Plan', paths: [<path key="a" d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>, <rect key="b" x="8" y="2" width="8" height="4" rx="1"/>] },
+    { label: 'Tx Plus',       paths: [<path key="a" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>, <polyline key="b" points="14 2 14 8 20 8"/>, <line key="c" x1="12" y1="18" x2="12" y2="12"/>, <line key="d" x1="9" y1="15" x2="15" y2="15"/>] },
+    { label: 'Allergy',       paths: [<path key="a" d="M18 11V6a2 2 0 00-2-2v0a2 2 0 00-2 2v0M14 10V4a2 2 0 00-2-2v0a2 2 0 00-2 2v2M10 10.5V6a2 2 0 00-2-2v0a2 2 0 00-2 2v8"/>, <path key="b" d="M18 8a2 2 0 114 0v6a8 8 0 01-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 012.83-2.82L7 15"/>] },
+    { label: 'Attatchments',  paths: [<path key="a" d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>] },
+    { label: 'Authorization', paths: [<path key="a" d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>, <circle key="b" cx="8.5" cy="7" r="4"/>, <polyline key="c" points="17 11 19 13 23 9"/>] },
+    { label: 'Service List',  paths: [<line key="a" x1="8" y1="6" x2="21" y2="6"/>, <line key="b" x1="8" y1="12" x2="21" y2="12"/>, <line key="c" x1="8" y1="18" x2="21" y2="18"/>, <line key="d" x1="3" y1="6" x2="3.01" y2="6"/>, <line key="e" x1="3" y1="12" x2="3.01" y2="12"/>, <line key="f" x1="3" y1="18" x2="3.01" y2="18"/>] },
+    { label: 'Add Service',   paths: [<circle key="a" cx="12" cy="12" r="10"/>, <line key="b" x1="12" y1="8" x2="12" y2="16"/>, <line key="c" x1="8" y1="12" x2="16" y2="12"/>] },
+    { label: 'Overview',      paths: [<rect key="a" x="3" y="3" width="7" height="7"/>, <rect key="b" x="14" y="3" width="7" height="7"/>, <rect key="c" x="3" y="14" width="7" height="7"/>, <rect key="d" x="14" y="14" width="7" height="7"/>] },
+    { label: 'Contacts',      paths: [<path key="a" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>, <circle key="b" cx="9" cy="7" r="4"/>, <path key="c" d="M23 21v-2a4 4 0 00-3-3.87"/>, <path key="d" d="M16 3.13a4 4 0 010 7.75"/>] },
+    { label: 'Client Ext',    paths: [<path key="a" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>, <polyline key="b" points="15 3 21 3 21 9"/>, <line key="c" x1="10" y1="14" x2="21" y2="3"/>] },
+    { label: 'Client Links',  paths: [<path key="a" d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>, <path key="b" d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>] },
+    { label: 'Dashboard',     paths: [<line key="a" x1="18" y1="20" x2="18" y2="10"/>, <line key="b" x1="12" y1="20" x2="12" y2="4"/>, <line key="c" x1="6" y1="20" x2="6" y2="14"/>] },
+    { label: 'Diagnosis',     paths: [<polyline key="a" points="22 12 18 12 15 21 9 3 6 12 2 12"/>] },
+    { label: 'Employee',      paths: [<path key="a" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>, <circle key="b" cx="12" cy="7" r="4"/>] },
   ];
-  const rightLinks = [
-    { icon: '🔴', label: '1 Alert' },
-    { icon: '🔬', label: 'Diagnosis' },
-    { icon: '💡', label: 'Clinical Decision Supports' },
-    { icon: '📌', label: 'Assignments' },
+
+  const headerIcons = [
+    { key: 'account', paths: [<path key="a" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>, <circle key="b" cx="12" cy="7" r="4"/>, <circle key="c" cx="19" cy="19" r="3"/>, <line key="d" x1="19" y1="16" x2="19" y2="22"/>, <line key="e" x1="16" y1="19" x2="22" y2="19"/>] },
+    { key: 'help',    paths: [<circle key="a" cx="12" cy="12" r="10"/>, <path key="b" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>, <line key="c" x1="12" y1="17" x2="12.01" y2="17"/>] },
+    { key: 'mail',    paths: [<path key="a" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>, <polyline key="b" points="22,6 12,13 2,6"/>] },
+    { key: 'logout',  paths: [<path key="a" d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>, <polyline key="b" points="16 17 21 12 16 7"/>, <line key="c" x1="21" y1="12" x2="9" y2="12"/>] },
   ];
+
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "Arial,sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Nav bar */}
-      <div style={{ background: '#f5f0e8', borderBottom: '2px solid #cc6600', display: 'flex', alignItems: 'center', padding: '5px 8px', gap: 3, flexShrink: 0 }}>
-        {['Back', 'Home', 'Logout', 'Help'].map(label => (
-          <button key={label} style={{
-            background: 'linear-gradient(to bottom,#f7aa50,#df7a18)', border: '1px solid #a85800',
-            borderRadius: 3, color: '#fff', fontWeight: 700, fontSize: 12, padding: '4px 14px',
-            cursor: 'pointer', textShadow: '0 1px 1px rgba(0,0,0,0.25)', boxShadow: '0 1px 2px rgba(0,0,0,0.15)', flexShrink: 0,
-          }}>{label}</button>
-        ))}
-        <button style={{ background: '#fff', border: '1px solid #aaa', borderRadius: 2, padding: '3px 7px', cursor: 'pointer', fontSize: 14, marginLeft: 2, flexShrink: 0 }}>✉</button>
-        <div style={{ flex: 1, textAlign: 'right', paddingRight: 8 }}>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#111', whiteSpace: 'nowrap' }}>Change Behavioral Health Progress Note</span>
-        </div>
-      </div>
-      {/* Case info bar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'center', padding: '5px 14px', gap: 40, flexShrink: 0, fontSize: 13 }}>
-        <span><b style={{ color: '#333' }}>Client: </b>{clientName}</span>
-        <span><b style={{ color: '#333' }}>Case #: </b><a href="#" style={{ color: '#1a5cb5', textDecoration: 'none' }} onClick={e => e.preventDefault()}>000002</a></span>
-        <span><b style={{ color: '#333' }}>LOC/Grid: </b>None</span>
-        <span><b style={{ color: '#333' }}>Case: </b><span style={{ color: '#cc6600', fontWeight: 700 }}>Open</span></span>
-      </div>
-      {/* Patient info table */}
-      <table style={{ width: '100%', borderCollapse: 'collapse', borderBottom: '1px solid #ddd', fontSize: 12, tableLayout: 'fixed', flexShrink: 0 }}>
-        <colgroup><col style={{ width: '22%' }}/><col style={{ width: '28%' }}/><col style={{ width: '50%' }}/></colgroup>
-        <tbody>
-          <tr style={{ verticalAlign: 'top' }}>
-            <td style={{ padding: '8px 12px' }}>
-              <div style={{ display: 'flex', gap: 16, marginBottom: 5 }}>
-                <span style={{ fontWeight: 600, color: '#444' }}>Date of Birth</span>
-                <span style={{ fontWeight: 600, color: '#444' }}>Home Phone</span>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", fontSize: 13 }}>
+
+      {/* ── Thin brand strip ── */}
+      <div style={{ height: 4, background: TOP_STRIP, flexShrink: 0 }} />
+
+      {/* ── Header ── */}
+      <div style={{ height: 65, background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'center', padding: '0 20px', flexShrink: 0 }}>
+        <img src="/qualifacts-credible-logo.png" style={{ height: 44, objectFit: 'contain', objectPosition: 'left center' }} alt="Qualifacts Credible" draggable={false} />
+        <div style={{ flex: 1 }} />
+        {/* User section */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid #d0d0d0', borderRadius: 3, padding: '4px 12px', fontSize: 13, color: '#333' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span style={{ color: '#444', fontSize: 13 }}>Demo Clinician</span>
+          </div>
+          <div style={{ display: 'flex', gap: 2 }}>
+            {headerIcons.map(icon => (
+              <div
+                key={icon.key}
+                onMouseEnter={() => setHoveredIcon(icon.key)}
+                onMouseLeave={() => setHoveredIcon(null)}
+                style={{ width: 28, height: 28, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === icon.key ? HOVER_BG : 'transparent', cursor: 'default', transition: 'background 0.14s' }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  {icon.paths}
+                </svg>
               </div>
-              <div><span style={{ fontWeight: 600, color: '#444' }}>Address</span></div>
-            </td>
-            <td style={{ padding: '8px 8px' }}>
-              <table style={{ width: '100%', border: '1px solid #aaa', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <tr><td style={{ background: '#c0d0e0', borderBottom: '1px solid #aaa', padding: '3px 8px', fontWeight: 700, textAlign: 'center', color: '#222' }}>Current Admission</td></tr>
-                  {['Primary Org:', 'Primary Program:', 'Case Holder:'].map(f => (
-                    <tr key={f}><td style={{ padding: '3px 8px', fontWeight: 600, color: '#333' }}>{f}</td></tr>
-                  ))}
-                </tbody>
-              </table>
-            </td>
-            <td style={{ padding: '8px 12px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody><tr>
-                  <td style={{ verticalAlign: 'top', paddingRight: 8 }}>
-                    {leftLinks.map(l => (
-                      <div key={l.label} style={{ marginBottom: 3 }}>
-                        <a href="#" onClick={e => e.preventDefault()} style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#1a5cb5', textDecoration: 'none' }}>
-                          <span>{l.icon}</span><span style={{ textDecoration: 'underline' }}>{l.label}</span>
-                        </a>
-                      </div>
-                    ))}
-                  </td>
-                  <td style={{ verticalAlign: 'top' }}>
-                    {rightLinks.map(l => (
-                      <div key={l.label} style={{ marginBottom: 3 }}>
-                        <a href="#" onClick={e => e.preventDefault()} style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#1a5cb5', textDecoration: 'none' }}>
-                          <span>{l.icon}</span><span style={{ textDecoration: 'underline' }}>{l.label}</span>
-                        </a>
-                      </div>
-                    ))}
-                  </td>
-                </tr></tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      {/* Index + Note sections */}
-      <div style={{ display: 'flex', padding: '12px 14px', gap: 14, flex: 1, overflowY: 'auto' }}>
-        {/* Left: Index sidebar */}
-        <div style={{ flex: '0 0 155px', alignSelf: 'start' }}>
-          <div style={{ border: '1px solid #aaa', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ background: '#6699cc', color: '#fff', fontWeight: 700, fontSize: 12, padding: '4px 8px', textAlign: 'center' }}>Index</div>
-            {[{ num: 1, label: 'Narrative' }, { num: 2, label: 'Send Copy To' }, { num: 3, label: 'Signatures' }].map(item => (
-              <div key={item.label} onClick={() => setActiveIndex(item.label)} style={{
-                padding: '6px 8px', fontSize: 12, cursor: 'pointer', borderBottom: '1px solid #ddd',
-                background: activeIndex === item.label ? '#f5a830' : '#fff',
-                color: activeIndex === item.label ? '#fff' : '#1a5cb5',
-                fontWeight: activeIndex === item.label ? 700 : 400,
-                textDecoration: activeIndex === item.label ? 'none' : 'underline',
-              }}>{item.num}. {item.label}</div>
             ))}
           </div>
         </div>
-        {/* Note sections */}
-        <div style={{ flex: 1 }}>
-          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#222' fontSize={13} borderColor='#bbb' minHeight={165} borderRadius={3} />
+      </div>
+
+      {/* ── Horizontal nav tabs ── */}
+      <div style={{ height: 42, background: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', padding: '0 16px', gap: 2, flexShrink: 0 }}>
+        {navTabs.map(tab => {
+          const isActive  = tab === 'Service';
+          const isHovered = hoveredTab === tab && !isActive;
+          return (
+            <div
+              key={tab}
+              onMouseEnter={() => setHoveredTab(tab)}
+              onMouseLeave={() => setHoveredTab(null)}
+              style={{
+                padding: '5px 14px', borderRadius: 4,
+                background: isActive ? BRAND_PURPLE : isHovered ? HOVER_BG : 'transparent',
+                color: isActive ? '#fff' : '#444',
+                fontSize: 14, fontWeight: isActive ? 500 : 400,
+                cursor: 'default', transition: 'background 0.14s', userSelect: 'none',
+              }}
+            >
+              {tab}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Body ── */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* Left sidebar */}
+        <div style={{ width: 158, background: '#fff', borderRight: '1px solid #e8e8e8', flexShrink: 0, overflowY: 'auto' }}>
+          {sidebarItems.map(item => {
+            const isActive  = false;
+            const isHovered = hoveredNav === item.label && !isActive;
+            return (
+              <div
+                key={item.label}
+                onMouseEnter={() => setHoveredNav(item.label)}
+                onMouseLeave={() => setHoveredNav(null)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 9,
+                  padding: '8px 12px',
+                  background: isActive ? BRAND_PURPLE : isHovered ? HOVER_BG : 'transparent',
+                  color: isActive ? '#fff' : '#444',
+                  fontSize: 13, cursor: 'default',
+                  transition: 'background 0.14s', userSelect: 'none',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: isActive ? 1 : 0.65 }}>
+                  {item.paths}
+                </svg>
+                {item.label}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Note content */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '22px 30px 80px', background: '#fff' }}>
+          <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString()}</div>
+          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#444' fontSize={13} borderColor='#d0d7de' minHeight={165} borderRadius={6} />
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, paddingTop: 4 }}>
+            <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 500, border: '1px solid #cdd3da', borderRadius: 5, background: '#fff', color: '#444', cursor: 'pointer' }}>Clear Fields</button>
+            <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 600, border: 'none', borderRadius: 5, background: BRAND_PURPLE, color: '#fff', cursor: 'pointer' }}>Submit Note</button>
+          </div>
+        </div>
+
       </div>
     </div>
   );
@@ -2457,7 +2486,7 @@ export const EHR_LABELS = {
   qualifacts:   'Qualifacts',
   arize:        'Arize',
   echo:         'Echo',
-  credible:     'Credible',
+  credible:     'Qualifacts Credible',
   insync:       'Insync',
   carlogic:     'Carelogic',
   myevolve:     'myEvolv',
