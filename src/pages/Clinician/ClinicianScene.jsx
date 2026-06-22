@@ -776,7 +776,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
-        onBack={() => { setActivitiesSession(null); setPhase('sessions'); setClientName('Webb, Marcus'); }}
+        onBack={() => { setActivitiesSession(null); setPhase('sessions'); }}
         onAddToNote={onAddToNote}
         session={activitiesSession}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
@@ -787,7 +787,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           setActivitiesInitialTab('done');
           setActivitiesSession(null);
           setPhase('sessions');
-          setClientName('Webb, Marcus');
         }}
       />;
       return <MySessionsPanel
@@ -847,7 +846,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           summary: 'Session notes drafted via Add Summary — pending EHR submission.',
         });
       }}
-      onSuggestionsLeft={() => { setPendingEHRSession(null); setClientName('Webb, Marcus'); }}
+      onSuggestionsLeft={() => { setPendingEHRSession(null); }}
       onAddedToEHR={() => {
         // Commit pending session as Done and jump to Activities → Marked as Done
         if (pendingEHRSession) {
