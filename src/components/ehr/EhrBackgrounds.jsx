@@ -2242,7 +2242,7 @@ export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
             </div>
             <div style={{ border: '2px solid #0060dc', padding: 3, background: '#edf5ff', marginTop: 0 }}>
               <table style={{ width: '98%', fontSize: 12 }}><tbody>
-                <tr><td style={{ width: 74 }}>02/06/25</td><td>Admitted: Bronson Hospital</td></tr>
+                <tr><td style={{ width: 74 }}>02/06/25</td><td>Admitted: Demo Hospital</td></tr>
                 <tr><td>01/22/24</td><td>THIS IS A TEST CHART</td></tr>
                 <tr><td>02/27/17</td><td>This is the note that shows at the top of the chart</td></tr>
               </tbody></table>
@@ -2252,17 +2252,17 @@ export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
           <div style={{ background: '#d5d5d5', padding: 1 }}>
             <div style={{ background: '#f7f7f7', border: '1px solid #aaa' }}>
               <div style={{ background: '#ddd', padding: 2, display: 'grid', gridTemplateColumns: '30% 20% 1fr auto', gap: 8 }}>
-                <span><b style={{ color: '#2b3b4c' }}>Name:&nbsp;</b><b>{clientName || 'Doe, John Ulysses Jr.'}</b>&nbsp;&nbsp;(9/M)</span>
-                <span><b style={{ color: '#2b3b4c' }}>Case #:&nbsp;</b><b>00019999</b></span>
+                <span><b style={{ color: '#2b3b4c' }}>Name:&nbsp;</b><b>{clientName || 'Demo, Client'}</b>&nbsp;&nbsp;(9/M)</span>
+                <span><b style={{ color: '#2b3b4c' }}>Case #:&nbsp;</b><b>DEMO-0001</b></span>
                 <span><b style={{ color: '#2b3b4c' }}>Current LOC:&nbsp;</b><b>SED - Level 4 - High</b>&nbsp;&nbsp;<b style={{ color: '#2b3b4c' }}>IH LOC:&nbsp;</b><b>None</b></span>
                 <span><b style={{ color: '#2b3b4c' }}>Case:&nbsp;</b><b style={{ color: '#109030' }}>Open</b></span>
               </div>
               <div style={{ padding: 1, background: '#f00' }}><div style={{ background: '#fff', textAlign: 'center', border: '1px solid red' }}><b>Reading Assistance,&nbsp;&nbsp;GUARDIAN</b></div></div>
               <div style={{ display: 'grid', gridTemplateColumns: '28% 40% 1fr', gap: 6, padding: 2 }}>
                 <div style={{ fontSize: 11, padding: 2 }}>
-                  <b style={{ color: '#2b3b4c' }}>Date of Birth</b><br />01/01/2017<br /><br />
-                  <b style={{ color: '#2b3b4c' }}>Address</b><br />10 N Main<br />three rivers, MI 49093<br /><br />
-                  <b style={{ color: '#2b3b4c' }}>Email Address:</b><br /><b>johndoe@gmail.com</b>
+                  <b style={{ color: '#2b3b4c' }}>Date of Birth</b><br />01/01/2000<br /><br />
+                  <b style={{ color: '#2b3b4c' }}>Address</b><br />123 Demo St<br />Demo City, ST 00000<br /><br />
+                  <b style={{ color: '#2b3b4c' }}>Email Address:</b><br /><b>demo.client@example.com</b>
                 </div>
                 <div>
                   <div style={{ border: '1px solid #aaa', marginBottom: 5 }}>
@@ -2310,7 +2310,7 @@ export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
                     <div style={{ display: 'grid', gridTemplateColumns: '110px 110px 1fr', gap: 12, marginBottom: 8 }}>
                       <label><b style={{ color: '#2b3b4c' }}>Date</b><br /><input defaultValue="06/30/2026" style={{ ...pceInput, width: 90 }} /></label>
                       <label><b style={{ color: '#2b3b4c' }}>Begin Time</b><br /><input defaultValue="02:21" style={{ ...pceInput, width: 42 }} /> <select defaultValue="PM" style={{ ...pceInput, width: 48 }}><option>AM</option><option>PM</option></select></label>
-                      <label><b style={{ color: '#2b3b4c' }}>Staff</b><br /><span>2380 Eleos Test1</span></label>
+                      <label><b style={{ color: '#2b3b4c' }}>Staff</b><br /><span>Demo Clinician</span></label>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
                       <label><b style={{ color: '#2b3b4c' }}>Contact Type</b><br /><select style={selectStyle}><option>* Select Contact Type</option><option>Face to Face</option><option>Telephone</option></select></label>
@@ -2340,7 +2340,7 @@ export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
 
           <div style={{ borderTop: '1px solid #888', marginTop: 5, padding: '3px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
             <span>Tuesday, June 30, 2026 2:21 PM Eastern Time</span>
-            <span>Eleos Test1</span>
+            <span>Demo Clinician</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', font: 'normal 10px Verdana, Arial, Helvetica, sans-serif', color: '#707070' }}>
             <b>PCE Care Management 9.4 Copyright 1999, 2026 PCE Systems Inc. All rights reserved.</b>
