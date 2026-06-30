@@ -2011,33 +2011,36 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
     { label: 'Group Activities', drop: true }, { label: 'Documents', drop: true }, { label: 'Support', drop: false },
     { label: 'Payers', drop: true }, { label: 'Reports', drop: false }, { label: 'CalAIM Reports', drop: false },
     { label: 'Accounting', drop: true }, { label: 'CalAIM Billing', drop: true }, { label: 'Admin', drop: true },
+    { label: 'My Forms', drop: false },
   ];
   const pageTabs = ['PAGE 1', 'CO-SIGNERS', 'DIAGNOSIS', 'PROBLEM LIST', 'CARE PLAN CYCLES'];
 
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#f5f5f5' }}>
-      {/* Dark header */}
-      <div style={{ background: '#2e3540', display: 'flex', alignItems: 'center', padding: '8px 16px', flexShrink: 0, gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontWeight: 800, fontSize: 18, color: '#fff', letterSpacing: '-0.5px' }}>Exym</span>
-          <span style={{ fontSize: 12, color: '#9aabb8', borderLeft: '1px solid #4a5568', paddingLeft: 10 }}>Edit a Note</span>
-          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', borderLeft: '1px solid #4a5568', paddingLeft: 10 }}>{clientName} — Progress Note</span>
-        </div>
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fafafa' }}>
+      {/* App bar — matches Exym mdc-top-app-bar */}
+      <div style={{ background: '#537799', display: 'flex', alignItems: 'center', padding: '8px 16px', flexShrink: 0, gap: 12 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg width="105" height="28" viewBox="0 0 181.7 76" style={{ flexShrink: 0 }}>
+          <path fill="#fff" d="M34.1,1.7v9.6H13.3V25h17.8v9.6H13.3v15.6h21.6v9.6H1.6V1.7H34.1z"/>
+          <path fill="#C2A266" d="M61.5,16h11.7L61.8,37.3l11.9,22.6H62l-6.5-14.3L49,59.8H37.2l11.9-22.6L37.7,16h11.7l6,13.2L61.5,16z"/>
+          <path fill="#fff" d="M79,65.8C80,66,81,66,82,66c4.2,0,5.7-2.3,6-6.2L75.7,16h11.7l6.5,30.3h0.2L99.8,16H111l-10.6,40.9 C96.5,72.1,94,74.2,83.6,74.2H79L79,65.8L79,65.8z"/>
+          <path fill="#fff" d="M114.2,16h10.7v4.5h0.2c2.8-4,6.4-5.6,11.1-5.6c5.1,0,8.9,2.5,10.1,7h0.2c1.7-4.6,5.8-7,11.1-7 c7.4,0,10.9,4.6,10.9,13.1v31.8h-11.2V29.2c0-3.7-1.2-5.7-4.4-5.7c-3.6,0-5.9,2.4-5.9,7.5v28.8h-11.2V29.2c0-3.7-1.2-5.7-4.4-5.7 c-3.6,0-5.9,2.4-5.9,7.5v28.8h-11.2L114.2,16L114.2,16z"/>
+        </svg>
+        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: 12 }}>Edit a Note</span>
+        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: 12 }}>{clientName} — Progress Note</span>
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #4a5568', borderRadius: 4, overflow: 'hidden' }}>
-          <input placeholder="Client Search" style={{ padding: '6px 10px', background: 'transparent', border: 'none', fontSize: 13, color: '#fff', outline: 'none', width: 180 }} />
-          <button style={{ background: '#4a5568', border: 'none', cursor: 'pointer', padding: '6px 10px' }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div style={{ display: 'flex', alignItems: 'center', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 4, overflow: 'hidden' }}>
+          <input placeholder="Client Search" style={{ padding: '5px 10px', background: 'transparent', border: 'none', fontSize: 12.5, color: '#fff', outline: 'none', width: 170 }} />
+          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '5px 10px', color: 'rgba(255,255,255,0.6)' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aabb8" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aabb8" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aabb8" strokeWidth="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </div>
-      {/* Nav bar */}
-      <div style={{ background: '#3a4254', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto' }}>
+      {/* Nav bar — same blue as header, shadow separates the two rows */}
+      <div style={{ background: '#537799', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto', boxShadow: 'inset 0 1px 0 rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.1)' }}>
         {navItems.map((item, i) => (
           <button key={i} style={{ padding: '8px 13px', background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 12.5, color: '#c8d4e0', whiteSpace: 'nowrap', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 3 }}>
             {item.label}{item.drop && <span style={{ fontSize: 10 }}>▾</span>}
@@ -2046,7 +2049,6 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
       </div>
       {/* Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-        {/* Form meta */}
         <div style={{ padding: '10px 16px', background: '#fff', borderBottom: '1px solid #e8e8e8', flexShrink: 0, fontSize: 13, color: '#444' }}>
           <label style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <span style={{ fontWeight: 600 }}>No Show:</span>
@@ -2058,16 +2060,36 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
             <span style={{ marginLeft: 8 }}>In progress</span>
           </div>
         </div>
-        {/* Page tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #ddd', flexShrink: 0 }}>
-          {pageTabs.map(tab => (
-            <button key={tab} onClick={() => setActivePageTab(tab)} style={{
-              flex: tab === 'PAGE 1' ? '0 0 200px' : 1,
-              padding: '10px 12px', border: 'none', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, whiteSpace: 'nowrap',
-              background: activePageTab === tab ? '#1e3a6e' : '#f0f2f5',
-              color: activePageTab === tab ? '#fff' : '#555',
-              borderRight: '1px solid #ddd',
-            }}>{tab}</button>
+        {/* Page tabs — matches Exym reference exactly */}
+        <div style={{ display: 'flex', flexShrink: 0, padding: '12px 16px 0', background: '#fafafa', borderBottom: '1px solid #d8dee4' }}>
+          {pageTabs.map((tab, idx) => (
+            <button
+              key={tab}
+              onClick={() => setActivePageTab(tab)}
+              style={{
+                flex: 1,
+                marginRight: idx === pageTabs.length - 1 ? 0 : 6,
+                padding: '10px 12px',
+                cursor: 'pointer',
+                fontSize: 12.5,
+                fontWeight: 600,
+                letterSpacing: '0.03em',
+                whiteSpace: 'nowrap',
+                background: '#fff',
+                color: activePageTab === tab ? '#537799' : '#556c8d',
+                border: '1px solid #c8d4e0',
+                borderBottom: activePageTab === tab ? '2px solid #537799' : '1px solid #c8d4e0',
+                borderTopLeftRadius: 4,
+                borderTopRightRadius: 4,
+                transition: 'all 0.1s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: 36,
+              }}
+            >
+              {tab}
+            </button>
           ))}
         </div>
         {/* Action buttons */}
@@ -2084,7 +2106,7 @@ export function ExymBg({ noteValues = {}, onNoteChange, highlightedField }) {
             <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={175} borderRadius={4} />
           </div>
           <div style={{ width: 1, background: '#ccc', flexShrink: 0 }} />
-          <div style={{ flex: 1 }} />
+          <div style={{ flex: 1, background: '#fafafa' }} />
         </div>
       </div>
     </div>
