@@ -2429,139 +2429,280 @@ export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField })
   );
 }
 export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
+  const [activeTab, setActiveTab] = useState('Service');
+  const [serviceValues, setServiceValues] = useState({
+    status: 'Show',
+    program: '',
+    procedure: 'Assessment LPHA',
+    location: '',
+    modeOfDelivery: '',
+    evidenceBasedPractices: '',
+    transportationService: 'No',
+    attending: '',
+    referring: '',
+  });
+  const patientLabel = clientName ? clientName.replace(/^(.*)\s+(\S+)$/, '$2, $1') : 'Test, Client (1099)';
+  const serviceOptions = {
+    status: ['Show', 'In Progress', 'New', 'Complete', 'Cancelled'],
+    program: ['', 'Adult Services', 'Crisis Services', 'Outpatient Services', 'Residential Services'],
+    procedure: ['', 'Assessment LPHA', 'Group Therapy', 'Therapy - Group', 'Individual Therapy', 'Case Management'],
+    location: ['', 'Office', 'Home', 'In Community', 'School', 'Telehealth'],
+    modeOfDelivery: ['', 'Face To Face', 'Telehealth', 'Phone', 'Collateral'],
+    evidenceBasedPractices: ['', 'CBT', 'DBT', 'MI', 'Seeking Safety'],
+    transportationService: ['No', 'From Client Location', 'To Client Location'],
+    attending: ['', 'Admin, David', 'Young, Tim', 'Campbell, Brian'],
+    referring: ['', 'Referring 1', 'Referring 2'],
+  };
   const navItems = [
-    { badge: 'AA', label: 'Access Assessment', arrow: false },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>, label: 'Psych/Med Documents', arrow: true },
-    { badge: 'QO', label: 'Quick Orders', arrow: false },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>, label: 'Assessment/Screening Tools', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>, label: 'Clinical Documents', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>, label: 'Client Dashboard', arrow: false },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>, label: 'Client Chart', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>, label: 'Flow Sheet (Vitals)', arrow: false },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>, label: 'Consents', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3"/></svg>, label: 'Medication Management (Rx)', arrow: false },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.81 19.79 19.79 0 0 1 1.61 1.18 2 2 0 0 1 3.6 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 7.91a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 15.18z"/></svg>, label: 'Referrals', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>, label: 'Releases and Disclosures', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3z"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, label: 'Flags/Protocols/Events', arrow: true },
-    { badge: 'B', label: 'Billing', arrow: true },
-    { badge: 'D', label: 'Documents', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>, label: 'Inpatient/Residential', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>, label: 'Orders', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>, label: 'Primary Care', arrow: true },
-    { badge: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>, label: 'SmartLinks', arrow: false },
+    ['badge:CT', 'Consent To Share Data', false],
+    ['door', 'My Office', true],
+    ['badge:ST', 'Shared Treatment Plan', false],
+    ['user', 'Client', true],
+    ['badge:CF', 'Client Funds', false],
+    ['external', 'SmartLinks', false],
   ];
-
-  const actionIcons = [
-    <svg key="more" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>,
-    <svg key="check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>,
-    <svg key="person" width="14" height="14" viewBox="0 0 24 24" fill="#1a3560" stroke="none"><circle cx="12" cy="8" r="5" fill="#1a3560"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#1a3560"/></svg>,
-    <svg key="star1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-    <svg key="star2" width="14" height="14" viewBox="0 0 24 24" fill="#f0c040" stroke="#f0c040" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-    <svg key="cal1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
-    <svg key="cal2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/></svg>,
-    <svg key="book" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
-    <svg key="q" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-    <svg key="info" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
-    <svg key="trash" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>,
-    <svg key="print" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
-    <svg key="doc" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#444" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
-  ];
+  const selectStyle = {
+    width: 288,
+    height: 31,
+    border: '1px solid #cfcfcf',
+    background: '#fff',
+    color: '#111',
+    fontSize: 16,
+    fontFamily: 'inherit',
+  };
+  const fieldBoxStyle = {
+    width: 288,
+    height: 31,
+    border: '1px solid #cfcfcf',
+    background: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 7px',
+    fontSize: 16,
+    boxSizing: 'border-box',
+  };
+  const setServiceValue = (field, value) => setServiceValues(prev => ({ ...prev, [field]: value }));
+  const formRow = (label, field, required = false) => (
+    <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
+      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+        {serviceOptions[field] ? (
+          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={selectStyle}>
+            {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
+          </select>
+        ) : (
+          <div style={{ ...fieldBoxStyle, background: field === 'cancelReason' ? '#f6f6f6' : '#fff' }} />
+        )}
+      </div>
+    </div>
+  );
+  const rightRow = (label, field, required = false, suffix = '') => (
+    <div style={{ display: 'grid', gridTemplateColumns: '175px 210px 80px', alignItems: 'center', gap: 10, minHeight: 39 }}>
+      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+        {serviceOptions[field] ? (
+          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={{ ...selectStyle, width: 188 }}>
+            {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
+          </select>
+        ) : (
+          <input value={field === 'startDate' ? '02/09/2026' : ''} onChange={() => {}} style={{ width: 90, height: 31, border: '1px solid #cfcfcf', background: '#fff', padding: '0 5px', fontSize: 16, boxSizing: 'border-box' }} />
+        )}
+      </div>
+      <span style={{ fontSize: 16 }}>{suffix}</span>
+    </div>
+  );
+  const Icon = ({ name, size = 24, color = '#254a67', fill = 'none' }) => {
+    const common = { width: size, height: size, viewBox: '0 0 24 24', fill, stroke: color, strokeWidth: 2.4, strokeLinecap: 'round', strokeLinejoin: 'round', style: { display: 'block' } };
+    switch (name) {
+      case 'menu': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z" /></svg>;
+      case 'search': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z" /></svg>;
+      case 'star': return <svg width={size} height={size} viewBox="0 0 576 512" fill={color} style={{ display: 'block' }}><path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" /></svg>;
+      case 'home-user': return <svg width={size} height={size} viewBox="0 0 576 512" fill={color} style={{ display: 'block' }}><path d="M570.69,236.27,512,184.44V48a16,16,0,0,0-16-16H432a16,16,0,0,0-16,16V99.67L314.78,10.3C308.5,4.61,296.53,0,288,0s-20.46,4.61-26.74,10.3l-256,226A18.27,18.27,0,0,0,0,248.2a18.64,18.64,0,0,0,4.09,10.71L25.5,282.7a21.14,21.14,0,0,0,12,5.3,21.67,21.67,0,0,0,10.69-4.11l15.9-14V480a32,32,0,0,0,32,32H480a32,32,0,0,0,32-32V269.88l15.91,14A21.94,21.94,0,0,0,538.63,288a20.89,20.89,0,0,0,11.87-5.31l21.41-23.81A21.64,21.64,0,0,0,576,248.19,21,21,0,0,0,570.69,236.27ZM288,176a64,64,0,1,1-64,64A64,64,0,0,1,288,176ZM400,448H176a16,16,0,0,1-16-16,96,96,0,0,1,96-96h64a96,96,0,0,1,96,96A16,16,0,0,1,400,448Z" /></svg>;
+      case 'user': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z" /></svg>;
+      case 'money': return <svg {...common} fill="none"><rect x="3" y="7" width="18" height="10" rx="1.3" /><circle cx="12" cy="12" r="2.5" /><path d="M6 10v4M18 10v4" /></svg>;
+      case 'question': return <svg width={size} height={size} viewBox="0 0 384 512" fill={color} style={{ display: 'block' }}><path d="M202.021 0C122.202 0 70.503 32.703 29.914 91.026c-7.363 10.58-5.093 25.086 5.178 32.874l43.138 32.709c10.373 7.865 25.132 6.026 33.253-4.148 25.049-31.381 43.63-49.449 82.757-49.449 30.764 0 68.816 19.799 68.816 49.631 0 22.552-18.617 34.134-48.993 51.164-35.423 19.86-82.299 44.576-82.299 106.405V320c0 13.255 10.745 24 24 24h72.471c13.255 0 24-10.745 24-24v-5.773c0-42.86 125.268-44.645 125.268-160.627C377.504 66.256 286.902 0 202.021 0zM192 373.459c-38.196 0-69.271 31.075-69.271 69.271 0 38.195 31.075 69.27 69.271 69.27s69.271-31.075 69.271-69.271-31.075-69.27-69.271-69.27z" /></svg>;
+      case 'smile': return <svg width={size} height={size} viewBox="0 0 496 512" fill={color} style={{ display: 'block' }}><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm80 168c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm-160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32-32-14.3-32-32 14.3-32 32-32zm194.8 170.2C334.3 380.4 292.5 400 248 400s-86.3-19.6-114.8-53.8c-13.6-16.3 11-36.7 24.6-20.5 22.4 26.9 55.2 42.2 90.2 42.2s67.8-15.4 90.2-42.2c13.4-16.2 38.1 4.2 24.6 20.5z" /></svg>;
+      case 'medical': return <svg {...common} fill="none"><rect x="4" y="5" width="16" height="15" rx="1.5" /><path d="M9 3v4M15 3v4M12 10v6M9 13h6" /></svg>;
+      case 'briefcase': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M320 336c0 8.84-7.16 16-16 16h-96c-8.84 0-16-7.16-16-16v-48H0v144c0 25.6 22.4 48 48 48h416c25.6 0 48-22.4 48-48V288H320v48zm144-208h-80V80c0-25.6-22.4-48-48-48H176c-25.6 0-48 22.4-48 48v48H48c-25.6 0-48 22.4-48 48v80h512v-80c0-25.6-22.4-48-48-48zm-144 0H192V96h128v32z" /></svg>;
+      case 'bell': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M224 512c35.32 0 63.97-28.65 63.97-64H160.03c0 35.35 28.65 64 63.97 64zm215.39-149.71c-19.32-20.76-55.47-51.99-55.47-154.29 0-77.7-54.48-139.9-127.94-155.16V32c0-17.67-14.32-32-31.98-32s-31.98 14.33-31.98 32v20.84C118.56 68.1 64.08 130.3 64.08 208c0 102.3-36.15 133.53-55.47 154.29-6 6.45-8.66 14.16-8.61 21.71.11 16.4 12.98 32 32.1 32h383.8c19.12 0 32-15.6 32.1-32 .05-7.55-2.61-15.27-8.61-21.71z" /></svg>;
+      case 'history': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z" /></svg>;
+      case 'power': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M400 54.1c63 45 104 118.6 104 201.9 0 136.8-110.8 247.7-247.5 248C120 504.3 8.2 393 8 256.4 7.9 173.1 48.9 99.3 111.8 54.2c11.7-8.3 28-4.8 35 7.7L162.6 90c5.9 10.5 3.1 23.8-6.6 31-41.5 30.8-68 79.6-68 134.9-.1 92.3 74.5 168.1 168 168.1 91.6 0 168.6-74.2 168-169.1-.3-51.8-24.7-101.8-68.1-134-9.7-7.2-12.4-20.5-6.5-30.9l15.8-28.1c7-12.4 23.2-16.1 34.8-7.8zM296 264V24c0-13.3-10.7-24-24-24h-32c-13.3 0-24 10.7-24 24v240c0 13.3 10.7 24 24 24h32c13.3 0 24-10.7 24-24z" /></svg>;
+      case 'building': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M436 480h-20V24c0-13.255-10.745-24-24-24H56C42.745 0 32 10.745 32 24v456H12c-6.627 0-12 5.373-12 12v20h448v-20c0-6.627-5.373-12-12-12zM128 76c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12V76zm0 96c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40zm52 148h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12zm76 160h-64v-84c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v84zm64-172c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40zm0-96c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40zm0-96c0 6.627-5.373 12-12 12h-40c-6.627 0-12-5.373-12-12V76c0-6.627 5.373-12 12-12h40c6.627 0 12 5.373 12 12v40z" /></svg>;
+      case 'list': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M48 48a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm448 16H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z" /></svg>;
+      case 'door': return <svg width={size} height={size} viewBox="0 0 640 512" fill={color} style={{ display: 'block' }}><path d="M624 448h-80V113.45C544 86.19 522.47 64 496 64H384v64h96v384h144c8.84 0 16-7.16 16-16v-32c0-8.84-7.16-16-16-16zM312.24 1.01l-192 49.74C105.99 54.44 96 67.7 96 82.92V448H16c-8.84 0-16 7.16-16 16v32c0 8.84 7.16 16 16 16h336V33.18c0-21.58-19.56-37.41-39.76-32.17zM264 288c-13.25 0-24-14.33-24-32s10.75-32 24-32 24 14.33 24 32-10.75 32-24 32z" /></svg>;
+      case 'external': return <svg width={size} height={size} viewBox="0 0 512 512" fill={color} style={{ display: 'block' }}><path d="M432,320H400a16,16,0,0,0-16,16V448H64V128H208a16,16,0,0,0,16-16V80a16,16,0,0,0-16-16H48A48,48,0,0,0,0,112V464a48,48,0,0,0,48,48H400a48,48,0,0,0,48-48V336A16,16,0,0,0,432,320ZM488,0h-128c-21.37,0-32.05,25.91-17,41l35.73,35.73L135,320.37a24,24,0,0,0,0,34L157.67,377a24,24,0,0,0,34,0L435.28,133.32,471,169c15,15,41,4.5,41-17V24A24,24,0,0,0,488,0Z" /></svg>;
+      case 'chevron': return <svg {...common} width={14} height={14} viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></svg>;
+      case 'calendar': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M0 464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V192H0v272zm320-196c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM192 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12h-40c-6.6 0-12-5.4-12-12v-40zM64 268c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zm0 128c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM400 64h-48V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H160V16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v48H48C21.5 64 0 85.5 0 112v48h448v-48c0-26.5-21.5-48-48-48z" /></svg>;
+      case 'caret-down': return <svg width={size} height={size} viewBox="0 0 320 512" fill={color} style={{ display: 'block' }}><path d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z" /></svg>;
+      case 'plus': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" /></svg>;
+      case 'times': return <svg width={size} height={size} viewBox="0 0 352 512" fill={color} style={{ display: 'block' }}><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z" /></svg>;
+      case 'handshake': return <svg width={size} height={size} viewBox="0 0 640 512" fill={color} style={{ display: 'block' }}><path d="M434.7 64h-85.9c-8 0-15.7 3-21.6 8.4l-98.3 90c-.1.1-.2.3-.3.4-16.6 15.6-16.3 40.5-2.1 56 12.7 13.9 39.4 17.6 56.1 2.7.1-.1.3-.1.4-.2l79.9-73.2c6.5-5.9 16.7-5.5 22.6 1 6 6.5 5.5 16.6-1 22.6l-26.1 23.9L504 313.8c2.9 2.4 5.5 5 7.9 7.7V128l-54.6-54.6c-5.9-6-14.1-9.4-22.6-9.4zM544 128.2v223.9c0 17.7 14.3 32 32 32h64V128.2h-96zm48 223.9c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16zM0 384h64c17.7 0 32-14.3 32-32V128.2H0V384zm48-63.9c8.8 0 16 7.2 16 16s-7.2 16-16 16-16-7.2-16-16c0-8.9 7.2-16 16-16zm435.9 18.6L334.6 217.5l-30 27.5c-29.7 27.1-75.2 24.5-101.7-4.4-26.9-29.4-24.8-74.9 4.4-101.7L289.1 64h-83.8c-8.5 0-16.6 3.4-22.6 9.4L128 128v223.9h18.3l90.5 81.9c27.4 22.3 67.7 18.1 90-9.3l.2-.2 17.9 15.5c15.9 13 39.4 10.5 52.3-5.4l31.4-38.6 5.4 4.4c13.7 11.1 33.9 9.1 45-4.7l9.5-11.7c11.2-13.8 9.1-33.9-4.6-45.1z" /></svg>;
+      case 'file': return <svg width={size} height={size} viewBox="0 0 384 512" fill={color} style={{ display: 'block' }}><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zm64 236c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-64c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12v8zm0-72v8c0 6.6-5.4 12-12 12H108c-6.6 0-12-5.4-12-12v-8c0-6.6 5.4-12 12-12h168c6.6 0 12 5.4 12 12zm96-114.1v6.1H256V0h6.1c6.4 0 12.5 2.5 17 7l97.9 98c4.5 4.5 7 10.6 7 16.9z" /></svg>;
+      case 'dots-vertical': return <svg width={size} height={size} viewBox="0 0 192 512" fill={color} style={{ display: 'block' }}><path d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z" /></svg>;
+      case 'clipboard-check': return <svg width={size} height={size} viewBox="0 0 384 512" fill={color} style={{ display: 'block' }}><path d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM192 40c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm121.2 231.8l-143 141.8c-4.7 4.7-12.3 4.6-17-.1l-82.6-83.3c-4.7-4.7-4.6-12.3.1-17L99.1 285c4.7-4.7 12.3-4.6 17 .1l46 46.4 106-105.2c4.7-4.7 12.3-4.6 17 .1l28.2 28.4c4.7 4.8 4.6 12.3-.1 17z" /></svg>;
+      case 'user-circle': return <svg width={size} height={size} viewBox="0 0 496 512" fill={color} style={{ display: 'block' }}><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z" /></svg>;
+      case 'star-outline': return <svg {...common} fill="none"><path d="m12 2.8 2.8 5.7 6.3.9-4.6 4.4 1.1 6.3-5.6-3-5.6 3 1.1-6.3-4.6-4.4 6.3-.9L12 2.8Z" /></svg>;
+      case 'book': return <svg width={size} height={size} viewBox="0 0 576 512" fill={color} style={{ display: 'block' }}><path d="M542.22 32.05c-54.8 3.11-163.72 14.43-230.96 55.59-4.64 2.84-7.27 7.89-7.27 13.17v363.87c0 11.55 12.63 18.85 23.28 13.49 69.18-34.82 169.23-44.32 218.7-46.92 16.89-.89 30.02-14.43 30.02-30.66V62.75c.01-17.71-15.35-31.74-33.77-30.7zM264.73 87.64C197.5 46.48 88.58 35.17 33.78 32.05 15.36 31.01 0 45.04 0 62.75V400.6c0 16.24 13.13 29.78 30.02 30.66 49.49 2.6 149.59 12.11 218.77 46.95 10.62 5.35 23.21-1.94 23.21-13.46V100.63c0-5.29-2.62-10.14-7.27-12.99z" /></svg>;
+      case 'info': return <svg width={size} height={size} viewBox="0 0 192 512" fill={color} style={{ display: 'block' }}><path d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z" /></svg>;
+      case 'trash': return <svg width={size} height={size} viewBox="0 0 448 512" fill={color} style={{ display: 'block' }}><path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z" /></svg>;
+      default: return null;
+    }
+  };
+  const HeaderIcon = ({ children }) => <span style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</span>;
+  const Badge = ({ value }) => <span style={{ width: 31, height: 31, borderRadius: '50%', background: '#254a67', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700 }}>{value}</span>;
+  const ToolbarIcon = ({ name, disabled = false, size = 20 }) => (
+    <span className={`streamline-toolbar-icon${disabled ? ' is-disabled' : ''}`}>
+      <Icon name={name} size={size} color={disabled ? '#7e99a9' : '#254a67'} />
+    </span>
+  );
+  const ToolbarStarPlus = () => (
+    <span className="streamline-toolbar-icon" style={{ position: 'relative' }}>
+      <Icon name="star" size={21} color="#254a67" />
+      <span style={{ position: 'absolute', right: 1, top: 1, width: 10, height: 10, borderRadius: '50%', background: '#254a67', color: '#edf4f9', fontSize: 10, lineHeight: '10px', textAlign: 'center', fontWeight: 700 }}>+</span>
+    </span>
+  );
 
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Top header bar */}
-      <div style={{ background: '#fff', borderBottom: '2px solid #2ecc5a', display: 'flex', alignItems: 'center', padding: '0 12px', height: 38, flexShrink: 0, gap: 10 }}>
-        {/* Hamburger */}
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#1a3560', display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {[0,1,2].map(i => <div key={i} style={{ width: 16, height: 2, background: '#1a3560', borderRadius: 1 }} />)}
-        </button>
-        {/* SmartCare logo */}
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1, marginRight: 8 }}>
-          <span style={{ fontWeight: 700, fontSize: 14, color: '#1a3560', letterSpacing: '-0.01em' }}>
-            SmartCare<span style={{ color: '#2ecc5a', fontSize: 10 }}>™</span>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden' }}>
+      <style>{`
+        .streamline-toolbar-icon {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          border-radius: 2px;
+          color: #254a67;
+        }
+        .streamline-toolbar-icon:hover { background: #d9eaf5; }
+        .streamline-toolbar-icon.is-disabled {
+          color: #7e99a9;
+          opacity: 0.6;
+          cursor: default;
+          pointer-events: none;
+        }
+      `}</style>
+      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box' }}>
+        <HeaderIcon><Icon name="menu" size={31} /></HeaderIcon>
+        <img src="/streamline-smartcare-logo.png" alt="SmartCare" style={{ height: 31.05, width: 'auto', display: 'block', marginRight: 150 }} />
+        <HeaderIcon><Icon name="search" size={32} /></HeaderIcon>
+        <HeaderIcon><Icon name="star" size={32} /></HeaderIcon>
+        <HeaderIcon><Icon name="home-user" size={32} /></HeaderIcon>
+        <HeaderIcon><Icon name="user" size={31} /></HeaderIcon>
+        <div style={{ color: '#000', fontSize: 24, borderBottom: '3px solid #254a67', minWidth: 470, height: 43, display: 'flex', alignItems: 'center', gap: 14 }}>
+          <span>{patientLabel}</span>
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+            <Icon name="money" size={21} /><Icon name="question" size={21} /><Icon name="smile" size={21} /><Icon name="medical" size={21} /><Icon name="briefcase" size={21} />
+            <Icon name="dots-vertical" size={18} /><Icon name="plus" size={18} /><Icon name="times" size={17} />
           </span>
-          <span style={{ fontSize: 7.5, color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Behavioral Health EHR</span>
         </div>
-        {/* Search, star, person */}
-        {[
-          <svg key="s" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-          <svg key="st" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-          <svg key="p" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
-        ].map((icon, i) => (
-          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>{icon}</button>
-        ))}
-        {/* Patient tab */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#f0f4f8', border: '1px solid #dde4ee', borderRadius: 4, padding: '3px 10px', fontSize: 12.5, color: '#1a3560', fontWeight: 500 }}>
-          <span>(1026)</span>
-          <span style={{ background: '#2ecc5a', color: '#fff', borderRadius: 3, padding: '1px 5px', fontSize: 10, fontWeight: 700 }}>ASAM</span>
-          {['T','T','T'].map((t,i) => <span key={i} style={{ fontSize: 11, fontWeight: 700, color: '#1a3560', marginLeft: 2 }}>{t}</span>)}
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </div>
-        <div style={{ flex: 1 }} />
-        {/* Right icons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {[
-            <div key="n1" style={{ position: 'relative' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-              <div style={{ position: 'absolute', top: -4, right: -4, background: '#e84040', color: '#fff', borderRadius: '50%', width: 13, height: 13, fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>3</div>
-            </div>,
-            <div key="n2" style={{ position: 'relative' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              <div style={{ position: 'absolute', top: -4, right: -4, background: '#e84040', color: '#fff', borderRadius: '50%', width: 13, height: 13, fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>5</div>
-            </div>,
-            <svg key="clk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
-            <svg key="help" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-            <svg key="pwr" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>,
-          ].map((icon, i) => (
-            <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', display: 'flex', alignItems: 'center' }}>{icon}</button>
-          ))}
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
+          <Icon name="briefcase" size={26} /><Icon name="bell" size={26} /><Icon name="history" size={26} /><Icon name="question" size={26} /><Icon name="power" size={25} />
         </div>
       </div>
-      {/* Action toolbar */}
-      <div style={{ background: '#f0f4f8', borderBottom: '1px solid #dde4ee', display: 'flex', alignItems: 'center', padding: '3px 10px', height: 32, flexShrink: 0, gap: 6 }}>
-        <span style={{ fontSize: 11, color: '#555', fontWeight: 600, marginRight: 2 }}>GoTo</span>
-        {actionIcons.map((icon, i) => (
-          <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 3px', display: 'flex', alignItems: 'center' }}>{icon}</button>
-        ))}
-        <div style={{ flex: 1 }} />
-        <button style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#1a3560', color: '#fff', border: 'none', borderRadius: 3, padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save
-        </button>
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px', fontSize: 14, color: '#888' }}>×</button>
-      </div>
-      {/* Body */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {/* Left sidebar */}
-        <div style={{ width: 220, background: '#fff', borderRight: '1px solid #dde4ee', flexShrink: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-          {/* Tab icons */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #dde4ee', padding: '6px 12px', gap: 14 }}>
-            {[
-              <svg key="p" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a3560" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
-              <svg key="g" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>,
-              <svg key="l" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
-            ].map((icon, i) => <button key={i} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}>{icon}</button>)}
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
+        <div style={{ width: 345, background: '#efefef', borderRight: '1px solid #cfcfcf', flexShrink: 0 }}>
+          <div style={{ height: 53, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid #cfcfcf' }}>
+            {['user', 'home-user', 'building', 'list'].map((icon, i) => <div key={icon} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: i === 0 ? '3px solid #254a67' : 0 }}><Icon name={icon} size={27} /></div>)}
           </div>
-          {/* Nav items */}
-          {navItems.map((item, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 12px', borderBottom: '1px solid #f0f2f5', cursor: 'pointer' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#f5f8ff'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 22, color: '#1a3560', fontSize: 11, fontWeight: 700 }}>{item.badge}</span>
-              <span style={{ flex: 1, fontSize: 12.5, color: '#1a3560' }}>{item.label}</span>
-              {item.arrow && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5"><polyline points="9 18 15 12 9 6"/></svg>}
+          {navItems.map(([icon, label, arrow], i) => (
+            <div key={label} style={{ height: i === 0 ? 52 : 51, borderBottom: '1px solid #cfcfcf', display: 'flex', alignItems: 'center', gap: 12, padding: '0 17px', boxSizing: 'border-box', fontSize: 16 }}>
+              {icon.startsWith('badge:') ? <Badge value={icon.slice(6)} /> : <span style={{ width: 31, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={27} /></span>}
+              <span style={{ flex: 1 }}>{label}</span>
+              {arrow && <Icon name="chevron" size={16} />}
             </div>
           ))}
         </div>
-        {/* Note area */}
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          <div style={{ flex: '0 0 60%', overflowY: 'auto', padding: '20px 24px', background: '#fff' }}>
-            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#dde4ee' minHeight={175} borderRadius={4} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
+          <div style={{ height: 53, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
+            <div style={{ color: '#000', fontSize: 29, flex: 1 }}>Progress Note</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
+              <ToolbarIcon name="handshake" size={21} />
+              <ToolbarIcon name="file" size={18} />
+              <ToolbarIcon name="dots-vertical" size={16} />
+              <ToolbarIcon name="clipboard-check" disabled size={18} />
+              <ToolbarIcon name="user-circle" size={22} />
+              <span className="streamline-toolbar-icon" style={{ width: 34, fontSize: 14 }}>GoTo</span>
+              <ToolbarStarPlus />
+              <ToolbarIcon name="star" size={21} />
+              <ToolbarIcon name="book" size={21} />
+              <ToolbarIcon name="question" size={21} />
+              <ToolbarIcon name="trash" disabled size={18} />
+            </div>
           </div>
-          <div style={{ width: 1, background: '#dde4ee', flexShrink: 0 }} />
-          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '8px 8px 24px 8px', boxSizing: 'border-box' }}>
+            <div style={{ width: 1190, minHeight: activeTab === 'Service' ? 1120 : '100%', background: '#fff', boxShadow: 'inset 0 0 0 1px #d8d8d8', padding: '20px 15px 56px', boxSizing: 'border-box' }}>
+              <div style={{ height: 49, display: 'grid', gridTemplateColumns: '260px 390px 370px 150px', gap: 8, alignItems: 'center', padding: '0 10px', boxShadow: '0 2px 9px rgba(0,0,0,.25)', marginBottom: 16 }}>
+                <div style={{ display: 'flex', height: 31, alignItems: 'center' }}><span style={{ background: '#eee', padding: '7px 8px', fontSize: 16 }}>Effective</span><span style={{ padding: '7px 8px', fontSize: 16 }}>02/09/2026</span><Icon name="calendar" size={21} /><Icon name="caret-down" size={14} /></div>
+                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Status</span><span style={{ padding: '7px 8px', fontSize: 16 }}>New</span></div>
+                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Author</span><span style={{ padding: '7px 8px', fontSize: 16 }}>Eleos</span></div>
+                <div style={{ fontSize: 16 }}>10/14/2025</div>
+              </div>
+              <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #111', marginBottom: 16, fontSize: 17 }}>
+                {['Service', 'Note', 'Billing Diagnosis', 'Add-On Codes', 'Warnings', 'Disposition'].map(tab => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    style={{ padding: '8px 20px', background: activeTab === tab ? '#d7e9f6' : '#fff', border: 0, borderBottom: activeTab === tab ? '4px solid #254a67' : '4px solid transparent', font: 'inherit', cursor: 'pointer' }}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+              {activeTab === 'Service' ? (
+                <>
+                  <h2 style={{ margin: '0 0 15px 12px', fontSize: 24, fontWeight: 400, color: '#111' }}>Service</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '620px 460px', gap: 45, padding: '0 12px', color: '#111' }}>
+                    <div>
+                      {formRow('Status', 'status')}
+                      {formRow('Program', 'program', true)}
+                      {formRow('Procedure', 'procedure')}
+                      {formRow('Location', 'location', true)}
+                      <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
+                        <label style={{ fontSize: 16, color: '#111' }}>Clinician</label>
+                        <div style={fieldBoxStyle}>Eleos</div>
+                      </div>
+                      {formRow('Mode Of Delivery', 'modeOfDelivery')}
+                      {formRow('Cancel Reason', 'cancelReason')}
+                      <div style={{ height: 28 }} />
+                      {formRow('Evidence Based Practices', 'evidenceBasedPractices')}
+                      {formRow('Transportation Service', 'transportationService')}
+                    </div>
+                    <div>
+                      {rightRow('Start Date', 'startDate')}
+                      {rightRow('Start Time', 'startTime', true)}
+                      {rightRow('Travel Time', 'travelTime', true, 'Minutes')}
+                      <div style={{ height: 39 }} />
+                      {rightRow('Documentation Time', 'documentationTime', true, 'Minutes')}
+                      {rightRow('Service Time', 'serviceTime', true, 'Minutes')}
+                      {rightRow('Attending', 'attending')}
+                      {rightRow('Referring', 'referring')}
+                      <div style={{ height: 40 }} />
+                      <label style={{ fontSize: 16 }}><span style={{ display: 'inline-block', width: 18, height: 18, border: '1px solid #aaa', verticalAlign: 'middle', marginRight: 6 }} />Interpreter Services Needed</label>
+                    </div>
+                  </div>
+                  <div style={{ borderTop: '1px solid #cfcfcf', marginTop: 28, paddingTop: 50 }}>
+                    <h2 style={{ margin: '0 0 22px 8px', fontSize: 23, fontWeight: 400, color: '#111' }}>Custom Fields</h2>
+                    <div style={{ borderTop: '1px solid #cfcfcf', padding: '8px 22px' }}>
+                      <h3 style={{ margin: 0, fontSize: 22, fontWeight: 400, color: '#111' }}>Interpreter/Bilingual Service Information</h3>
+                    </div>
+                  </div>
+                </>
+              ) : activeTab === 'Note' ? (
+                <div style={{ padding: '0 12px 24px' }}>
+                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                </div>
+              ) : (
+                <div style={{ padding: '28px 12px', color: '#666', fontSize: 16 }}>{activeTab} content is not available in this demo.</div>
+              )}
+            </div>
+          </div>
+          <div style={{ height: 8, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
         </div>
       </div>
     </div>
