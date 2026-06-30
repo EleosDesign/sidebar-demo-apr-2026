@@ -1,3 +1,6 @@
 {
-  "installCommand": "rm -f package-lock.json && npm install --registry https://registry.npmjs.org/"
+  "installCommand": "rm -f package-lock.json && npm install --registry https://registry.npmjs.org/",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

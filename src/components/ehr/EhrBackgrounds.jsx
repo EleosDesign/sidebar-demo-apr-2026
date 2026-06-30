@@ -533,176 +533,80 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
 // ═══════════════════════════════════════════════════════════════════════════════
 export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
-  const [activeTab, setActiveTab] = useState('Enter Notes');
+  const { selectedNoteType } = useNoteTypeContext();
+  const noteTypeLabel = NOTE_TYPE_LIST.find(t => t.id === selectedNoteType)?.label ?? 'Progress Note';
   const tabs = ['View/Enter Appointment Details', 'Enter Notes', 'Complete Paperwork', 'Approval/Signatures'];
-  const medications = [
-    { name: 'Advil 200 mg/1 200MG',     sig: '--',              qty: '--', refills: '0' },
-    { name: 'FLONASE 50 ug/1 5',        sig: '--',              qty: '--', refills: '0' },
-    { name: 'Lorazepam 0.5 mg/1 .5 mg', sig: '--',              qty: '--', refills: '0' },
-    { name: 'PAXIL 12.5 mg/1 1 tablet', sig: 'take medication', qty: '--', refills: '0' },
-    { name: 'TYLENOL 500 mg/1 5MG',     sig: 'Take with food',  qty: '--', refills: '0' },
-    { name: 'Xanax 0.25 mg/1 1/day',    sig: '--',              qty: '--', refills: '0' },
-    { name: 'Vitamin ABC(Outside)',      sig: 'TESTING',         qty: '--', refills: ''  },
-  ];
-  const allergies = ['Bee Pollens', 'peanut'];
-  const diagnoses = [
-    { code: 'F60.3', desc: 'Borderline personality disorder(19-aug-2020 to ...)' },
-    { code: 'Z60.0', desc: 'Phase of life problem(17-aug-2023 to ...)' },
-    { code: 'F33.2', desc: 'Major Depressive Disorder, Recurrent, Severe(21-apr-2021 to ...)' },
-  ];
-  const sideIcons = [
-    <svg key="a" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
-    <svg key="b" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
-    <svg key="c" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>,
-    <svg key="d" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-    <svg key="e" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="7" r="3.5"/><path d="M2 21c0-3.5 3.1-6 7-6s7 2.5 7 6"/><circle cx="19" cy="7" r="2.5"/><path d="M19 13c2.3 0 4 1.7 4 4"/></svg>,
-    <svg key="f" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
-    <svg key="g" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/></svg>,
-    <svg key="h" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>,
-    <svg key="i" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>,
-    <svg key="j" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><polygon points="12 2 2 7 12 12 22 7"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
-    <svg key="k" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-  ];
+  const topButtonStyle = { font: 'italic 12px Verdana', background: '#efebe7', border: '1px solid #777', marginRight: 7, padding: '2px 10px' };
+  const serviceDate = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-');
+  const fieldRow = (label, value, extra) => (
+    <tr>
+      <td style={{ background: '#fff', height: 29, padding: '3px 6px', border: '1px solid #d8d8d8', width: '45%', whiteSpace: 'nowrap' }}>{label}</td>
+      <td style={{ background: '#fff', height: 29, padding: '3px 6px', border: '1px solid #d8d8d8' }}>{value}{extra}</td>
+    </tr>
+  );
+
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: 'Arial, sans-serif', fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* App header */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '5px 10px', background: '#fff', borderBottom: '1px solid #ccc', flexShrink: 0, gap: 6 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          {/* Welligent logo: navy W mark + wordmark */}
-          <svg width="28" height="28" viewBox="0 0 28 28">
-            <rect width="28" height="28" rx="5" fill="#1a3a6b"/>
-            <text x="14" y="21" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="18" fill="#fff">W</text>
-          </svg>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontWeight: 800, fontSize: 14, color: '#1a3a6b', letterSpacing: '-0.3px' }}>welligent</span>
-            <span style={{ fontSize: 8, color: '#f5a623', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Session Notes</span>
-          </div>
-        </div>
-        <div style={{ flex: 1 }} />
-        <span style={{ fontSize: 12, color: '#666' }}>{clientName} — MR#10234</span>
-        <button style={{ padding: '3px 11px', border: '1px solid #bbb', borderRadius: 3, background: '#fff', cursor: 'pointer', fontSize: 12, color: '#333' }}>Text Input</button>
-        <button style={{ padding: '3px 11px', border: '1px solid #bbb', borderRadius: 3, background: '#f5f5f5', cursor: 'pointer', fontSize: 12, color: '#333', display: 'flex', alignItems: 'center', gap: 5 }}>
-          <span style={{ fontWeight: 700, fontSize: 11, color: '#1a3560' }}>eleos</span>
-          <span>Eleos Documentation Dashboard</span>
-          <span style={{ borderLeft: '1px solid #bbb', paddingLeft: 8, marginLeft: 2 }}>Psychiatry</span>
-        </button>
-        <button style={{ padding: '3px 11px', border: '1px solid #bbb', borderRadius: 3, background: '#fff', cursor: 'pointer', fontSize: 12, color: '#333' }}>Other »</button>
-        <button style={{ padding: '3px 11px', border: '1px solid #bbb', borderRadius: 3, background: '#fff', cursor: 'pointer', fontSize: 12, color: '#333' }}>Print</button>
-        <button style={{ padding: '3px 11px', border: '1px solid #bbb', borderRadius: 3, background: '#fff', cursor: 'pointer', fontSize: 12, color: '#333' }}>Close</button>
-      </div>
-      {/* Tab bar */}
-      <div style={{ display: 'flex', background: '#2c5f8a', flexShrink: 0 }}>
-        {tabs.map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)} style={{
-            padding: '8px 22px', border: 'none', cursor: 'pointer', fontSize: 13,
-            background: activeTab === tab ? '#3a7eb8' : 'transparent',
-            color: '#fff', fontWeight: activeTab === tab ? 600 : 400,
-            borderBottom: activeTab === tab ? '3px solid #f5a623' : '3px solid transparent',
-            flexShrink: 0,
-          }}>{tab}</button>
-        ))}
-      </div>
-      {/* Main area */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Left panel */}
-        <div style={{ width: 295, borderRight: '1px solid #ccc', overflowY: 'auto', flexShrink: 0, background: '#fff' }}>
-          {/* Active Medications */}
-          <div style={{ borderBottom: '1px solid #ccc' }}>
-            <div style={{ background: '#cfe0ed', padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 12, color: '#1a3a5c', borderBottom: '1px solid #b8cfe0' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
-              Active Medications
+    <div style={{ position: 'absolute', inset: 0, fontFamily: '"Open Sans", Arial, sans-serif', fontSize: 12, overflow: 'hidden', background: '#f5f5f5', color: '#111' }}>
+      <div style={{ height: '100%', padding: 8, boxSizing: 'border-box' }}>
+        <div style={{ height: '100%', border: '1px solid #a0cf67', background: '#f5f5f5', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ height: 30, background: '#0063ba', color: '#fff', display: 'flex', alignItems: 'center' }}>
+            <div style={{ flex: 1, paddingLeft: 8, fontWeight: 700 }}>
+              <img src="/welligent-unlock.gif" alt="" width="15" style={{ verticalAlign: 'middle', marginRight: 8 }} />
+              Session Notes - ELEOS
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5 }}>
-              <thead>
-                <tr style={{ background: '#f3f3f3' }}>
-                  <th style={{ padding: '4px 8px', textAlign: 'left', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd' }}>Medication</th>
-                  <th style={{ padding: '4px 8px', textAlign: 'left', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd' }}>Sig</th>
-                  <th style={{ padding: '4px 6px', textAlign: 'right', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd', fontSize: 11, lineHeight: 1.2 }}>Quantity<br/>Refills</th>
-                </tr>
-              </thead>
-              <tbody>
-                {medications.map((med, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '5px 6px 5px 8px' }}>
-                      <span style={{ fontSize: 10, color: '#666', marginRight: 4, fontStyle: 'italic', fontWeight: 600 }}>Rx</span>
-                      {med.name}
-                    </td>
-                    <td style={{ padding: '5px 6px', color: '#555' }}>{med.sig}</td>
-                    <td style={{ padding: '5px 6px', textAlign: 'right', color: '#555', lineHeight: 1.3 }}>{med.qty}<br/>{med.refills}</td>
-                  </tr>
-                ))}
-                <tr>
-                  <td colSpan={3} style={{ padding: '5px 8px' }}>
-                    <a href="#" onClick={e => e.preventDefault()} style={{ color: '#2a5d8a', textDecoration: 'underline', fontSize: 12 }}>Copy All to the Note</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {['Other »', 'Delete', 'Save', 'Print', 'Close'].map(label => <input key={label} type="button" value={label} style={topButtonStyle} />)}
           </div>
-          {/* Active Allergies */}
-          <div style={{ borderBottom: '1px solid #ccc' }}>
-            <div style={{ background: '#cfe0ed', padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 12, color: '#1a3a5c', borderBottom: '1px solid #b8cfe0' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" strokeWidth="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-              Active Allergies
+
+          <div style={{ background: '#0063ba', borderTop: '1px solid #fff', borderRadius: '0 0 7px 7px', alignSelf: 'center', display: 'flex', marginBottom: 18 }}>
+            {tabs.map(tab => (
+              <div key={tab} style={{ padding: '5px 15px', color: '#fff', borderLeft: tab === tabs[0] ? 'none' : '1px solid #fff', background: tab === 'Enter Notes' ? '#e87800' : '#0063ba' }}>{tab}</div>
+            ))}
+          </div>
+
+          <div style={{ flex: 1, overflow: 'auto', padding: '0 16px 14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '29% 1% 70%', minWidth: 980, gap: 0 }}>
+              <div>
+                <div style={{ background: 'gray', padding: 1, marginBottom: 14 }}>
+                  <div style={{ background: 'ButtonFace', padding: '4px 6px' }}>0 Items Displayed</div>
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', background: '#000' }}>
+                  <tbody>
+                    <tr><td colSpan="2" style={{ background: '#0063ba', color: '#fff', height: 35, padding: '0 8px', fontSize: 14 }}>Event Details</td></tr>
+                    {fieldRow('Date of Service:', serviceDate, <><img src="/welligent-clock.gif" alt="" style={{ marginLeft: 8, verticalAlign: 'middle' }} /><b style={{ color: 'red' }}> *</b></>)}
+                    {fieldRow('Scheduled/Start Time:', '07:00am', <b style={{ color: 'red' }}> *</b>)}
+                    {fieldRow('Appointment Duration (Face to Face):', '15 (Minutes)')}
+                    {fieldRow('Other Time (Not Face-to-Face):', '0 (Minutes)')}
+                    {fieldRow('Client:', clientName || 'Webb, Marcus')}
+                    {fieldRow('Provider:', 'Eleos')}
+                    {fieldRow('Event Status:', 'Pending Completion')}
+                    {fieldRow('Primary Action:', 'Individual', <b style={{ color: 'red' }}> *</b>)}
+                  </tbody>
+                </table>
+              </div>
+
+              <div />
+
+              <div>
+                <table style={{ width: '100%', height: '100%', borderCollapse: 'separate', borderSpacing: 1, background: 'gray' }}>
+                  <tbody>
+                    <tr><td style={{ height: 22, background: '#0063ba', color: '#fff', fontWeight: 700, paddingLeft: 6 }}>{noteTypeLabel}</td></tr>
+                    <tr>
+                      <td style={{ background: '#fff', verticalAlign: 'top', padding: 5 }}>
+                        <div style={{ border: '1px solid #000', padding: 8, background: '#fff' }}>
+                          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField}
+                            labelColor='#111' fontSize={12} borderColor='#999' minHeight={84} borderRadius={0} fontFamily='Arial, sans-serif' />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5 }}>
-              <thead>
-                <tr style={{ background: '#f3f3f3' }}>
-                  <th style={{ padding: '4px 8px', textAlign: 'left', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd' }}>Allergy</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allergies.map((a, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '5px 8px' }}>
-                      <span style={{ marginRight: 8, color: '#777', fontSize: 11 }}>◉</span>{a}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
-          {/* Diagnoses */}
-          <div>
-            <div style={{ background: '#cfe0ed', padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, fontSize: 12, color: '#1a3a5c', borderBottom: '1px solid #b8cfe0' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"/></svg>
-              Diagnoses
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11.5 }}>
-              <thead>
-                <tr style={{ background: '#f3f3f3' }}>
-                  <th style={{ padding: '4px 8px', textAlign: 'left', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd', whiteSpace: 'nowrap' }}>Code</th>
-                  <th style={{ padding: '4px 8px', textAlign: 'left', fontWeight: 600, color: '#555', borderBottom: '1px solid #ddd' }}>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {diagnoses.map((d, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '5px 8px', whiteSpace: 'nowrap', verticalAlign: 'top' }}>
-                      <span style={{ marginRight: 5, color: '#777', fontSize: 11 }}>◉</span>{d.code}
-                    </td>
-                    <td style={{ padding: '5px 8px', color: '#333', lineHeight: 1.4 }}>{d.desc}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+          <div style={{ height: 25, background: '#0063ba', borderTop: '1px solid #0063ba', color: '#fff', display: 'flex', alignItems: 'center', paddingLeft: 8, fontWeight: 700, flexShrink: 0 }}>
+            Note: This record was last modified by Eleos Bh Test on Thursday June 25, 2026 at 10:35 am&nbsp;&nbsp;<u>(View Audit Log)</u>
           </div>
-        </div>
-        {/* Progress Note area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 22px', background: '#fff' }}>
-          <div style={{ fontSize: 16, fontWeight: 600, color: '#222', marginBottom: 18 }}>Progress Note</div>
-          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField}
-            labelColor='#444' fontSize={13} borderColor='#ccc' minHeight={150} />
-        </div>
-        {/* Right icon sidebar */}
-        <div style={{ width: 38, background: '#162540', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 6, gap: 1, flexShrink: 0 }}>
-          {sideIcons.map((icon, i) => (
-            <button key={i} style={{ background: 'transparent', border: 'none', cursor: 'pointer', width: 36, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {icon}
-            </button>
-          ))}
-          <div style={{ flex: 1 }} />
-          <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#aac', fontSize: 13, padding: '8px 0', marginBottom: 6 }}>«</button>
         </div>
       </div>
     </div>
