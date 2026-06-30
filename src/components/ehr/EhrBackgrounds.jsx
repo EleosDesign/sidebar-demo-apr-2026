@@ -1448,90 +1448,97 @@ export function CarlogicBg({ noteValues = {}, onNoteChange, highlightedField }) 
 // 8. MYEVOLV
 // ═══════════════════════════════════════════════════════════════════════════════
 export function MyEvolvBg({ noteValues = {}, onNoteChange, highlightedField }) {
-  const [activeSide, setActiveSide] = useState('Therapy');
-  const sideItems = ['Telehealth Confirmations', 'Therapy', 'Assessment Launch', 'Internal Tasks', 'Additional Information', 'Referral to Another Agency', 'Tasks/Schedules', 'Service Related Encounter Information'];
-  const actionBtns = ['Save', 'Cancel', 'Delete', 'Print ▾', 'Send Alert', 'History', 'Refresh', 'Copy Test', 'Form Info', 'Save Draft'];
-  const navTabs = ['myEvolv', 'Taskbar', 'Referral', 'Program', 'Client', 'People', 'Family', 'Incidents', 'Outreach', 'Groups', 'Resource', 'Finance', 'Agency', 'State', 'Reports', 'Setup'];
+  const { clientName } = useEhrContext();
+  const [activeNav, setActiveNav] = useState('My Progress Notes');
+  const topTabs = ['Taskbar', 'Referral', 'Program\nReferrals', 'Client', 'People\nSearch', 'Incidents', 'Groups', 'Agency', 'Reports'];
+  const sections = [
+    ['Taskbar', 'Homeview', 'Front Desk Daily Check In', 'Front Desk NX'],
+    ['Client', 'My Client', 'Enrollment Information', 'Planning', 'OASAS Goals', 'Service Entry', 'Placement Disruptions', 'Immunizations', 'Visits', 'Demographics', 'My Progress Notes', 'Problems/Needs', 'Strengths'],
+  ];
+  const pill = { background: '#124061', color: '#fff', border: '1px solid #8aa0ad', borderRadius: 18, height: 34, padding: '0 36px', fontSize: 18, lineHeight: '30px', boxShadow: 'inset 0 1px rgba(255,255,255,0.25)', cursor: 'pointer', fontFamily: 'inherit' };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#e0e0e0' }}>
-      {/* App header */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', padding: '6px 16px', flexShrink: 0, gap: 14 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* Netsmart myEvolv logo */}
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-            <rect width="30" height="30" rx="4" fill="#0076a8"/>
-            <text x="15" y="21" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="700" fontSize="13" fill="#fff">my</text>
-          </svg>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontWeight: 400, fontSize: 13, color: '#0076a8', letterSpacing: '0px' }}>
-              <span style={{ fontWeight: 300 }}>my</span><span style={{ fontWeight: 800 }}>Evolv</span>
-            </span>
-            <span style={{ fontSize: 8, color: '#888', letterSpacing: '0.06em', textTransform: 'uppercase' }}>by Netsmart</span>
-          </div>
+    <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, Helvetica, sans-serif", fontSize: 14, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#b6b7bc', color: '#222' }}>
+      <div style={{ height: 66, background: '#f2f2f2', borderTop: '1px solid #222', display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
+        <div style={{ width: 114, display: 'flex', alignItems: 'center', paddingLeft: 14, borderRight: '1px solid #aaa', boxSizing: 'border-box' }}>
+          <span style={{ color: '#0c3d61', fontWeight: 800, fontStyle: 'italic', fontSize: 20, letterSpacing: '-1px' }}>myEvolv</span>
         </div>
-        <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {[
-            { label: 'Presenter Notes', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/></svg> },
-            { label: 'Edit', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> },
-            { label: 'Create Demos', icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg> },
-          ].map(b => (
-            <button key={b.label} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 12, color: '#555', display: 'flex', alignItems: 'center', gap: 4 }}>{b.icon}{b.label}</button>
-          ))}
-          <button style={{ background: '#7c3aed', color: '#fff', border: 'none', cursor: 'pointer', borderRadius: 6, padding: '5px 14px', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            Share
-          </button>
-        </div>
-      </div>
-      {/* Module nav bar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto' }}>
-        {navTabs.map((tab, i) => (
-          <button key={i} style={{ padding: '7px 12px', background: 'transparent', border: 'none', borderBottom: '3px solid transparent', cursor: 'pointer', fontSize: 12, color: '#555', whiteSpace: 'nowrap', flexShrink: 0 }}>{tab}</button>
+        {topTabs.map(tab => (
+          <button key={tab} style={{ whiteSpace: 'pre-line', background: 'transparent', border: 'none', padding: '0 22px', fontSize: 19, lineHeight: 1.1, fontWeight: 700, color: '#333', cursor: 'pointer', fontFamily: 'inherit' }}>{tab}</button>
         ))}
+        <div style={{ flex: 1 }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18, padding: '0 16px', borderLeft: '1px solid #aaa', color: '#666' }}>
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <svg width="31" height="31" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span style={{ fontSize: 18 }}>⌄</span>
+        </div>
       </div>
-      {/* Content: background + modal */}
-      <div style={{ flex: 1, background: '#d8d8d8', overflow: 'hidden', display: 'flex', padding: '6px 6px 6px 44px' }}>
-        <div style={{ background: '#fff', border: '1px solid #bbb', boxShadow: '2px 4px 16px rgba(0,0,0,0.18)', display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
-          {/* Modal title bar */}
-          <div style={{ background: '#f0f0f0', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', padding: '4px 8px', flexShrink: 0 }}>
-            <span style={{ fontSize: 13, color: '#333', flex: 1 }}>Therapy (Individual and Family)</span>
-            <div style={{ display: 'flex', gap: 2 }}>
-              {['−', '□', '×'].map(c => (
-                <button key={c} style={{ width: 20, height: 20, background: '#e8e8e8', border: '1px solid #ccc', borderRadius: 2, fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>{c}</button>
-              ))}
-            </div>
+      <div style={{ height: 40, background: '#124061', display: 'flex', alignItems: 'center', flexShrink: 0, color: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.2)' }}>
+        {['Client', 'Case Management', 'Progress Notes', 'My Progress Notes'].map(item => (
+          <button key={item} style={{ height: '100%', padding: '0 18px', minWidth: item === 'Client' ? 120 : 210, background: '#124061', border: 'none', color: '#fff', fontSize: 19, textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit' }}>{item}<span style={{ float: 'right', fontSize: 18 }}>›</span></button>
+        ))}
+        <div style={{ flex: 1 }} />
+        <div style={{ position: 'relative', width: 280, marginRight: 18 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" style={{ position: 'absolute', left: 8, top: 7 }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input placeholder="Search..." style={{ width: '100%', height: 28, boxSizing: 'border-box', padding: '2px 10px 2px 38px', border: '2px solid #6d7378', fontSize: 20, background: '#fff', color: '#666' }} />
+        </div>
+      </div>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', paddingTop: 16 }}>
+        <aside style={{ width: 340, margin: '0 18px 18px 16px', background: '#fff', overflowY: 'auto', flexShrink: 0 }}>
+          <div style={{ display: 'flex', height: 66, borderBottom: '1px solid #ddd', alignItems: 'center', justifyContent: 'space-around', color: '#999' }}>
+            <button style={{ width: 100, height: 50, background: '#d8d8d8', border: '1px solid #aaa', borderRadius: 5, color: '#000', cursor: 'pointer' }}><svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="7" r="4"/><path d="M3 21c0-5 4-8 9-8s9 3 9 8"/></svg></button>
+            <span style={{ fontSize: 45 }}>★</span>
+            <span style={{ fontSize: 44 }}>↺</span>
           </div>
-          {/* Action buttons */}
-          <div style={{ padding: '8px 12px', borderBottom: '1px solid #e8e8e8', display: 'flex', flexWrap: 'wrap', gap: 5, flexShrink: 0 }}>
-            {actionBtns.map(b => (
-              <button key={b} style={{ padding: '5px 16px', background: '#1f7068', color: '#fff', border: 'none', borderRadius: 20, fontSize: 12, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap' }}>{b}</button>
+          <div style={{ padding: '8px 12px 24px' }}>
+            <div style={{ color: '#27749f', fontSize: 26, fontWeight: 700, marginBottom: 6 }}>myNavigation</div>
+            {sections.map(([heading, ...items]) => (
+              <div key={heading}>
+                <div style={{ background: '#e7e7e7', padding: '8px', fontSize: 24, fontWeight: 800, borderRadius: '4px 4px 0 0' }}>{heading}</div>
+                {items.map(item => (
+                  <button key={item} onClick={() => setActiveNav(item)} style={{ display: 'block', width: '100%', textAlign: 'left', padding: '8px 6px 8px 14px', border: 'none', background: activeNav === item ? '#f3f7fa' : '#fff', color: '#000', fontSize: 20, lineHeight: 1.35, cursor: 'pointer', fontFamily: 'inherit' }}>{item}</button>
+                ))}
+              </div>
             ))}
           </div>
-          {/* Sidebar + note */}
-          <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-            <div style={{ width: 162, borderRight: '1px solid #e8e8e8', flexShrink: 0, overflowY: 'auto' }}>
-              <div style={{ padding: '8px 12px 4px', fontWeight: 700, fontSize: 12, color: '#333' }}>Information</div>
-              {sideItems.map(item => (
-                <div key={item} onClick={() => setActiveSide(item)} style={{
-                  padding: '6px 10px 6px 18px', fontSize: 12, cursor: 'pointer',
-                  color: activeSide === item ? '#1f7068' : '#444',
-                  fontWeight: activeSide === item ? 600 : 400,
-                  background: activeSide === item ? '#f0faf9' : 'transparent',
-                  borderLeft: activeSide === item ? '3px solid #1f7068' : '3px solid transparent',
-                }}>{item}</div>
-              ))}
-            </div>
-            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-              <div style={{ flex: '0 0 58%', overflowY: 'auto', padding: '16px 20px' }}>
-                <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#666' fontSize={13} borderColor='#ccc' minHeight={170} borderRadius={4} />
+        </aside>
+        <main style={{ flex: 1, background: '#fff', overflowY: 'auto' }}>
+          <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ minHeight: 126, display: 'flex', alignItems: 'flex-start', padding: '8px 10px 10px', borderBottom: '1px solid #e0e6eb', boxSizing: 'border-box' }}>
+              <div style={{ width: 60, height: 68, border: '1px solid #ddd', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc', marginRight: 8 }}><svg width="48" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="12" cy="7" r="4"/><path d="M3 21c0-5 4-8 9-8s9 3 9 8"/></svg></div>
+              <div style={{ fontSize: 18, lineHeight: 1.45, color: '#666', flex: 1 }}>
+                <strong style={{ color: '#2670a6' }}>{clientName || 'TEST, ELEOS2'}</strong>
+                <span style={{ marginLeft: 10 }}>| <strong>ID#</strong> 00105651</span>
+                <span style={{ marginLeft: 24 }}><strong>DOB</strong> 07/01/2000</span>
+                <span style={{ marginLeft: 24 }}><strong>Intake</strong> 03/16/2026</span>
+                <span style={{ marginLeft: 24 }}><strong>Location</strong> 123 Main Street, MOUNT VERNON, NY 10553</span>
+                <div style={{ fontWeight: 800, fontSize: 16, marginTop: 14 }}>25 Yrs M</div>
               </div>
-              <div style={{ width: 1, background: '#ddd', flexShrink: 0 }} />
-              <div style={{ flex: 1 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginLeft: 20 }}>
+                <button style={{ ...pill, minWidth: 178, height: 34, padding: '0 20px' }}>Select Client</button>
+                <select defaultValue="Actions" style={{ minWidth: 164, height: 34, borderRadius: 16, border: '1px solid #aaa', background: '#e7e7e7', padding: '0 28px', fontSize: 20, color: '#111' }}><option>Actions</option></select>
+              </div>
+            </div>
+            <div style={{ padding: '10px 10px 12px', borderBottom: '1px solid #e0e6eb', display: 'flex', gap: 18, alignItems: 'center' }}>
+              <button style={{ ...pill, marginRight: 0 }}>Select Note</button>
+              <button style={{ ...pill }}>Send Alert</button>
+              <button style={{ ...pill }}>Refresh</button>
+              <button style={{ ...pill }}>Form Info</button>
+            </div>
+            <div style={{ height: 48, background: '#124061', color: '#fff', display: 'flex', alignItems: 'center', fontSize: 28, fontWeight: 800, padding: '0 20px', gap: 12 }}><span style={{ fontSize: 20 }}>⌃</span>Group 1</div>
+            <div style={{ padding: '28px 28px 80px', maxWidth: 'none' }}>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Note</div>
+              <div style={{ border: '1px solid #c9c9c9', borderRadius: 5, overflow: 'hidden', marginBottom: 18, background: '#eee' }}>
+                <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 0, padding: '0 8px', borderBottom: '1px solid #d2d2d2' }}>
+                  {['B', 'I', 'U', '◼', 'S', 'x²', 'x₂', '14⌄', 'A', '≡', '1≡', '☷', 'T⌄', '▦', '◷'].map((item, i) => (
+                    <button key={`${item}-${i}`} disabled={i !== 8} style={{ minWidth: i === 7 || i === 12 ? 66 : 44, height: 40, border: '1px solid #aaa', background: i === 8 ? '#b4b4b4' : '#a9a9a9', color: i === 8 ? '#fffb57' : '#909090', fontSize: 20, fontWeight: 800, cursor: i === 8 ? 'pointer' : 'default' }}>{item}</button>
+                  ))}
+                </div>
+              </div>
+              <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' labelWeight={700} fontSize={14} borderColor='#c9c9c9' minHeight={150} borderRadius={4} bg='#fff' />
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
