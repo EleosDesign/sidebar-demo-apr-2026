@@ -9,6 +9,7 @@ import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
+import LockedDownModeToggle from '../../components/ehr/LockedDownModeToggle.jsx';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import UserMenu from '../../components/ui/UserMenu.jsx';
@@ -164,6 +165,8 @@ export default function ClinicianScene({ step, onNext }) {
           <NoteTypeSelector />
           <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
           <EhrSelector />
+          <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+          <LockedDownModeToggle />
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
@@ -5355,6 +5358,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const [planExpanded, setPlanExpanded] = useState(false);
   const [planHover, setPlanHover] = useState(false);
   const inputRef = useRef(null);
+  const { setClientName: setEhrClientName } = useEhrContext();
 
   const filtered = query.trim()
     ? CLIENT_OPTIONS.filter(c => c.toLowerCase().includes(query.toLowerCase()))
@@ -5364,6 +5368,9 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
     setClientName(name);
     setQuery(name);
     setDropdownOpen(false);
+    const parts = name.trim().split(/\s+/);
+    const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : name;
+    setEhrClientName(formatted);
   }
 
   function clearClient() {
