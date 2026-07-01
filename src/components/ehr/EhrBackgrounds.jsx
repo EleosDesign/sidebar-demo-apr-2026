@@ -2200,86 +2200,153 @@ export function NetsmartBg({ noteValues = {}, onNoteChange, highlightedField }) 
 // 14. PCE
 // ═══════════════════════════════════════════════════════════════════════════════
 export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
-  const [activeIndex, setActiveIndex] = useState('Narrative');
+  const { clientName } = useEhrContext();
+  const [activeIndex, setActiveIndex] = useState('Note');
+
+  const pceInput = { border: '1px solid #888', fontSize: 12, height: 20, boxSizing: 'border-box', fontFamily: 'Arial, sans-serif' };
+  const indexItems = ['Note', 'Mental Status Exam', 'Risk Assessment', 'Diagnosis', 'Send Copy To', 'Signatures'];
+  const shellLinks = [
+    ['Chart Documents', 'chartblue'], ['Eligibility/Insurance', 'eligibility'], ['Health/PHCP Info', 'health'], ['Client Appointments', 'calendar'],
+    ['1 Alert', 'alert'], ['Diagnosis', 'dx'], ['Authorizations', 'auths'], ['Education Portal', 'education'],
+  ];
+  const selectStyle = { ...pceInput, background: '#fff', minWidth: 150 };
 
   return (
-    <div style={{ position: 'absolute', inset: 0, fontFamily: 'Arial, sans-serif', fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
-      {/* Top bar */}
-      <div style={{ background: '#fff', borderBottom: '2px solid #cc3300', display: 'flex', alignItems: 'center', padding: '5px 10px', flexShrink: 0, gap: 4 }}>
-        {['Back', 'Home', 'Logout', 'Help'].map(label => (
-          <button key={label} style={{ background: '#cc3300', color: '#fff', border: 'none', borderRadius: 3, padding: '4px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>{label}</button>
-        ))}
-        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
-        </button>
-        <div style={{ flex: 1 }} />
-        <span style={{ fontWeight: 700, fontSize: 14, color: '#222' }}>Change Behavioral Health Progress Note</span>
-        <div style={{ flex: 1 }} />
-      </div>
-      {/* Patient info bar */}
-      <div style={{ background: '#f5f5f5', borderBottom: '1px solid #ccc', display: 'flex', alignItems: 'stretch', padding: '8px 14px', gap: 16, flexShrink: 0, fontSize: 12 }}>
-        {/* Left: DOB/Address */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
-          <span style={{ color: '#333' }}><strong>Date of Birth</strong></span>
-          <span style={{ color: '#333' }}><strong>Home Phone</strong></span>
-          <span style={{ color: '#333' }}><strong>Address</strong></span>
-        </div>
-        {/* Current Admission box */}
-        <div style={{ border: '1px solid #aaa', padding: '6px 10px', background: '#fff', minWidth: 200 }}>
-          <div style={{ background: '#a8c4d8', fontWeight: 700, fontSize: 11, padding: '2px 6px', marginBottom: 6, textAlign: 'center' }}>Current Admission</div>
-          {['Primary Org:', 'Primary Program:', 'Case Holder:'].map(label => (
-            <div key={label} style={{ fontSize: 12, color: '#333', marginBottom: 2 }}><strong>{label}</strong></div>
-          ))}
-        </div>
-        {/* Links */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 24px', alignContent: 'start' }}>
-          {[
-            { label: 'Chart Documents', icon: '🗂️', color: '#2255aa' },
-            { label: '1 Alert', icon: '⚠️', color: '#cc0000' },
-            { label: 'Eligibility/Insurance', icon: '🧾', color: '#2255aa' },
-            { label: 'Diagnosis', icon: '🔬', color: '#2255aa' },
-            { label: 'Health/PHCP Info', icon: '❤️', color: '#2255aa' },
-            { label: 'Clinical Decision Supports', icon: '💡', color: '#2255aa' },
-            { label: 'Latest Clinical Documents', icon: '📋', color: '#2255aa' },
-            { label: 'Assignments', icon: '📌', color: '#2255aa' },
-            { label: 'Quality Measures', icon: '📊', color: '#2255aa' },
-          ].map(item => (
-            <a key={item.label} href="#" onClick={e => e.preventDefault()} style={{ fontSize: 12, color: item.color, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ fontSize: 11 }}>{item.icon}</span>{item.label}
-            </a>
-          ))}
-        </div>
-        {/* Case info */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginLeft: 'auto', textAlign: 'right', minWidth: 180 }}>
-          <span style={{ fontSize: 12, color: '#333' }}><strong>Case #:</strong> 000002</span>
-          <span style={{ fontSize: 12, color: '#333' }}><strong>LOC/Grid:</strong> None</span>
-          <span style={{ fontSize: 12 }}><strong>Case:</strong> <span style={{ color: '#2a7a2a', fontWeight: 700 }}>Open</span></span>
-        </div>
-      </div>
-      {/* Body */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {/* Index sidebar */}
-        <div style={{ width: 160, flexShrink: 0, padding: '10px 8px' }}>
-          <div style={{ border: '1px solid #888', overflow: 'hidden', borderRadius: 2 }}>
-            <div style={{ background: '#5b8ab8', color: '#fff', fontWeight: 700, fontSize: 12, padding: '4px 8px', textAlign: 'center' }}>Index</div>
-            {[
-              { num: '1.', label: 'Narrative', link: false },
-              { num: '2.', label: 'Send Copy To', link: true },
-              { num: '3.', label: 'Signatures', link: true },
-            ].map(item => (
-              <div key={item.label} onClick={() => setActiveIndex(item.label)} style={{ padding: '5px 8px', background: activeIndex === item.label ? '#e8d8a0' : '#fff', cursor: 'pointer', fontSize: 12, borderTop: '1px solid #ddd', display: 'flex', gap: 4 }}>
-                <span style={{ color: '#555' }}>{item.num}</span>
-                {item.link ? <a href="#" onClick={e => e.preventDefault()} style={{ color: '#2255aa' }}>{item.label}</a> : <span style={{ color: '#333', fontWeight: 600 }}>{item.label}</span>}
-              </div>
-            ))}
+    <div style={{ position: 'absolute', inset: 0, fontFamily: 'Arial, Tahoma, Helvetica, sans-serif', fontSize: 12, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff', color: '#000' }}>
+      <div style={{ height: 93, flexShrink: 0, position: 'relative', background: '#fff' }}>
+        <div style={{ height: 4 }} />
+        <div style={{ width: 960, height: 87, position: 'relative', padding: 1, background: 'linear-gradient(90deg, #ffffff 0%, #f3fbfb 45%, #d6efef 100%)' }}>
+          <div style={{ position: 'absolute', top: 20, left: 10, color: '#55360e', font: 'bold 12px Calibri, Arial' }}>PCE Care Management</div>
+          <div style={{ position: 'absolute', top: 66, left: 7, height: 15, display: 'flex', alignItems: 'center', gap: 5 }}>
+            <img src="/pce-backButtonTeal.png" alt="Back" />
+            <img src="/pce-homeButtonTeal.png" alt="Home" />
+            <span style={{ width: 8 }} />
+            <img src="/pce-message1.png" alt="Messages" />
+            <button type="button" style={{ height: 35, display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12 }}>Login</button>
+          </div>
+          <div title="Add Progress Note" style={{ position: 'absolute', top: 70, left: 550, width: 400, textAlign: 'right', font: '14px Calibri, Arial' }}><b>Add Progress Note</b></div>
+          <div style={{ position: 'absolute', top: 6, left: 790, width: 160, textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: 5 }}>
+            <img src="/pce-logoutButtonTeal.png" alt="Logout" />
+            <img src="/pce-helpButtonTeal.png" alt="Help" />
           </div>
         </div>
-        {/* Note area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', background: '#fff' }}>
-          <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#ccc' minHeight={175} borderRadius={3} />
+      </div>
+
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        <div style={{ width: 960 }}>
+          <div style={{ paddingBottom: 3 }}>
+            <div style={{ display: 'flex', gap: 10, marginLeft: 10, marginBottom: 0 }}>
+              <button style={{ border: 0, background: '#dc0000', color: '#fff', fontWeight: 700, fontSize: 12, padding: '2px 10px' }}>Adverse Reactions/Allergies</button>
+              <button style={{ border: 0, background: '#0060dc', color: '#fff', fontWeight: 700, fontSize: 12, padding: '2px 10px' }}>Access Notes</button>
+              <button style={{ border: 0, background: '#ffff00', color: '#000', fontWeight: 700, fontSize: 12, padding: '2px 10px' }}>Clinical Notes</button>
+            </div>
+            <div style={{ border: '2px solid #0060dc', padding: 3, background: '#edf5ff', marginTop: 0 }}>
+              <table style={{ width: '98%', fontSize: 12 }}><tbody>
+                <tr><td style={{ width: 74 }}>02/06/25</td><td>Admitted: Demo Hospital</td></tr>
+                <tr><td>01/22/24</td><td>THIS IS A TEST CHART</td></tr>
+                <tr><td>02/27/17</td><td>This is the note that shows at the top of the chart</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+
+          <div style={{ background: '#d5d5d5', padding: 1 }}>
+            <div style={{ background: '#f7f7f7', border: '1px solid #aaa' }}>
+              <div style={{ background: '#ddd', padding: 2, display: 'grid', gridTemplateColumns: '30% 20% 1fr auto', gap: 8 }}>
+                <span><b style={{ color: '#2b3b4c' }}>Name:&nbsp;</b><b>{clientName || 'Demo, Client'}</b>&nbsp;&nbsp;(9/M)</span>
+                <span><b style={{ color: '#2b3b4c' }}>Case #:&nbsp;</b><b>DEMO-0001</b></span>
+                <span><b style={{ color: '#2b3b4c' }}>Current LOC:&nbsp;</b><b>SED - Level 4 - High</b>&nbsp;&nbsp;<b style={{ color: '#2b3b4c' }}>IH LOC:&nbsp;</b><b>None</b></span>
+                <span><b style={{ color: '#2b3b4c' }}>Case:&nbsp;</b><b style={{ color: '#109030' }}>Open</b></span>
+              </div>
+              <div style={{ padding: 1, background: '#f00' }}><div style={{ background: '#fff', textAlign: 'center', border: '1px solid red' }}><b>Reading Assistance,&nbsp;&nbsp;GUARDIAN</b></div></div>
+              <div style={{ display: 'grid', gridTemplateColumns: '28% 40% 1fr', gap: 6, padding: 2 }}>
+                <div style={{ fontSize: 11, padding: 2 }}>
+                  <b style={{ color: '#2b3b4c' }}>Date of Birth</b><br />01/01/2000<br /><br />
+                  <b style={{ color: '#2b3b4c' }}>Address</b><br />123 Demo St<br />Demo City, ST 00000<br /><br />
+                  <b style={{ color: '#2b3b4c' }}>Email Address:</b><br /><b>demo.client@example.com</b>
+                </div>
+                <div>
+                  <div style={{ border: '1px solid #aaa', marginBottom: 5 }}>
+                    <div style={{ background: '#cededc', textAlign: 'center', fontWeight: 700, fontSize: 10 }}>Current Admission:</div>
+                    <div style={{ padding: 3 }}><b style={{ color: '#2b3b4c' }}>Primary Program:&nbsp;</b>MIC Outpatient</div>
+                    <div style={{ padding: 3 }}><b style={{ color: '#2b3b4c' }}>Case Holder:&nbsp;</b>Unassigned</div>
+                  </div>
+                  <div style={{ border: '1px solid #ddd' }}>
+                    <div style={{ background: '#cededc', textAlign: 'center', fontWeight: 700, fontSize: 10 }}>Current Funding</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', padding: 3, gap: 3, fontSize: 11 }}>
+                      <span><b>Medicaid:</b> Not Eligible</span><span><b>CCBHC State Funding:</b> Yes</span>
+                      <span><b>CWP:</b> No</span><span><b>SED Waiver:</b> No</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center', color: '#f00', fontWeight: 700, fontSize: 11, marginTop: 6 }}>*** NON-MEDICAID CLIENT ***<br />*** SUICIDE WARNING ALERT ***</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 18px', alignContent: 'start', padding: '2px 0 0 12px' }}>
+                  {shellLinks.map(([label, cls]) => (
+                    <a key={label} href="#" onClick={e => e.preventDefault()} style={{ color: '#184ab6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}>
+                      <span style={{ width: 14, height: 14, border: '1px solid #9aa', background: cls === 'alert' ? '#c00' : '#e8eef5', display: 'inline-block' }} />{label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '165px 1fr', alignItems: 'start', marginTop: 5 }}>
+            <div style={{ width: 165 }}>
+              <div style={{ background: '#23a1b9', color: '#fff', fontWeight: 700, textAlign: 'center', padding: 3 }}>Index</div>
+              <ul style={{ listStyle: 'none', margin: 0, padding: 0, borderLeft: '1px solid #23a1b9', borderRight: '1px solid #23a1b9', borderBottom: '1px solid #23a1b9' }}>
+                {indexItems.map((label, i) => (
+                  <li key={label} onClick={() => setActiveIndex(label)} style={{ display: 'flex', gap: 4, padding: '3px 4px', background: activeIndex === label ? '#e5e5e5' : '#fff', cursor: 'pointer', fontSize: 12 }}>
+                    <span style={{ width: 18, textAlign: 'right' }}>{i + 1}.</span>
+                    {activeIndex === label ? <span>{label}</span> : <a href="#" onClick={e => e.preventDefault()} style={{ color: '#184ab6' }}>{label}</a>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div style={{ width: 780, paddingLeft: 5 }}>
+              {activeIndex === 'Note' ? (
+                <>
+                  <div style={{ border: '1px solid #999', background: '#fbfbfe', padding: 5, marginBottom: 8 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '110px 110px 1fr', gap: 12, marginBottom: 8 }}>
+                      <label><b style={{ color: '#2b3b4c' }}>Date</b><br /><input defaultValue="06/30/2026" style={{ ...pceInput, width: 90 }} /></label>
+                      <label><b style={{ color: '#2b3b4c' }}>Begin Time</b><br /><input defaultValue="02:21" style={{ ...pceInput, width: 42 }} /> <select defaultValue="PM" style={{ ...pceInput, width: 48 }}><option>AM</option><option>PM</option></select></label>
+                      <label><b style={{ color: '#2b3b4c' }}>Staff</b><br /><span>Demo Clinician</span></label>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                      <label><b style={{ color: '#2b3b4c' }}>Contact Type</b><br /><select style={selectStyle}><option>* Select Contact Type</option><option>Face to Face</option><option>Telephone</option></select></label>
+                      <label><b style={{ color: '#2b3b4c' }}>Attendance</b><br /><select style={selectStyle}><option>* Select Attendance</option><option>Client Present</option><option>No-Show</option></select></label>
+                      <label><b style={{ color: '#2b3b4c' }}>Place Of Contact</b><br /><select style={selectStyle}><option>* Select Place Of Contact</option><option>Office</option><option>Home</option><option>Telemed Video-Client at Home</option></select></label>
+                    </div>
+                    <label style={{ display: 'block', marginTop: 8 }}><input type="checkbox" /> Flag this note as critical information for prescriber to view during medical review <img src="/pce-red-flag.png" alt="" style={{ verticalAlign: 'middle' }} /></label>
+                  </div>
+
+                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#2b3b4c' labelWeight={700} fontSize={12} borderColor='#888' minHeight={116} borderRadius={0} fontFamily='Arial, Tahoma, Helvetica, sans-serif' />
+
+                  <div style={{ border: '2px solid #c00', background: '#fff', padding: 4, marginTop: 8 }}><b>REMINDER:</b><br />Update Health &amp; Safety Warnings as applicable</div>
+                  <div style={{ marginTop: 8, borderTop: '1px solid #888', paddingTop: 5, display: 'flex', gap: 4 }}>
+                    <input type="button" value="Save and Continue to Mental Status Exam" />
+                    <input type="button" value="Save" />
+                    <input type="button" value="Cancel" />
+                  </div>
+                </>
+              ) : (
+                <div style={{ border: '1px solid #999', background: '#fbfbfe', minHeight: 420, padding: 12 }}>
+                  <h3 style={{ margin: '0 0 8px', fontSize: 14, color: '#2b3b4c' }}>{activeIndex}</h3>
+                  <p style={{ margin: 0 }}>This page is listed in the exported PCE index. Note fields are only shown on the Note page.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid #888', marginTop: 5, padding: '3px 0', display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+            <span>Tuesday, June 30, 2026 2:21 PM Eastern Time</span>
+            <span>Demo Clinician</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', font: 'normal 10px Verdana, Arial, Helvetica, sans-serif', color: '#707070' }}>
+            <b>PCE Care Management 9.4 Copyright 1999, 2026 PCE Systems Inc. All rights reserved.</b>
+            <span>TIME-OUT IN: 58 Minutes, 33 Seconds</span>
+          </div>
         </div>
-        <div style={{ width: 1, background: '#ddd', flexShrink: 0 }} />
-        <div style={{ flex: 1, background: '#fff' }} />
       </div>
     </div>
   );
