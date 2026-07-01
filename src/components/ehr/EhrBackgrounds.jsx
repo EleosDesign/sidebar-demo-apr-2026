@@ -1720,83 +1720,174 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 10. KIPU
 // ═══════════════════════════════════════════════════════════════════════════════
+const KIPU_PURPLE = '#6C18C9';
+const KIPU_CHART_TABS = [
+  'Information', 'Pre-Admission', 'Admission', 'Releases', 'Nursing Intake', 'Financial Intake', 'Clinical Assessments', 'Treatment Plans', 'Clinical Progress Notes', 'Wiley HW', 'Completed Group Sessions', 'ASAM/Transfer',
+  'Case Management', 'Medical', 'Recurring Assessments', "Doctor's Orders", 'MAR', 'Nursing', 'Labs', 'Discharge Planning', 'Disclosure Log', 'Rounds', 'Patient Ledger', 'Patient Assessments', 'Flags', 'Vitals',
+  'Documents', 'Lab Orders', 'Lab Requisitions', 'Lab Reports', 'Attendance', 'Chart Summary',
+];
+
 export function KipuBg({ noteValues = {}, onNoteChange, highlightedField }) {
-  const [activeNav, setActiveNav] = useState('Clients');
-  const navItems = ['Dashboard', 'Clients', 'Occupancy', 'Schedules', 'Shifts', 'Contacts', 'Labs', 'Reports', 'Inventory', 'Help'];
+  const { clientName } = useEhrContext();
+  const [hoveredNav, setHoveredNav] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState(null);
+  const [hoveredTab, setHoveredTab] = useState(null);
+  const navItems = ['Dashboard', 'Clients', 'Occupancy', 'Schedules', 'Shifts', 'Contacts', 'Labs', 'Reports', 'Templates', 'Inventory', 'Help'];
+
+  const chartTabs = (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+      {KIPU_CHART_TABS.map(item => {
+        const isActive = item === 'Clinical Progress Notes';
+        const isHovered = hoveredTab === item;
+        return (
+          <span key={item} onMouseEnter={() => setHoveredTab(item)} onMouseLeave={() => setHoveredTab(null)} style={{
+            padding: '5px 10px', fontSize: 12, whiteSpace: 'nowrap', cursor: 'default', borderRadius: 3,
+            color: isActive ? KIPU_PURPLE : '#3a4a5c',
+            fontWeight: isActive ? 700 : 400,
+            background: isActive ? '#fff' : isHovered ? '#b8d3fb' : '#cadffe',
+            border: isActive ? '1px solid #6fa4e8' : '1px solid transparent',
+            borderBottom: isActive ? '1px solid #fff' : '1px solid transparent',
+          }}>{item}</span>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div style={{ position: 'absolute', inset: 0, fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: 13, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#fff' }}>
       {/* Purple header */}
-      <div style={{ background: '#7a30b8', display: 'flex', alignItems: 'center', padding: '8px 18px', gap: 16, flexShrink: 0 }}>
-        {/* Kipu Health logo */}
+      <div style={{ background: KIPU_PURPLE, display: 'flex', alignItems: 'center', padding: '8px 18px', gap: 16, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect width="28" height="28" rx="5" fill="rgba(255,255,255,0.18)"/>
-            <text x="14" y="20" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="900" fontSize="16" fill="#fff">k</text>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="5" fill="rgba(255,255,255,0.18)"/>
+            <text x="12" y="17" textAnchor="middle" fontFamily="Arial,sans-serif" fontWeight="900" fontSize="14" fill="#fff">K</text>
           </svg>
-          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-            <span style={{ fontWeight: 700, fontSize: 16, color: '#fff', letterSpacing: '0.02em' }}>kipu</span>
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Health</span>
-          </div>
+          <span style={{ fontWeight: 700, fontSize: 16, color: '#fff', letterSpacing: '0.01em' }}>Kipu EMR</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.85)', fontSize: 12, cursor: 'default' }}>
+          All Locations
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
         <div style={{ flex: 1 }} />
-        <div style={{ position: 'relative', flex: '0 0 240px' }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.2" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input placeholder="Search Client" style={{ width: '100%', padding: '7px 10px 7px 30px', border: 'none', borderRadius: 20, fontSize: 13, outline: 'none', boxSizing: 'border-box' }} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ position: 'relative' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-            <div style={{ position: 'absolute', top: -5, right: -5, background: '#fff', color: '#7a30b8', borderRadius: '50%', width: 14, height: 14, fontSize: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>A</div>
+        <span style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12 }}>{new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          {[
+            { key: 'search', paths: <><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></> },
+            { key: 'bell', badge: 2, paths: <><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></> },
+            { key: 'download', paths: <><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></> },
+            { key: 'mail', paths: <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></> },
+          ].map(icon => (
+            <div key={icon.key} onMouseEnter={() => setHoveredIcon(icon.key)} onMouseLeave={() => setHoveredIcon(null)} style={{ position: 'relative', width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredIcon === icon.key ? 'rgba(255,255,255,0.16)' : 'transparent', transition: 'background 0.14s ease' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.9">{icon.paths}</svg>
+              {icon.badge && <span style={{ position: 'absolute', top: -1, right: -1, background: '#fff', color: KIPU_PURPLE, borderRadius: '50%', width: 13, height: 13, fontSize: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{icon.badge}</span>}
+            </div>
+          ))}
+          <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 4 }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.9"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
         </div>
       </div>
       {/* White nav bar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'stretch', flexShrink: 0 }}>
-        {navItems.map(item => (
-          <button key={item} onClick={() => setActiveNav(item)} style={{
-            padding: '10px 16px', border: 'none', cursor: 'pointer', fontSize: 13, background: 'transparent', whiteSpace: 'nowrap',
-            color: activeNav === item ? '#7a30b8' : '#444',
-            fontWeight: activeNav === item ? 600 : 400,
-            borderBottom: activeNav === item ? '2px solid #7a30b8' : '2px solid transparent',
-            display: 'flex', alignItems: 'center', gap: 5,
-          }}>
-            {item}
-            {item === 'Labs' && <span style={{ background: '#e8e8e8', color: '#666', borderRadius: '50%', width: 16, height: 16, fontSize: 9, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>A</span>}
-          </button>
-        ))}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'stretch', flexShrink: 0, overflowX: 'auto' }}>
+        {navItems.map(item => {
+          const isActive = item === 'Clients';
+          const isHovered = hoveredNav === item;
+          return (
+            <div key={item} onMouseEnter={() => setHoveredNav(item)} onMouseLeave={() => setHoveredNav(null)} style={{
+              padding: '10px 14px', cursor: 'default', fontSize: 13, whiteSpace: 'nowrap',
+              color: isActive ? KIPU_PURPLE : '#444',
+              fontWeight: isActive ? 600 : 400,
+              borderBottom: isActive ? `2px solid ${KIPU_PURPLE}` : '2px solid transparent',
+              background: !isActive && isHovered ? '#f7f2fb' : 'transparent',
+              transition: 'background 0.14s ease',
+            }}>
+              {item}
+            </div>
+          );
+        })}
+      </div>
+      {/* Patient info bar */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 18, flexShrink: 0, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: '#222' }}>{clientName}</span>
+        <div style={{ width: 1, height: 18, background: '#e2e8f0' }} />
+        <span style={{ fontSize: 12, color: '#444' }}><b>MR#:</b> ——</span>
+        <span style={{ fontSize: 12, color: '#444' }}><b>DOB:</b> ——/——/——</span>
+        <div style={{ width: 3, height: 18, background: '#8fd19e', borderRadius: 2 }} />
+        <span style={{ fontSize: 12, color: '#444' }}><b>Location:</b> — <b style={{ marginLeft: 8 }}>LoC:</b> —</span>
+        <span style={{ fontSize: 12, color: '#444' }}>No known allergies</span>
+        <div style={{ flex: 1 }} />
+        <div style={{ width: 24, height: 24, borderRadius: 4, background: '#eee', color: '#666', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>P</div>
+        <button style={{ background: '#fff', border: '1px solid #aac4e0', borderRadius: 4, padding: '5px 12px', fontSize: 12, fontWeight: 600, color: '#337ab7', cursor: 'default', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#337ab7" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          SCHEDULER
+        </button>
+        <div style={{ width: 22, height: 24, border: '1px solid #d0d7de', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="3"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      {/* Chart section tabs */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '10px 20px', flexShrink: 0 }}>
+        {chartTabs}
       </div>
       {/* Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Patient / discharge section */}
-        <div style={{ background: '#dce8f8', borderBottom: '1px solid #c0d4ec', padding: '14px 20px', flexShrink: 0 }}>
-          <div style={{ display: 'flex', gap: 0, marginBottom: 14, borderBottom: '1px solid #c0d4ec', paddingBottom: 10, overflowX: 'auto' }}>
-            {['Patient Info', 'Insurance', 'Medical', 'Treatment', 'Care Team', 'Vitals', 'Lab Results', 'Forms'].map((t, i) => (
-              <button key={t} style={{ padding: '5px 12px', background: i === 4 ? 'rgba(255,255,255,0.5)' : 'transparent', border: 'none', cursor: 'pointer', fontSize: 12, color: '#1a3a6a', fontWeight: i === 4 ? 600 : 400, whiteSpace: 'nowrap', flexShrink: 0 }}>{t}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#1a3a6a' }}>Anticipated Discharge Date:</span>
-              <input style={{ padding: '4px 8px', border: '1px solid #aac4e0', borderRadius: 3, fontSize: 13, width: 160, background: '#fff', outline: 'none' }} placeholder="Select date..." />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#1a3a6a' }}>Golden Thread</span>
-              <button style={{ background: '#2db564', color: '#fff', border: 'none', borderRadius: 4, padding: '5px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                Golden Thread
-              </button>
-            </div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '18px 24px 60px', background: '#fff' }}>
+        <div style={{ maxWidth: 700, marginBottom: 14 }}>
+          <div style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>← Clinical Progress Notes</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#222', marginBottom: 12 }}>Individual Progress Note</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <button style={{ padding: '9px 20px', fontSize: 13, border: '1px solid #ccc', borderRadius: 20, background: '#eee', color: '#444', cursor: 'default' }}>Add signers</button>
+            <button style={{ padding: '10px 22px', fontSize: 12, fontWeight: 700, letterSpacing: '0.03em', border: 'none', borderRadius: 22, background: '#274a78', color: '#fff', cursor: 'default' }}>ADD COMMENTS / PRINT PREVIEW</button>
           </div>
         </div>
-        {/* Note area */}
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          <div style={{ flex: '0 0 52%', overflowY: 'auto', padding: '18px 22px', background: '#fff' }}>
-            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#666' fontSize={13} borderColor='#ccc' minHeight={180} borderRadius={5} />
+
+        <div style={{ background: '#cadffe', borderRadius: 4, padding: '16px 20px', marginBottom: 14, maxWidth: 700 }}>
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-end', flexWrap: 'wrap', paddingBottom: 16, borderBottom: '2px solid #fff' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#222', flex: '0 0 100px' }}>Date of Service:</div>
+            {['Start time', 'Duration', 'Unit', 'End time'].map(f => (
+              <div key={f}>
+                <div style={{ fontSize: 11, color: '#555', marginBottom: 4 }}>{f}</div>
+                {f === 'Unit' ? (
+                  <select style={{ padding: '5px 8px', fontSize: 12, border: '1px solid #b8c9e0', borderRadius: 3, background: '#fff' }}><option>Minute</option><option>Hour</option></select>
+                ) : (
+                  <input style={{ padding: '5px 8px', fontSize: 12, border: '1px solid #b8c9e0', borderRadius: 3, width: 130 }} placeholder={f === 'Start time' ? '' : '—'} />
+                )}
+              </div>
+            ))}
           </div>
-          <div style={{ width: 1, background: '#ddd', flexShrink: 0 }} />
-          <div style={{ flex: 1, background: '#fff' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', padding: '16px 0', borderBottom: '2px solid #fff' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#222' }}>Level of Care:</span>
+            {['DETOX', 'MH RESIDENTIAL', 'RESIDENTIAL', 'MH PHP', 'PHP', 'IOP'].map(lvl => (
+              <label key={lvl} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#333', cursor: 'default' }}>
+                <input type="radio" name="kipu-loc" readOnly checked={false} /> {lvl}
+              </label>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 0', borderBottom: '2px solid #fff' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#222' }}>Treatment Objectives Addressed</span>
+            <button style={{ background: 'linear-gradient(to bottom, #fcfcfc, #e2e2e2)', color: '#333', border: '1px solid #adadad', borderRadius: 4, padding: '5px 14px 5px 8px', fontSize: 12, fontWeight: 600, cursor: 'default', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 1px 1px rgba(0,0,0,0.08)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#3fae4a" stroke="#2e8b3a" strokeWidth="1"/><line x1="12" y1="7" x2="12" y2="17" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/><line x1="7" y1="12" x2="17" y2="12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/></svg>
+              Golden Thread
+            </button>
+          </div>
+
+          <div style={{ paddingTop: 16 }}>
+            <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#222' labelWeight={700} fontSize={13} borderColor='#b8c9e0' minHeight={100} borderRadius={4} bg='#fff' />
+          </div>
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#333', marginBottom: 6 }}>Annotations</div>
+          <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>No Annotations found</div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+          <button style={{ padding: '8px 16px', fontSize: 12, border: 'none', borderRadius: 4, background: '#e8e8e8', color: '#999', cursor: 'default' }}>Update</button>
+          <button style={{ padding: '8px 16px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#fff', color: '#444', cursor: 'default' }}>Validate assessment</button>
+          <button style={{ padding: '8px 16px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#fff', color: '#444', cursor: 'default' }}>Sign & Submit</button>
+          <button style={{ padding: '8px 16px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#fff', color: '#444', cursor: 'default' }}>Add signers</button>
+          <button style={{ padding: '8px 16px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#fff', color: '#444', cursor: 'default' }}>Preview/print view</button>
         </div>
       </div>
     </div>
