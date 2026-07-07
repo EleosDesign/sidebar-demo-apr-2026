@@ -5545,7 +5545,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} />
 
         {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteType ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} forcedValue={rule?.noteType} disabled={!!rule?.noteType} />
+        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
