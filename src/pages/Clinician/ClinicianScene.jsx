@@ -12,6 +12,8 @@ import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
 import LockedDownModeToggle from '../../components/ehr/LockedDownModeToggle.jsx';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
+import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
+import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
 import { CLIENTS_LIST, CLIENT_OPTIONS } from '../../data/clients.js';
@@ -5359,6 +5361,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const [planHover, setPlanHover] = useState(false);
   const inputRef = useRef(null);
   const { setClientName: setEhrClientName } = useEhrContext();
+  const { lockedDownMode } = useLockedDownModeContext();
 
   const filtered = query.trim()
     ? CLIENT_OPTIONS.filter(c => c.toLowerCase().includes(query.toLowerCase()))
@@ -5381,6 +5384,8 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   }
 
   const isGroup = clientName.toLowerCase().includes('group');
+  const fmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
+  const rule = lockedDownMode ? CLIENT_LOCK_RULES[fmtName] : null;
 
   const PLAN_ITEMS = isGroup ? [
     'Practice interpersonal effectiveness skills: each member to identify one boundary to set this week',
@@ -5534,13 +5539,13 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         </>}
 
         {/* Session Type */}
-        <AcFormField key={isGroup ? 'group' : 'individual'} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy']} compactMode={compactMode} />
+        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
 
         {/* Setting */}
-        <AcFormField label="Setting:" defaultValue="In Person" options={['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} />
+        <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} />
 
         {/* Note Type */}
-        <AcFormField label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} />
+        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteType ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} forcedValue={rule?.noteType} disabled={!!rule?.noteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
@@ -5572,18 +5577,19 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   );
 }
 
-function AcFormField({ label, defaultValue, options = [], compactMode = false }) {
+function AcFormField({ label, defaultValue, options = [], compactMode = false, forcedValue, disabled }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
-  const [selected, setSelected] = useState(defaultValue);
+  const [selected, setSelected] = useState(forcedValue ?? defaultValue);
   const [open, setOpen] = useState(false);
+  useEffect(() => { if (forcedValue !== undefined) setSelected(forcedValue); }, [forcedValue]);
   return (
     <div style={{ marginBottom: 16, position: 'relative' }}>
       {label && (
         <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>{label}</span>
       )}
       <div
-        onClick={() => setOpen(v => !v)}
-        style={{ background: 'white', border: `1px solid ${open ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+        onClick={() => { if (!disabled) setOpen(v => !v); }}
+        style={{ background: 'white', border: `1px solid ${open ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.6 : 1, userSelect: 'none' }}
       >
         <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected}</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
