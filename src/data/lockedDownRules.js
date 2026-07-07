@@ -6,6 +6,6 @@ export const CLIENT_LOCK_RULES = {
     sessionType: 'Individual Therapy',
     setting: ['In Person', 'Telehealth'],
     noteType: 'DAP',
-    noteTypeLabel: 'DAP Note',
+    noteTypeLabel: 'Progress Note',
   },
 };
