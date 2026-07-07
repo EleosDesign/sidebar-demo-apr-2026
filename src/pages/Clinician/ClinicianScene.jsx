@@ -16,7 +16,7 @@ import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.j
 import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
-import { CLIENTS_LIST, CLIENT_OPTIONS } from '../../data/clients.js';
+import { CLIENTS_LIST, CLIENT_OPTIONS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
@@ -3014,6 +3014,7 @@ function TagField({ label, selected, onChange }) {
 
 function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const { lockedDownMode } = useLockedDownModeContext();
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
   const [voiceRecording, setVoiceRecording] = useState(false);
@@ -3067,9 +3068,10 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
     else                        onSuggestionsLeft?.();
   }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const clientPool = lockedDownMode ? DEMO_CLIENT_OPTIONS : CLIENT_OPTIONS;
   const filteredClients = clientQuery.trim()
-    ? CLIENT_OPTIONS.filter(c => c.toLowerCase().includes(clientQuery.toLowerCase()))
-    : CLIENT_OPTIONS;
+    ? clientPool.filter(c => c.toLowerCase().includes(clientQuery.toLowerCase()))
+    : clientPool;
 
   function selectClientOpt(name) { setClientName(name); setClientQuery(name); setClientDropOpen(false); }
   function clearClientField() { setClientName(''); setClientQuery(''); setClientDropOpen(false); setTimeout(() => clientInputRef.current?.focus(), 0); }
@@ -5363,9 +5365,10 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const { setClientName: setEhrClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
 
+  const clientPool = lockedDownMode ? DEMO_CLIENT_OPTIONS : CLIENT_OPTIONS;
   const filtered = query.trim()
-    ? CLIENT_OPTIONS.filter(c => c.toLowerCase().includes(query.toLowerCase()))
-    : CLIENT_OPTIONS;
+    ? clientPool.filter(c => c.toLowerCase().includes(query.toLowerCase()))
+    : clientPool;
 
   function selectClient(name) {
     setClientName(name);
