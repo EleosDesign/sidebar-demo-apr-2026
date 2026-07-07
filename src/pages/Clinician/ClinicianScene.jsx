@@ -523,11 +523,13 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const [captureSession, setCaptureSession] = useState({ name: '', dateTime: 'Apr 2, 2026, 10:30 AM' });
   const [activitiesSession, setActivitiesSession] = useState(null); // session selected for suggestions in activities flow
   // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
-  const [doneIds, setDoneIds] = useState(INITIAL_DONE_IDS);
+  const [doneIds, setDoneIds] = useState(() =>
+    savedState?.doneIds ? new Set(savedState.doneIds) : INITIAL_DONE_IDS
+  );
   const [activitiesInitialTab, setActivitiesInitialTab] = useState('ehr'); // which tab MySessionsPanel opens on
   const [autoRunQuality, setAutoRunQuality] = useState(false); // triggers immediate analysis when Quality tab opens
   // Sessions dynamically added from the Add Summary flow
-  const [addedSessions, setAddedSessions] = useState([]);
+  const [addedSessions, setAddedSessions] = useState(() => savedState?.addedSessions ?? []);
   // Session currently being worked on in Add Summary (set when suggestions phase is reached)
   const [pendingEHRSession, setPendingEHRSession] = useState(null);
 
@@ -663,7 +665,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── State persistence ────────────────────────────────────────────────────────
   const stateRef = useRef(null);
-  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW, posX: posXRef.current, posY: posYRef.current, sidebarH: sidebarHRef.current, side };
+  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW, posX: posXRef.current, posY: posYRef.current, sidebarH: sidebarHRef.current, side, addedSessions, doneIds: [...doneIds] };
   // Save state to parent on unmount so it survives close→reopen
   useEffect(() => () => { onSaveState?.(stateRef.current); }, []);
   // Bubble recording status to parent (for launch button indicator)
