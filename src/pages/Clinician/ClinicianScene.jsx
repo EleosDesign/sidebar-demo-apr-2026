@@ -3723,7 +3723,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const resolvedData = (() => {
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
-    if (session.id === 'larry') return useEhrNoteHeaders ? LARRY_QUINN_DAP_DATA : LARRY_QUINN_SUGGESTIONS_DATA;
+    if (session.id === 'larry' || session.name === 'Larry Quinn') return useEhrNoteHeaders ? LARRY_QUINN_DAP_DATA : LARRY_QUINN_SUGGESTIONS_DATA;
     if (session.id === 'jacob-audio') return JACOB_AUDIO_SUGGESTIONS_DATA;
     if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
     if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
@@ -5395,6 +5395,10 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
     'Continue DBT emotion regulation module — review opposite action technique in next session',
     'Group homework: complete daily mood tracking log and bring to next session',
     'Encourage peer support check-ins between sessions using group messaging channel',
+  ] : clientName === 'Larry Quinn' ? [
+    'Engage in current treatment and uphold sobriety.',
+    "Set boundaries for girlfriend's move-in, emphasizing on commitment to treatment and sobriety.",
+    'Engage in a potential family therapy session to further improve relationship dynamics.',
   ] : [
     'Learn stress management techniques to address work-related anxiety and apply them in daily situations',
     'Practice mindfulness exercises for 10 minutes daily to improve emotional regulation',
