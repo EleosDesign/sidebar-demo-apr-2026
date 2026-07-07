@@ -564,7 +564,7 @@ export function WelligentBg({ noteValues = {}, onNoteChange, highlightedField })
           </div>
 
           <div style={{ flex: 1, overflow: 'auto', padding: '0 16px 14px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '29% 1% 70%', minWidth: 980, gap: 0 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '29% 1% 50%', minWidth: 980, gap: 0 }}>
               <div>
                 <div style={{ background: 'gray', padding: 1, marginBottom: 14 }}>
                   <div style={{ background: 'ButtonFace', padding: '4px 6px' }}>0 Items Displayed</div>
@@ -905,11 +905,13 @@ export function ArizeBg({ noteValues = {}, onNoteChange, highlightedField }) {
 
         {/* Note content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '22px 30px 80px', background: '#fff' }}>
+          <div style={{ maxWidth: '55%' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString()}</div>
           <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#444' fontSize={13} borderColor='#d0d7de' minHeight={165} borderRadius={6} />
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12, paddingTop: 4 }}>
             <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 500, border: '1px solid #cdd3da', borderRadius: 5, background: '#fff', color: '#444', cursor: 'pointer' }}>Clear Fields</button>
             <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 600, border: 'none', borderRadius: 5, background: SIDEBAR, color: '#fff', cursor: 'pointer' }}>Submit Note</button>
+          </div>
           </div>
         </div>
 
@@ -1254,11 +1256,13 @@ export function CredibleBg({ noteValues = {}, onNoteChange, highlightedField }) 
 
         {/* Note content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '22px 30px 80px', background: '#fff' }}>
+          <div style={{ maxWidth: '55%' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>{clientName} · Individual Therapy · {new Date().toLocaleDateString()}</div>
           <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#444' fontSize={13} borderColor='#d0d7de' minHeight={165} borderRadius={6} />
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12, paddingTop: 4 }}>
             <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 500, border: '1px solid #cdd3da', borderRadius: 5, background: '#fff', color: '#444', cursor: 'pointer' }}>Clear Fields</button>
             <button style={{ padding: '9px 28px', fontSize: 13, fontWeight: 600, border: 'none', borderRadius: 5, background: BRAND_PURPLE, color: '#fff', cursor: 'pointer' }}>Submit Note</button>
+          </div>
           </div>
         </div>
 
@@ -1526,7 +1530,7 @@ export function MyEvolvBg({ noteValues = {}, onNoteChange, highlightedField }) {
               <button style={{ ...pill }}>Form Info</button>
             </div>
             <div style={{ height: 48, background: '#124061', color: '#fff', display: 'flex', alignItems: 'center', fontSize: 28, fontWeight: 800, padding: '0 20px', gap: 12 }}><span style={{ fontSize: 20 }}>⌃</span>Group 1</div>
-            <div style={{ padding: '28px 28px 80px', maxWidth: 'none' }}>
+            <div style={{ padding: '28px 28px 80px', maxWidth: '55%' }}>
               <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Note</div>
               <div style={{ border: '1px solid #c9c9c9', borderRadius: 5, overflow: 'hidden', marginBottom: 18, background: '#eee' }}>
                 <div style={{ height: 58, display: 'flex', alignItems: 'center', gap: 0, padding: '0 8px', borderBottom: '1px solid #d2d2d2' }}>
@@ -2078,7 +2082,7 @@ export function FootholdBg({ noteValues = {}, onNoteChange, highlightedField }) 
             </div>
           </div>
           {/* Note area (scrollable below fold) */}
-          <div style={{ border: '1px solid #e0e8f0', borderRadius: 8, overflow: 'hidden', marginTop: 16 }}>
+          <div style={{ border: '1px solid #e0e8f0', borderRadius: 8, overflow: 'hidden', marginTop: 16, maxWidth: '60%' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #e0e8f0', fontWeight: 600, fontSize: 14, color: '#1a2a3a' }}>Progress Note — {clientName}</div>
             <div style={{ padding: '16px' }}>
               <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#555' fontSize={13} borderColor='#d0dae8' minHeight={150} borderRadius={5} />
@@ -2855,7 +2859,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 12px 24px' }}>
+                <div style={{ padding: '0 12px 24px', maxWidth: '50%' }}>
                   <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
                 </div>
               ) : (
