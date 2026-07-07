@@ -19,3 +19,10 @@ export const CLIENT_OPTIONS = [
   'Jacob Rosen', 'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
+
+// ── Demo-mode subset (only clients/groups with wired-up content) ─────────────
+export const DEMO_CLIENT_OPTIONS = [
+  'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
+  'Patricia Rodriguez', 'Ashlyn Rivera',
+  'Anger Management Group', 'SUD Group',
+];
