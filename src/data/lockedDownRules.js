@@ -8,4 +8,12 @@ export const CLIENT_LOCK_RULES = {
     noteType: 'DAP',
     noteTypeLabel: 'Progress Note',
   },
+  'Murphy, Calvin': {
+    sessionType: 'Case Management',
+    setting: 'In Person',
+    noteType: 'SOAP',
+    noteTypeLabel: 'SOAP Note',
+    activityType: 'Case Management',
+    population: 'Adult',
+  },
 };
