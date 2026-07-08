@@ -857,7 +857,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           type: 'individual',
           sessionType: 'text',
           isActive: true,
-          summary: 'Session notes drafted via Add Summary — pending EHR submission.',
+          summary: 'The client expressed experiencing seasonal depression and shared a winter seasonal mood shift. The client stated, "it\'s been hard to leave the house".',
         });
       }}
       onSuggestionsLeft={() => { setPendingEHRSession(null); }}
