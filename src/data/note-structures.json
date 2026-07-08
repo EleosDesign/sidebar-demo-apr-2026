@@ -981,6 +981,43 @@
         }
       ],
       "noteTypes": ["Individual Note"]
+    },
+    "BPSAssessment": {
+      "name": "BPS Assessment",
+      "description": "Biopsychosocial assessment for initial intake and evaluation",
+      "sections": [
+        { "id": "presentingProblem", "label": "Presenting Problem", "description": "Reason for seeking services and presenting concerns" },
+        { "id": "anxietyHistory", "label": "Anxiety Symptoms And History", "description": "History and current presentation of anxiety symptoms" },
+        { "id": "previousTreatment", "label": "Previous Mental Health Treatment", "description": "Past mental health treatment history" },
+        { "id": "currentHealth", "label": "Current Health Status", "description": "Current physical health and wellness" },
+        { "id": "medicalHistory", "label": "Medical History And Medications", "description": "Medical history, surgeries, and current medications" },
+        { "id": "alcoholUse", "label": "Alcohol Use History And Pattern", "description": "History and pattern of alcohol use" },
+        { "id": "asamDim1", "label": "Dimension 1: Acute Intoxication And/Or Withdrawal Potential", "description": "ASAM Dimension 1" },
+        { "id": "asamDim2", "label": "Dimension 2: Biomedical Conditions & Complications", "description": "ASAM Dimension 2" },
+        { "id": "asamDim3", "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications", "description": "ASAM Dimension 3" },
+        { "id": "asamDim4", "label": "Dimension 4: Readiness To Change", "description": "ASAM Dimension 4" },
+        { "id": "asamDim5", "label": "Dimension 5: Relapse, Continued Use, Or Continued Problem Potential", "description": "ASAM Dimension 5" },
+        { "id": "asamDim6", "label": "Dimension 6: Recovery/Living Environment", "description": "ASAM Dimension 6" },
+        { "id": "riskAssessment", "label": "Risk To Self And Others", "description": "Assessment of risk to self and others" },
+        { "id": "socialSupport", "label": "Relationships And Social Support", "description": "Social relationships and support network" },
+        { "id": "spiritualBeliefs", "label": "Spiritual Beliefs", "description": "Spiritual and religious beliefs" },
+        { "id": "familyDynamics", "label": "Family Composition And Dynamics", "description": "Family structure and relational dynamics" },
+        { "id": "emotionalAbuse", "label": "History Of Emotional Abuse", "description": "History of emotional abuse" },
+        { "id": "housingFinancial", "label": "Financial And Housing Stability", "description": "Housing, financial, food, and transportation status" },
+        { "id": "educationEmployment", "label": "Education And Employment", "description": "Educational and employment history" },
+        { "id": "legalHistory", "label": "Legal History", "description": "Legal history and involvement" },
+        { "id": "functionalImpairment", "label": "Functional Impairment", "description": "Assessment of functional impairment across domains" },
+        { "id": "mentalStatusExam", "label": "Mental Status Examination", "description": "Mental status examination findings" },
+        { "id": "clientStrengths", "label": "Client Strengths", "description": "Identified client strengths and protective factors" },
+        { "id": "barriers", "label": "Barriers To Treatment", "description": "Potential barriers to treatment engagement and success" },
+        { "id": "dependents", "label": "Dependents", "description": "Supervision capacity and dependents" },
+        { "id": "adverseChildhood", "label": "Emotional Abuse", "description": "Adverse childhood events" },
+        { "id": "assessmentsCompleted", "label": "Assessments", "description": "Formal assessments administered" },
+        { "id": "treatmentGoals", "label": "Client Goals For Treatment", "description": "Client-identified goals for treatment" },
+        { "id": "disposition", "label": "Disposition", "description": "Assessment disposition and next steps" },
+        { "id": "interpretiveSummary", "label": "Interpretive Summary", "description": "Comprehensive interpretive summary" }
+      ],
+      "usedBy": ["Ashlyn Rivera"]
     }
   },
   "metadata": {
