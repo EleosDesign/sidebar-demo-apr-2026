@@ -381,10 +381,10 @@ export const TAG_FILTERS = {
 };
 
 export const TEXT_SUMMARY_BULLETS = [
-  '• Client attended and engaged in individual therapy session focused on coping strategies and emotional regulation.',
-  '• Therapist applied CBT techniques to identify and challenge negative thought patterns and cognitive distortions.',
-  '• Client demonstrated openness to exploring core beliefs contributing to current distress.',
-  '• Meaningful progress noted toward treatment goal of improving emotional regulation and reducing anxiety symptoms.',
-  '• Safety assessment completed — client denied suicidal or homicidal ideation and remains committed to safety plan.',
-  '• Plan to continue weekly individual sessions; client will practice mindfulness and journaling exercises between sessions.',
+  '• Cln met w ct at local park near ct home',
+  '• Ct expressed sx of ^ depression, "It has been hard to leave the house"',
+  '• Ct shared hx of seasonal mood shifts in winter',
+  '• Cln validated ct and discussed DBT Wise Mind',
+  '• Ct denied SI and agreed to safety plan',
+  '• Ct will reach out for support as needed',
 ];
