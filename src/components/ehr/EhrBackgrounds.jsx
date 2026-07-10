@@ -6,7 +6,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
-import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 import EnhancePointer from '../enhance/EnhancePointer';
@@ -395,7 +394,6 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
   const noteTypeCtx = useNoteTypeContext();
-  const { lockedDownMode } = useLockedDownModeContext();
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sidebarOpen = ehrField?.sidebarOpen ?? false;
@@ -439,7 +437,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   }, []); // eslint-disable-line
 
   const handleChange = (id, val) => {
-    const nextVal = lockedDownMode ? val.replaceAll('::', DEMO_TEXT_SHORTCUT) : val;
+    const nextVal = val.replaceAll('::', DEMO_TEXT_SHORTCUT);
     onNoteChange?.(id, nextVal);
     // Keep EhrFieldContext.fieldValues in sync so LQA dirty-check works
     const key = DAP_FIELD_MAP[id];
