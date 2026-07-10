@@ -4,12 +4,12 @@ import { useNoteTypeContext } from './NoteTypeContext.jsx';
 import { CLIENT_LOCK_RULES } from '../data/lockedDownRules.js';
 
 const LockedDownModeContext = createContext({
-  lockedDownMode: false,
+  lockedDownMode: true,
   setLockedDownMode: () => {},
 });
 
 export function LockedDownModeProvider({ children }) {
-  const [lockedDownMode, setLockedDownMode] = useState(false);
+  const [lockedDownMode, setLockedDownMode] = useState(true);
   const { clientName } = useEhrContext();
   const { setSelectedNoteType } = useNoteTypeContext();
 
