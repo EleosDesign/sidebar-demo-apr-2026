@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 import EnhancePointer from '../enhance/EnhancePointer';
@@ -28,9 +29,16 @@ const DAP_FIELD_MAP = {
 };
 
 // ── Clinical text enhancer (mock AI) ─────────────────────────────────────────
+const DEMO_TEXT_SHORTCUT = 'ct challenging relationship w/ partner, affecting recovery.';
+const DEMO_TEXT_SHORTCUT_ENHANCED = 'The client is experiencing difficulties in his relationship with his partner, which appears to be impacting his recovery process. He is actively working on establishing and maintaining healthy boundaries to support his recovery and overall well-being.';
+
 function buildEnhancedText(text) {
   let s = text.trim();
   if (!s) return s;
+
+  if (s.includes(DEMO_TEXT_SHORTCUT)) {
+    return s.replaceAll(DEMO_TEXT_SHORTCUT, DEMO_TEXT_SHORTCUT_ENHANCED);
+  }
 
   // ① Normalize: capitalize first character, ensure sentence-ending punctuation
   s = s.charAt(0).toUpperCase() + s.slice(1);
@@ -387,6 +395,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
   const noteTypeCtx = useNoteTypeContext();
+  const { lockedDownMode } = useLockedDownModeContext();
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sidebarOpen = ehrField?.sidebarOpen ?? false;
@@ -430,11 +439,12 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   }, []); // eslint-disable-line
 
   const handleChange = (id, val) => {
-    onNoteChange?.(id, val);
+    const nextVal = lockedDownMode ? val.replaceAll('::', DEMO_TEXT_SHORTCUT) : val;
+    onNoteChange?.(id, nextVal);
     // Keep EhrFieldContext.fieldValues in sync so LQA dirty-check works
     const key = DAP_FIELD_MAP[id];
     if (key && ehrField) {
-      ehrField.setFieldValues(prev => ({ ...prev, [key]: val }));
+      ehrField.setFieldValues(prev => ({ ...prev, [key]: nextVal }));
     }
   };
 

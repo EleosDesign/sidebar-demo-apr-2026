@@ -79,8 +79,6 @@ export default function EnhancePointer({
           aria-label={tooltip}
           onMouseDown={e => e.preventDefault()}
           onClick={onCheckQuality}
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
           style={{
             position: 'relative',
             width: 44,
