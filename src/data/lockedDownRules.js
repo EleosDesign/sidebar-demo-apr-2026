@@ -16,6 +16,12 @@ export const CLIENT_LOCK_RULES = {
     activityType: 'Case Management',
     population: 'Adult',
   },
+  'Rodriguez, Patricia': {
+    sessionType: 'Medication Management',
+    setting: ['In Person', 'Telehealth'],
+    noteType: 'PsychiatricMedical',
+    noteTypeLabel: 'Medication Management',
+  },
   'Rivera, Ashlyn': {
     sessionType: 'BPS Assessment',
     setting: 'In Person',
