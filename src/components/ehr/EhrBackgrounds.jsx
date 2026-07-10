@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 import EnhancePointer from '../enhance/EnhancePointer';
@@ -394,9 +395,12 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
   const noteTypeCtx = useNoteTypeContext();
+  const { selectedEhr } = useEhrContext();
+  const { lockedDownMode } = useLockedDownModeContext();
   const ehrField = useEhrField();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sidebarOpen = ehrField?.sidebarOpen ?? false;
+  const qualityAndEnhanceDisabled = lockedDownMode && selectedEhr === 'eleos-lite';
   const [focusedField, setFocusedField] = useState(null);
   const [enhancingField, setEnhancingField] = useState(null);
   const [tooltipField, setTooltipField] = useState(null);
@@ -459,6 +463,12 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   const dismissTooltip = () => { setTooltipField(null); setTooltipText(''); };
   const applyEnhanced = (id) => { handleChange(id, tooltipText); dismissTooltip(); };
 
+  useEffect(() => {
+    if (!qualityAndEnhanceDisabled) return;
+    setEnhancingField(null);
+    dismissTooltip();
+  }, [qualityAndEnhanceDisabled]); // eslint-disable-line
+
   return (
     <>
       {sections.map(s => {
@@ -469,9 +479,9 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         const isShowingTooltip = tooltipField === s.id;
 
         // Enhance button: focused, field has text (or loading), NOT while tooltip is open
-        const showEnhanceBtn = isFocused && (hasText || isEnhancing) && !isShowingTooltip;
+        const showEnhanceBtn = !qualityAndEnhanceDisabled && isFocused && (hasText || isEnhancing) && !isShowingTooltip;
         // LQA CTA: focused on the LAST section AND user has typed something in it
-        const showLqaCta = isFocused && s.id === lastSectionId && hasText;
+        const showLqaCta = !qualityAndEnhanceDisabled && isFocused && s.id === lastSectionId && hasText;
         // Launch button: last field is empty BUT at least one other field has content
         // (hides when the entire note is blank — nothing to help with yet)
         const noteHasSomeContent = Object.values(noteValues).some(v => (v ?? '').trim().length > 0);
@@ -518,7 +528,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 )}
                 {showLaunchBtn && <InlineLaunchButton />}
                 {/* Tooltip card — sits in the same row as the LQA circle */}
-                {isShowingTooltip && (
+                {!qualityAndEnhanceDisabled && isShowingTooltip && (
                   <div style={{ zIndex: 9 }}>
                     <EnhanceTooltip
                       text={tooltipText}

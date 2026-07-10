@@ -47,6 +47,9 @@ export default function ClinicianScene({ step, onNext }) {
   );
   const [sidebarStartTab, setSidebarStartTab] = useState(null);
   const noteTypeCtx = useNoteTypeContext();
+  const { selectedEhr } = useEhrContext();
+  const { lockedDownMode } = useLockedDownModeContext();
+  const qualityDisabled = lockedDownMode && selectedEhr === 'eleos-lite';
   const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
   const setNoteValues = (updater) => {
     if (!noteTypeCtx) return;
@@ -82,6 +85,7 @@ export default function ClinicianScene({ step, onNext }) {
   const handleLaunch   = () => { if (step === 0) onNext(); setSidebarOpen(true); };
 
   const handleOpenQuality = () => {
+    if (qualityDisabled) return;
     setSidebarStartTab('quality');
     if (step === 0) onNext();
     setSidebarOpen(true);
@@ -171,7 +175,7 @@ export default function ClinicianScene({ step, onNext }) {
           <LockedDownModeToggle />
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
-          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
+          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} qualityDisabled={qualityDisabled} />
           : isClosing
             ? sidebarWrapper('sidebarToButton 0.5s cubic-bezier(0.4, 0, 1, 1) both', handleExitDone)
             : sidebarWrapper('sidebarFromButton 0.65s cubic-bezier(0.16, 1, 0.3, 1) both', null)
@@ -183,12 +187,12 @@ export default function ClinicianScene({ step, onNext }) {
 
 // ── Companion Launch Button (step 0) ─────────────────────────────────────────
 
-function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isRecording }) {
+function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isRecording, qualityDisabled = false }) {
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef(null);
   const dotsOnRight = pos.x + BTN_W / 2 > window.innerWidth / 2;
   const ehrCtx = useEhrField();
-  const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+  const lqaStatus = qualityDisabled ? 'idle' : (ehrCtx?.lqaStatus ?? 'idle');
 
   const handleMouseDown = (e) => {
     if (e.button !== 0) return;
@@ -381,10 +385,12 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
 
 function EnhancePointerToolbarWrapper() {
   const { selectedEhr } = useEhrContext();
+  const { lockedDownMode } = useLockedDownModeContext();
   const ehrCtx = useEhrField();
   return (
     <EnhancePointerToolbar
       selectedEhr={selectedEhr}
+      disabled={lockedDownMode && selectedEhr === 'eleos-lite'}
       onCheckQuality={() => ehrCtx?.triggerQualityCheck?.()}
       outstandingCount={ehrCtx?.lqaStatus === 'issues' ? 3 : 0}
       showBadge={ehrCtx?.lqaStatus === 'issues'}
@@ -507,8 +513,9 @@ const SIDEBAR_BOTTOM_GAP = 16;
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
-  const { setClientName } = useEhrContext();
+  const { selectedEhr, setClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
+  const qualityDisabled = lockedDownMode && selectedEhr === 'eleos-lite';
 
   // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
   useEffect(() => {
@@ -578,10 +585,20 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const showNavLabels = sidebarH >= 480 && !compactMode;
   const ITEM_H = showNavLabels ? 64 : 40;
   const RAIL_FIXED_H = showNavLabels ? 267 : 220;
-  const ALL_NAV_KEYS = ['activities', 'summary', 'capture', 'clients', 'quality'];
-  const maxVisible = Math.min(ALL_NAV_KEYS.length, Math.max(0, Math.floor((sidebarH - RAIL_FIXED_H) / ITEM_H)));
-  const visibleNavItems = ALL_NAV_KEYS.slice(0, maxVisible);
-  const overflowNavItems = ALL_NAV_KEYS.slice(maxVisible);
+  const allNavKeys = qualityDisabled
+    ? ['activities', 'summary', 'capture', 'clients']
+    : ['activities', 'summary', 'capture', 'clients', 'quality'];
+  const maxVisible = Math.min(allNavKeys.length, Math.max(0, Math.floor((sidebarH - RAIL_FIXED_H) / ITEM_H)));
+  const visibleNavItems = allNavKeys.slice(0, maxVisible);
+  const overflowNavItems = allNavKeys.slice(maxVisible);
+
+  useEffect(() => {
+    if (!qualityDisabled) return;
+    if (navTab === 'quality') setNavTab('activities');
+    setAutoRunQuality(false);
+    if (ehrCtx?.lqaStatus !== 'idle') ehrCtx?.setLqaStatus?.('idle');
+    ehrCtx?.setChangedSinceAnalysis?.(false);
+  }, [qualityDisabled, navTab, ehrCtx]); // eslint-disable-line
 
   useEffect(() => {
     const onMove = (e) => {
@@ -694,6 +711,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   }, [ending, onNext]);
 
   const handleNavClick = (tab) => {
+    if (qualityDisabled && tab === 'quality') return;
     // Leaving Add Summary while suggestions are pending → add entry to "Add to EHR"
     if (navTab === 'summary' && tab !== 'summary' && pendingEHRSession) {
       setAddedSessions(prev => [pendingEHRSession, ...prev]);
@@ -720,6 +738,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   // Consume startTab prop — navigate to it once then clear
   useEffect(() => {
     if (startTab) {
+      if (qualityDisabled && startTab === 'quality') {
+        onStartTabConsumed?.();
+        return;
+      }
       setNavTab(startTab);
       if (startTab === 'quality') {
         setAutoRunQuality(true); // signal LQAReview to enter analyzing state immediately
@@ -727,7 +749,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       }
       onStartTabConsumed?.();
     }
-  }, [startTab]); // eslint-disable-line
+  }, [startTab, qualityDisabled]); // eslint-disable-line
 
   // Determine active nav icon
   const activeNav = navTab;
@@ -835,7 +857,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
+    if (navTab === 'quality' && !qualityDisabled)  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}

@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import EnhancePointer from './EnhancePointer';
 
 interface EnhancePointerToolbarProps {
-  /** The currently selected EHR. Pass 'eleos-lite' to hide the toolbar. */
+  /** Whether to hide the toolbar. */
+  disabled?: boolean;
   selectedEhr?: string;
   /** Ref to the EHR container (used to limit textarea search scope). */
   ehrContainerRef?: React.RefObject<HTMLElement>;
@@ -23,10 +24,10 @@ interface EnhancePointerToolbarProps {
  *  - Shows when any EHR textarea is focused (with 300ms delay)
  *  - Hides 150ms after focus leaves (unless toolbar itself is focused)
  *  - Repositions on scroll and window resize
- *  - Hidden entirely for Eleos Lite EHR
+ *  - Hidden when disabled
  */
 export default function EnhancePointerToolbar({
-  selectedEhr = '',
+  disabled = false,
   ehrContainerRef,
   onCheckQuality,
   outstandingCount = 0,
@@ -38,8 +39,7 @@ export default function EnhancePointerToolbar({
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
-  // Eleos Lite is excluded
-  const isExcluded = selectedEhr === 'eleos-lite';
+  const isExcluded = disabled;
 
   /** Find the last visible textarea outside the companion sidebar. */
   const findLastTextarea = useCallback((): HTMLTextAreaElement | null => {
