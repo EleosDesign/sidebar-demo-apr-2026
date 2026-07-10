@@ -22,4 +22,12 @@ export const CLIENT_LOCK_RULES = {
     noteType: 'PsychiatricMedical',
     noteTypeLabel: 'Medication Management',
   },
+  'Rivera, Ashlyn': {
+    sessionType: 'BPS Assessment',
+    setting: 'In Person',
+    noteType: 'BPSAssessment',
+    noteTypeLabel: 'BPS Assessment',
+    activityType: 'BPS Assessment',
+    population: 'Adult',
+  },
 };

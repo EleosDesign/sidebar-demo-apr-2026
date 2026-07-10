@@ -111,68 +111,70 @@ export const TREATMENT_PLAN_SUGGESTIONS_DATA = [
 
 // ── Assessment suggestions ────────────────────────────────────────────────────
 export const ASSESSMENT_SUGGESTIONS_DATA = [
-  { section: 'Presenting Problem', cards: [
+  { section: 'Initial Information', cards: [
     { field: 'Presenting Problem', content: 'The client is a 23-year-old female university student presenting for an initial assessment due to concerns about anxiety and alcohol use. She reports that her anxiety, which she describes as "nervousness," has been a long-standing issue since her early teens and is now impacting multiple areas of her life, including academics. She also identifies a pattern of drinking alcohol to cope with social anxiety, which has led to negative consequences such as blackouts and poor academic performance. The client states she is seeking help now because things have "not been fantastic" and she is worried they will "get worse."', type: 'text', showActions: true },
   ]},
-  { section: 'Anxiety Symptoms And History', cards: [
+  { section: 'Mental Health Current and History', cards: [
     { field: 'Anxiety Symptoms And History', content: 'The client reports experiencing symptoms of anxiety since approximately age 13 or 14. She describes these symptoms as a persistent "nervousness" related to various life stressors, including social situations, school, work, and graduating college. She currently rates her anxiety as a 6 out of 10. She reports the most recent peak in anxiety (10/10) occurred last weekend. When her anxiety is high, she sometimes experiences a low or "down" mood. The client feels her anxiety is "trickling into every area of her life now."', type: 'text', showActions: true },
-  ]},
-  { section: 'Previous Mental Health Treatment', cards: [
     { field: 'Previous Mental Health Treatment', content: 'The client has a history of brief mental health treatment. A few years ago, she saw a counselor for approximately five or six sessions and a psychiatrist once or twice. She states she was told she had "some sort of anxiety disorder," possibly a general one. The client reports that she was not "on board with the whole therapy thing at that point" and did not believe it would help, so she discontinued treatment. She now feels she is in a different state of mind and is ready to engage in and commit to therapy, stating, "I want the help now."', type: 'text', showActions: true },
   ]},
-  { section: 'Alcohol Use History And Pattern', cards: [
+  { section: 'Medical - Current and History', cards: [
+    { field: 'Current Health Status', content: 'The client reports being in good physical health. She is physically active, engaging in activities such as going to the gym and practicing yoga. She denies any current serious or chronic medical conditions.', type: 'text', showActions: true },
+    { field: 'Medical History And Medications', content: 'The client\'s only reported surgical history is an appendectomy. She states her only current medication is an oral contraceptive ("the pill"). She denies any other prescribed medications for physical or mental health conditions.', type: 'text', showActions: true },
+  ]},
+  { section: 'Substance Use - Current and History', cards: [
     { field: 'Alcohol Use History And Pattern', content: 'The client reports first using alcohol at age 14. Her use has progressed from social experimentation to a primary coping mechanism for anxiety. She states she drinks when going out with friends, and while it helps her "relax" and "have fun," she is concerned because she sometimes drinks more than intended, leading to negative consequences. These consequences include making "bad decisions," experiencing hangovers that impact her ability to attend or perform in her college classes, and occasional blackouts. The last reported blackout occurred approximately one month ago. She states that her drinking is more frequent now than when she was younger and is used as a "tool to get through the anxiety."', type: 'text', showActions: true },
   ]},
-  { section: 'Dimension 1: Acute Intoxication And/Or Withdrawal Potential', cards: [
+  { section: 'ASAM', cards: [
     { field: 'Dimension 1: Acute Intoxication And/Or Withdrawal Potential', content: 'Substance(s) used: Alcohol. Date & time of most-recent use: Not specified. Route of administration: Oral. Typical quantity/pattern: Reports drinking when going out, sometimes to excess, resulting in hangovers and occasional blackouts. Current signs of intoxication: None observed during the interview. History of withdrawal symptoms: Not assessed. Prior detox/withdrawal complications: Not assessed.', type: 'text', showActions: true },
-  ]},
-  { section: 'Dimension 2: Biomedical Conditions & Complications', cards: [
     { field: 'Dimension 2: Biomedical Conditions & Complications', content: 'Current medical conditions: None reported. Acute medical complaints: None reported. Chronic illnesses impacting care: None reported. Surgeries/hospitalizations: History of appendectomy. Infectious disease status (HIV/HBV/HCV): Not assessed. Pain issues: None reported. Pregnancy status: Not pregnant; the client reports using oral contraceptives.', type: 'text', showActions: true },
-  ]},
-  { section: 'Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications', cards: [
     { field: 'Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications', content: 'Active psychological / behavioral / emotional / cognitive conditions: the client reports significant anxiety, describing it as nervousness that impacts her functioning. Past psychiatric diagnoses: Reports being told she had "some sort of anxiety disorder" by a previous counselor. Reported or observed cognitive functioning: Appears intact; thought process is linear and organized. Reported self-harm or homicidal thoughts/behaviors: Denies any history of suicidal or homicidal ideation. Psychotropic medications & response: None currently or historically reported. Stabilizing factors: Reports a supportive boyfriend. Reported or observed management of ADLs: Appears to be managing ADLs without difficulty. Stated connection between current signs/symptoms and SUD: the client explicitly states she uses alcohol to manage her social anxiety symptoms, saying it helps her "relax and have fun."', type: 'text', showActions: true },
-  ]},
-  { section: 'Dimension 4: Readiness To Change', cards: [
     { field: 'Dimension 4: Readiness To Change', content: 'Internal motivation statements: "I realize now that I\'m not handling it as well as I thought I was," "It\'s affecting other areas of my life," and "I want the help now." External pressures (legal, family, work): University professors have confronted her about poor academic performance and showing up to class with a hangover. Change goals voiced by the client: To lessen her anxiety and to reduce her alcohol consumption. Confidence in the ability to change (0-10): Not explicitly rated. Importance of change (0-10): Not explicitly rated, but the client contrasts her current motivation with her past lack of readiness for treatment.', type: 'text', showActions: true },
-  ]},
-  { section: 'Dimension 5: Relapse, Continued Use, Or Continued Problem Potential', cards: [
     { field: 'Dimension 5: Relapse, Continued Use, Or Continued Problem Potential', content: 'Longest period of abstinence: Not specified, but reports periods of being "off and on" with her anxiety and drinking. The client\'s description of recent cravings or triggers: Identifies social situations and feelings of anxiety as primary triggers for drinking. Coping skills the client reports using: Primarily uses alcohol to cope with anxiety. Situations the client identifies as difficult or that precede use: Reports that when she tries to go out without drinking, she feels "uncomfortable," "tense," and "confused." The client\'s reported history of overdose or relapse: No overdose history reported; reports occasional blackouts, with the last one about a month ago. Consequences of use mentioned by the client (medical, legal, social): Poor academic performance, being confronted by professors, making "bad decisions," and hangovers. What the client says she knows about her personal triggers: Identifies social situations and anxiety as triggers.', type: 'text', showActions: true },
-  ]},
-  { section: 'Dimension 6: Recovery/Living Environment', cards: [
     { field: 'Dimension 6: Recovery/Living Environment', content: 'Current living situation: Lives in a university dorm on campus and returns to her parents\' home most weekends. Supportive household members: Parents are aware of her anxiety and provide financial support. The client reports a supportive boyfriend of six months. Evidence of peer/social supports (sober or using): Reports having two close college friends she can rely on. Other social contacts are part of the "going out" and drinking environment. Employment/financial stability: Not currently employed consistently; is financially supported by her parents. Transportation access: Appears to have adequate transportation, traveling between campus and home regularly. Threats to safety: Reports a history of emotional abuse from her father, which causes distress.', type: 'text', showActions: true },
   ]},
-  { section: 'Risk To Self And Others', cards: [
+  { section: 'Risk Assessment', cards: [
     { field: 'Risk To Self And Others', content: 'The client explicitly denies any history of suicidal ideation, plans, or intent, stating "never" when asked. She also denies any history of homicidal ideation, stating she is a "nice person." No history of suicide attempts was reported. No self-harm behaviors were discussed. Protective factors include future-oriented goals (graduating, getting a job) and a supportive relationship with her boyfriend.', type: 'text', showActions: true },
   ]},
-  { section: 'Relationships And Social Support', cards: [
+  { section: 'Psychosocial Assessment', cards: [
     { field: 'Relationships And Social Support', content: 'The client has been in a relationship with her boyfriend for six months, whom she describes as supportive and aware of her struggles with anxiety. She identifies two close friends from college whom she feels she can rely on. Her broader social circle is associated with a university party culture. Her relationship with her older sister is distant, described as a "Merry Christmas, Happy Easter kind of relationship."', type: 'text', showActions: true },
-  ]},
-  { section: 'Spiritual Beliefs', cards: [
     { field: 'Spiritual Beliefs', content: 'The client identifies as Catholic and reports a belief in God. She does not consider herself to be actively practicing but states that her faith is "there." She identifies prayer as a potential resource she could draw upon for strength during treatment.', type: 'text', showActions: true },
   ]},
-  { section: 'Family Composition And Dynamics', cards: [
+  { section: 'Family - Current and History', cards: [
     { field: 'Family Composition And Dynamics', content: 'The client\'s immediate family consists of her mother, father, and one older sister. She resides on campus during the week and returns to her parents\' home on weekends. The relationship with her parents is strained, particularly with her father. Her relationship with her sister, a successful doctor, is described as distant and superficial. She reports a dynamic of being unfavorably compared to her sibling by her father.', type: 'text', showActions: true },
-  ]},
-  { section: 'History Of Emotional Abuse', cards: [
     { field: 'History Of Emotional Abuse', content: 'The client reports a history of significant emotional abuse from her father. She provided examples of harsh and invalidating statements he has made, such as "I can\'t believe you\'re my daughter" and telling her not to identify herself as her daughter in public. She states that this constant comparison to her "ideal" sister has been a source of significant distress and does not "foster a great relationship." She reports she has become "numb" to these comments over time, but they still feel "annoying" and painful.', type: 'text', showActions: true },
   ]},
-  { section: 'Education And Employment', cards: [
-    { field: 'Education And Employment', content: 'The client is a senior in college pursuing a degree in education with the goal of becoming a teacher. Her academic performance is currently a source of stress, as her anxiety and the consequences of her alcohol use (e.g., hangovers, missing class) are negatively impacting her grades. She reports that her professors have begun to confront her about her performance. She has past work experience in babysitting and retail but is not working much currently due to her academic commitments.', type: 'text', showActions: true },
+  { section: 'Housing / Financial / Food / Transportation', cards: [
+    { field: 'Financial And Housing Stability', content: 'The client is currently a full-time university student and is financially dependent on her parents. She lives in a dormitory on campus during the school week and returns to her parents\' home on most weekends. While she is not happy with this financial arrangement and desires to be independent, she states it "works for now." No issues related to housing instability, food insecurity, or lack of transportation were reported.', type: 'text', showActions: true },
   ]},
-  { section: 'Legal History', cards: [
+  { section: 'Education / Employment / Legal - Current and History', cards: [
+    { field: 'Education And Employment', content: 'The client is a senior in college pursuing a degree in education with the goal of becoming a teacher. Her academic performance is currently a source of stress, as her anxiety and the consequences of her alcohol use (e.g., hangovers, missing class) are negatively impacting her grades. She reports that her professors have begun to confront her about her performance. She has past work experience in babysitting and retail but is not working much currently due to her academic commitments.', type: 'text', showActions: true },
     { field: 'Legal History', content: 'The client reports one past incident of legal involvement at age 14 or 15. She was caught shoplifting with friends while under the influence of alcohol. The incident involved the police and her parents being called. She believes she may have a criminal record as a result of this event but reports no subsequent legal issues.', type: 'text', showActions: true },
   ]},
-  { section: 'Mental Status Examination', cards: [
+  { section: 'Functioning', cards: [
+    { field: 'Functional Impairment', content: 'The client\'s functioning is most significantly impaired in the academic domain. Symptoms of anxiety and the consequences of alcohol use are directly impacting her ability to attend class and maintain her grades, jeopardizing her goal of graduation. Socially, she relies on alcohol to manage anxiety, which suggests an impairment in her ability to navigate social situations without substance use. Her ability to manage ADLs and IADLs appears intact. Cognitively, her ability to understand, remember, and apply information seems unimpaired outside the context of substance use.', type: 'text', showActions: true },
+  ]},
+  { section: 'MSE', cards: [
     { field: 'Mental Status Examination', content: 'The client was cooperative and engaged throughout the interview. Mood appeared euthymic with underlying anxiety. Affect was congruent with the topics discussed and appropriate in range, though it became more constricted and she appeared sad when discussing her father\'s comments. Speech was clear, with a normal rate, rhythm, and volume. Thought process was consistently linear, logical, and goal-directed. There was no evidence of delusions, hallucinations, or other perceptual disturbances. Insight is assessed as fair to good; she demonstrates an awareness of her anxiety and problematic alcohol use and expresses a clear motivation for change. Judgment appears to be impaired when under the influence of alcohol, as evidenced by her reports of making "bad decisions," but was intact during the session.', type: 'text', showActions: true },
   ]},
-  { section: 'Client Strengths', cards: [
+  { section: 'Strengths / Barriers', cards: [
     { field: 'Client Strengths', content: 'The client demonstrates significant strengths, including being articulate, intelligent, and insightful about her presenting problems. She is highly motivated for treatment at this time, stating, "I\'m ready now." She identifies herself as a "hard worker" and has a supportive boyfriend and two close friends. She is future-oriented, with clear goals of graduating college and becoming a teacher.', type: 'text', showActions: true },
-  ]},
-  { section: 'Barriers To Treatment', cards: [
     { field: 'Barriers To Treatment', content: 'Potential barriers include a long-standing pattern of using alcohol as a primary coping mechanism for anxiety. The history of emotional abuse and invalidation from her father may present challenges in developing self-worth and trust. Her distant relationship with her family may limit her sources of familial support.', type: 'text', showActions: true },
   ]},
-  { section: 'Client Goals For Treatment', cards: [
+  { section: 'Supervision Capacity', cards: [
+    { field: 'Dependents', content: 'The client has no dependents; this domain is not applicable.', type: 'text', showActions: true },
+  ]},
+  { section: 'Adverse Childhood Events', cards: [
+    { field: 'Emotional Abuse', content: 'The client endorsed experiencing emotional abuse from her father during her adolescence. She reported he would make humiliating and insulting comments, such as, "I can\'t believe you\'re my daughter," and would compare her unfavorably to her older sister. This was reported to be a recurring pattern that caused significant emotional distress. She stated the emotional impact now is that she is "numb" to it.', type: 'text', showActions: true },
+  ]},
+  { section: 'Assessments Completed', cards: [
+    { field: 'Assessments', content: 'No formal assessment tools were administered during this initial intake session.', type: 'text', showActions: true },
+  ]},
+  { section: 'Treatment Plan/Goals', cards: [
     { field: 'Client Goals For Treatment', content: 'The client identified three primary goals for treatment: 1) To lessen the symptoms and impact of her anxiety. 2) To reduce her alcohol consumption and develop healthier coping strategies. 3) To successfully navigate her final year of college and graduate.', type: 'text', showActions: true },
+  ]},
+  { section: 'Assessment Disposition', cards: [
+    { field: 'Disposition', content: 'A specific disposition or plan for the next session was not explicitly discussed at the conclusion of the interview.', type: 'text', showActions: true },
   ]},
   { section: 'Interpretive Summary', cards: [
     { field: 'Interpretive Summary', content: 'The client is a 23-year-old female college senior presenting with symptoms of long-standing anxiety and a pattern of maladaptive alcohol use, which she identifies as a coping mechanism for social distress. These interconnected issues are causing significant impairment in her academic functioning and personal well-being, prompting her to seek services. A key contributing factor to her distress appears to be a history of paternal emotional invalidation and unfavorable comparisons to her sibling, which has likely impacted her self-concept. Although a previous, brief course of therapy was unsuccessful due to a stated lack of readiness, the client now presents as highly motivated and ready to engage in treatment. Her strengths include strong self-awareness, intelligence, and a supportive network that includes her boyfriend and close friends. Her stated goals are to reduce anxiety, moderate her drinking, and successfully complete her education. The focus of treatment will be to address these goals by developing healthier coping skills, exploring the function of her alcohol use, and processing the impact of her family dynamics on her current mental health.', type: 'text', showActions: true },
@@ -379,10 +381,10 @@ export const TAG_FILTERS = {
 };
 
 export const TEXT_SUMMARY_BULLETS = [
-  '• Client attended and engaged in individual therapy session focused on coping strategies and emotional regulation.',
-  '• Therapist applied CBT techniques to identify and challenge negative thought patterns and cognitive distortions.',
-  '• Client demonstrated openness to exploring core beliefs contributing to current distress.',
-  '• Meaningful progress noted toward treatment goal of improving emotional regulation and reducing anxiety symptoms.',
-  '• Safety assessment completed — client denied suicidal or homicidal ideation and remains committed to safety plan.',
-  '• Plan to continue weekly individual sessions; client will practice mindfulness and journaling exercises between sessions.',
+  '• Cln met w ct at local park near ct home',
+  '• Ct expressed sx of ^ depression, "It has been hard to leave the house"',
+  '• Ct shared hx of seasonal mood shifts in winter',
+  '• Cln validated ct and discussed DBT Wise Mind',
+  '• Ct denied SI and agreed to safety plan',
+  '• Ct will reach out for support as needed',
 ];

@@ -821,6 +821,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             'Assessment':            'Assessment',
             'Anger Management Group': 'AngerManagementGroup',
             'SUD Group':              'SUDGroup',
+            'BPS Assessment':         'BPSAssessment',
           };
           let noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
           if (lockedDownMode && session?.name) {
@@ -841,11 +842,15 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       onAddToNote={onAddToNote}
       compactMode={compactMode}
       onSuggestionsReached={(name) => {
-        // Update EHR client name
+        // Update EHR client name and note type
         if (name) {
           const parts = name.trim().split(/\s+/);
           const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : name;
           setClientName(formatted);
+          if (lockedDownMode) {
+            const r = CLIENT_LOCK_RULES[formatted];
+            if (r?.noteType) noteTypeCtx?.setSelectedNoteType(r.noteType);
+          }
         }
         // Build the session entry the moment suggestions are shown
         setPendingEHRSession({
@@ -3163,13 +3168,13 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           </div>
 
           {/* Activity Type */}
-          <AcFormField key={summaryRule?.activityType ? 'locked-activity' : 'activity'} label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management']} compactMode={compactMode} forcedValue={summaryRule?.activityType} disabled={!!summaryRule?.activityType} />
+          <AcFormField key={summaryRule?.activityType ? 'locked-activity' : 'activity'} label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={summaryRule?.activityType} disabled={!!summaryRule?.activityType} />
 
           {/* Population */}
           <AcFormField key={summaryRule?.population ? 'locked-pop' : 'pop'} label="Population:" defaultValue="Adult" options={['Adult', 'Child/Adolescent', 'Older Adult', 'Couple', 'Family']} compactMode={compactMode} forcedValue={summaryRule?.population} disabled={!!summaryRule?.population} />
 
           {/* Note Type */}
-          <AcFormField key={summaryRule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note', 'Medication Management']} compactMode={compactMode} forcedValue={summaryRule?.noteTypeLabel} disabled={!!summaryRule?.noteType} />
+          <AcFormField key={summaryRule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={summaryRule?.noteTypeLabel} disabled={!!summaryRule?.noteType} />
 
           {/* Date — native input, custom display */}
           <div style={{ marginBottom: 16 }}>
@@ -3343,7 +3348,8 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   }
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
-  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={suggestionsData} compactMode={compactMode} sidebarW={467} />;
+  const resolvedSuggestions = clientName === 'Ashlyn Rivera' ? ASSESSMENT_SUGGESTIONS_DATA : suggestionsData;
+  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={resolvedSuggestions} compactMode={compactMode} sidebarW={467} />;
 
   // ── Phase 1b: voice capture ───────────────────────────────────────────────
   if (phase === 'voice') {
@@ -3734,6 +3740,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (!session) return SUGGESTIONS_DATA;
     if (session.id === 'larry' || session.name === 'Larry Quinn') return useEhrNoteHeaders ? LARRY_QUINN_DAP_DATA : LARRY_QUINN_SUGGESTIONS_DATA;
     if (session.name === 'Calvin Murphy') return CASE_MGMT_SUGGESTIONS_DATA;
+    if (session.name === 'Ashlyn Rivera') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.id === 'jacob-audio') return JACOB_AUDIO_SUGGESTIONS_DATA;
     if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
     if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
@@ -5556,13 +5563,13 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         </>}
 
         {/* Session Type */}
-        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
+        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
 
         {/* Setting */}
         <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
 
         {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
