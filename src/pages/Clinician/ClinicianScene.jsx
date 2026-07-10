@@ -749,6 +749,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const endAp = endH >= 12 ? 'PM' : 'AM';
           const dispH = endH > 12 ? endH - 12 : endH || 12;
           const endT = `${dispH}:${String(endM).padStart(2,'0')} ${endAp}`;
+          // Carry over client metadata so SuggestionsPanel resolves the right dataset
+          const knownSession = ALL_SESSIONS.find(s => s.name === captureSession.name);
           const audioSession = {
             id: `audio-${Date.now()}`,
             ...daysAgo(0),
@@ -758,7 +760,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             sessionType: 'audio',
             isActive: false,
             summary: 'Audio session captured and transcribed. AI-generated suggestions are ready for EHR review.',
-            suggestionsKey: 'audio',
+            ...(knownSession?.specialty && { specialty: knownSession.specialty }),
+            ...(knownSession?.noteType && { noteType: knownSession.noteType }),
           };
           setAddedSessions(prev => [audioSession, ...prev]);
           setCapturePhase('done');
@@ -791,10 +794,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         compactMode={compactMode}
         sidebarW={sidebarW}
         onAddedToEHR={() => {
-          setDoneIds(prev => new Set([...prev, activitiesSession.id]));
-          setActivitiesInitialTab('done');
-          setActivitiesSession(null);
-          setPhase('sessions');
         }}
       />;
       return <MySessionsPanel
@@ -862,15 +861,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       }}
       onSuggestionsLeft={() => { setPendingEHRSession(null); }}
       onAddedToEHR={() => {
-        // Commit pending session as Done and jump to Activities → Marked as Done
         if (pendingEHRSession) {
           setAddedSessions(prev => [pendingEHRSession, ...prev]);
-          setDoneIds(prev => new Set([...prev, pendingEHRSession.id]));
           setPendingEHRSession(null);
         }
-        setActivitiesInitialTab('done');
-        setNavTab('activities');
-        setPhase('sessions');
       }}
     />;
     return <PlaceholderPanel tab={navTab} />;
@@ -3175,7 +3169,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           <AcFormField key={summaryRule?.population ? 'locked-pop' : 'pop'} label="Population:" defaultValue="Adult" options={['Adult', 'Child/Adolescent', 'Older Adult', 'Couple', 'Family']} compactMode={compactMode} forcedValue={summaryRule?.population} disabled={!!summaryRule?.population} />
 
           {/* Note Type */}
-          <AcFormField key={summaryRule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note']} compactMode={compactMode} forcedValue={summaryRule?.noteTypeLabel} disabled={!!summaryRule?.noteType} />
+          <AcFormField key={summaryRule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue="DAP Note" options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Intake Note', 'Medication Management']} compactMode={compactMode} forcedValue={summaryRule?.noteTypeLabel} disabled={!!summaryRule?.noteType} />
 
           {/* Date — native input, custom display */}
           <div style={{ marginBottom: 16 }}>
@@ -5562,13 +5556,13 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         </>}
 
         {/* Session Type */}
-        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
+        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
 
         {/* Setting */}
         <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
 
         {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
