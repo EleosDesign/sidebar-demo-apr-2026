@@ -98,16 +98,18 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
   // If opened via the inline LQA CTA, start straight in 'progress'; otherwise derive from saved status
   const [state, setState] = useState(() => {
     if (autoRunAnalysis) return 'progress';
-    if (lqaStatus === 'issues') return 'results';
+    if (lqaStatus === 'issues' || lqaStatus === 'success') return 'results';
     if (lqaStatus === 'loading') return 'progress';
     return 'idle';
   });
 
-  const [resultsVariant, setResultsVariant] = useState('issues');
+  const [resultsVariant, setResultsVariant] = useState(() =>
+    lqaStatus === 'success' ? 'allClear' : 'issues'
+  );
   const [dismissed, setDismissed] = useState([]);
   const [openExpanded, setOpenExpanded] = useState(true);
   const [completedExpanded, setCompletedExpanded] = useState(false);
-  const timerRef = useRef(null);
+
 
   // If opened via the inline CTA, kick off analysis immediately on mount
   useEffect(() => {
@@ -121,33 +123,20 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
   useEffect(() => {
     if (lqaStatus === 'issues' && state !== 'results') setState('results');
     if (lqaStatus === 'loading' && state === 'idle') setState('progress');
+    if (lqaStatus === 'success' && state === 'progress') { setState('results'); setResultsVariant('allClear'); }
   }, [lqaStatus]); // eslint-disable-line
 
   const visibleItems = OPEN_ITEMS.filter(item => !dismissed.includes(item.id));
 
   function runAnalysis() {
     setState('progress');
-    if (ehrCtx) ehrCtx.setLqaStatus('loading');
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setState('results');
-      setResultsVariant('issues');
-      if (ehrCtx) ehrCtx.setLqaStatus('issues');
-    }, 3400);
+    ehrCtx?.triggerQualityCheck({ duration: 3400 });
   }
 
   function reRunAnalysis() {
     setState('progress');
-    if (ehrCtx) ehrCtx.setLqaStatus('loading');
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setState('results');
-      setResultsVariant('allClear');
-      if (ehrCtx) ehrCtx.setLqaStatus('idle');
-    }, 2800);
+    ehrCtx?.triggerQualityCheck({ finalStatus: 'success' });
   }
-
-  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', fontFamily: "'Poppins',sans-serif", background: '#fff', overflow: 'hidden' }}>

@@ -210,6 +210,8 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
   const dotsOnRight = pos.x + BTN_W / 2 > window.innerWidth / 2;
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+  const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
+  const noteHasContent = ehrCtx?.noteHasContent ?? false;
 
   const handleMouseDown = (e) => {
     if (e.button !== 0) return;
@@ -232,7 +234,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
     const onUp = () => {
       setIsDragging(false);
       if (!dragRef.current.moved) {
-        if ((lqaStatus === 'loading' || lqaStatus === 'issues') && onOpenQuality) {
+        if ((noteHasContent || lqaStatus !== 'idle') && onOpenQuality) {
           onOpenQuality();
         } else {
           onNext();
@@ -242,10 +244,10 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
     return () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
-  }, [isDragging, onPosChange, onNext, lqaStatus, onOpenQuality]);
+  }, [isDragging, onPosChange, onNext, lqaStatus, noteHasContent, onOpenQuality]);
 
-  // ── LQA Pill (shown when analysis is loading or issues found) ─────────────────
-  if (lqaStatus === 'loading' || lqaStatus === 'issues') {
+  // ── LQA Pill (note has content, or active analysis state) ───────────────────
+  if (noteHasContent || lqaStatus !== 'idle') {
     const pillY = Math.min(pos.y, window.innerHeight - 136 - 16);
     return (
       <div
@@ -276,16 +278,25 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
             {lqaStatus === 'loading' && (
               <div style={{ position: 'absolute', inset: -3, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.8)', animation: 'lqaPillSpin 0.9s linear infinite', zIndex: 3 }} />
             )}
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: '2px solid #293D87', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
-              {lqaStatus === 'loading' ? (
-                <>
-                  <style>{`@keyframes lqaBadgePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }`}</style>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'white', animation: 'lqaBadgePulse 1s ease-in-out infinite' }} />
-                </>
-              ) : (
-                <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: 'white', letterSpacing: 0 }}>4</span>
-              )}
-            </div>
+            {lqaStatus !== 'loading' && lqaStatus !== 'idle' && !(lqaStatus === 'success' && changedSinceAnalysis) && (
+              <div style={{
+                position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%',
+                background: lqaStatus === 'success' ? '#22c55e' : lqaStatus === 'error' ? '#eab308' : '#ef4444',
+                border: '2px solid #293D87', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4,
+              }}>
+                {lqaStatus === 'issues' && (
+                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: 'white', letterSpacing: 0 }}>4</span>
+                )}
+                {lqaStatus === 'success' && (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 5.5L4 7.5L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+                {lqaStatus === 'error' && (
+                  <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 11, fontWeight: 700, color: 'white', letterSpacing: 0 }}>!</span>
+                )}
+              </div>
+            )}
           </div>
           {/* Divider */}
           <div style={{ width: 32, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', margin: '12px 0' }} />
@@ -417,8 +428,19 @@ function EnhancePointerToolbarWrapper() {
 
 function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField, sidebarOpen }) {
   const { selectedEhr } = useEhrContext();
+  const ehrCtx = useEhrField();
   const Bg = EHR_BACKGROUNDS[selectedEhr] ?? EHR_BACKGROUNDS.welligent;
-  return <Bg noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />;
+
+  useEffect(() => {
+    const hasContent = Object.values(noteValues).some(v => (v ?? '').trim().length > 0);
+    ehrCtx?.setNoteHasContent?.(hasContent);
+  }, [noteValues]); // eslint-disable-line
+
+  const handleNoteChange = (field, val) => {
+    onNoteChange?.(field, val);
+    ehrCtx?.notifyNoteChange?.();
+  };
+  return <Bg noteValues={noteValues} onNoteChange={handleNoteChange} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />;
 }
 
 function EHRDropdownGrid() {
@@ -476,8 +498,7 @@ function NoteSection({ noteValues, onNoteChange, highlightedField }) {
     };
     const emptyKeys = Object.keys(dapValues).filter(k => !dapValues[k].trim());
     if (emptyKeys.length === 1 && emptyKeys[0] === key && ehrCtx.lqaStatus === 'idle') {
-      ehrCtx.setLqaStatus('loading');
-      setTimeout(() => ehrCtx.setLqaStatus('issues'), 2800);
+      ehrCtx.triggerQualityCheck();
     }
   };
 
@@ -730,8 +751,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     }
     // Clicking quality tab auto-triggers analysis if not already running
     if (tab === 'quality' && ehrCtx && ehrCtx.lqaStatus === 'idle') {
-      ehrCtx.setLqaStatus('loading');
-      setTimeout(() => ehrCtx.setLqaStatus('issues'), 2800);
+      ehrCtx.triggerQualityCheck();
     }
   };
 
@@ -741,7 +761,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       setNavTab(startTab);
       if (startTab === 'quality') {
         setAutoRunQuality(true); // signal LQAReview to enter analyzing state immediately
-        ehrCtx?.triggerQualityCheck?.();  // update lqaStatus in context (drives badge + pill)
+        if (ehrCtx?.lqaStatus === 'idle') ehrCtx?.triggerQualityCheck?.();
       }
       onStartTabConsumed?.();
     }
@@ -5481,6 +5501,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         );
       case 'quality': {
         const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+        const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
         return (
           <NavTooltip key="quality" label="Note Quality" show={!showLabels}>
             <div onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
@@ -5495,6 +5516,13 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
                 {lqaStatus === 'issues' && (
                   <span style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 10, fontWeight: 600, color: 'white', letterSpacing: 0 }}>4</span>
+                  </span>
+                )}
+                {lqaStatus === 'success' && !changedSinceAnalysis && (
+                  <span style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: '50%', background: '#22c55e', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+                      <path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </span>
                 )}
               </div>
