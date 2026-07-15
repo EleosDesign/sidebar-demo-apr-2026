@@ -8,6 +8,7 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
   const [lqaStatus, setLqaStatus] = useState('idle'); // 'idle' | 'loading' | 'issues'
   const [changedSinceAnalysis, setChangedSinceAnalysis] = useState(false);
   const [serviceCodeMatchPassed, setServiceCodeMatchPassed] = useState(false);
+  const [noteHasContent, setNoteHasContent] = useState(false);
 
   // ── Enhance state ──────────────────────────────────────────────────────────
   const [enhanceActive, setEnhanceActive] = useState(false);
@@ -16,9 +17,11 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
 
   const analyzedSnapshotRef = useRef(null);
 
+  const analysisComplete = lqaStatus === 'issues' || lqaStatus === 'success' || lqaStatus === 'error';
+
   // Mark dirty whenever fieldValues change after analysis completes
   useEffect(() => {
-    if (lqaStatus === 'issues' && analyzedSnapshotRef.current !== null) {
+    if (analysisComplete && analyzedSnapshotRef.current !== null) {
       const snap = analyzedSnapshotRef.current;
       const dirty = Object.keys(fieldValues).some(k => fieldValues[k] !== snap[k]);
       if (dirty) setChangedSinceAnalysis(true);
@@ -27,7 +30,7 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
 
   // When analysis finishes → snapshot values and reset dirty flag
   useEffect(() => {
-    if (lqaStatus === 'issues') {
+    if (analysisComplete) {
       analyzedSnapshotRef.current = { ...fieldValues };
       setChangedSinceAnalysis(false);
     }
@@ -43,14 +46,19 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
     }));
   };
 
-  /**
-   * Trigger the LQA quality-check flow from anywhere (e.g. after an AI enhance
-   * on the Plan field). No-ops if a check is already in flight.
-   */
-  const triggerQualityCheck = () => {
-    if (lqaStatus === 'loading') return;
+  const analysisTimerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(analysisTimerRef.current), []);
+
+  // Run a quality check and resolve to `finalStatus` after `duration` ms.
+  const triggerQualityCheck = ({ duration = 2800, finalStatus = 'issues' } = {}) => {
+    clearTimeout(analysisTimerRef.current);
     setLqaStatus('loading');
-    setTimeout(() => setLqaStatus('issues'), 2800);
+    analysisTimerRef.current = setTimeout(() => setLqaStatus(finalStatus), duration);
+  };
+
+  const notifyNoteChange = () => {
+    if (analysisComplete) setChangedSinceAnalysis(true);
   };
 
   return (
@@ -66,6 +74,8 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
       enhanceField, setEnhanceField,
       enhanceLoading, setEnhanceLoading,
       triggerQualityCheck,
+      notifyNoteChange,
+      noteHasContent, setNoteHasContent,
       sidebarOpen,
     }}>
       {children}

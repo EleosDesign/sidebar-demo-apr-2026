@@ -76,16 +76,18 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
   // If opened via the inline LQA CTA, start straight in 'progress'; otherwise derive from saved status
   const [state, setState] = useState(() => {
     if (autoRunAnalysis) return 'progress';
-    if (lqaStatus === 'issues') return 'results';
+    if (lqaStatus === 'issues' || lqaStatus === 'success') return 'results';
     if (lqaStatus === 'loading') return 'progress';
     return 'idle';
   });
 
-  const [results, setResults] = useState(() => evaluateNoteQuality(noteValues, sections, serviceCodeMatchPassed));
+  const [resultsVariant, setResultsVariant] = useState(() =>
+    lqaStatus === 'success' ? 'allClear' : 'issues'
+  );
   const [dismissed, setDismissed] = useState([]);
   const [openExpanded, setOpenExpanded] = useState(true);
   const [completedExpanded, setCompletedExpanded] = useState(false);
-  const timerRef = useRef(null);
+
 
   // Auto-run when Quality is opened from either the nav or inline CTA.
   useEffect(() => {
@@ -99,6 +101,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
   useEffect(() => {
     if (lqaStatus === 'issues' && state !== 'results') setState('results');
     if (lqaStatus === 'loading' && state === 'idle') setState('progress');
+    if (lqaStatus === 'success' && state === 'progress') { setState('results'); setResultsVariant('allClear'); }
   }, [lqaStatus]); // eslint-disable-line
 
   const visibleItems = results.openItems.filter(item => !dismissed.includes(item.id));
@@ -106,33 +109,15 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
   function runAnalysis() {
     const nextResults = evaluateNoteQuality(noteValues, sections, serviceCodeMatchPassed);
     setState('progress');
-    if (ehrCtx) ehrCtx.setLqaStatus('loading');
     setDismissed([]);
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setResults(nextResults);
-      setState('results');
-      if (ehrCtx) ehrCtx.setLqaStatus('issues');
-    }, 3400);
+    ehrCtx?.triggerQualityCheck({ duration: 3400 });
   }
 
   function reRunAnalysis() {
     const nextResults = evaluateNoteQuality(noteValues, sections, true);
     setState('progress');
-    setDismissed([]);
-    if (ehrCtx) {
-      ehrCtx.setLqaStatus('loading');
-      ehrCtx.setServiceCodeMatchPassed(true);
-    }
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setResults(nextResults);
-      setState('results');
-      if (ehrCtx) ehrCtx.setLqaStatus('issues');
-    }, 2800);
+    ehrCtx?.triggerQualityCheck({ finalStatus: 'success' });
   }
-
-  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', fontFamily: "'Poppins',sans-serif", background: '#fff', overflow: 'hidden' }}>
