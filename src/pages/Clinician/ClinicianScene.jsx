@@ -231,6 +231,8 @@ export default function ClinicianScene({ step, onNext }) {
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <EhrSelector />
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+            <LqaDemoTrigger />
+            <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <LockedDownModeToggle />
           </div>
         </div>
@@ -488,6 +490,34 @@ function EnhancePointerToolbarWrapper() {
 }
 
 // ── EHR Background — context-driven dispatcher ───────────────────────────────
+
+function LqaDemoTrigger() {
+  const ehrCtx = useEhrField();
+  const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+  const STATES = [
+    { key: 'issues',  color: '#ef4444', label: 'Issues'  },
+    { key: 'success', color: '#22c55e', label: 'Success' },
+    { key: 'error',   color: '#EF6C00', label: 'Error'   },
+  ];
+  return (
+    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      {STATES.map(({ key, color, label }) => (
+        <button
+          key={key}
+          title={`Demo: ${label}`}
+          onClick={() => ehrCtx?.triggerQualityCheck({ duration: 0, finalStatus: key })}
+          style={{
+            width: 12, height: 12, borderRadius: '50%', border: 'none', padding: 0, cursor: 'pointer',
+            background: color,
+            opacity: lqaStatus === key ? 1 : 0.35,
+            transition: 'opacity 0.15s',
+            flexShrink: 0,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField, sidebarOpen, activitySelectionSeq }) {
   const { selectedEhr } = useEhrContext();

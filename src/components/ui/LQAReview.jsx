@@ -78,6 +78,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
     if (autoRunAnalysis) return 'progress';
     if (lqaStatus === 'issues' || lqaStatus === 'success') return 'results';
     if (lqaStatus === 'loading') return 'progress';
+    if (lqaStatus === 'error') return 'error';
     return 'idle';
   });
 
@@ -99,9 +100,10 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
 
   // Sync if lqaStatus changes while panel is open
   useEffect(() => {
-    if (lqaStatus === 'issues' && state !== 'results') setState('results');
-    if (lqaStatus === 'loading' && state === 'idle') setState('progress');
+    if (lqaStatus === 'issues') { setState('results'); setResultsVariant('issues'); }
+    if (lqaStatus === 'loading' && (state === 'idle' || state === 'error')) setState('progress');
     if (lqaStatus === 'success' && state === 'progress') { setState('results'); setResultsVariant('allClear'); }
+    if (lqaStatus === 'error') setState('error');
   }, [lqaStatus]); // eslint-disable-line
 
   const visibleItems = results.openItems.filter(item => !dismissed.includes(item.id));
@@ -255,6 +257,26 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
           </div>
         )}
 
+        {/* ERROR */}
+        {state === 'error' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', gap: 18, textAlign: 'center' }}>
+            <div style={{ width: 84, height: 84, borderRadius: '50%', background: '#fff3e0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L2 20h20L12 2z" fill="#EF6C00" opacity="0.15" />
+                <path d="M12 2L2 20h20L12 2z" stroke="#EF6C00" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M12 9v5" stroke="#EF6C00" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="12" cy="17" r="1" fill="#EF6C00" />
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 19, fontWeight: 700, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif", marginBottom: 8 }}>Analysis Failed</div>
+              <div style={{ fontSize: 14, color: '#888', fontFamily: "'Poppins',sans-serif", lineHeight: 1.6, maxWidth: 240 }}>
+                Something went wrong. Please try running the analysis again.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* RESULTS — all clear */}
         {state === 'results' && results.openItems.length === 0 && (
           <div>
@@ -308,23 +330,73 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
             Analyzing...
           </button>
         )}
-        {state === 'results' && (
-          <button
-            onClick={reRunAnalysis}
-            style={{
-              width: '100%', height: 30, border: 'none', borderRadius: 4,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
-              background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer',
-              boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)',
-            }}
-          >
+        {state === 'results' && resultsVariant === 'issues' && (
+          <>
+            <button
+              onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
+              disabled={!changedSinceAnalysis}
+              style={{
+                width: '100%', height: 30, border: 'none', borderRadius: 4,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
+                transition: 'background 0.2s, color 0.2s',
+                ...(changedSinceAnalysis
+                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: 'rgba(45,76,205,0.12)', color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
+                ),
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Re-Run Analysis
+            </button>
+            {!changedSinceAnalysis && (
+              <div style={{ fontSize: 12, color: '#aaa', textAlign: 'center', fontFamily: "'Poppins',sans-serif" }}>
+                Edit your note to enable re-analysis
+              </div>
+            )}
+          </>
+        )}
+        {state === 'error' && (
+          <button onClick={runAnalysis}
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
               <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Re-Run Analysis
+            Run Analysis Again
           </button>
+        )}
+        {state === 'results' && resultsVariant === 'allClear' && (
+          <>
+            <button
+              onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
+              disabled={!changedSinceAnalysis}
+              style={{
+                width: '100%', height: 30, border: 'none', borderRadius: 4,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
+                transition: 'background 0.2s, color 0.2s',
+                ...(changedSinceAnalysis
+                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: 'rgba(45,76,205,0.12)', color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
+                ),
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Re-Run Analysis
+            </button>
+            {!changedSinceAnalysis && (
+              <div style={{ fontSize: 12, color: '#aaa', textAlign: 'center', fontFamily: "'Poppins',sans-serif" }}>
+                Edit your note to enable re-analysis
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
