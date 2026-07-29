@@ -39,7 +39,24 @@ const BTN_H = 56;
 export default function ClinicianScene({ step, onNext }) {
   const [sidebarOpen, setSidebarOpen] = useState(step > 0);
   const [isClosing, setIsClosing] = useState(false);
-  const [btnPos, setBtnPos] = useState(() => ({ x: 16, y: window.innerHeight - BTN_H - 32 }));
+  const [btnPos, setBtnPos] = useState(() => ({ x: window.innerWidth - BTN_W - 16, y: window.innerHeight - BTN_H - 32 }));
+  // Intended button position (deliberate default or last drag) — kept distinct from
+  // the rendered btnPos so a resize/zoom that forces a reclamp can grow back later.
+  const btnIntendedPos = useRef(btnPos);
+  const setBtnPosDeliberate = (next) => {
+    btnIntendedPos.current = next;
+    setBtnPos(next);
+  };
+  useEffect(() => {
+    const reconcileBtnPos = () => {
+      setBtnPos({
+        x: Math.max(0, Math.min(window.innerWidth - BTN_W, btnIntendedPos.current.x)),
+        y: Math.max(0, Math.min(window.innerHeight - BTN_H, btnIntendedPos.current.y)),
+      });
+    };
+    window.addEventListener('resize', reconcileBtnPos);
+    return () => window.removeEventListener('resize', reconcileBtnPos);
+  }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
   const sidebarSavedState = useRef(
@@ -171,7 +188,7 @@ export default function ClinicianScene({ step, onNext }) {
           <LockedDownModeToggle />
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
-          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
+          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPosDeliberate} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
           : isClosing
             ? sidebarWrapper('sidebarToButton 0.5s cubic-bezier(0.4, 0, 1, 1) both', handleExitDone)
             : sidebarWrapper('sidebarFromButton 0.65s cubic-bezier(0.16, 1, 0.3, 1) both', null)
@@ -546,7 +563,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   });
   const [posY, setPosY] = useState(() => {
     if (savedState?.posY != null) return savedState.posY;
-    const initH = savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7);
+    // Fresh sessions default to full viewport height, so the panel is top-anchored.
+    const initH = savedState?.sidebarH ?? (window.innerHeight - 2 * G);
     if (!initialPos) return window.innerHeight - initH - G;
     return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
   });
@@ -555,7 +573,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     const x = initialPos ? Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x)) : G;
     return (x + (savedState?.sidebarW ?? 467) / 2) < window.innerWidth / 2 ? 'left' : 'right';
   });
-  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7));
+  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? (window.innerHeight - 2 * G));
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isWidthResizing, setIsWidthResizing] = useState(false);
@@ -571,6 +589,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   posYRef.current = posY;
   sidebarHRef.current = sidebarH;
   sidebarWRef.current = sidebarW;
+  // Intended size/position (deliberate default or last drag/resize) — kept distinct
+  // from the rendered w/h/x/y so a resize/zoom that forces a shrink-to-fit can grow
+  // back toward it once the viewport has room again.
+  const intendedRef = useRef({ w: sidebarW, h: sidebarH, x: posX, y: posY });
 
   // ── Nav overflow calculation ─────────────────────────────────────────────────
   // With labels: item≈64px, fixed≈267px. Without labels: item≈40px, fixed≈220px.
@@ -593,14 +615,17 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         setPosX(newX);
         setPosY(newY);
         setSide((newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right');
+        intendedRef.current = { ...intendedRef.current, x: newX, y: newY };
       }
       if (resizeRef.current) {
         // dragging up → negative dy → increase height; keep bottom edge fixed
         const dy = e.clientY - resizeRef.current.startMouseY;
         const newH = Math.max(200, Math.min(window.innerHeight - G - G, resizeRef.current.origH - dy));
         const bottomEdge = resizeRef.current.origY + resizeRef.current.origH;
+        const newY = Math.max(G, bottomEdge - newH);
         setSidebarH(newH);
-        setPosY(Math.max(G, bottomEdge - newH));
+        setPosY(newY);
+        intendedRef.current = { ...intendedRef.current, h: newH, y: newY };
       }
       if (widthResizeRef.current) {
         const { edge, startMouseX, origW, origX } = widthResizeRef.current;
@@ -612,12 +637,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const newX = Math.max(G, Math.min(window.innerWidth - SIDEBAR_W_MIN - G, rightEdge - newW));
           setSidebarW(newW);
           setPosX(newX);
+          intendedRef.current = { ...intendedRef.current, w: newW, x: newX };
         } else {
           // Left edge fixed → dragging right widens
           const newW = Math.max(SIDEBAR_W_MIN, Math.min(SIDEBAR_W_MAX, origW + dx));
           setSidebarW(newW);
           const clampedX = Math.max(G, Math.min(window.innerWidth - newW - G, posXRef.current));
           setPosX(clampedX);
+          intendedRef.current = { ...intendedRef.current, w: newW, x: clampedX };
         }
       }
     };
@@ -629,6 +656,28 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, []);
+
+  // Keep the panel fully on-screen across window resizes and browser zoom changes:
+  // re-derive rendered w/h/x/y from the intended values against the current viewport
+  // every time, so it shrinks to fit when space is tight and grows back when it isn't.
+  useEffect(() => {
+    const reconcile = () => {
+      const { w: iw, h: ih, x: ix, y: iy } = intendedRef.current;
+      const maxW = window.innerWidth - 2 * G;
+      const maxH = window.innerHeight - 2 * G;
+      const newW = Math.max(SIDEBAR_W_MIN, Math.min(iw, SIDEBAR_W_MAX, maxW));
+      const newH = Math.max(200, Math.min(ih, maxH));
+      const newX = Math.max(G, Math.min(window.innerWidth - newW - G, ix));
+      const newY = Math.max(G, Math.min(window.innerHeight - newH - G, iy));
+      setSidebarW(newW);
+      setSidebarH(newH);
+      setPosX(newX);
+      setPosY(newY);
+      setSide((newX + newW / 2) < window.innerWidth / 2 ? 'left' : 'right');
+    };
+    window.addEventListener('resize', reconcile);
+    return () => window.removeEventListener('resize', reconcile);
   }, []);
 
   const handleMouseDown = (e) => {
