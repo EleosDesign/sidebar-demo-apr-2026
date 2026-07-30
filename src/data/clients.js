@@ -20,6 +20,24 @@ export const CLIENT_OPTIONS = [
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
+export const CLIENT_PRONOUNS = {
+  'Marcus Webb': 'He/Him',
+  'Aisha Monroe': 'She/Her',
+  'Tom Reilly': 'He/Him',
+  'Carmen Vega': 'She/Her',
+  'David Park': 'He/Him',
+  'Priya Nair': 'She/Her',
+  'James Osei': 'He/Him',
+  'Linda Torres': 'She/Her',
+  'Ryan Cho': 'He/Him',
+  'Jacob Rosen': 'He/Him',
+  'Larry Quinn': 'He/Him',
+  'Calvin Murphy': 'He/Him',
+  'Trisha Platts': 'She/Her',
+  'Patricia Rodriguez': 'She/Her',
+  'Ashlyn Rivera': 'She/Her',
+};
+
 // ── Demo-mode subset (only clients/groups with wired-up content) ─────────────
 export const DEMO_CLIENT_OPTIONS = [
   'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
