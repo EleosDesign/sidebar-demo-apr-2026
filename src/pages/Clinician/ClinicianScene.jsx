@@ -3063,6 +3063,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   const [clientDropOpen, setClientDropOpen] = useState(false);
   const summaryFmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
   const summaryRule = lockedDownMode ? CLIENT_LOCK_RULES[summaryFmtName] : null;
+  const summaryPronouns = CLIENT_PRONOUNS[clientName];
   const clientInputRef = useRef(null);
   const dateRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -3166,6 +3167,13 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               </svg>
             </div>
           </div>
+
+          {/* Pronouns */}
+          {summaryPronouns && (
+            <div style={{ marginBottom: 16 }}>
+              <span style={{ ...P, fontSize: compactMode ? 14 : 16, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: {summaryPronouns}</span>
+            </div>
+          )}
 
           {/* Activity Type */}
           <AcFormField key={summaryRule?.activityType ? 'locked-activity' : 'activity'} label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={summaryRule?.activityType} disabled={!!summaryRule?.activityType} />
