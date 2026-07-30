@@ -16,7 +16,7 @@ import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.j
 import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
-import { CLIENTS_LIST, CLIENT_OPTIONS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
+import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
@@ -5406,6 +5406,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const isGroup = clientName.toLowerCase().includes('group');
   const fmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
   const rule = lockedDownMode ? CLIENT_LOCK_RULES[fmtName] : null;
+  const pronouns = CLIENT_PRONOUNS[clientName];
 
   const PLAN_ITEMS = isGroup ? [
     'Practice interpersonal effectiveness skills: each member to identify one boundary to set this week',
@@ -5496,7 +5497,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           </div>
           {/* Pronouns + Edit Client */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, width: '100%' }}>
-            <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: He/Him</span>
+            {pronouns && <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: {pronouns}</span>}
             <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.15px', lineHeight: '24px', cursor: 'pointer' }}>Edit Client</span>
           </div>
         </div>
