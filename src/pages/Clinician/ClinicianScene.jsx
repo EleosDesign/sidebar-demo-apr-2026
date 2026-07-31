@@ -42,16 +42,30 @@ export default function ClinicianScene({ step, onNext }) {
   const [btnPos, setBtnPos] = useState(() => ({ x: window.innerWidth - BTN_W - 16, y: window.innerHeight - BTN_H - 32 }));
   // Intended button position (deliberate default or last drag) — kept distinct from
   // the rendered btnPos so a resize/zoom that forces a reclamp can grow back later.
-  const btnIntendedPos = useRef(btnPos);
+  // Horizontal intent is tracked as a distance from whichever edge (left/right) the
+  // button is nearest, so it re-hugs that edge on zoom-out as well as zoom-in.
+  const btnXSide = (x) => (x + BTN_W / 2 > window.innerWidth / 2 ? 'right' : 'left');
+  const btnIntendedPos = useRef({
+    xSide: btnXSide(btnPos.x),
+    xGap: btnXSide(btnPos.x) === 'right' ? (window.innerWidth - btnPos.x - BTN_W) : btnPos.x,
+    y: btnPos.y,
+  });
   const setBtnPosDeliberate = (next) => {
-    btnIntendedPos.current = next;
+    const xSide = btnXSide(next.x);
+    btnIntendedPos.current = {
+      xSide,
+      xGap: xSide === 'right' ? (window.innerWidth - next.x - BTN_W) : next.x,
+      y: next.y,
+    };
     setBtnPos(next);
   };
   useEffect(() => {
     const reconcileBtnPos = () => {
+      const { xSide, xGap, y } = btnIntendedPos.current;
+      const rawX = xSide === 'right' ? (window.innerWidth - BTN_W - xGap) : xGap;
       setBtnPos({
-        x: Math.max(0, Math.min(window.innerWidth - BTN_W, btnIntendedPos.current.x)),
-        y: Math.max(0, Math.min(window.innerHeight - BTN_H, btnIntendedPos.current.y)),
+        x: Math.max(0, Math.min(window.innerWidth - BTN_W, rawX)),
+        y: Math.max(0, Math.min(window.innerHeight - BTN_H, y)),
       });
     };
     window.addEventListener('resize', reconcileBtnPos);
@@ -585,14 +599,24 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const posYRef = useRef(posY);
   const sidebarHRef = useRef(sidebarH);
   const sidebarWRef = useRef(sidebarW);
+  const sideRef = useRef(side);
   posXRef.current = posX;
   posYRef.current = posY;
   sidebarHRef.current = sidebarH;
   sidebarWRef.current = sidebarW;
+  sideRef.current = side;
   // Intended size/position (deliberate default or last drag/resize) — kept distinct
   // from the rendered w/h/x/y so a resize/zoom that forces a shrink-to-fit can grow
-  // back toward it once the viewport has room again.
-  const intendedRef = useRef({ w: sidebarW, h: sidebarH, x: posX, y: posY });
+  // back toward it once the viewport has room again. Horizontal intent (xGap) is a
+  // distance from whichever edge `side` currently names, not a raw left offset, so
+  // it re-hugs that edge on zoom-out as well as zoom-in.
+  const intendedRef = useRef({
+    w: sidebarW,
+    h: sidebarH,
+    y: posY,
+    side,
+    xGap: side === 'left' ? posX : (window.innerWidth - posX - sidebarW),
+  });
 
   // ── Nav overflow calculation ─────────────────────────────────────────────────
   // With labels: item≈64px, fixed≈267px. Without labels: item≈40px, fixed≈220px.
@@ -612,10 +636,16 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         const dy = e.clientY - dragRef.current.startMouseY;
         const newX = Math.max(G, Math.min(window.innerWidth - sidebarWRef.current - G, dragRef.current.origX + dx));
         const newY = Math.max(G, Math.min(window.innerHeight - sidebarHRef.current - G, dragRef.current.origY + dy));
+        const newSide = (newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right';
         setPosX(newX);
         setPosY(newY);
-        setSide((newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right');
-        intendedRef.current = { ...intendedRef.current, x: newX, y: newY };
+        setSide(newSide);
+        intendedRef.current = {
+          ...intendedRef.current,
+          y: newY,
+          side: newSide,
+          xGap: newSide === 'left' ? newX : (window.innerWidth - newX - sidebarWRef.current),
+        };
       }
       if (resizeRef.current) {
         // dragging up → negative dy → increase height; keep bottom edge fixed
@@ -637,14 +667,22 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const newX = Math.max(G, Math.min(window.innerWidth - SIDEBAR_W_MIN - G, rightEdge - newW));
           setSidebarW(newW);
           setPosX(newX);
-          intendedRef.current = { ...intendedRef.current, w: newW, x: newX };
+          intendedRef.current = {
+            ...intendedRef.current,
+            w: newW,
+            xGap: sideRef.current === 'left' ? newX : (window.innerWidth - newX - newW),
+          };
         } else {
           // Left edge fixed → dragging right widens
           const newW = Math.max(SIDEBAR_W_MIN, Math.min(SIDEBAR_W_MAX, origW + dx));
           setSidebarW(newW);
           const clampedX = Math.max(G, Math.min(window.innerWidth - newW - G, posXRef.current));
           setPosX(clampedX);
-          intendedRef.current = { ...intendedRef.current, w: newW, x: clampedX };
+          intendedRef.current = {
+            ...intendedRef.current,
+            w: newW,
+            xGap: sideRef.current === 'left' ? clampedX : (window.innerWidth - clampedX - newW),
+          };
         }
       }
     };
@@ -663,12 +701,15 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   // every time, so it shrinks to fit when space is tight and grows back when it isn't.
   useEffect(() => {
     const reconcile = () => {
-      const { w: iw, h: ih, x: ix, y: iy } = intendedRef.current;
+      const { w: iw, h: ih, y: iy, xGap, side: iSide } = intendedRef.current;
       const maxW = window.innerWidth - 2 * G;
       const maxH = window.innerHeight - 2 * G;
       const newW = Math.max(SIDEBAR_W_MIN, Math.min(iw, SIDEBAR_W_MAX, maxW));
       const newH = Math.max(200, Math.min(ih, maxH));
-      const newX = Math.max(G, Math.min(window.innerWidth - newW - G, ix));
+      // Re-derive x from the anchored edge every time (not the last rendered x), so
+      // growing the viewport (zoom-out) re-hugs that edge instead of leaving a gap.
+      const rawX = iSide === 'left' ? xGap : (window.innerWidth - newW - xGap);
+      const newX = Math.max(G, Math.min(window.innerWidth - newW - G, rawX));
       const newY = Math.max(G, Math.min(window.innerHeight - newH - G, iy));
       setSidebarW(newW);
       setSidebarH(newH);

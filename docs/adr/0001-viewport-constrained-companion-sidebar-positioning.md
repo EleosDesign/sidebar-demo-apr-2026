@@ -16,6 +16,8 @@ Introduce two decoupled concepts for both the Companion Sidebar and the Launcher
 
 The Companion Sidebar remains exactly as free-floating, draggable, and resizable on all edges as it is today — this decision does not turn it into a pinned/docked panel, despite the new default looking like one (full height, flush to the right edge).
 
+Horizontal Intended Position is tracked as a distance from whichever edge (left/right) the element currently sits nearest to — Side, in existing glossary terms — rather than as a raw offset from the left edge. This applies to the Fresh Session default and to any position the user drags to. It means growing the viewport (zoom-out) re-hugs that edge instead of leaving a gap, symmetric with the shrinking behavior on zoom-in.
+
 ## Considered Options
 
 - **Force all existing sessions to the new bottom-right/full-height default.** Rejected — would silently discard positions users already dragged and saved to `eleos-sidebar-state`.
@@ -28,3 +30,4 @@ The Companion Sidebar remains exactly as free-floating, draggable, and resizable
 
 - Both `CompanionLaunchButton` and `EleosSidebar` need a shared resize/zoom-reconciliation mechanism (a `resize` listener plus fit/grow-back logic), rather than the current one-time-at-mount positioning.
 - The existing 320–600px width clamp and the full-height default become inputs to the fit/grow-back calculation, not just static bounds checked during drag.
+- Vertical Intended Position keeps its original raw-offset behavior (not edge-relative) — only horizontal position anchors to a Side. Side is always left or right (whichever half of the viewport the center currently falls in), so a panel dragged near the middle still grows back toward whichever edge it's closer to, not toward the center.
