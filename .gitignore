@@ -8,3 +8,8 @@ dist/
 !.claude/settings.json
 !.claude/settings.example.json
 .vercel
+.mcp.json
+.repowise/
+.serena/
+.vscode/
+graphify-out/

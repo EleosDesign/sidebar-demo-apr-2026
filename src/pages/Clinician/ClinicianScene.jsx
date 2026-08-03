@@ -13,8 +13,13 @@ import LockedDownModeToggle from '../../components/ehr/LockedDownModeToggle.jsx'
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
+import { useMobileModeContext } from '../../contexts/MobileModeContext.jsx';
 import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
+import MobileModeFrame from '../../components/mobile/MobileModeFrame.jsx';
+import MobileQuestionScreen from '../../components/mobile/MobileQuestionScreen.jsx';
+import MobileNoteComplete from '../../components/mobile/MobileNoteComplete.jsx';
+import { MOBILE_QUESTION_SCREENS } from '../../data/mobileQuestionScreens.js';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
 import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
@@ -509,6 +514,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
+  const { mobileMode, sessionKey, exitMobileMode } = useMobileModeContext();
 
   // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
   useEffect(() => {
@@ -518,6 +524,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   }, [noteTypeCtx?.noteValues]); // eslint-disable-line
 
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
+  // Mobile Mode always lands on the Add Summary flow, freshly, on every entry
+  useEffect(() => { if (mobileMode) setNavTab('summary'); }, [mobileMode, sessionKey]);
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
@@ -574,7 +582,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── Nav overflow calculation ─────────────────────────────────────────────────
   // With labels: item≈64px, fixed≈267px. Without labels: item≈40px, fixed≈220px.
-  const compactMode = sidebarW < 380;
+  const compactMode = mobileMode || sidebarW < 380;
   const showNavLabels = sidebarH >= 480 && !compactMode;
   const ITEM_H = showNavLabels ? 64 : 40;
   const RAIL_FIXED_H = showNavLabels ? 267 : 220;
@@ -837,6 +845,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
     if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
+      key={sessionKey}
       initialClient={captureSession.name || ''}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
@@ -871,9 +880,18 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           setPendingEHRSession(null);
         }
       }}
+      onFinishToActivities={() => {
+        exitMobileMode();
+        setActivitiesInitialTab('ehr');
+        setNavTab('activities');
+        setPhase('sessions');
+      }}
     />;
     return <PlaceholderPanel tab={navTab} />;
   };
+
+  // Mobile Mode bypasses the desktop sidebar chrome entirely — full-screen phone frame
+  if (mobileMode) return <MobileModeFrame onExit={exitMobileMode}>{renderPanel()}</MobileModeFrame>;
 
   // ── Layout helpers ──────────────────────────────────────────────────────────
   const isLeft = side === 'left';
@@ -2941,10 +2959,38 @@ function TagField({ label, selected, onChange }) {
 }
 
 
-function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, compactMode = false }) {
+function GeneratingOverlay() {
+  const P = { fontFamily: 'Poppins, sans-serif' };
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: 'rgba(34,54,72,0.82)', borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 42, zIndex: 50 }}>
+      <style>{`
+        @keyframes starSpin { 0%,100% { transform: scale(1) rotate(0deg); opacity: 1; } 25% { transform: scale(1.25) rotate(15deg); opacity: 0.7; } 50% { transform: scale(0.85) rotate(-10deg); opacity: 1; } 75% { transform: scale(1.15) rotate(8deg); opacity: 0.8; } }
+        @keyframes starPop  { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.4); opacity: 1; } }
+      `}</style>
+      <div style={{ position: 'relative', width: 56, height: 56 }}>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', bottom: 0, left: 0, animation: 'starSpin 2s ease-in-out infinite' }}>
+          <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
+        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 0, right: 0, animation: 'starPop 1.6s ease-in-out 0.3s infinite' }}>
+          <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
+        </svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 4, left: 10, animation: 'starPop 1.6s ease-in-out 0.8s infinite' }}>
+          <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
+        </svg>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: '100%', maxWidth: 280 }}>
+        <span style={{ ...P, fontSize: 24, fontWeight: 500, lineHeight: 1.334, color: 'white' }}>Generating suggestions</span>
+        <span style={{ ...P, fontSize: 16, fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.15px', color: 'white', opacity: 0.8 }}>They will be ready soon</span>
+      </div>
+    </div>
+  );
+}
+
+function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, compactMode = false }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const { lockedDownMode } = useLockedDownModeContext();
-  const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'suggestions'
+  const { mobileMode, enterMobileMode } = useMobileModeContext();
+  const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'questions' | 'suggestions' | 'complete'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
   const [voiceRecording, setVoiceRecording] = useState(false);
   const [voicePaused, setVoicePaused] = useState(false);
@@ -2954,6 +3000,25 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   const [animating, setAnimating] = useState(false);
   const animTimeoutsRef = useRef([]);
   const [generating, setGenerating] = useState(false);
+  // Mobile-only cosmetic check-in screens shown between capture and suggestions
+  const [questionsFromPhase, setQuestionsFromPhase] = useState('text');
+  const [questionStep, setQuestionStep] = useState(0);
+  const [questionAnswers, setQuestionAnswers] = useState({});
+  const [questionOther, setQuestionOther] = useState({});
+
+  const finishToSuggestions = () => {
+    setGenerating(true);
+    setTimeout(() => { setGenerating(false); setPhase('suggestions'); }, 3000);
+  };
+  const proceedFromCapture = (fromPhase) => {
+    if (mobileMode) {
+      setQuestionsFromPhase(fromPhase);
+      setQuestionStep(0);
+      setPhase('questions');
+    } else {
+      finishToSuggestions();
+    }
+  };
 
   // Clean up bullet animation timeouts on unmount
   useEffect(() => () => animTimeoutsRef.current.forEach(clearTimeout), []);
@@ -3278,7 +3343,14 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
   const resolvedSuggestions = clientName === 'Ashlyn Rivera' ? ASSESSMENT_SUGGESTIONS_DATA : suggestionsData;
-  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => setPhase('text')} onAddToNote={onAddToNote} onAddedToEHR={onAddedToEHR} suggestionsData={resolvedSuggestions} compactMode={compactMode} sidebarW={467} />;
+  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => { if (mobileMode) { setQuestionStep(MOBILE_QUESTION_SCREENS.length - 1); setPhase('questions'); } else { setPhase('text'); } }} onAddToNote={onAddToNote} onAddedToEHR={() => { onAddedToEHR?.(); if (mobileMode) setPhase('complete'); }} suggestionsData={resolvedSuggestions} compactMode={compactMode} mobileMode={mobileMode} sidebarW={467} />;
+
+  if (phase === 'complete') return (
+    <MobileNoteComplete
+      onGoToActivities={() => onFinishToActivities?.()}
+      onStartNew={() => enterMobileMode()}
+    />
+  );
 
   // ── Phase 1b: voice capture ───────────────────────────────────────────────
   if (phase === 'voice') {
@@ -3363,7 +3435,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           </button>
           {/* Next */}
           <button
-            onClick={nextEnabled ? () => { cancelRecording(); setGenerating(true); setTimeout(() => { setGenerating(false); setPhase('suggestions'); }, 3000); } : undefined}
+            onClick={nextEnabled ? () => { cancelRecording(); proceedFromCapture('voice'); } : undefined}
             style={{ background: nextEnabled ? '#eaedfa' : 'transparent', borderRadius: 999, width: 104, height: 40, border: 'none', cursor: nextEnabled ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'background 0.2s ease' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -3517,29 +3589,32 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         )}
 
         {/* ── Generating loader overlay ── */}
-        {generating && (
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(34,54,72,0.82)', borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 42, zIndex: 50 }}>
-            <style>{`
-              @keyframes starSpin { 0%,100% { transform: scale(1) rotate(0deg); opacity: 1; } 25% { transform: scale(1.25) rotate(15deg); opacity: 0.7; } 50% { transform: scale(0.85) rotate(-10deg); opacity: 1; } 75% { transform: scale(1.15) rotate(8deg); opacity: 0.8; } }
-              @keyframes starPop  { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.4); opacity: 1; } }
-            `}</style>
-            <div style={{ position: 'relative', width: 56, height: 56 }}>
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', bottom: 0, left: 0, animation: 'starSpin 2s ease-in-out infinite' }}>
-                <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-              </svg>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 0, right: 0, animation: 'starPop 1.6s ease-in-out 0.3s infinite' }}>
-                <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-              </svg>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 4, left: 10, animation: 'starPop 1.6s ease-in-out 0.8s infinite' }}>
-                <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-              </svg>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: '100%', maxWidth: 280 }}>
-              <span style={{ ...P, fontSize: 24, fontWeight: 500, lineHeight: 1.334, color: 'white' }}>Generating suggestions</span>
-              <span style={{ ...P, fontSize: 16, fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.15px', color: 'white', opacity: 0.8 }}>They will be ready soon</span>
-            </div>
-          </div>
-        )}
+        {generating && <GeneratingOverlay />}
+      </div>
+    );
+  }
+
+  // ── Mobile-only: cosmetic check-in screens before suggestions ─────────────
+  if (phase === 'questions') {
+    const screen = MOBILE_QUESTION_SCREENS[questionStep];
+    const isLast = questionStep === MOBILE_QUESTION_SCREENS.length - 1;
+    return (
+      <div style={{ position: 'relative', height: '100%' }}>
+        <MobileQuestionScreen
+          screen={screen}
+          stepIndex={questionStep}
+          totalSteps={MOBILE_QUESTION_SCREENS.length}
+          value={questionAnswers[screen.key] ?? (screen.type === 'multi' ? [] : '')}
+          onChange={(next) => setQuestionAnswers(a => ({ ...a, [screen.key]: next }))}
+          otherValue={questionOther[screen.key] ?? ''}
+          onOtherChange={(next) => setQuestionOther(o => ({ ...o, [screen.key]: next }))}
+          onBack={() => { if (questionStep === 0) setPhase(questionsFromPhase); else setQuestionStep(s => s - 1); }}
+          onNext={() => { if (isLast) finishToSuggestions(); else setQuestionStep(s => s + 1); }}
+          onSkip={finishToSuggestions}
+          isLast={isLast}
+          compactMode={compactMode}
+        />
+        {generating && <GeneratingOverlay />}
       </div>
     );
   }
@@ -3608,10 +3683,10 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 12px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
           disabled={!hasEnoughText}
-          onClick={() => { if (hasEnoughText) { setGenerating(true); setTimeout(() => { setGenerating(false); setPhase('suggestions'); }, 3000); } }}
+          onClick={() => { if (hasEnoughText) proceedFromCapture('text'); }}
           style={{ width: '100%', padding: '8px 22px', background: hasEnoughText ? '#2d4ccd' : 'rgba(45,76,205,0.12)', color: hasEnoughText ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: hasEnoughText ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', transition: 'background 0.2s, color 0.2s', boxShadow: hasEnoughText ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
         >
-          {compactMode ? 'Generate' : 'Generate Suggestions'}
+          {mobileMode ? 'Next' : (compactMode ? 'Generate' : 'Generate Suggestions')}
         </button>
         <div style={{ textAlign: 'center', marginTop: 10, marginBottom: 4 }}>
           <span style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
@@ -3621,34 +3696,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
       </div>
 
       {/* ── Generating loader overlay ── */}
-      {generating && (
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(34,54,72,0.82)', borderRadius: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 42, zIndex: 50 }}>
-          <style>{`
-            @keyframes starSpin { 0%,100% { transform: scale(1) rotate(0deg); opacity: 1; } 25% { transform: scale(1.25) rotate(15deg); opacity: 0.7; } 50% { transform: scale(0.85) rotate(-10deg); opacity: 1; } 75% { transform: scale(1.15) rotate(8deg); opacity: 0.8; } }
-            @keyframes starPop  { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.4); opacity: 1; } }
-          `}</style>
-          {/* Stars */}
-          <div style={{ position: 'relative', width: 56, height: 56 }}>
-            {/* Big star */}
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', bottom: 0, left: 0, animation: 'starSpin 2s ease-in-out infinite' }}>
-              <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-            </svg>
-            {/* Small top-right star */}
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 0, right: 0, animation: 'starPop 1.6s ease-in-out 0.3s infinite' }}>
-              <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-            </svg>
-            {/* Tiny top-left star */}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 4, left: 10, animation: 'starPop 1.6s ease-in-out 0.8s infinite' }}>
-              <path d="M12 2L13.8 8.2L20 10L13.8 11.8L12 18L10.2 11.8L4 10L10.2 8.2L12 2Z" fill="#F6C53E"/>
-            </svg>
-          </div>
-          {/* Text */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'white', textAlign: 'center', width: '100%', maxWidth: 280 }}>
-            <span style={{ ...P, fontSize: 24, fontWeight: 500, lineHeight: 1.334, color: 'white' }}>Generating suggestions</span>
-            <span style={{ ...P, fontSize: 16, fontWeight: 400, lineHeight: 1.5, letterSpacing: '0.15px', color: 'white', opacity: 0.8 }}>They will be ready soon</span>
-          </div>
-        </div>
-      )}
+      {generating && <GeneratingOverlay />}
     </div>
   );
 }
@@ -3657,7 +3705,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 // All suggestion datasets imported from src/data/suggestions.js
 
 
-function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, sidebarW = 467 }) {
+function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, mobileMode = false, sidebarW = 467 }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
@@ -4074,7 +4122,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 onAddedToEHR?.();
               }}
               style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
-              {compactMode ? `Add ${activeCount} to EHR` : `Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`}
+              {mobileMode ? 'Send to EHR' : (compactMode ? `Add ${activeCount} to EHR` : `Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`)}
             </button>
           ) : (
             <button style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'rgba(45,76,205,0.12)', border: 'none', borderRadius: 4, cursor: 'default', ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px' }}>

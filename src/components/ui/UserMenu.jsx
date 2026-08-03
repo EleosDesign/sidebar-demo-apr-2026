@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
+import { useMobileModeContext } from '../../contexts/MobileModeContext.jsx';
 
 function IconCard() {
   return (
@@ -90,9 +91,10 @@ function Toggle({ on }) {
   );
 }
 
-export default function UserMenu({ onBackToMobile }) {
+export default function UserMenu() {
   const [open, setOpen] = useState(false);
   const { useEhrNoteHeaders, setUseEhrNoteHeaders } = useEhrNoteHeadersContext();
+  const { enterMobileMode } = useMobileModeContext();
   const buttonRef = useRef(null);
   const dropdownRef = useRef(null);
   const [pos, setPos] = useState({ top: 0, right: 0 });
@@ -141,7 +143,7 @@ export default function UserMenu({ onBackToMobile }) {
     },
     {
       icon: <IconPhone />, label: 'Mobile',
-      onClick: () => { setOpen(false); if (onBackToMobile) onBackToMobile(); },
+      onClick: () => { setOpen(false); enterMobileMode(); },
     },
   ];
 
