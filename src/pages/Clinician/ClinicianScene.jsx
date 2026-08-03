@@ -16,7 +16,7 @@ import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.j
 import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
-import { CLIENTS_LIST, CLIENT_OPTIONS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
+import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
@@ -2085,7 +2085,7 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, overflow: 'hidden' }}>
       {/* ── Header ── */}
-      <div style={{ background: 'white', borderRadius: 16, paddingTop: compactMode ? 14 : 24, paddingBottom: compactMode ? 10 : 16, paddingLeft: compactMode ? 10 : 16, paddingRight: compactMode ? 10 : 16, boxShadow: SHADOW_EL4, flexShrink: 0 }}>
+      <div hidden style={{ background: 'white', borderRadius: 16, paddingTop: compactMode ? 14 : 24, paddingBottom: compactMode ? 10 : 16, paddingLeft: compactMode ? 10 : 16, paddingRight: compactMode ? 10 : 16, boxShadow: SHADOW_EL4, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <button onClick={onBack} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -2105,8 +2105,13 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
 
       {/* ── Content + Ask Eleos ── */}
       <div style={{ flex: 1, background: 'white', borderRadius: '16px 16px 0 0', boxShadow: '0px 6px 30px 5px rgba(0,0,0,0.12)', overflow: 'hidden', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+        <button aria-label="Back to clients" onClick={onBack} style={{ position: 'absolute', top: 16, left: 16, zIndex: 6, width: 40, height: 40, background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="#212121" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
         {/* Scrollable area */}
-        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 80 }}>
+        <div hidden style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 80 }}>
           {/* Sticky spacer */}
           <div style={{ position: 'sticky', top: 0, height: 20, background: 'white', zIndex: 5, marginLeft: -24, marginRight: -24 }} />
 
@@ -2274,84 +2279,8 @@ const ASK_ELEOS_ACTIONS = [
   },
 ];
 
-const SOURCE_DETAILS = {
-  'Session 11 · Mar 26': {
-    title: 'Session Note — March 26, 2026',
-    subtitle: 'Behavioral activation homework partially completed. Client reports using breathing techniques during stressful work meetings.',
-  },
-  'Session 10 · Mar 19': {
-    title: 'Session Note — March 19, 2026',
-    subtitle: 'Anxiety spike observed ahead of performance review. Sleep log shows improvement on nights following grounding practice.',
-  },
-  'Session 9 · Mar 12': {
-    title: 'Session Note — March 12, 2026',
-    subtitle: 'Introduced behavioral activation plan. Client expressed ambivalence. Continued CBT focus on workplace cognitions.',
-  },
-  'Session 8 · Feb 19': {
-    title: 'Session Note — February 19, 2026',
-    subtitle: 'Safety screening completed — no SI/HI reported. Avoidance patterns around manager conflict clearly identified.',
-  },
-  'Session 1 · Aug 2024': {
-    title: 'Intake Session — August 14, 2024',
-    subtitle: 'GAD-7 score: 16 (severe). Primary concerns: workplace anxiety, sleep difficulties, and conflict avoidance with manager.',
-  },
-  'Treatment Plan · Feb 2026': {
-    title: 'Treatment Plan — February 2026',
-    subtitle: 'Primary diagnosis: GAD (F41.1). Active goals: reduce anxiety, improve conflict management, build sleep routine.',
-  },
-};
-
-function SourceChip({ label, P, compactMode = false }) {
-  const [hovered, setHovered] = useState(false);
-  const isOverflow = label.startsWith('+');
-  const detail = SOURCE_DETAILS[label];
-
-  return (
-    <div
-      style={{ position: 'relative', display: 'inline-flex' }}
-      onMouseEnter={() => !isOverflow && detail && setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: hovered ? '#dce1f7' : '#eaedfa', borderRadius: 4, padding: '3px 7px 3px 5px', cursor: detail ? 'pointer' : 'default', transition: 'background 0.15s ease' }}>
-        {!isOverflow && (
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
-        )}
-        <span style={{ ...P, fontSize: 11, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px', lineHeight: '16px', whiteSpace: 'nowrap' }}>{label}</span>
-      </div>
-
-      {hovered && detail && (
-        <div style={{
-          position: 'absolute',
-          bottom: 'calc(100% + 8px)',
-          /* In compact mode anchor to right edge so tooltip doesn't spill past sidebar */
-          ...(compactMode ? { right: 0, left: 'auto' } : { left: 0 }),
-          background: '#fff',
-          borderRadius: compactMode ? 12 : 16,
-          boxShadow: '0px 6px 30px 5px rgba(0,0,0,0.12), 0px 16px 24px 1px rgba(0,0,0,0.10), 0px 8px 10px -5px rgba(0,0,0,0.20)',
-          padding: compactMode ? '12px 14px' : '16px 20px',
-          width: compactMode ? 210 : 280,
-          zIndex: 200,
-          pointerEvents: 'none',
-        }}>
-          <div style={{ display: 'flex', gap: compactMode ? 8 : 10, alignItems: 'flex-start' }}>
-            <div style={{ width: compactMode ? 26 : 32, height: compactMode ? 26 : 32, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 }}>
-              <div style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 500, color: '#2d4ccd', lineHeight: '20px', letterSpacing: '0.4px' }}>{detail.title}</div>
-              <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.4px' }}>{detail.subtitle}</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+function CitationDates({ dates, P, compactMode = false }) {
+  return <span style={{ ...P, fontSize: compactMode ? 11 : 12, color: 'rgba(0,0,0,0.6)', lineHeight: 1.5 }}>({dates.join(', ')})</span>;
 }
 
 function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
@@ -2427,7 +2356,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
         'Sleep difficulties correlating with workplace stress — tracking via sleep log',
         'Avoidance patterns identified around conflict conversations with manager',
       ],
-      sources: ['Session 11 · Mar 26', 'Session 10 · Mar 19', '+2'],
+      sources: ['Mar 26, 2026', 'Mar 19, 2026'],
     },
     {
       heading: 'Key Updates Since Last Session',
@@ -2436,7 +2365,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
         'Client reports using breathing techniques during stressful work meetings',
         'Continued CBT work on negative thought patterns around performance',
       ],
-      sources: ['Session 11 · Mar 26'],
+      sources: ['Mar 26, 2026'],
     },
     {
       heading: 'Active Goals',
@@ -2445,7 +2374,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
         'Improve conflict management at work — 35% progress',
         'Build consistent sleep routine — 45% progress',
       ],
-      sources: ['Treatment Plan · Feb 2026'],
+      sources: ['Feb 2026'],
     },
     {
       heading: 'Suggested Focus Areas',
@@ -2454,7 +2383,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
         'Explore cognitive distortions around manager relationship',
         'Review sleep log and reinforce sleep hygiene strategies',
       ],
-      sources: ['Session 11 · Mar 26', 'Treatment Plan · Feb 2026'],
+      sources: ['Mar 26, 2026', 'Feb 2026'],
     },
   ];
 
@@ -2512,11 +2441,11 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
       const isCard = action.title === 'Prepare for Activity';
       const responseText = INITIAL_RESPONSES[action.title] ?? `Here's the information for ${clientName} based on documented session history.`;
       const responseSources = {
-        'Discharge Summary':   ['Session 11 · Mar 26', 'Session 10 · Mar 19', '+9'],
-        'Treatment Plan':      ['Treatment Plan · Feb 2026', 'Session 9 · Mar 12'],
-        'Progress Summary':    ['Session 11 · Mar 26', 'Session 1 · Aug 2024', '+9'],
-        'Prior Auth Letter':   ['Treatment Plan · Feb 2026', 'Session 11 · Mar 26'],
-        'Supervision Review':  ['Session 11 · Mar 26', 'Session 8 · Feb 19', '+3'],
+        'Discharge Summary':   ['Mar 26, 2026', 'Mar 19, 2026'],
+        'Treatment Plan':      ['Mar 12, 2026', 'Feb 2026'],
+        'Progress Summary':    ['Mar 26, 2026', 'Aug 14, 2024'],
+        'Prior Auth Letter':   ['Mar 26, 2026', 'Feb 2026'],
+        'Supervision Review':  ['Mar 26, 2026', 'Feb 19, 2026'],
       }[action.title];
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -2673,13 +2602,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
                               <p key={j} style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: '#212121', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>• {item}</p>
                             ))}
                           </div>
-                          {section.sources && (
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginTop: 2 }}>
-                              {section.sources.map((src, si) => (
-                                <SourceChip key={si} label={src} P={P} compactMode={compactMode} />
-                              ))}
-                            </div>
-                          )}
+                          {section.sources && <CitationDates dates={section.sources} P={P} compactMode={compactMode} />}
                         </div>
                       ))}
                       <div style={{ borderTop: '1px solid rgba(0,0,0,0.12)', paddingTop: 9 }}>
@@ -2705,10 +2628,8 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
                       </p>
                     ))}
                     {msg.sources && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, paddingTop: 4, borderTop: '1px solid rgba(0,0,0,0.08)', marginTop: 4 }}>
-                        {msg.sources.map((src, si) => (
-                          <SourceChip key={si} label={src} P={P} compactMode={compactMode} />
-                        ))}
+                      <div style={{ paddingTop: 4, borderTop: '1px solid rgba(0,0,0,0.08)', marginTop: 4 }}>
+                        <CitationDates dates={msg.sources} P={P} compactMode={compactMode} />
                       </div>
                     )}
                   </div>
@@ -3063,6 +2984,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   const [clientDropOpen, setClientDropOpen] = useState(false);
   const summaryFmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
   const summaryRule = lockedDownMode ? CLIENT_LOCK_RULES[summaryFmtName] : null;
+  const summaryPronouns = CLIENT_PRONOUNS[clientName];
   const clientInputRef = useRef(null);
   const dateRef = useRef(null);
   const startTimeRef = useRef(null);
@@ -3166,6 +3088,13 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               </svg>
             </div>
           </div>
+
+          {/* Pronouns */}
+          {summaryPronouns && (
+            <div style={{ marginBottom: 16 }}>
+              <span style={{ ...P, fontSize: compactMode ? 14 : 16, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: {summaryPronouns}</span>
+            </div>
+          )}
 
           {/* Activity Type */}
           <AcFormField key={summaryRule?.activityType ? 'locked-activity' : 'activity'} label="Activity Type:" defaultValue="Individual Therapy" options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Crisis Intervention', 'Case Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={summaryRule?.activityType} disabled={!!summaryRule?.activityType} />
@@ -5406,6 +5335,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const isGroup = clientName.toLowerCase().includes('group');
   const fmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
   const rule = lockedDownMode ? CLIENT_LOCK_RULES[fmtName] : null;
+  const pronouns = CLIENT_PRONOUNS[clientName];
 
   const PLAN_ITEMS = isGroup ? [
     'Practice interpersonal effectiveness skills: each member to identify one boundary to set this week',
@@ -5496,7 +5426,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           </div>
           {/* Pronouns + Edit Client */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, width: '100%' }}>
-            <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: He/Him</span>
+            {pronouns && <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: {pronouns}</span>}
             <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.15px', lineHeight: '24px', cursor: 'pointer' }}>Edit Client</span>
           </div>
         </div>
