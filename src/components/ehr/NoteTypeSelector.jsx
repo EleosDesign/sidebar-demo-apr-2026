@@ -23,12 +23,12 @@ export default function NoteTypeSelector() {
       {open && (
         <div style={{
           position: 'absolute',
-          bottom: 'calc(100% + 10px)',
-          right: 0,
+          top: 'calc(100% + 10px)',
+          left: 0,
           background: '#fff',
           border: '1px solid #e4e8ee',
           borderRadius: 12,
-          boxShadow: '0 -4px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
           padding: '10px',
           width: 220,
           zIndex: 101,
