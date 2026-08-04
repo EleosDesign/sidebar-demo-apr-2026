@@ -556,7 +556,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
-  const { mobileMode, sessionKey, exitMobileMode } = useMobileModeContext();
+  const { mobileMode, sessionKey, enterMobileMode, exitMobileMode } = useMobileModeContext();
 
   // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
   useEffect(() => {
@@ -893,6 +893,12 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     }
     if (navTab === 'activities') {
       if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      if (phase === 'complete' && mobileMode) return (
+        <MobileNoteComplete
+          onGoToActivities={() => { setActivitiesSession(null); setPhase('sessions'); }}
+          onStartNew={() => { setActivitiesSession(null); setPhase('sessions'); enterMobileMode(); }}
+        />
+      );
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
         clientName={activitiesSession.name}
         sessionSubtitle={`${activitiesSession.month} ${activitiesSession.day}, 2026, ${activitiesSession.time}`}
@@ -901,8 +907,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         session={activitiesSession}
         isIndividualAudio={activitiesSession.type === 'individual' && activitiesSession.sessionType === 'audio'}
         compactMode={compactMode}
+        mobileMode={mobileMode}
         sidebarW={sidebarW}
         onAddedToEHR={() => {
+          if (mobileMode) setPhase('complete');
         }}
       />;
       return <MySessionsPanel
@@ -982,7 +990,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         }
       }}
       onFinishToActivities={() => {
-        exitMobileMode();
         setActivitiesInitialTab('ehr');
         setNavTab('activities');
         setPhase('sessions');
@@ -4231,7 +4238,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 <path d="M6 7l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Scroll down to add all
+              {mobileMode ? 'Scroll down to end' : 'Scroll down to add all'}
             </button>
           )}
         </div>}
