@@ -22,6 +22,7 @@ import MobileNoteComplete from '../../components/mobile/MobileNoteComplete.jsx';
 import { MOBILE_QUESTION_SCREENS } from '../../data/mobileQuestionScreens.js';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
 import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
+import { AUDIO_INPUT_OPTIONS, DEMO_AUDIO_INPUT_OPTIONS } from '../../data/audioOptions.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
@@ -5660,7 +5661,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
           <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, display: 'block', marginBottom: 8 }}>Audio Input:</span>
-          <AcFormField label={null} defaultValue="MacBook Pro Microphone (Built In)" options={['MacBook Pro Microphone (Built In)', 'External Microphone', 'AirPods Pro', 'iPhone Microphone']} compactMode={compactMode} />
+          <AcFormField key={lockedDownMode ? 'locked-audio' : 'audio'} label={null} defaultValue="MacBook Pro Microphone (Built In)" options={lockedDownMode ? DEMO_AUDIO_INPUT_OPTIONS : AUDIO_INPUT_OPTIONS} compactMode={compactMode} />
         </div>
 
         {/* Sound check */}
