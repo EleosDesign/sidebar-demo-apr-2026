@@ -151,29 +151,40 @@ export default function ClinicianScene({ step, onNext }) {
           from { transform: scale(1);    opacity: 1; filter: blur(0px); }
           to   { transform: scale(0.04); opacity: 0; filter: blur(8px); }
         }
+        .demo-controls-tray {
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.15s ease;
+        }
+        .demo-controls-hotzone:hover .demo-controls-tray,
+        .demo-controls-hotzone:focus-within .demo-controls-tray {
+          opacity: 1;
+          pointer-events: auto;
+        }
       `}</style>
       <EhrFieldProvider sidebarOpen={sidebarOpen}>
         <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />
         {/* EnhancePointerToolbarWrapper removed — inline CTAs in StackedFields
             (Enhance button + LqaInlineCta) now cover the same functionality
             and the global toolbar was colliding with them visually */}
-        {/* Demo controls tray — bottom-right, discrete but accessible */}
-        <div style={{
-          position: 'fixed', bottom: 20, right: 56, zIndex: 9,
-          display: 'flex', gap: 4, alignItems: 'center',
-          padding: '3px 4px',
-          background: 'rgba(15,25,60,0.07)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.35)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-        }}>
-          <NoteTypeSelector />
-          <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
-          <EhrSelector />
-          <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
-          <LockedDownModeToggle />
+        {/* Demo controls tray — top-left, hidden until hover */}
+        <div className="demo-controls-hotzone" style={{ position: 'fixed', top: 16, left: 16, zIndex: 9, padding: 10 }}>
+          <div className="demo-controls-tray" style={{
+            display: 'flex', gap: 4, alignItems: 'center',
+            padding: '3px 4px',
+            background: 'rgba(15,25,60,0.07)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            borderRadius: 16,
+            border: '1px solid rgba(255,255,255,0.35)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+          }}>
+            <NoteTypeSelector />
+            <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+            <EhrSelector />
+            <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+            <LockedDownModeToggle />
+          </div>
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
