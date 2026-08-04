@@ -16,7 +16,7 @@ export default function MobileModeFrame({ onExit, children }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'rgba(20, 22, 30, 0.72)',
+        background: '#000',
         pointerEvents: 'auto',
       }}
     >
