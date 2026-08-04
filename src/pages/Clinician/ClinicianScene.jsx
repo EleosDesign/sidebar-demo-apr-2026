@@ -44,7 +44,38 @@ const BTN_H = 56;
 export default function ClinicianScene({ step, onNext }) {
   const [sidebarOpen, setSidebarOpen] = useState(step > 0);
   const [isClosing, setIsClosing] = useState(false);
-  const [btnPos, setBtnPos] = useState(() => ({ x: 16, y: window.innerHeight - BTN_H - 32 }));
+  const [btnPos, setBtnPos] = useState(() => ({ x: window.innerWidth - BTN_W - 16, y: window.innerHeight - BTN_H - 32 }));
+  // Intended button position (deliberate default or last drag) — kept distinct from
+  // the rendered btnPos so a resize/zoom that forces a reclamp can grow back later.
+  // Horizontal intent is tracked as a distance from whichever edge (left/right) the
+  // button is nearest, so it re-hugs that edge on zoom-out as well as zoom-in.
+  const btnXSide = (x) => (x + BTN_W / 2 > window.innerWidth / 2 ? 'right' : 'left');
+  const btnIntendedPos = useRef({
+    xSide: btnXSide(btnPos.x),
+    xGap: btnXSide(btnPos.x) === 'right' ? (window.innerWidth - btnPos.x - BTN_W) : btnPos.x,
+    y: btnPos.y,
+  });
+  const setBtnPosDeliberate = (next) => {
+    const xSide = btnXSide(next.x);
+    btnIntendedPos.current = {
+      xSide,
+      xGap: xSide === 'right' ? (window.innerWidth - next.x - BTN_W) : next.x,
+      y: next.y,
+    };
+    setBtnPos(next);
+  };
+  useEffect(() => {
+    const reconcileBtnPos = () => {
+      const { xSide, xGap, y } = btnIntendedPos.current;
+      const rawX = xSide === 'right' ? (window.innerWidth - BTN_W - xGap) : xGap;
+      setBtnPos({
+        x: Math.max(0, Math.min(window.innerWidth - BTN_W, rawX)),
+        y: Math.max(0, Math.min(window.innerHeight - BTN_H, y)),
+      });
+    };
+    window.addEventListener('resize', reconcileBtnPos);
+    return () => window.removeEventListener('resize', reconcileBtnPos);
+  }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
   const sidebarSavedState = useRef(
@@ -187,7 +218,7 @@ export default function ClinicianScene({ step, onNext }) {
           </div>
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
-          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPos} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
+          ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPosDeliberate} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
           : isClosing
             ? sidebarWrapper('sidebarToButton 0.5s cubic-bezier(0.4, 0, 1, 1) both', handleExitDone)
             : sidebarWrapper('sidebarFromButton 0.65s cubic-bezier(0.16, 1, 0.3, 1) both', null)
@@ -565,7 +596,8 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   });
   const [posY, setPosY] = useState(() => {
     if (savedState?.posY != null) return savedState.posY;
-    const initH = savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7);
+    // Fresh sessions default to full viewport height, so the panel is top-anchored.
+    const initH = savedState?.sidebarH ?? (window.innerHeight - 2 * G);
     if (!initialPos) return window.innerHeight - initH - G;
     return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
   });
@@ -574,7 +606,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     const x = initialPos ? Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x)) : G;
     return (x + (savedState?.sidebarW ?? 467) / 2) < window.innerWidth / 2 ? 'left' : 'right';
   });
-  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? Math.round(window.innerHeight * 0.7));
+  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? (window.innerHeight - 2 * G));
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isWidthResizing, setIsWidthResizing] = useState(false);
@@ -586,10 +618,24 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const posYRef = useRef(posY);
   const sidebarHRef = useRef(sidebarH);
   const sidebarWRef = useRef(sidebarW);
+  const sideRef = useRef(side);
   posXRef.current = posX;
   posYRef.current = posY;
   sidebarHRef.current = sidebarH;
   sidebarWRef.current = sidebarW;
+  sideRef.current = side;
+  // Intended size/position (deliberate default or last drag/resize) — kept distinct
+  // from the rendered w/h/x/y so a resize/zoom that forces a shrink-to-fit can grow
+  // back toward it once the viewport has room again. Horizontal intent (xGap) is a
+  // distance from whichever edge `side` currently names, not a raw left offset, so
+  // it re-hugs that edge on zoom-out as well as zoom-in.
+  const intendedRef = useRef({
+    w: sidebarW,
+    h: sidebarH,
+    y: posY,
+    side,
+    xGap: side === 'left' ? posX : (window.innerWidth - posX - sidebarW),
+  });
 
   // ── Nav overflow calculation ─────────────────────────────────────────────────
   // With labels: item≈64px, fixed≈267px. Without labels: item≈40px, fixed≈220px.
@@ -609,17 +655,26 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         const dy = e.clientY - dragRef.current.startMouseY;
         const newX = Math.max(G, Math.min(window.innerWidth - sidebarWRef.current - G, dragRef.current.origX + dx));
         const newY = Math.max(G, Math.min(window.innerHeight - sidebarHRef.current - G, dragRef.current.origY + dy));
+        const newSide = (newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right';
         setPosX(newX);
         setPosY(newY);
-        setSide((newX + sidebarWRef.current / 2) < window.innerWidth / 2 ? 'left' : 'right');
+        setSide(newSide);
+        intendedRef.current = {
+          ...intendedRef.current,
+          y: newY,
+          side: newSide,
+          xGap: newSide === 'left' ? newX : (window.innerWidth - newX - sidebarWRef.current),
+        };
       }
       if (resizeRef.current) {
         // dragging up → negative dy → increase height; keep bottom edge fixed
         const dy = e.clientY - resizeRef.current.startMouseY;
         const newH = Math.max(200, Math.min(window.innerHeight - G - G, resizeRef.current.origH - dy));
         const bottomEdge = resizeRef.current.origY + resizeRef.current.origH;
+        const newY = Math.max(G, bottomEdge - newH);
         setSidebarH(newH);
-        setPosY(Math.max(G, bottomEdge - newH));
+        setPosY(newY);
+        intendedRef.current = { ...intendedRef.current, h: newH, y: newY };
       }
       if (widthResizeRef.current) {
         const { edge, startMouseX, origW, origX } = widthResizeRef.current;
@@ -631,12 +686,22 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const newX = Math.max(G, Math.min(window.innerWidth - SIDEBAR_W_MIN - G, rightEdge - newW));
           setSidebarW(newW);
           setPosX(newX);
+          intendedRef.current = {
+            ...intendedRef.current,
+            w: newW,
+            xGap: sideRef.current === 'left' ? newX : (window.innerWidth - newX - newW),
+          };
         } else {
           // Left edge fixed → dragging right widens
           const newW = Math.max(SIDEBAR_W_MIN, Math.min(SIDEBAR_W_MAX, origW + dx));
           setSidebarW(newW);
           const clampedX = Math.max(G, Math.min(window.innerWidth - newW - G, posXRef.current));
           setPosX(clampedX);
+          intendedRef.current = {
+            ...intendedRef.current,
+            w: newW,
+            xGap: sideRef.current === 'left' ? clampedX : (window.innerWidth - clampedX - newW),
+          };
         }
       }
     };
@@ -648,6 +713,31 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, []);
+
+  // Keep the panel fully on-screen across window resizes and browser zoom changes:
+  // re-derive rendered w/h/x/y from the intended values against the current viewport
+  // every time, so it shrinks to fit when space is tight and grows back when it isn't.
+  useEffect(() => {
+    const reconcile = () => {
+      const { w: iw, h: ih, y: iy, xGap, side: iSide } = intendedRef.current;
+      const maxW = window.innerWidth - 2 * G;
+      const maxH = window.innerHeight - 2 * G;
+      const newW = Math.max(SIDEBAR_W_MIN, Math.min(iw, SIDEBAR_W_MAX, maxW));
+      const newH = Math.max(200, Math.min(ih, maxH));
+      // Re-derive x from the anchored edge every time (not the last rendered x), so
+      // growing the viewport (zoom-out) re-hugs that edge instead of leaving a gap.
+      const rawX = iSide === 'left' ? xGap : (window.innerWidth - newW - xGap);
+      const newX = Math.max(G, Math.min(window.innerWidth - newW - G, rawX));
+      const newY = Math.max(G, Math.min(window.innerHeight - newH - G, iy));
+      setSidebarW(newW);
+      setSidebarH(newH);
+      setPosX(newX);
+      setPosY(newY);
+      setSide((newX + newW / 2) < window.innerWidth / 2 ? 'left' : 'right');
+    };
+    window.addEventListener('resize', reconcile);
+    return () => window.removeEventListener('resize', reconcile);
   }, []);
 
   const handleMouseDown = (e) => {
