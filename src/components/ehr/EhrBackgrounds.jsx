@@ -473,10 +473,12 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
         // LQA CTA: focused on the LAST section AND user has typed something in it
         const showLqaCta = isFocused && s.id === lastSectionId && hasText;
         // Launch button: last field is empty BUT at least one other field has content
-        // (hides when the entire note is blank — nothing to help with yet)
+        // (hides when the entire note is blank — nothing to help with yet).
+        // Only makes sense while the sidebar isn't already open — its sole job is opening it.
         const noteHasSomeContent = Object.values(noteValues).some(v => (v ?? '').trim().length > 0);
-        const showLaunchBtn = isFocused && s.id === lastSectionId && !hasText && noteHasSomeContent;
-        // Action strip shows when any button is visible
+        const showLaunchBtn = isFocused && s.id === lastSectionId && !hasText && noteHasSomeContent && !sidebarOpen;
+        // Action strip shows when any button is visible. Enhance/LQA are independent of
+        // sidebarOpen — see docs/adr/0002-inline-ehr-ctas-visible-while-sidebar-open.md
         const showStrip = showEnhanceBtn || showLqaCta || showLaunchBtn;
 
         return (
@@ -497,9 +499,14 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 transition: 'background 0.3s',
               }}
             />
-            {/* Action strip — hidden while sidebar is open; single flex row otherwise */}
-            {!sidebarOpen && (showStrip || isShowingTooltip) && (
+            {/* Action strip — single flex row. Enhance/LQA no longer depend on sidebarOpen
+                (see docs/adr/0002-inline-ehr-ctas-visible-while-sidebar-open.md); zIndex here
+                must stay above the Companion Sidebar's zIndex:10 so an overlapping open
+                sidebar never renders on top of these. */}
+            {(showStrip || isShowingTooltip) && (
               <div style={{
+                position: 'relative',
+                zIndex: 11,
                 marginTop: 6,
                 display: 'flex',
                 gap: 8,
