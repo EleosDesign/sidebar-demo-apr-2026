@@ -65,6 +65,15 @@ export default function ClinicianScene({ step, onNext }) {
     };
     setBtnPos(next);
   };
+  // Companion Sidebar reports its own side live (drag, width-resize, zoom-reconcile) so the
+  // button — hidden behind the open panel — is already on the matching edge once it reappears.
+  const setBtnSide = (newSide) => {
+    if (btnIntendedPos.current.xSide === newSide) return;
+    const xGap = 16;
+    btnIntendedPos.current = { xSide: newSide, xGap, y: btnIntendedPos.current.y };
+    const rawX = newSide === 'right' ? (window.innerWidth - BTN_W - xGap) : xGap;
+    setBtnPos(prev => ({ x: Math.max(0, Math.min(window.innerWidth - BTN_W, rawX)), y: prev.y }));
+  };
   useEffect(() => {
     const reconcileBtnPos = () => {
       const { xSide, xGap, y } = btnIntendedPos.current;
@@ -157,6 +166,7 @@ export default function ClinicianScene({ step, onNext }) {
       <EleosSidebar step={step} onNext={onNext} onCollapse={handleCollapse} initialPos={btnPos}
         savedState={sidebarSavedState.current}
         onSaveState={s => { sidebarSavedState.current = s; try { localStorage.setItem('eleos-sidebar-state', JSON.stringify(s)); } catch {} }}
+        onSideChange={setBtnSide}
         onRecordingChange={setIsRecording}
         onAddToNote={handleAddToNote}
         startTab={sidebarStartTab}
@@ -552,7 +562,7 @@ function NoteField({ label, height, value = '', onChange, onFocus, placeholder, 
 
 const SIDEBAR_BOTTOM_GAP = 16;
 
-function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
+function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
@@ -590,24 +600,18 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const SIDEBAR_W_MIN = 320;
   const SIDEBAR_W_MAX = 600;
   const [sidebarW, setSidebarW] = useState(() => savedState?.sidebarW ?? 467);
-  const [posX, setPosX] = useState(() => {
-    if (savedState?.posX != null) return savedState.posX;
-    if (!initialPos) return G;
-    return Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x));
-  });
-  const [posY, setPosY] = useState(() => {
-    if (savedState?.posY != null) return savedState.posY;
-    // Fresh sessions default to full viewport height, so the panel is top-anchored.
-    const initH = savedState?.sidebarH ?? (window.innerHeight - 2 * G);
-    if (!initialPos) return window.innerHeight - initH - G;
-    return Math.max(G, Math.min(window.innerHeight - initH - G, initialPos.y));
-  });
-  const [side, setSide] = useState(() => {
-    if (savedState?.side) return savedState.side;
-    const x = initialPos ? Math.max(G, Math.min(window.innerWidth - (savedState?.sidebarW ?? 467) - G, initialPos.x)) : G;
-    return (x + (savedState?.sidebarW ?? 467) / 2) < window.innerWidth / 2 ? 'left' : 'right';
-  });
-  const [sidebarH, setSidebarH] = useState(() => savedState?.sidebarH ?? (window.innerHeight - 2 * G));
+  // Side, position, and height are always derived fresh from the Launcher Button's current
+  // side on open — never restored from savedState — so the panel always opens snapped
+  // full-height to whichever edge the button is on (see ADR-0003). Width is the only saved
+  // dimension that still carries over between sessions.
+  const [side, setSide] = useState(() => (
+    initialPos && (initialPos.x + BTN_W / 2) > window.innerWidth / 2 ? 'right' : 'left'
+  ));
+  const [posX, setPosX] = useState(() => (
+    side === 'right' ? Math.max(G, window.innerWidth - sidebarW - G) : G
+  ));
+  const [posY, setPosY] = useState(() => G);
+  const [sidebarH, setSidebarH] = useState(() => window.innerHeight - 2 * G);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isWidthResizing, setIsWidthResizing] = useState(false);
@@ -776,11 +780,15 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
   // ── State persistence ────────────────────────────────────────────────────────
   const stateRef = useRef(null);
-  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW, posX: posXRef.current, posY: posYRef.current, sidebarH: sidebarHRef.current, side, addedSessions, doneIds: [...doneIds] };
+  // side/posX/posY/sidebarH are intentionally excluded — they're always re-derived from the
+  // Launcher Button's side on the next open (see ADR-0003), so persisting them would be dead state.
+  stateRef.current = { navTab, phase, capturePhase, captureSession, sidebarW, addedSessions, doneIds: [...doneIds] };
   // Save state to parent on unmount so it survives close→reopen
   useEffect(() => () => { onSaveState?.(stateRef.current); }, []);
   // Bubble recording status to parent (for launch button indicator)
   useEffect(() => { onRecordingChange?.(capturePhase === 'recording'); }, [capturePhase]);
+  // Keep the Launcher Button's side in sync live, even while it's hidden behind the open panel
+  useEffect(() => { onSideChange?.(side); }, [side]);
 
   // ── Existing logic ──────────────────────────────────────────────────────────
 
