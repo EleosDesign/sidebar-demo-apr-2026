@@ -2518,7 +2518,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }
   );
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden', zoom: 0.8 }}>
       <style>{`
         .streamline-toolbar-icon {
           width: 24px;
@@ -2647,7 +2647,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }
                 </>
               ) : activeTab === 'Note' ? (
                 <div style={{ padding: '0 12px 24px', maxWidth: '50%' }}>
-                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={16} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
                 </div>
               ) : (
                 <div style={{ padding: '28px 12px', color: '#666', fontSize: 16 }}>{activeTab} content is not available in this demo.</div>
