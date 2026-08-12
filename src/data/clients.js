@@ -44,3 +44,6 @@ export const DEMO_CLIENT_OPTIONS = [
   'Patricia Rodriguez', 'Ashlyn Rivera',
   'Anger Management Group', 'SUD Group',
 ];
+
+// ── Demo-mode subset of the sidebar Clients tab — mirrors DEMO_CLIENT_OPTIONS ──
+export const DEMO_CLIENTS_LIST = DEMO_CLIENT_OPTIONS.map((name, i) => ({ id: i + 1, name }));
