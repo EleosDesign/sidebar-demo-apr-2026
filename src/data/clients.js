@@ -15,7 +15,7 @@ export const CLIENTS_LIST = [
 // ── Client options for Capture Session dropdown ───────────────────────────────
 export const CLIENT_OPTIONS = [
   'Marcus Webb', 'Aisha Monroe', 'Tom Reilly', 'Carmen Vega', 'David Park',
-  'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho', 'Thursday AM Group',
+  'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho',
   'Jacob Rosen', 'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
