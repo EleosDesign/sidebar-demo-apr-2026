@@ -203,25 +203,6 @@ export const ANGER_GROUP_SUGGESTIONS_DATA = [
   ]},
 ];
 
-// ── Group session — single suggestion per member ──────────────────────────────
-export const GROUP_SINGLE_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Group Process', content: 'Group session focused on anger recognition and de-escalation strategies. 7 of 8 members present and engaged. Facilitated structured discussion on identifying physiological and cognitive early warning signs of anger escalation.', type: 'text', showActions: true },
-    { field: 'Member Participation', chips: ['Active participation: 5 members', 'Observer role: 2 members', 'Homework reviewed collectively'], type: 'chips' },
-    { field: 'Session Content', content: 'Introduced pause-and-plan technique with group practice via role-play. One member shared a successful real-world application since last session; group reinforced with positive feedback. Psychoeducation on amygdala hijack and window of tolerance provided.', type: 'text' },
-  ]},
-  { section: 'Assessment', cards: [
-    { field: 'Group Dynamics', content: 'Group cohesion remains strong. Therapeutic alliance developing well across members. Two members continue to demonstrate leadership behaviors supportive of group norms. One new member integrated smoothly into group process.', type: 'text', showActions: true },
-    { field: 'Progress Indicators', chips: ['Skill practice improving', 'Self-disclosure increasing', 'Homework compliance: 70%'], type: 'chips' },
-    { field: 'Individual Progress Note', content: 'Each group member to receive individual progress note reflecting personal engagement level, skill acquisition, and goal progress within group context. Single-note format per member. See attached individual summaries.', type: 'text' },
-  ]},
-  { section: 'Plan', cards: [
-    { field: 'Next Session Focus', content: 'Session 8: Communication and assertiveness skills. Members to practice assertive communication in low-stakes scenarios before next session. Review homework from session 7 as group warm-up activity.', type: 'text', showActions: true },
-    { field: 'Homework Assigned', chips: ['Anger log ×3 this week', 'Practice pause-and-plan in one real situation', 'Rate trigger intensity 0–10'], type: 'chips' },
-    { field: 'Individual Follow-up', content: 'One member flagged for individual check-in prior to next group session to address elevated distress observed today. Remaining members continue group-only contact as scheduled.', type: 'text' },
-  ]},
-];
-
 // ── SUD Group suggestions ─────────────────────────────────────────────────────
 export const SUD_GROUP_SUGGESTIONS_DATA = [
   { section: 'Group Summary', cards: [
@@ -256,25 +237,6 @@ export const SUD_GROUP_SUGGESTIONS_DATA = [
     { field: 'ASAM-Relevant Disclosures', content: 'No ASAM-relevant disclosures were made.', type: 'text', showActions: true },
     { field: 'Significant Peer Interactions', content: 'No significant peer interactions were reported.', type: 'text', showActions: true },
     { field: 'Explicitly Stated Plans for Next Steps', content: 'No next steps were discussed or identified by the participant.', type: 'text', showActions: true },
-  ]},
-];
-
-// ── Group session — multiple suggestions per member + ASAM ───────────────────
-export const GROUP_ASAM_SUGGESTIONS_DATA = [
-  { section: 'Data', cards: [
-    { field: 'Group Process', content: 'SUD group session focused on craving management and social triggers. 5 of 6 members present. One member disclosed a slip since last session; group responded with support and non-judgment. Motivational enhancement techniques used to reinforce ambivalence exploration.', type: 'text', showActions: true },
-    { field: 'ASAM Dimensions', chips: ['D1: Acute intoxication — none reported', 'D2: Biomedical — stable', 'D3: Emotional/Behavioral — moderate', 'D4: Readiness — contemplation–preparation', 'D5: Relapse potential — moderate-high', 'D6: Recovery environment — limited support'], type: 'chips' },
-    { field: 'Session Content', content: 'Reviewed urge surfing and HALT framework. Role-played refusal skills for social scenarios. Discussed building sober support networks. One member identified a sponsor; group celebrated milestone. Psychoeducation on the neurobiological basis of craving provided.', type: 'text' },
-  ]},
-  { section: 'Assessment', cards: [
-    { field: 'Clinical Status', content: 'Group continues to demonstrate recovery-oriented engagement. ASAM Level of Care reassessment indicates continued appropriateness of current IOP level for most members. One member presenting with elevated relapse risk warrants increased monitoring and possible step-up evaluation.', type: 'text', showActions: true },
-    { field: 'Member Progress', chips: ['Sustained abstinence: 3 members', 'Single slip — re-engaged: 1 member', 'Active use — safety planning: 1 member', 'Absent: 1 member'], type: 'chips' },
-    { field: 'ASAM Level of Care', content: 'Majority of members appropriate for ASAM Level 2.1 (Intensive Outpatient). One member to be referred for Level 2.5 (Partial Hospitalization) evaluation based on elevated D5 (relapse potential) and D6 (recovery environment) scores.', type: 'text' },
-  ]},
-  { section: 'Plan', cards: [
-    { field: 'Group Plan', content: 'Continue ASAM-informed IOP group twice weekly. Next session: relapse prevention planning and building recovery capital. Schedule ASAM reassessment for member at elevated risk. Coordinate with prescribers regarding MAT status for two members.', type: 'text', showActions: true },
-    { field: 'Individual Suggestions', chips: ['Multiple per-member notes generated', 'ASAM dimension scores documented individually', 'Step-up referral initiated for 1 member', 'MAT coordination for 2 members'], type: 'chips' },
-    { field: 'Follow-up', content: 'Group meets again in 3 days. Individual case reviews scheduled with each member\'s primary counselor this week. ASAM reassessment forms distributed for completion prior to next clinical team meeting.', type: 'text' },
   ]},
 ];
 
