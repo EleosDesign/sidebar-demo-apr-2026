@@ -21,7 +21,7 @@ import MobileQuestionScreen from '../../components/mobile/MobileQuestionScreen.j
 import MobileNoteComplete from '../../components/mobile/MobileNoteComplete.jsx';
 import { MOBILE_QUESTION_SCREENS } from '../../data/mobileQuestionScreens.js';
 import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL_SESSIONS, INITIAL_DONE_IDS } from '../../data/sessions.js';
-import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS } from '../../data/clients.js';
+import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS, DEMO_CLIENTS_LIST } from '../../data/clients.js';
 import { AUDIO_INPUT_OPTIONS, DEMO_AUDIO_INPUT_OPTIONS } from '../../data/audioOptions.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
 import {
@@ -1118,6 +1118,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 // ── Clients Panel ─────────────────────────────────────────────────────────────
 
 function ClientsPanel({ sidebarW = 467 }) {
+  const { lockedDownMode } = useLockedDownModeContext();
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
   const P = { fontFamily: 'Poppins, sans-serif' };
@@ -1127,7 +1128,8 @@ function ClientsPanel({ sidebarW = 467 }) {
     return <ClientDetailPanelV2 client={selectedClient} onBack={() => setSelectedClient(null)} sidebarW={sidebarW} />;
   }
 
-  const filtered = CLIENTS_LIST.filter(c =>
+  const clientsSource = lockedDownMode ? DEMO_CLIENTS_LIST : CLIENTS_LIST;
+  const filtered = clientsSource.filter(c =>
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
