@@ -27,7 +27,7 @@ import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefau
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
   CASE_MGMT_SUGGESTIONS_DATA, TREATMENT_PLAN_SUGGESTIONS_DATA, ASSESSMENT_SUGGESTIONS_DATA,
-  ANGER_GROUP_SUGGESTIONS_DATA, SUD_GROUP_SUGGESTIONS_DATA,
+  ANGER_GROUP_SUGGESTIONS_DATA, SUD_GROUP_SUGGESTIONS_DATA, GROUP_SUGGESTIONS_BY_NOTE_TYPE,
   LARRY_QUINN_SUGGESTIONS_DATA, LARRY_QUINN_DAP_DATA,
   PROGRESS_NOTE_SUGGESTIONS_DATA, JACOB_AUDIO_SUGGESTIONS_DATA,
   TAG_OPTIONS, TAG_FILTERS, TEXT_SUMMARY_BULLETS,
@@ -3838,8 +3838,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     if (session.name === 'Calvin Murphy') return CASE_MGMT_SUGGESTIONS_DATA;
     if (session.name === 'Ashlyn Rivera') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.id === 'jacob-audio') return JACOB_AUDIO_SUGGESTIONS_DATA;
-    if (session.id === 'anger-grp') return ANGER_GROUP_SUGGESTIONS_DATA;
-    if (session.id === 'sud-grp') return SUD_GROUP_SUGGESTIONS_DATA;
+    if (session.type === 'group') return GROUP_SUGGESTIONS_BY_NOTE_TYPE[session.noteType] ?? SUD_GROUP_SUGGESTIONS_DATA;
     if (session.specialty === 'psychiatry' || session.noteType === 'Med Management') return PSYCH_SUGGESTIONS_DATA;
     if (session.noteType === 'Assessment') return ASSESSMENT_SUGGESTIONS_DATA;
     if (session.noteType === 'Case Management') return CASE_MGMT_SUGGESTIONS_DATA;

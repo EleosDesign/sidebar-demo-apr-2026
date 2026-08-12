@@ -240,6 +240,14 @@ export const SUD_GROUP_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// Group-session suggestion lookup, keyed by session.noteType. Unmatched noteType
+// values (a new group session added without a dataset entry) fall back to
+// SUD Group's shape at the call site — see resolvedData() in ClinicianScene.jsx.
+export const GROUP_SUGGESTIONS_BY_NOTE_TYPE = {
+  'Anger Management Group': ANGER_GROUP_SUGGESTIONS_DATA,
+  'SUD Group': SUD_GROUP_SUGGESTIONS_DATA,
+};
+
 // ── Larry Quinn suggestions (recovery / partner / boundary-setting) ────────────
 // Key Moments format (default). DAP format toggled via "Use my EHR note headers" (avatar menu).
 export const LARRY_QUINN_SUGGESTIONS_DATA = [
