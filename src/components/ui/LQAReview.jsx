@@ -154,7 +154,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
       <style>{`@keyframes lqaSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
 
       {/* ── Header ── */}
-      <div style={{ padding: '14px 16px 12px', borderBottom: '1px solid #f0f0f0', flexShrink: 0 }}>
+      <div data-tour-target="quality-score-summary" style={{ padding: '14px 16px 12px', borderBottom: '1px solid #f0f0f0', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
           <button
             onClick={onAdvance}
@@ -246,7 +246,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
 
         {/* RESULTS — issues */}
         {state === 'results' && resultsVariant === 'issues' && (
-          <div>
+          <div data-tour-target="quality-issues-list">
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div onClick={() => setOpenExpanded(!openExpanded)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', cursor: 'pointer' }}>

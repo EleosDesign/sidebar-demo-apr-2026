@@ -14,6 +14,7 @@ import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useMobileModeContext } from '../../contexts/MobileModeContext.jsx';
+import { useGuidedTour } from '../../contexts/GuidedTourContext.jsx';
 import { CLIENT_LOCK_RULES } from '../../data/lockedDownRules.js';
 import UserMenu from '../../components/ui/UserMenu.jsx';
 import MobileModeFrame from '../../components/mobile/MobileModeFrame.jsx';
@@ -88,10 +89,12 @@ export default function ClinicianScene({ step, onNext }) {
   }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
+  const guidedTour = useGuidedTour();
   const sidebarSavedState = useRef(
     (() => { try { return JSON.parse(localStorage.getItem('eleos-sidebar-state') ?? 'null'); } catch { return null; } })()
   );
-  const [sidebarStartTab, setSidebarStartTab] = useState(null);
+  // Guided-demo journeys land directly on their target tab instead of 'activities'.
+  const [sidebarStartTab, setSidebarStartTab] = useState(() => (guidedTour.active ? guidedTour.allowedTabs[0] : null));
   const noteTypeCtx = useNoteTypeContext();
   const noteValues = noteTypeCtx?.noteValues ?? INITIAL_NOTE_VALUES;
   const setNoteValues = (updater) => {
@@ -209,25 +212,27 @@ export default function ClinicianScene({ step, onNext }) {
         {/* EnhancePointerToolbarWrapper removed — inline CTAs in StackedFields
             (Enhance button + LqaInlineCta) now cover the same functionality
             and the global toolbar was colliding with them visually */}
-        {/* Demo controls tray — top-left, hidden until hover */}
-        <div className="demo-controls-hotzone" style={{ position: 'fixed', top: 16, left: 16, zIndex: 9, padding: 10 }}>
-          <div className="demo-controls-tray" style={{
-            display: 'flex', gap: 4, alignItems: 'center',
-            padding: '3px 4px',
-            background: 'rgba(15,25,60,0.07)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            borderRadius: 16,
-            border: '1px solid rgba(255,255,255,0.35)',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-          }}>
-            <NoteTypeSelector />
-            <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
-            <EhrSelector />
-            <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
-            <LockedDownModeToggle />
+        {/* Demo controls tray — sales-engineer only; never shown during a guided demo journey */}
+        {!guidedTour.active && (
+          <div className="demo-controls-hotzone" style={{ position: 'fixed', top: 16, left: 16, zIndex: 9, padding: 10 }}>
+            <div className="demo-controls-tray" style={{
+              display: 'flex', gap: 4, alignItems: 'center',
+              padding: '3px 4px',
+              background: 'rgba(15,25,60,0.07)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              borderRadius: 16,
+              border: '1px solid rgba(255,255,255,0.35)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+            }}>
+              <NoteTypeSelector />
+              <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+              <EhrSelector />
+              <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+              <LockedDownModeToggle />
+            </div>
           </div>
-        </div>
+        )}
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPosDeliberate} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
           : isClosing
@@ -568,6 +573,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const { setClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
   const { mobileMode, sessionKey, enterMobileMode, exitMobileMode } = useMobileModeContext();
+  const guidedTour = useGuidedTour();
 
   // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
   useEffect(() => {
@@ -650,8 +656,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const RAIL_FIXED_H = showNavLabels ? 267 : 220;
   const ALL_NAV_KEYS = ['activities', 'summary', 'capture', 'clients', 'quality'];
   const maxVisible = Math.min(ALL_NAV_KEYS.length, Math.max(0, Math.floor((sidebarH - RAIL_FIXED_H) / ITEM_H)));
-  const visibleNavItems = ALL_NAV_KEYS.slice(0, maxVisible);
-  const overflowNavItems = ALL_NAV_KEYS.slice(maxVisible);
+  // Guided-demo journeys hard-lock the rail to only their own tab — no wandering off-script.
+  const visibleNavItems = guidedTour.active ? guidedTour.allowedTabs : ALL_NAV_KEYS.slice(0, maxVisible);
+  const overflowNavItems = guidedTour.active ? [] : ALL_NAV_KEYS.slice(maxVisible);
 
   useEffect(() => {
     const onMove = (e) => {
@@ -898,10 +905,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     );
 
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || (guidedTour.active ? guidedTour.defaultClient : '')} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
     }
     if (navTab === 'activities') {
-      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || (guidedTour.active ? guidedTour.defaultClient : '')} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
       if (phase === 'complete' && mobileMode) return (
         <MobileNoteComplete
           onGoToActivities={() => { setActivitiesSession(null); setPhase('sessions'); }}
@@ -1067,8 +1074,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           onResizeMouseDown={handleResizeMouseDown}
           showLabels={showNavLabels}
           isCapturing={capturePhase === 'recording'}
-          onCollapse={onCollapse}
+          onCollapse={guidedTour.active ? guidedTour.exit : onCollapse}
           compactMode={compactMode}
+          tourActive={guidedTour.active}
         />
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)' }}>
           <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
@@ -3227,7 +3235,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           </p>
 
           {/* Client — autocomplete */}
-          <div style={{ marginBottom: 16 }}>
+          <div data-tour-target="summary-client-card" style={{ marginBottom: 16 }}>
             <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: '#212121', lineHeight: 1.57, letterSpacing: '0.1px', display: 'block', marginBottom: 8 }}>Client:</span>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <div style={{ flex: 1, position: 'relative' }}>
@@ -4036,7 +4044,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Scrollable sections — Suggestions tab only */}
-        {activeTab === 'suggestions' && <div ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: 82 }}>
+        {activeTab === 'suggestions' && <div data-tour-target="summary-suggestions-list" ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: 82 }}>
           <div style={{ position: 'sticky', top: 0, height: 0, background: 'white', zIndex: 5 }} />
           {data.map(({ section, cards }) => {
             const isOpen = openSections.has(section);
@@ -5096,7 +5104,7 @@ function NavTooltip({ label, show, children }) {
   );
 }
 
-function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow, overflowActive, onMoreClick, showMore, onResizeMouseDown, showLabels, isCapturing, onCollapse, compactMode = false }) {
+function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow, overflowActive, onMoreClick, showMore, onResizeMouseDown, showLabels, isCapturing, onCollapse, compactMode = false, tourActive = false }) {
   const nav = (tab) => () => onNavClick(tab);
   const isActive = (key) => activeItem === key;
   const ehrCtx = useEhrField();
@@ -5107,6 +5115,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
     background: active ? 'white' : 'transparent',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     padding: compactMode ? 2 : 4, flexShrink: 0,
+    ...(tourActive && active ? { boxShadow: '0 0 0 2px white', animation: 'tourNavRingPulse 1.8s ease-in-out infinite' } : {}),
   });
 
   const lbl = (text, active) => showLabels ? (
@@ -5202,6 +5211,9 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
 
   return (
     <div style={{ width: compactMode ? 54 : 74, flexShrink: 0, background: '#293D87', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 24, paddingBottom: 24, position: 'relative' }}>
+      {tourActive && (
+        <style>{`@keyframes tourNavRingPulse { 0%, 100% { box-shadow: 0 0 0 2px white, 0 0 0 2px white; } 50% { box-shadow: 0 0 0 2px white, 0 0 0 6px rgba(255,255,255,0.55); } }`}</style>
+      )}
 
       {/* ── Resize handle — same color as rail, pill indicates drag target ── */}
       <div
@@ -5476,6 +5488,22 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const { setClientName: setEhrClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
 
+  // Factored out so both the real button click and a guided-tour "Next" (via the
+  // eleos:tourApply event) run the exact same code path — see eleos:tourSignal below.
+  const handleCaptureClick = () => {
+    const now = new Date();
+    const dt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+    onCapture(clientName, dt);
+    window.dispatchEvent(new CustomEvent('eleos:tourSignal', { detail: { signal: 'capture-started' } }));
+  };
+  const handleCaptureClickRef = useRef(handleCaptureClick);
+  useEffect(() => { handleCaptureClickRef.current = handleCaptureClick; });
+  useEffect(() => {
+    const onTourApply = (e) => { if (e.detail?.action === 'capture-start') handleCaptureClickRef.current(); };
+    window.addEventListener('eleos:tourApply', onTourApply);
+    return () => window.removeEventListener('eleos:tourApply', onTourApply);
+  }, []);
+
   const clientPool = lockedDownMode ? DEMO_CLIENT_OPTIONS : CLIENT_OPTIONS;
   const filtered = query.trim()
     ? clientPool.filter(c => c.toLowerCase().includes(query.toLowerCase()))
@@ -5522,7 +5550,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, position: 'relative' }}>
 
       {/* ── Header card ── */}
-      <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '24px 16px 16px' }}>
+      <div data-tour-target="capture-header" style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '24px 16px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           {/* invisible placeholder to center title */}
           <div style={{ width: 24, opacity: 0 }} />
@@ -5657,14 +5685,14 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         )}
         </>}
 
-        {/* Session Type */}
-        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
+        {/* Session Type / Setting / Note Type */}
+        <div data-tour-target="capture-settings-fields">
+          <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
 
-        {/* Setting */}
-        <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
+          <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
 
-        {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+          <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+        </div>
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
@@ -5682,11 +5710,8 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
       {/* ── Bottom CTA ── */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
-          onClick={() => {
-            const now = new Date();
-            const dt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-            onCapture(clientName, dt);
-          }}
+          data-tour-target="capture-submit-button"
+          onClick={handleCaptureClick}
           style={{ width: '100%', padding: '8px 16px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
         >
           Capture Session

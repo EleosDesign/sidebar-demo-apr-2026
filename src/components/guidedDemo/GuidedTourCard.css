@@ -1,0 +1,151 @@
+.guided-tour-card-wrap {
+  position: fixed;
+  z-index: 100000; /* above IconTooltip's 99999 ceiling — the tour must sit above everything */
+  font-family: 'Poppins', sans-serif;
+}
+
+.guided-tour-card-wrap--fallback {
+  left: 24px;
+  bottom: 24px;
+}
+
+.guided-tour-ring {
+  position: fixed;
+  z-index: 99999;
+  border-radius: 12px;
+  pointer-events: none; /* never blocks the real control underneath */
+  box-shadow: 0 0 0 2px #2d4ccd;
+  animation: guidedTourRingPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes guidedTourRingPulse {
+  0%, 100% { box-shadow: 0 0 0 2px #2d4ccd; }
+  50%      { box-shadow: 0 0 0 2px #2d4ccd, 0 0 0 7px rgba(45,76,205,0.35); }
+}
+
+.guided-tour-card {
+  position: relative;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12);
+  padding: 18px 18px 16px;
+}
+
+/* Speech-bubble tail pointing toward the target */
+.guided-tour-card--left::after,
+.guided-tour-card--right::after {
+  content: '';
+  position: absolute;
+  top: 28px;
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+.guided-tour-card--left::after {
+  right: -9px;
+  border-left: 9px solid white;
+}
+.guided-tour-card--right::after {
+  left: -9px;
+  border-right: 9px solid white;
+}
+
+.guided-tour-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.guided-tour-card__progress {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #293D87;
+}
+
+.guided-tour-card__exit {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(33,33,33,0.45);
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px;
+}
+.guided-tour-card__exit:hover { color: rgba(33,33,33,0.8); }
+
+.guided-tour-card__title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.guided-tour-card__body {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(33,33,33,0.75);
+}
+
+.guided-tour-card__dots {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.guided-tour-card__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(41,61,135,0.2);
+}
+.guided-tour-card__dot.is-active {
+  background: #293D87;
+}
+
+.guided-tour-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.guided-tour-card__nav-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.guided-tour-card__btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.guided-tour-card__btn--ghost {
+  background: transparent;
+  color: rgba(33,33,33,0.55);
+  border-color: transparent;
+}
+.guided-tour-card__btn--ghost:hover { color: rgba(33,33,33,0.85); }
+
+.guided-tour-card__btn--secondary {
+  background: white;
+  color: #293D87;
+  border-color: rgba(41,61,135,0.3);
+}
+.guided-tour-card__btn--secondary:hover { background: rgba(41,61,135,0.06); }
+
+.guided-tour-card__btn--primary {
+  background: #293D87;
+  color: white;
+}
+.guided-tour-card__btn--primary:hover { background: #22316d; }
