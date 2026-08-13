@@ -16,7 +16,7 @@ export const CLIENTS_LIST = [
 export const CLIENT_OPTIONS = [
   'Marcus Webb', 'Aisha Monroe', 'Tom Reilly', 'Carmen Vega', 'David Park',
   'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho',
-  'Jacob Rosen', 'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
+  'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
@@ -30,7 +30,6 @@ export const CLIENT_PRONOUNS = {
   'James Osei': 'He/Him',
   'Linda Torres': 'She/Her',
   'Ryan Cho': 'He/Him',
-  'Jacob Rosen': 'He/Him',
   'Larry Quinn': 'He/Him',
   'Calvin Murphy': 'He/Him',
   'Trisha Platts': 'She/Her',

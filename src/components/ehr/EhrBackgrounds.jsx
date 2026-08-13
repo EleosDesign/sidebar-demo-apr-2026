@@ -2239,6 +2239,7 @@ export function PCEBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // 15. ELEOS LITE
 // ═══════════════════════════════════════════════════════════════════════════════
 export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField }) {
+  const { clientName } = useEhrContext();
   const [activeNav, setActiveNav] = useState('Progress Notes');
   const clinicalModules = ['Overview', 'Vitals', 'Demographics', 'Progress Notes', 'Appointments', 'History'];
 
@@ -2305,7 +2306,7 @@ export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField })
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6080a0" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 13, color: '#1a2a3a' }}>Jacob Rosen</div>
+                <div style={{ fontWeight: 700, fontSize: 13, color: '#1a2a3a' }}>{clientName}</div>
                 <div style={{ fontSize: 10, color: '#888' }}>MRN: 8829-102</div>
               </div>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
