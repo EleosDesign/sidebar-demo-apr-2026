@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
 import EnhancePointer from '../enhance/EnhancePointer';
@@ -2380,9 +2381,15 @@ export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField })
     </div>
   );
 }
-export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField }) {
+export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, activitySelectionSeq }) {
   const { clientName } = useEhrContext();
+  const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState('Service');
+  useEffect(() => {
+    // activitySelectionSeq starts at 0 and only increments on a real activity
+    // selection, so this deliberately does nothing on mount (seq === 0).
+    if (activitySelectionSeq && lockedDownMode) setActiveTab('Note');
+  }, [activitySelectionSeq]); // eslint-disable-line react-hooks/exhaustive-deps -- only an activity selection should trigger this, not lockedDownMode toggling alone
   const [serviceValues, setServiceValues] = useState({
     status: 'Show',
     program: '',

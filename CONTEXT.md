@@ -20,6 +20,10 @@ The Companion Sidebar state where the full panel is closed and only the floating
 
 Whether the Launcher Button and the Companion Sidebar panel sit closer to the left or right edge of the viewport (`side` state in `EleosSidebar`, `xSide` in the button's intended-position tracking, per ADR-0001). The two are kept as one Side, synced whenever either changes: opening the panel re-derives its Side from the button's current Side (and snaps to full viewport height); any change to the panel's Side while it's open — drag, width-resize, or the ADR-0001 zoom-reconciliation — updates the button's tracked Side live, even while the button is hidden behind the open panel. Not tracked for vertical position — only horizontal edge.
 
+## Demo Mode
+
+The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext`), toggled by the button labeled "Demo Mode" (`LockedDownModeToggle`) and defaulting on. While active, `CLIENT_LOCK_RULES` (`src/data/lockedDownRules.js`) forces session type, setting, and note type to fixed values for the demo clients it lists, overriding whatever the clinician would otherwise pick. Referred to as "Demo toggle" in issue reports — same concept, not a separate one.
+
 ## Note Complete screen
 
 The confirmation screen (`MobileNoteComplete`) shown after a suggestions review is sent to the EHR while in Mobile Mode. Offers "Go to Mobile Activities List" and "Enter New Summary." Used both by the new-summary flow (`AddSummaryPanel`) and, per this session's fix, by the session-select-from-activities flow.
