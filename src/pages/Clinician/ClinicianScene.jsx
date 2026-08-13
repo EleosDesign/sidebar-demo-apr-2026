@@ -88,6 +88,10 @@ export default function ClinicianScene({ step, onNext }) {
   }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
+  // Bumped whenever an activity/session is selected in the sidebar, for EHR shells
+  // (Streamline) that need to react to that event rather than to noteType/clientName values.
+  const [activitySelectionSeq, setActivitySelectionSeq] = useState(0);
+  const bumpActivitySelectionSeq = () => setActivitySelectionSeq(n => n + 1);
   const sidebarSavedState = useRef(
     (() => { try { return JSON.parse(localStorage.getItem('eleos-sidebar-state') ?? 'null'); } catch { return null; } })()
   );
@@ -169,6 +173,7 @@ export default function ClinicianScene({ step, onNext }) {
         onSideChange={setBtnSide}
         onRecordingChange={setIsRecording}
         onAddToNote={handleAddToNote}
+        onActivitySelected={bumpActivitySelectionSeq}
         startTab={sidebarStartTab}
         onStartTabConsumed={() => setSidebarStartTab(null)} />
     </div>
@@ -205,7 +210,7 @@ export default function ClinicianScene({ step, onNext }) {
         }
       `}</style>
       <EhrFieldProvider sidebarOpen={sidebarOpen}>
-        <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />
+        <EHRBackground noteValues={noteValues} onNoteChange={(field, val) => setNoteValues(prev => ({ ...prev, [field]: val }))} highlightedField={highlightedField} sidebarOpen={sidebarOpen} activitySelectionSeq={activitySelectionSeq} />
         {/* EnhancePointerToolbarWrapper removed — inline CTAs in StackedFields
             (Enhance button + LqaInlineCta) now cover the same functionality
             and the global toolbar was colliding with them visually */}
@@ -452,10 +457,10 @@ function EnhancePointerToolbarWrapper() {
 
 // ── EHR Background — context-driven dispatcher ───────────────────────────────
 
-function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField, sidebarOpen }) {
+function EHRBackground({ noteValues = INITIAL_NOTE_VALUES, onNoteChange, highlightedField, sidebarOpen, activitySelectionSeq }) {
   const { selectedEhr } = useEhrContext();
   const Bg = EHR_BACKGROUNDS[selectedEhr] ?? EHR_BACKGROUNDS.welligent;
-  return <Bg noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sidebarOpen={sidebarOpen} />;
+  return <Bg noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sidebarOpen={sidebarOpen} activitySelectionSeq={activitySelectionSeq} />;
 }
 
 function EHRDropdownGrid() {
@@ -562,7 +567,7 @@ function NoteField({ label, height, value = '', onChange, onFocus, placeholder, 
 
 const SIDEBAR_BOTTOM_GAP = 16;
 
-function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, startTab, onStartTabConsumed }) {
+function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, onActivitySelected, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
@@ -957,6 +962,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             if (r?.noteType) noteTypeKey = r.noteType;
           }
           noteTypeCtx?.setSelectedNoteType(noteTypeKey);
+          onActivitySelected?.();
         }}
       />;
     }
@@ -978,6 +984,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             const r = CLIENT_LOCK_RULES[formatted];
             if (r?.noteType) noteTypeCtx?.setSelectedNoteType(r.noteType);
           }
+          onActivitySelected?.();
         }
         // Build the session entry the moment suggestions are shown
         setPendingEHRSession({
