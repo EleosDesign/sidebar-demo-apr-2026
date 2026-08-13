@@ -5268,6 +5268,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
 // ── My Sessions Panel (step 1, phase = 'sessions') ───────────────────────────
 
 function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false }) {
+  const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState('');
@@ -5289,7 +5290,9 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
   };
 
   // Merge dynamically added sessions (from Add Summary flow) at the top
-  const allSessions = [...extraSessions, ...ALL_SESSIONS];
+  const allSessions = [...extraSessions, ...ALL_SESSIONS].filter(
+    s => !lockedDownMode || DEMO_CLIENT_OPTIONS.includes(s.name)
+  );
   const ehrList  = allSessions.filter(s => !doneIds.has(s.id));
   const doneList = allSessions.filter(s =>  doneIds.has(s.id));
   const filterBySearch = (list) => search.trim()
