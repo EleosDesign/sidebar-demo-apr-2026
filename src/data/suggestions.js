@@ -284,7 +284,7 @@ export const LARRY_QUINN_DAP_DATA = [
   ]},
 ];
 
-// ── Progress Note suggestions (Jacob Rosen case management) ───────────────────
+// ── Progress Note suggestions (generic case management fallback) ─────────────
 export const PROGRESS_NOTE_SUGGESTIONS_DATA = [
   { section: 'Progress Note', cards: [
     { field: 'Note Addresses Which Objective', content: 'The purpose of this session was to evaluate the client\'s mental status, support him in managing depressive symptoms, and discuss coping strategies.', type: 'text', showActions: true },
@@ -294,28 +294,6 @@ export const PROGRESS_NOTE_SUGGESTIONS_DATA = [
     { field: 'Client Responses', content: 'The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process.', type: 'text', showActions: true },
     { field: 'Progress Towards Recovery Plan Objectives', content: 'Despite ongoing struggles with depression, the client has shown progress by being open about his feelings and agreeing to utilize coping strategies, including the safety planning discussed during the session.', type: 'text', showActions: true },
     { field: 'Timelines for Next Service', content: 'The client agreed to reach out for additional support as he navigates his depressive symptoms moving forward.', type: 'text', showActions: true },
-  ]},
-];
-
-// ── Jacob Rosen audio session suggestions ─────────────────────────────────────
-export const JACOB_AUDIO_SUGGESTIONS_DATA = [
-  { section: 'Key Moments', cards: [
-    { field: 'Relationship & Living Situation', content: 'The therapist and client discussed the client\'s relationship with his partner, including their current living situation and the possibility of her moving back in.', type: 'text', showActions: true },
-    { field: 'Codependency & Early Recovery', content: 'The therapist shared concerns about the potential challenges of a codependent dynamic, especially during early recovery, and emphasized the importance of both the client and his partner maintaining their individual recovery.', type: 'text', showActions: true },
-  ]},
-  { section: 'Interventions', cards: [
-    { field: 'Boundary Setting', content: 'Client was encouraged to establish clear boundaries with his partner and explored what those boundaries might look like in practice, highlighting their importance for both his own well-being and that of his family.', type: 'text', showActions: true },
-    { field: 'Motivational Interviewing', content: 'Motivational interviewing techniques were used to strengthen the client\'s commitment to recovery and to support him in taking actionable steps toward his goals.', type: 'text', showActions: true },
-    { field: 'Psychoeducation', content: 'The therapist provided psychoeducation on the benefits of family sessions for couples in recovery, particularly in improving communication and relationship functioning.', type: 'text', showActions: true },
-  ]},
-  { section: 'Assessment', cards: [
-    { field: 'Engagement & Receptivity', content: 'The client appeared engaged, open, and receptive throughout the session. He demonstrated a clear commitment to his recovery and a willingness to take necessary steps to support both himself and his family.', type: 'text', showActions: true },
-    { field: 'Insight', content: 'The client showed insight into the importance of setting boundaries, particularly within his relationship, as a way to foster a more stable and healthy environment.', type: 'text', showActions: true },
-  ]},
-  { section: 'Plan', cards: [
-    { field: 'Treatment & Sobriety', content: 'The client will continue participating in his current treatment and maintaining sobriety.', type: 'text', showActions: true },
-    { field: 'Boundaries', content: 'He will establish and uphold clear boundaries regarding his partner\'s potential move-in, with an emphasis on her commitment to treatment and sobriety.', type: 'text', showActions: true },
-    { field: 'Family Therapy', content: 'Additionally, the client will consider participating in family therapy sessions to further strengthen relationship dynamics and communication.', type: 'text', showActions: true },
   ]},
 ];
 

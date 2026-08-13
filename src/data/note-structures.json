@@ -23,7 +23,7 @@
           "sampleContent": "The client will continue to engage in his current treatment and uphold his sobriety. The client will set boundaries for his girlfriend's move-in, emphasizing on commitment to treatment and sobriety. The client will engage in a potential family therapy session to further improve his relationship dynamics."
         }
       ],
-      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "usedBy": ["Jake Carol", "Larry Quinn"],
       "ehrMapping": {
         "smartcare": {
           "data": "interventions",
@@ -572,7 +572,7 @@
           ]
         }
       ],
-      "usedBy": ["Jake Carol", "Jacob Rosen", "Larry Quinn"],
+      "usedBy": ["Jake Carol", "Larry Quinn"],
       "ehrSystem": "smartscribe",
       "qualityFeatures": [
         "Real-time field validation",
