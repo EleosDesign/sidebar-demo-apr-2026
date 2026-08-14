@@ -1,6 +1,6 @@
 import React from 'react';
 import { STARS_VIEWBOX, STARS_PATHS } from './svg-efsgtmmfcy';
-import { smartScribeColor } from '../../contexts/EhrContext.jsx';
+import { smartScribeColor, smartScribeEnhanceShadow } from '../../contexts/EhrContext.jsx';
 
 interface EnhanceInlineButtonProps {
   onClick?: () => void;
@@ -53,13 +53,7 @@ export default function EnhanceInlineButton({ onClick, loading = false, skin = f
         border: `1.5px solid ${navy}`,
         borderRadius: 20,
         cursor: 'pointer',
-        boxShadow: [
-          '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
-          '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
-          '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
-          '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
-          '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
-        ].join(', '),
+        boxShadow: smartScribeEnhanceShadow(skin),
         transition: loading ? undefined : 'opacity 0.15s',
         userSelect: 'none',
         whiteSpace: 'nowrap',

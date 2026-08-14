@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useEhrField } from './EhrFieldContext.jsx';
+import { useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
 
 // ── Demo data ──────────────────────────────────────────────────────────────────
 
@@ -87,6 +88,7 @@ function CheckItem({ label, custom }) {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM', autoRunAnalysis = false, onAutoRunConsumed }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
   const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
@@ -168,8 +170,8 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'default', flexShrink: 0 }}>
             <svg width="25" height="24" viewBox="0 0 25 24" fill="none">
               <rect width="24" height="24" rx="12" fill="#EAEDFA"/>
-              <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill="#2D4CCD"/>
-              <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill="#2D4CCD"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')}/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')}/>
               <circle cx="22" cy="4" r="3" fill="#46BC9E"/>
             </svg>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -191,9 +193,9 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', gap: 18, textAlign: 'center' }}>
             <div style={{ width: 84, height: 84, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill="#2D4CCD" opacity="0.15" />
-                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" stroke="#2D4CCD" strokeWidth="1.5" strokeLinejoin="round" />
-                <path d="M9 12l2 2 4-4" stroke="#2D4CCD" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')} opacity="0.15" />
+                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M9 12l2 2 4-4" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div style={{ fontSize: 19, fontWeight: 700, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Analyze your Note</div>
@@ -208,9 +210,9 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '40px 24px', gap: 18, textAlign: 'center' }}>
             <div style={{ width: 84, height: 84, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill="#2D4CCD" opacity="0.3" />
-                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" stroke="#2D4CCD" strokeWidth="1.5" strokeLinejoin="round" />
-                <path d="M9 12l2 2 4-4" stroke="#2D4CCD" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')} opacity="0.3" />
+                <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M9 12l2 2 4-4" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div style={{ fontSize: 19, fontWeight: 700, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Note Ready</div>
@@ -226,13 +228,13 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
             <div style={{ position: 'relative', width: 80, height: 80 }}>
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="#e8edf8" strokeWidth="6" />
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#2D4CCD" strokeWidth="6"
+                <circle cx="40" cy="40" r="32" fill="none" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="6"
                   strokeLinecap="round" strokeDasharray="55 146"
                   style={{ transformOrigin: 'center', animation: 'lqaSpin 1.3s linear infinite' }} />
               </svg>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill="#2D4CCD" />
+                  <path d="M12 2L4 6v5c0 4.8 3.6 9.2 8 10.3C16.4 20.2 20 15.8 20 11V6l-8-4z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')} />
                   <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
@@ -320,7 +322,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           <div style={{ width: '100%', height: 3, background: '#e0e4f7', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
             <div style={{
               height: '100%', borderRadius: 2,
-              background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : 'linear-gradient(90deg, #2D4CCD, #7B8EE8)',
+              background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : `linear-gradient(90deg, ${smartScribeColor(smartScribeSkin, '#2D4CCD')}, #7B8EE8)`,
               width: resultsVariant === 'allClear' ? '100%' : `${Math.round(COMPLETED_ITEMS.length / (COMPLETED_ITEMS.length + OPEN_ITEMS.length) * 100)}%`,
               transition: 'width 0.5s ease, background 0.5s ease',
             }} />
@@ -328,13 +330,13 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
         )}
         {state === 'idle' && (
           <button onClick={runAnalysis}
-            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
             Check Note Quality
           </button>
         )}
         {state === 'progress' && (
           <button disabled
-            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'not-allowed', opacity: 0.5, fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+            style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'not-allowed', opacity: 0.5, fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
             Analyzing...
           </button>
         )}
@@ -349,8 +351,8 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
                 fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
                 transition: 'background 0.2s, color 0.2s',
                 ...(changedSinceAnalysis
-                  ? { background: '#2d4ccd', color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
-                  : { background: 'rgba(45,76,205,0.12)', color: '#2d4ccd', cursor: 'not-allowed' }
+                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
                 ),
               }}
             >
@@ -378,8 +380,8 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
                 fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
                 transition: 'background 0.2s, color 0.2s',
                 ...(changedSinceAnalysis
-                  ? { background: '#2d4ccd', color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
-                  : { background: 'rgba(45,76,205,0.12)', color: '#2d4ccd', cursor: 'not-allowed' }
+                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
+                  : { background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
                 ),
               }}
             >

@@ -5,7 +5,7 @@ import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
 import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolbar';
 import LQAReview from '../../components/ui/LQAReview.jsx';
-import { useEhrContext, useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.jsx';
+import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
@@ -183,8 +183,8 @@ export default function ClinicianScene({ step, onNext }) {
     <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <style>{`
         @keyframes lbPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(41,61,135,0.55), 0 4px 16px rgba(41,61,135,0.4); }
-          50%       { box-shadow: 0 0 0 10px rgba(41,61,135,0), 0 4px 16px rgba(41,61,135,0.4); }
+          0%, 100% { box-shadow: 0 0 0 0 rgba(var(--lb-pulse-rgb, 41,61,135),0.55), 0 4px 16px rgba(var(--lb-pulse-rgb, 41,61,135),0.4); }
+          50%       { box-shadow: 0 0 0 10px rgba(var(--lb-pulse-rgb, 41,61,135),0), 0 4px 16px rgba(var(--lb-pulse-rgb, 41,61,135),0.4); }
         }
         @keyframes lbFloat {
           0%, 100% { transform: translateY(0px); }
@@ -389,7 +389,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
       <div
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
-        style={{ width: 56, height: 56, position: 'relative', flexShrink: 0, marginRight: -2, borderRadius: '50%', animation: 'lbFloat 3s ease-in-out infinite, lbPulse 3s ease-in-out infinite' }}>
+        style={{ width: 56, height: 56, position: 'relative', flexShrink: 0, marginRight: -2, borderRadius: '50%', animation: 'lbFloat 3s ease-in-out infinite, lbPulse 3s ease-in-out infinite', '--lb-pulse-rgb': smartScribeRgb(smartScribeSkin) }}>
         {/* Background circle with Figma inner shadow (dy:-4, opacity:0.25) */}
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style={{ position: 'absolute', top: 0, left: 0 }}>
           <defs>
@@ -900,7 +900,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             ...daysAgo(0),
             name: captureSession.name,
             time: `${startT} – ${endT}`,
-            type: captureSession.name?.toLowerCase().includes('group') ? 'group' : 'individual',
+            type: 'individual',
             sessionType: 'audio',
             isActive: false,
             summary: 'Audio session captured and transcribed. AI-generated suggestions are ready for EHR review.',
@@ -1292,6 +1292,7 @@ const SHADOW_EL1_V1 = '0px 1px 3px 0px rgba(0,0,0,0.12), 0px 1px 1px 0px rgba(0,
 
 // eslint-disable-next-line no-unused-vars
 function ClientDetailPanel_V1({ client, onBack }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [tab, setTab] = useState('overview');
   const P = { fontFamily: 'Poppins, sans-serif' };
 
@@ -1327,11 +1328,11 @@ function ClientDetailPanel_V1({ client, onBack }) {
             <div key={t} onClick={() => setTab(t)}
               style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', position: 'relative' }}>
               <div style={{ padding: '9px 8px' }}>
-                <span style={{ ...P, fontSize: 14, fontWeight: active ? 500 : 400, color: active ? '#2d4ccd' : 'rgba(33,33,33,0.8)', letterSpacing: '0.4px', lineHeight: '24px', whiteSpace: 'nowrap' }}>
+                <span style={{ ...P, fontSize: 14, fontWeight: active ? 500 : 400, color: active ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.8)', letterSpacing: '0.4px', lineHeight: '24px', whiteSpace: 'nowrap' }}>
                   {t === 'overview' ? 'Overview' : 'Activities'}
                 </span>
               </div>
-              {active && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: '#2d4ccd', borderRadius: '2px 2px 0 0' }} />}
+              {active && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: smartScribeColor(smartScribeSkin, '#2d4ccd'), borderRadius: '2px 2px 0 0' }} />}
             </div>
           );
         })}
@@ -1351,6 +1352,7 @@ function ClientDetailPanel_V1({ client, onBack }) {
 
 // eslint-disable-next-line no-unused-vars
 function ClientOverviewTab_V1({ client }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [themeView, setThemeView] = useState('graph');
   const P = { fontFamily: 'Poppins, sans-serif' };
 
@@ -1450,7 +1452,7 @@ function ClientOverviewTab_V1({ client }) {
           </div>
           {/* View Activity button */}
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ background: '#2d4ccd', color: 'white', borderRadius: 4, padding: '4px 10px', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
+            <div style={{ background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', borderRadius: 4, padding: '4px 10px', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
               <span style={{ ...P, fontSize: 13, fontWeight: 500, letterSpacing: '0.46px', lineHeight: '22px' }}>View Activity</span>
             </div>
           </div>
@@ -1468,7 +1470,7 @@ function ClientOverviewTab_V1({ client }) {
                 const active = themeView === view;
                 return (
                   <div key={view} onClick={() => setThemeView(view)} style={{
-                    background: active ? '#2d4ccd' : 'transparent',
+                    background: active ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'transparent',
                     width: 98, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     borderRadius: 37, cursor: 'pointer',
                   }}>
@@ -1540,8 +1542,8 @@ function ClientOverviewTab_V1({ client }) {
                     <span style={{ ...P, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.43 }}>{row.label}</span>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {row.tags.map(tag => (
-                        <div key={tag} style={{ border: '1px solid #2d4ccd', borderRadius: 4, padding: '3px 6px', display: 'inline-flex', alignItems: 'center' }}>
-                          <span style={{ ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', lineHeight: '18px', whiteSpace: 'nowrap' }}>{tag}</span>
+                        <div key={tag} style={{ border: `1px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderRadius: 4, padding: '3px 6px', display: 'inline-flex', alignItems: 'center' }}>
+                          <span style={{ ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), lineHeight: '18px', whiteSpace: 'nowrap' }}>{tag}</span>
                         </div>
                       ))}
                     </div>
@@ -1757,6 +1759,7 @@ function V2Shell({ title, subtitle, onBack, client, children, sidebarW = 467 }) 
 
 // Shared toggle pill (Circles/Heatmap, By Status/Timeline, etc.)
 function V2Toggle({ options, value, onChange }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   return (
     <div style={{ display: 'flex', background: '#f5f5f5', borderRadius: 9999, padding: 2 }}>
@@ -1766,7 +1769,7 @@ function V2Toggle({ options, value, onChange }) {
           <button key={opt} onClick={() => onChange(opt)} style={{
             ...P, fontSize: 13, fontWeight: active ? 500 : 400,
             color: active ? 'white' : 'rgba(0,0,0,0.6)',
-            background: active ? '#2d4ccd' : 'transparent',
+            background: active ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'transparent',
             border: 'none', borderRadius: 9999, padding: '4px 16px',
             cursor: 'pointer', letterSpacing: '0.16px', transition: 'background 0.18s ease, color 0.18s ease',
           }}>{opt}</button>
@@ -1778,11 +1781,12 @@ function V2Toggle({ options, value, onChange }) {
 
 // ── Screen 2: Last Activity Summary ───────────────────────────────────────────
 function V2LastActivity({ onBack, client, sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const compactMode = sidebarW < 380;
   const Chip = ({ label, grey }) => (
     <div style={{ background: grey ? '#f1f5f9' : '#eaedfa', borderRadius: 9999, padding: '3px 10px', display: 'inline-flex' }}>
-      <span style={{ ...P, fontSize: 12, fontWeight: 500, color: grey ? '#45556c' : '#2d4ccd', lineHeight: 'normal' }}>{label}</span>
+      <span style={{ ...P, fontSize: 12, fontWeight: 500, color: grey ? '#45556c' : smartScribeColor(smartScribeSkin, '#2d4ccd'), lineHeight: 'normal' }}>{label}</span>
     </div>
   );
   const sessionBullets = [
@@ -1817,8 +1821,8 @@ function V2LastActivity({ onBack, client, sidebarW = 467 }) {
             </div>
           ))}
           <button style={{ alignSelf: 'flex-end', display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-            <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>View Full Session</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <span style={{ ...P, fontSize: 14, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '26px' }}>View Full Session</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
         </div>
 
@@ -1971,6 +1975,7 @@ function V2MostFrequentThemes({ onBack, client, sidebarW = 467 }) {
 
 // ── Screen 5: Themes by Session ───────────────────────────────────────────────
 function V2ThemesBySession({ onBack, client, sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [expanded, setExpanded] = useState(new Set([0]));
   const sessions = [
@@ -1989,7 +1994,7 @@ function V2ThemesBySession({ onBack, client, sidebarW = 467 }) {
   ];
   const ThemeChip = ({ label }) => (
     <div style={{ background: '#eaedfa', borderRadius: 4, padding: '2px 8px' }}>
-      <span style={{ ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', lineHeight: 'normal' }}>{label}</span>
+      <span style={{ ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), lineHeight: 'normal' }}>{label}</span>
     </div>
   );
   return (
@@ -2006,7 +2011,7 @@ function V2ThemesBySession({ onBack, client, sidebarW = 467 }) {
               <React.Fragment key={i}>
                 {i > 0 && <div style={{ height: 1, background: 'rgba(0,0,0,0.08)' }} />}
                 <div style={{ padding: '14px 16px', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#2d4ccd', flexShrink: 0, marginTop: 6 }} />
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), flexShrink: 0, marginTop: 6 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                       <span style={{ ...P, fontSize: 14, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px' }}>{s.label}</span>
@@ -2038,6 +2043,7 @@ function V2ThemesBySession({ onBack, client, sidebarW = 467 }) {
 
 // ── Screen 6 & 7: Treatment Goals (By Status + Timeline) ─────────────────────
 function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [view, setView] = useState('By Status');
 
@@ -2054,10 +2060,10 @@ function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
   const inProgress = goals.filter(g => g.status === 'in-progress');
   const notStarted = goals.filter(g => g.status === 'not-started');
 
-  const statusDot = (s) => ({ met: '#00a63e', 'in-progress': '#2d4ccd', 'not-started': '#cfd8dc' }[s] || '#cfd8dc');
+  const statusDot = (s) => ({ met: '#00a63e', 'in-progress': smartScribeColor(smartScribeSkin, '#2d4ccd'), 'not-started': '#cfd8dc' }[s] || '#cfd8dc');
   const statusLabel = (s) => ({ met: 'Met', 'in-progress': 'In Progress', 'not-started': 'Not Started' }[s]);
 
-  const ProgressBar = ({ pct, color = '#2d4ccd' }) => (
+  const ProgressBar = ({ pct, color = smartScribeColor(smartScribeSkin, '#2d4ccd') }) => (
     <div style={{ height: 6, background: '#e8ecf8', borderRadius: 9999, overflow: 'hidden' }}>
       <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 9999, transition: 'width 0.3s ease' }} />
     </div>
@@ -2077,7 +2083,7 @@ function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
             <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 {m.done
-                  ? <><circle cx="12" cy="12" r="9" stroke="#2d4ccd" strokeWidth="1.5"/><path d="M8 12l3 3 5-5" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></>
+                  ? <><circle cx="12" cy="12" r="9" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5"/><path d="M8 12l3 3 5-5" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></>
                   : <circle cx="12" cy="12" r="9" stroke="rgba(0,0,0,0.28)" strokeWidth="1.5"/>
                 }
               </svg>
@@ -2103,7 +2109,7 @@ function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Stats row */}
             <div style={{ display: 'flex', gap: 8 }}>
-              {[{ n: 1, label: 'Met', color: '#00a63e' }, { n: 3, label: 'In Progress', color: '#2d4ccd' }, { n: 1, label: 'Not Started', color: 'rgba(0,0,0,0.38)' }].map(s => (
+              {[{ n: 1, label: 'Met', color: '#00a63e' }, { n: 3, label: 'In Progress', color: smartScribeColor(smartScribeSkin, '#2d4ccd') }, { n: 1, label: 'Not Started', color: 'rgba(0,0,0,0.38)' }].map(s => (
                 <div key={s.label} style={{ flex: 1, border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, padding: '12px 8px', textAlign: 'center' }}>
                   <div style={{ ...P, fontSize: 22, fontWeight: 600, color: s.color, letterSpacing: '0.018px', lineHeight: 1.2 }}>{s.n}</div>
                   <div style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', marginTop: 2 }}>{s.label}</div>
@@ -2166,6 +2172,7 @@ function V2TreatmentGoals({ onBack, client, sidebarW = 467 }) {
 
 // ── Main client detail panel — routes to sub-screens ─────────────────────────
 function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const compactMode = sidebarW < 380;
   const SHADOW_EL4 = V2_SHADOW_EL4;
@@ -2187,7 +2194,7 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
   const themeChips = ['Anxiety · 12x', 'Self-esteem · 8x', 'Work stress · 10x'];
   const goalLegend = [
     { color: '#00a63e', label: '1 Done' },
-    { color: '#2d4ccd', label: '5 In Progress' },
+    { color: smartScribeColor(smartScribeSkin, '#2d4ccd'), label: '5 In Progress' },
     { color: '#cfd8dc', label: '1 Not Started' },
   ];
 
@@ -2305,9 +2312,9 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
                     <span style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>Activity Overview</span>
                   </div>
                   <button onClick={() => setDetailView('activity')} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2, padding: '4px 0' }}>
-                    <span style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>{compactMode ? 'View' : 'View Note'}</span>
+                    <span style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '26px' }}>{compactMode ? 'View' : 'View Note'}</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18L15 12L9 6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 18L15 12L9 6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </button>
                 </div>
@@ -2339,7 +2346,7 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                       {themeChips.map(chip => (
                         <div key={chip} style={{ background: '#eaedfa', borderRadius: 4, padding: '3px 6px 3px 4px' }}>
-                          <span style={{ ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', lineHeight: 'normal' }}>{chip}</span>
+                          <span style={{ ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), lineHeight: 'normal' }}>{chip}</span>
                         </div>
                       ))}
                     </div>
@@ -2369,7 +2376,7 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
                   <p style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.4px', textAlign: 'right', margin: '0 0 2px' }}>65%</p>
                   <div style={{ height: 8, borderRadius: 9999, overflow: 'hidden', display: 'flex' }}>
                     <div style={{ background: '#00a63e', width: '13.3%' }} />
-                    <div style={{ background: '#2d4ccd', width: '72%' }} />
+                    <div style={{ background: smartScribeColor(smartScribeSkin, '#2d4ccd'), width: '72%' }} />
                     <div style={{ background: '#cfd8dc', flex: 1 }} />
                   </div>
                 </div>
@@ -2390,6 +2397,7 @@ function ClientDetailPanelV2({ client, onBack, sidebarW = 467 }) {
 
 // ── Ask Eleos bar (reused in both the panel and the drawer) ───────────────────
 function AskEleosBar({ onOpen, P }) {
+  const smartScribeSkin = useSmartScribeSkin();
   return (
     <div
       onClick={onOpen}
@@ -2397,7 +2405,7 @@ function AskEleosBar({ onOpen, P }) {
     >
       <div style={{ background: 'white', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 9999, padding: '1px 13px 1px 17px', height: 58, display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.6)', lineHeight: '20px' }}>Ask Eleos…</span>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#2d4ccd', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M12 20V4M12 4L6 10M12 4L18 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -2449,6 +2457,7 @@ function CitationDates({ dates, P, compactMode = false }) {
 }
 
 function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [expanded, setExpanded] = useState(false);
   const [chatAction, setChatAction] = useState(null);
   const [messages, setMessages] = useState([]); // { role:'user'|'assistant', type:'text'|'card', text }
@@ -2670,8 +2679,8 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
         }
         .ask-action-card:hover {
           background: #f4f6ff !important;
-          border-color: #2d4ccd !important;
-          box-shadow: 0 2px 8px rgba(45,76,205,0.12) !important;
+          border-color: ${smartScribeColor(smartScribeSkin, '#2d4ccd')} !important;
+          box-shadow: 0 2px 8px rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12) !important;
           transform: translateY(-1px);
         }
         .ask-action-card:active {
@@ -2728,7 +2737,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
               if (msg.role === 'user') {
                 return (
                   <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft: compactMode ? 24 : 40 }}>
-                    <div style={{ background: '#2d4ccd', borderRadius: '16px 16px 4px 16px', padding: compactMode ? '8px 12px' : '12px 16px' }}>
+                    <div style={{ background: smartScribeColor(smartScribeSkin, '#2d4ccd'), borderRadius: '16px 16px 4px 16px', padding: compactMode ? '8px 12px' : '12px 16px' }}>
                       <p style={{ ...P, fontSize: compactMode ? 12 : 14, fontWeight: 400, color: 'white', letterSpacing: '0.17px', lineHeight: 1.43, margin: 0 }}>
                         {msg.text}
                       </p>
@@ -2740,7 +2749,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
               const AiAvatar = () => (
                 <div style={{ width: compactMode ? 22 : 28, height: compactMode ? 22 : 28, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L9.5 9.5L2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z" fill="#2d4ccd"/>
+                    <path d="M12 2L9.5 9.5L2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z" fill={smartScribeColor(smartScribeSkin, '#2d4ccd')}/>
                   </svg>
                 </div>
               );
@@ -2807,7 +2816,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                 <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#eaedfa', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L9.5 9.5L2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z" fill="#2d4ccd"/>
+                    <path d="M12 2L9.5 9.5L2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z" fill={smartScribeColor(smartScribeSkin, '#2d4ccd')}/>
                   </svg>
                 </div>
                 <div style={{ background: '#fafafa', borderRadius: 12, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -2859,11 +2868,11 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
                 onClick={() => setExpanded(e => !e)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, padding: 0 }}
               >
-                <span style={{ ...P, fontSize: 14, fontWeight: 600, color: '#2d4ccd', letterSpacing: '0', lineHeight: '21px' }}>
+                <span style={{ ...P, fontSize: 14, fontWeight: 600, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0', lineHeight: '21px' }}>
                   {expanded ? 'Show less' : 'Expand more'}
                 </span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ transition: 'transform 0.2s', transform: expanded ? 'rotate(180deg)' : 'none' }}>
-                  <path d="M6 9l6 6 6-6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 9l6 6 6-6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
             </div>
@@ -2883,7 +2892,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
             <button
               onClick={handleSend}
               disabled={!inputText.trim() || isReplying}
-              style={{ width: 32, height: 32, borderRadius: '50%', background: inputText.trim() && !isReplying ? '#2d4ccd' : 'rgba(0,0,0,0.12)', border: 'none', cursor: inputText.trim() && !isReplying ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
+              style={{ width: 32, height: 32, borderRadius: '50%', background: inputText.trim() && !isReplying ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.12)', border: 'none', cursor: inputText.trim() && !isReplying ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.15s ease' }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M12 20V4M12 4L6 10M12 4L18 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2919,6 +2928,7 @@ function formatTime(t) {
 // Tag picker field — filter chips + floating dropdown
 function TagField({ label, selected, onChange }) {
   const P = { fontFamily: 'Poppins, sans-serif' };
+  const smartScribeSkin = useSmartScribeSkin();
   const [open, setOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
   const [counterHovered, setCounterHovered] = useState(false);
@@ -2962,7 +2972,7 @@ function TagField({ label, selected, onChange }) {
       <div
         ref={triggerRef}
         onClick={() => setOpen(v => !v)}
-        style={{ background: 'white', border: `1px solid ${open ? '#2d4ccd' : selected.length > 0 ? 'rgba(45,76,205,0.5)' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', userSelect: 'none', minHeight: 40 }}
+        style={{ background: 'white', border: `1px solid ${open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : selected.length > 0 ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.5)` : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', userSelect: 'none', minHeight: 40 }}
       >
         {selected.length === 0 ? (
           <span style={{ ...P, flex: 1, fontSize: 16, color: 'rgba(33,33,33,0.38)', lineHeight: '24px', letterSpacing: '0.15px' }}>Add Suggestions</span>
@@ -2971,7 +2981,7 @@ function TagField({ label, selected, onChange }) {
             {/* Visible chips — max 2 */}
             <div style={{ display: 'flex', gap: 4, flex: 1, minWidth: 0, alignItems: 'center', overflow: 'hidden' }}>
               {selected.slice(0, 2).map(tag => (
-                <span key={tag} style={{ ...P, display: 'inline-flex', alignItems: 'center', gap: 2, background: 'rgba(45,76,205,0.06)', color: '#2d4ccd', fontSize: 12, fontWeight: 500, borderRadius: 4, padding: '3px 4px', lineHeight: '18px', letterSpacing: '0.16px', flex: '0 1 auto', minWidth: 0, maxWidth: 120 }}>
+                <span key={tag} style={{ ...P, display: 'inline-flex', alignItems: 'center', gap: 2, background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), fontSize: 12, fontWeight: 500, borderRadius: 4, padding: '3px 4px', lineHeight: '18px', letterSpacing: '0.16px', flex: '0 1 auto', minWidth: 0, maxWidth: 120 }}>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{tag}</span>
                   <span onMouseDown={e => { e.preventDefault(); e.stopPropagation(); toggle(tag); }} style={{ opacity: 0.7, cursor: 'pointer', fontSize: 13, lineHeight: 1, flexShrink: 0, marginLeft: 1 }}>×</span>
                 </span>
@@ -2985,15 +2995,15 @@ function TagField({ label, selected, onChange }) {
                 onMouseLeave={() => setCounterHovered(false)}
               >
                 {/* Counter pill */}
-                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, minHeight: 24, maxHeight: 24, border: '1px solid #2d4ccd', borderRadius: 100, padding: '3px 4px', cursor: 'default' }}>
-                  <span style={{ ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', lineHeight: '18px', letterSpacing: '0.16px', padding: '0 6px' }}>+{selected.length - 2}</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, minHeight: 24, maxHeight: 24, border: `1px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderRadius: 100, padding: '3px 4px', cursor: 'default' }}>
+                  <span style={{ ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), lineHeight: '18px', letterSpacing: '0.16px', padding: '0 6px' }}>+{selected.length - 2}</span>
                 </span>
                 {/* Tooltip */}
                 {counterHovered && (
                   <div style={{ position: 'absolute', bottom: 'calc(100% + 8px)', left: '50%', transform: 'translateX(-50%)', zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none' }}>
                     <div style={{ background: 'white', borderRadius: 4, padding: 8, boxShadow: '0 1px 10px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: 6, whiteSpace: 'nowrap' }}>
                       {selected.slice(2).map(tag => (
-                        <span key={tag} style={{ ...P, display: 'inline-flex', alignItems: 'center', background: 'rgba(45,76,205,0.06)', color: '#2d4ccd', fontSize: 12, fontWeight: 500, borderRadius: 4, padding: '3px 8px', lineHeight: '18px', letterSpacing: '0.16px' }}>
+                        <span key={tag} style={{ ...P, display: 'inline-flex', alignItems: 'center', background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), fontSize: 12, fontWeight: 500, borderRadius: 4, padding: '3px 8px', lineHeight: '18px', letterSpacing: '0.16px' }}>
                           {tag}
                         </span>
                       ))}
@@ -3011,7 +3021,7 @@ function TagField({ label, selected, onChange }) {
         )}
         {/* Chevron */}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
-          <path d="M6 9l6 6 6-6" stroke={open ? '#2d4ccd' : 'rgba(33,33,33,0.54)'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M6 9l6 6 6-6" stroke={open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.54)'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
@@ -3028,7 +3038,7 @@ function TagField({ label, selected, onChange }) {
                 <div
                   key={f.label}
                   onMouseDown={e => { e.preventDefault(); setActiveFilter(f.label); }}
-                  style={{ flexShrink: 0, padding: '3px 10px', borderRadius: 4, border: `1px solid ${isActive ? '#2d4ccd' : '#bdbdbd'}`, background: isActive ? 'rgba(45,76,205,0.08)' : 'white', cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: isActive ? '#293d87' : '#212121', lineHeight: '18px', letterSpacing: '0.16px', whiteSpace: 'nowrap' }}
+                  style={{ flexShrink: 0, padding: '3px 10px', borderRadius: 4, border: `1px solid ${isActive ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#bdbdbd'}`, background: isActive ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.08)` : 'white', cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: isActive ? smartScribeColor(smartScribeSkin, '#293d87') : '#212121', lineHeight: '18px', letterSpacing: '0.16px', whiteSpace: 'nowrap' }}
                 >
                   {f.label}
                 </div>
@@ -3058,14 +3068,14 @@ function TagField({ label, selected, onChange }) {
                         <div
                           key={opt}
                           onMouseDown={e => { e.preventDefault(); toggle(opt); }}
-                          style={{ padding: '9px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: i < groupOpts.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', background: checked ? 'rgba(45,76,205,0.06)' : 'white' }}
+                          style={{ padding: '9px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: i < groupOpts.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', background: checked ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white' }}
                           onMouseEnter={e => { if (!checked) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = checked ? 'rgba(45,76,205,0.06)' : 'white'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = checked ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white'; }}
                         >
-                          <span style={{ ...P, fontSize: 15, color: checked ? '#2d4ccd' : 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.15px', fontWeight: checked ? 500 : 400 }}>{opt}</span>
+                          <span style={{ ...P, fontSize: 15, color: checked ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.15px', fontWeight: checked ? 500 : 400 }}>{opt}</span>
                           {checked && (
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
-                              <path d="M2.5 8l4 4 7-7" stroke="#2d4ccd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M2.5 8l4 4 7-7" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                           )}
                         </div>
@@ -3084,14 +3094,14 @@ function TagField({ label, selected, onChange }) {
                   <div
                     key={opt}
                     onMouseDown={e => { e.preventDefault(); toggle(opt); }}
-                    style={{ padding: '9px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: i < visibleOpts.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', background: checked ? 'rgba(45,76,205,0.06)' : 'white' }}
+                    style={{ padding: '9px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', borderBottom: i < visibleOpts.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', background: checked ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white' }}
                     onMouseEnter={e => { if (!checked) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = checked ? 'rgba(45,76,205,0.06)' : 'white'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = checked ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white'; }}
                   >
-                    <span style={{ ...P, fontSize: 15, color: checked ? '#2d4ccd' : 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.15px', fontWeight: checked ? 500 : 400 }}>{opt}</span>
+                    <span style={{ ...P, fontSize: 15, color: checked ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.15px', fontWeight: checked ? 500 : 400 }}>{opt}</span>
                     {checked && (
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 8 }}>
-                        <path d="M2.5 8l4 4 7-7" stroke="#2d4ccd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2.5 8l4 4 7-7" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     )}
                   </div>
@@ -3134,6 +3144,7 @@ function GeneratingOverlay() {
 }
 
 function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const { lockedDownMode } = useLockedDownModeContext();
   const { mobileMode, enterMobileMode } = useMobileModeContext();
@@ -3263,7 +3274,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               <div style={{ flex: 1, position: 'relative' }}>
                 <div
                   onClick={() => { setClientDropOpen(true); clientInputRef.current?.focus(); }}
-                  style={{ background: 'white', border: `1px solid ${clientDropOpen ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: clientDropOpen && filteredClients.length > 0 ? '8px 8px 0 0' : 8, padding: '8px 12px', display: 'flex', alignItems: 'center', cursor: 'text' }}
+                  style={{ background: 'white', border: `1px solid ${clientDropOpen ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`, borderRadius: clientDropOpen && filteredClients.length > 0 ? '8px 8px 0 0' : 8, padding: '8px 12px', display: 'flex', alignItems: 'center', cursor: 'text' }}
                 >
                   <input
                     ref={clientInputRef}
@@ -3281,7 +3292,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                   )}
                 </div>
                 {clientDropOpen && filteredClients.length > 0 && (
-                  <div style={{ position: 'absolute', left: 0, right: 0, top: '100%', background: 'white', border: '1px solid #2d4ccd', borderTop: 'none', borderRadius: '0 0 8px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: 200, overflowY: 'auto' }}>
+                  <div style={{ position: 'absolute', left: 0, right: 0, top: '100%', background: 'white', border: `1px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderTop: 'none', borderRadius: '0 0 8px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: 200, overflowY: 'auto' }}>
                     {filteredClients.map((name, i) => (
                       <div key={name} onMouseDown={e => { e.preventDefault(); selectClientOpt(name); }}
                         style={{ ...P, padding: '9px 12px', fontSize: 14, color: 'rgba(0,0,0,0.87)', cursor: 'pointer', borderBottom: i < filteredClients.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', background: 'white' }}
@@ -3364,7 +3375,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 28px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
           <button
             onClick={() => setShowCaptureDrawer(true)}
-            style={{ width: '100%', padding: '8px 22px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
+            style={{ width: '100%', padding: '8px 22px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
           >
             Next
           </button>
@@ -3440,9 +3451,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                     <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, paddingLeft: 36 }}>Speak freely about the activity for up to 20 minutes</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                    <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
+                    <span style={{ ...P, fontSize: 14, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18l6-6-6-6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 18l6-6-6-6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
                 </button>
@@ -3474,9 +3485,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                     <span style={{ ...P, fontSize: 14, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.17px', lineHeight: 1.43, paddingLeft: 36 }}>Add key details about activity in your own words</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                    <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
+                    <span style={{ ...P, fontSize: 14, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '26px' }}>Start</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 18l6-6-6-6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9 18l6-6-6-6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
                 </button>
@@ -3586,9 +3597,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
             style={{ background: nextEnabled ? '#eaedfa' : 'transparent', borderRadius: 999, width: 104, height: 40, border: 'none', cursor: nextEnabled ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'background 0.2s ease' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M4 12l5 5L20 7" stroke={nextEnabled ? '#2d4ccd' : 'rgba(45,76,205,0.38)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M4 12l5 5L20 7" stroke={nextEnabled ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: nextEnabled ? '#2d4ccd' : 'rgba(45,76,205,0.38)', letterSpacing: '0.46px', lineHeight: '22px' }}>Next</span>
+            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: nextEnabled ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, letterSpacing: '0.46px', lineHeight: '22px' }}>Next</span>
           </button>
         </div>
       </div>
@@ -3598,9 +3609,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'white', position: 'relative' }}>
         <style>{`
           @keyframes voicePulse {
-            0%   { box-shadow: 0 0 0 0 rgba(45,76,205,0.45); }
-            70%  { box-shadow: 0 0 0 20px rgba(45,76,205,0); }
-            100% { box-shadow: 0 0 0 0 rgba(45,76,205,0); }
+            0%   { box-shadow: 0 0 0 0 rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.45); }
+            70%  { box-shadow: 0 0 0 20px rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0); }
+            100% { box-shadow: 0 0 0 0 rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0); }
           }
           @keyframes voiceWave {
             0%, 100% { transform: scaleY(0.4); }
@@ -3647,12 +3658,12 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                 {/* Expanding ring */}
                 <div
                   key={`ring-${countdown}`}
-                  style={{ position: 'absolute', width: 124, height: 124, borderRadius: '50%', border: '3px solid #2d4ccd', animation: 'countRing 0.9s cubic-bezier(0.2,0.6,0.4,1) both' }}
+                  style={{ position: 'absolute', width: 124, height: 124, borderRadius: '50%', border: `3px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, animation: 'countRing 0.9s cubic-bezier(0.2,0.6,0.4,1) both' }}
                 />
                 {/* Circle + number */}
                 <div
                   key={`num-${countdown}`}
-                  style={{ width: 124, height: 124, borderRadius: '50%', background: '#2d4ccd', display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'countIn 0.5s cubic-bezier(0.34,1.26,0.64,1) both' }}
+                  style={{ width: 124, height: 124, borderRadius: '50%', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'countIn 0.5s cubic-bezier(0.34,1.26,0.64,1) both' }}
                 >
                   <span style={{ ...P, fontSize: 34, fontWeight: 500, color: 'white', letterSpacing: '0.25px', lineHeight: 1.235 }}>{countdown}</span>
                 </div>
@@ -3667,8 +3678,8 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               {/* Stop button with progress arc */}
               <div style={{ position: 'relative', width: 124, height: 124 }}>
                 <svg style={{ position: 'absolute', inset: 0, transform: 'rotate(-90deg)' }} width="124" height="124" viewBox="0 0 124 124">
-                  <circle cx="62" cy="62" r={R} fill="none" stroke="rgba(45,76,205,0.12)" strokeWidth="3"/>
-                  <circle cx="62" cy="62" r={R} fill="none" stroke="#2d4ccd" strokeWidth="3"
+                  <circle cx="62" cy="62" r={R} fill="none" stroke={`rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`} strokeWidth="3"/>
+                  <circle cx="62" cy="62" r={R} fill="none" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="3"
                     strokeDasharray={circ}
                     strokeDashoffset={circ * (1 - progress)}
                     strokeLinecap="round"
@@ -3677,9 +3688,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                 </svg>
                 <button
                   onClick={pauseRecording}
-                  style={{ position: 'absolute', inset: 0, width: 124, height: 124, borderRadius: '50%', background: 'rgba(45,76,205,0.12)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ position: 'absolute', inset: 0, width: 124, height: 124, borderRadius: '50%', background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <div style={{ width: 32, height: 32, background: '#2d4ccd', borderRadius: 4 }} />
+                  <div style={{ width: 32, height: 32, background: smartScribeColor(smartScribeSkin, '#2d4ccd'), borderRadius: 4 }} />
                 </button>
               </div>
             </>
@@ -3690,12 +3701,12 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               style={{ background: '#eaedfa', border: 'none', cursor: 'pointer', borderRadius: 99, width: 209, height: 124, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}
             >
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                <rect x="9" y="1" width="6" height="13" rx="3" stroke="#2d4ccd" strokeWidth="1.5"/>
-                <path d="M5 11a7 7 0 0014 0" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="12" y1="18" x2="12" y2="22" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="8" y1="22" x2="16" y2="22" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
+                <rect x="9" y="1" width="6" height="13" rx="3" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5"/>
+                <path d="M5 11a7 7 0 0014 0" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="12" y1="18" x2="12" y2="22" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round"/>
+                <line x1="8" y1="22" x2="16" y2="22" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
-              <span style={{ ...P, fontSize: 20, fontWeight: 600, color: '#2d4ccd', letterSpacing: 0, lineHeight: 1.6 }}>Resume</span>
+              <span style={{ ...P, fontSize: 20, fontWeight: 600, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: 0, lineHeight: 1.6 }}>Resume</span>
             </button>
           ) : (
             /* ── Idle state ── */
@@ -3703,7 +3714,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center' }}>Press to start capturing</span>
               <button
                 onClick={startCountdown}
-                style={{ width: 124, height: 124, borderRadius: '50%', background: '#2d4ccd', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{ width: 124, height: 124, borderRadius: '50%', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
                   <rect x="9" y="2" width="6" height="12" rx="3" fill="white"/>
@@ -3725,9 +3736,9 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
               <div style={{ position: 'relative', flexShrink: 0, width: 24, height: 24 }}>
                 <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'white', position: 'absolute' }} />
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: 2, left: 2 }}>
-                  <circle cx="12" cy="12" r="9" stroke="#2d4ccd" strokeWidth="1.5"/>
-                  <line x1="12" y1="8" x2="12" y2="8" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round"/>
-                  <line x1="12" y1="11" x2="12" y2="16" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="12" cy="12" r="9" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5"/>
+                  <line x1="12" y1="8" x2="12" y2="8" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="12" y1="11" x2="12" y2="16" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               </div>
               <span style={{ ...P, fontSize: 16, fontWeight: 400, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: 1.5 }}>Maximum capture time is 4 min.</span>
@@ -3802,7 +3813,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
             onKeyDown={handleTextareaKeyDown}
             readOnly={animating}
             placeholder={'Add info about the activity, like\n\nWhat you did with your client\nWhat their response was\nYour plans until and for your next activity'}
-            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: animating ? '#fafbff' : 'white', transition: 'border-color 0.15s, background 0.2s' }}
+            style={{ ...P, width: '100%', minHeight: 220, border: `2px solid ${notes.length > 0 ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`, borderRadius: 8, padding: compactMode ? '12px' : '16px', fontSize: compactMode ? 13 : 16, color: notes.length > 0 ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.6)', lineHeight: 1.5, letterSpacing: '0.15px', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: animating ? '#fafbff' : 'white', transition: 'border-color 0.15s, background 0.2s' }}
           />
           <p style={{ ...P, fontSize: 14, color: hasEnoughText ? '#3e9987' : 'rgba(33,33,33,0.38)', marginTop: 8, lineHeight: 1.57, letterSpacing: '0.1px', transition: 'color 0.2s' }}>
             {hasEnoughText ? 'Ready to generate suggestions.' : 'Add more info to generate suggestions.'}
@@ -3831,12 +3842,12 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         <button
           disabled={!hasEnoughText}
           onClick={() => { if (hasEnoughText) proceedFromCapture('text'); }}
-          style={{ width: '100%', padding: '8px 22px', background: hasEnoughText ? '#2d4ccd' : 'rgba(45,76,205,0.12)', color: hasEnoughText ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: hasEnoughText ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', transition: 'background 0.2s, color 0.2s', boxShadow: hasEnoughText ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
+          style={{ width: '100%', padding: '8px 22px', background: hasEnoughText ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, color: hasEnoughText ? 'white' : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: hasEnoughText ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', transition: 'background 0.2s, color 0.2s', boxShadow: hasEnoughText ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
         >
           {mobileMode ? 'Next' : (compactMode ? 'Generate' : 'Generate Suggestions')}
         </button>
         <div style={{ textAlign: 'center', marginTop: 10, marginBottom: 4 }}>
-          <span style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
+          <span style={{ ...P, fontSize: 13, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
             What should I write?
           </span>
         </div>
@@ -3853,6 +3864,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, mobileMode = false, sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
@@ -3995,12 +4007,12 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
             <div key={tab} onClick={() => setActiveTab(tab)}
               style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === tab ? 500 : 400, color: activeTab === tab ? '#2d4ccd' : 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{TAB_LABELS[tab]}</span>
+                <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === tab ? 500 : 400, color: activeTab === tab ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.6)', letterSpacing: '0.4px' }}>{TAB_LABELS[tab]}</span>
                 {tab === 'coding' && (
-                  <span style={{ background: '#2d4ccd', borderRadius: 9999, padding: '1px 6px', fontSize: 12, fontWeight: 500, color: 'white', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px', lineHeight: '18px' }}>{CPT_COUNT}</span>
+                  <span style={{ background: smartScribeColor(smartScribeSkin, '#2d4ccd'), borderRadius: 9999, padding: '1px 6px', fontSize: 12, fontWeight: 500, color: 'white', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px', lineHeight: '18px' }}>{CPT_COUNT}</span>
                 )}
               </div>
-              {activeTab === tab && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: '#2d4ccd', borderRadius: '2px 2px 0 0' }} />}
+              {activeTab === tab && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: smartScribeColor(smartScribeSkin, '#2d4ccd'), borderRadius: '2px 2px 0 0' }} />}
             </div>
           ))}
         </div>
@@ -4098,7 +4110,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                             <span style={{ ...P, flex: 1, fontSize: 14, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, letterSpacing: '0.17px' }}>
                               {card.field !== section ? card.field : null}
                               {isEdited && !isEditing && (
-                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: '#2d4ccd', background: '#eaedfa', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.3px', verticalAlign: 'middle' }}>Edited</span>
+                                <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 600, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), background: '#eaedfa', borderRadius: 4, padding: '1px 5px', letterSpacing: '0.3px', verticalAlign: 'middle' }}>Edited</span>
                               )}
                             </span>
                             {!isExcluded && (
@@ -4115,7 +4127,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                           {/* Row 2: content box — textarea when editing, styled box when reading */}
                           {isEditing ? (
                             /* ── Edit mode: blue border only on this wrapper ── */
-                            <div style={{ position: 'relative', border: '1.5px solid #2d4ccd', borderRadius: 8, padding: 8 }}>
+                            <div style={{ position: 'relative', border: `1.5px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderRadius: 8, padding: 8 }}>
                               <textarea
                                 autoFocus
                                 ref={el => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; el.setSelectionRange(el.value.length, el.value.length); } }}
@@ -4146,7 +4158,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                       onMouseEnter={() => setHoveredEditKey(excludeKey)}
                                       onMouseLeave={() => setHoveredEditKey(null)}
                                       title="Edit suggestion"
-                                      style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredEditKey === excludeKey ? 'rgba(45,76,205,0.12)' : 'transparent', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#2d4ccd', transition: 'background 0.12s', padding: 0, flexShrink: 0 }}>
+                                      style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', background: hoveredEditKey === excludeKey ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)` : 'transparent', border: 'none', borderRadius: 4, cursor: 'pointer', color: smartScribeColor(smartScribeSkin, '#2d4ccd'), transition: 'background 0.12s', padding: 0, flexShrink: 0 }}>
                                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3 10.917V13H5.08304L11.2266 6.85641L9.14359 4.77336L3 10.917ZM12.8375 5.24552C13.0542 5.02888 13.0542 4.67893 12.8375 4.4623L11.5377 3.16248C11.3211 2.94584 10.9711 2.94584 10.7545 3.16248L9.73795 4.179L11.821 6.26205L12.8375 5.24552Z" fill="currentColor" fillOpacity="0.87"/>
                                       </svg>
@@ -4170,7 +4182,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                               {/* Row 3: Copy/Add actions OR Undo Exclusion */}
                               {isExcluded ? (
                                 <button onClick={() => toggleExclude(excludeKey)}
-                                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, width: '100%', height: 24, padding: 6, background: '#eaedfa', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
+                                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, width: '100%', height: 24, padding: 6, background: '#eaedfa', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.16px' }}>
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 7v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                   Undo Exclusion
                                 </button>
@@ -4181,13 +4193,13 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                     navigator.clipboard.writeText(displayContent).catch(() => {});
                                     setCopied(prev => new Set(prev).add(excludeKey));
                                     setTimeout(() => setCopied(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
-                                  }} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>
+                                  }} style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.16px' }}>
                                     {copied.has(excludeKey) ? (
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                     ) : (
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
                                     )}
-                                    <span style={{ color: copied.has(excludeKey) ? '#22c55e' : '#2d4ccd' }}>{copied.has(excludeKey) ? 'Copied!' : 'Copy'}</span>
+                                    <span style={{ color: copied.has(excludeKey) ? '#22c55e' : smartScribeColor(smartScribeSkin, '#2d4ccd') }}>{copied.has(excludeKey) ? 'Copied!' : 'Copy'}</span>
                                   </button>
                                   <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
                                   {/* Add to EHR button */}
@@ -4203,7 +4215,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                           setAdded(prev => new Set(prev).add(excludeKey));
                                           setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
                                         }}
-                                        style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: canAdd ? 'pointer' : 'default', ...P, fontSize: 12, fontWeight: 500, color: isAdded ? '#22c55e' : canAdd ? '#2d4ccd' : '#bbb', letterSpacing: '0.16px', transition: 'color 0.15s' }}
+                                        style={{ display: 'flex', alignItems: 'center', gap: 4, height: 24, padding: 6, background: 'none', border: 'none', borderRadius: 4, cursor: canAdd ? 'pointer' : 'default', ...P, fontSize: 12, fontWeight: 500, color: isAdded ? '#22c55e' : canAdd ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#bbb', letterSpacing: '0.16px', transition: 'color 0.15s' }}
                                       >
                                         {isAdded ? (
                                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -4233,7 +4245,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                 <span style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.2)', display: 'inline-block' }} />
                                 <button onClick={() => confirmEdit(excludeKey)}
                                   disabled={!editDraft.trim() || editDraft.trim() === displayContent.trim()}
-                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? '#2d4ccd' : '#bbb', background: 'none', border: 'none', cursor: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
+                                  style={{ display: 'flex', alignItems: 'center', gap: 4, ...P, fontSize: 14, fontWeight: 500, color: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#bbb', background: 'none', border: 'none', cursor: (editDraft.trim() && editDraft.trim() !== displayContent.trim()) ? 'pointer' : 'default', letterSpacing: '0.1px', padding: '0 4px' }}>
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                   Update
                                 </button>
@@ -4264,11 +4276,11 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 });
                 onAddedToEHR?.();
               }}
-              style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
+              style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
               {mobileMode ? 'Send to EHR' : (compactMode ? `Add ${activeCount} to EHR` : `Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`)}
             </button>
           ) : (
-            <button style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'rgba(45,76,205,0.12)', border: 'none', borderRadius: 4, cursor: 'default', ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px' }}>
+            <button style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, border: 'none', borderRadius: 4, cursor: 'default', ...P, fontSize: 13, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M6 7l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -4285,6 +4297,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
 // ── Insights Panel ────────────────────────────────────────────────────────────
 
 function InsightsPanel({ sidebarW = 467 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const compactMode = sidebarW < 380;
   // Compute how wide the arc chart can actually be:
@@ -4433,16 +4446,16 @@ function InsightsPanel({ sidebarW = 467 }) {
             <button onClick={() => setSelectedTheme(null)}
               style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M15 18l-6-6 6-6" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 18l-6-6 6-6" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <span style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.16px' }}>Back</span>
+              <span style={{ ...P, fontSize: 13, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.16px' }}>Back</span>
             </button>
           ) : <div />}
           <div style={{ display: 'flex', background: '#f0f0f0', borderRadius: 20, padding: 2 }}>
             {['graph', 'tags'].map(v => (
               <button key={v} onClick={() => setThemesView(v)}
                 style={{ padding: '3px 14px', borderRadius: 18, border: 'none', cursor: 'pointer', ...P, fontSize: 12, fontWeight: 500, letterSpacing: '0.16px',
-                  background: themesView === v ? '#2d4ccd' : 'transparent',
+                  background: themesView === v ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'transparent',
                   color: themesView === v ? 'white' : 'rgba(0,0,0,0.54)',
                   transition: 'background 0.2s ease, color 0.2s ease, transform 0.15s ease',
                   transform: themesView === v ? 'scale(1.04)' : 'scale(1)',
@@ -4589,7 +4602,7 @@ function InsightsPanel({ sidebarW = 467 }) {
                   /* Tags view for the selected theme */
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, padding: '8px 0' }}>
                     {tData.words.map(w => (
-                      <span key={w} style={{ ...P, fontSize: 12, fontWeight: 400, color: '#2d4ccd', border: '1px solid rgba(45,76,205,0.5)', borderRadius: 4, padding: '2px 8px', letterSpacing: '0.16px' }}>{w}</span>
+                      <span key={w} style={{ ...P, fontSize: 12, fontWeight: 400, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: `1px solid rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.5)`, borderRadius: 4, padding: '2px 8px', letterSpacing: '0.16px' }}>{w}</span>
                     ))}
                   </div>
                 )}
@@ -4631,7 +4644,7 @@ function InsightsPanel({ sidebarW = 467 }) {
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {t.words.map(w => (
-                      <span key={w} style={{ ...P, fontSize: 12, fontWeight: 400, color: '#2d4ccd', border: '1px solid rgba(45,76,205,0.5)', borderRadius: 4, padding: '2px 8px', letterSpacing: '0.16px' }}>{w}</span>
+                      <span key={w} style={{ ...P, fontSize: 12, fontWeight: 400, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: `1px solid rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.5)`, borderRadius: 4, padding: '2px 8px', letterSpacing: '0.16px' }}>{w}</span>
                     ))}
                   </div>
                 </div>
@@ -4694,19 +4707,22 @@ const cptCodeLabel = { fontFamily: 'Poppins, sans-serif', fontSize: 14, fontWeig
 // Chip: selected uses #5770d7 bg; unselected uses white bg + #bdbdbd border
 const cptChipBase = { padding: '3px 10px', borderRadius: 9999, border: '1px solid #bdbdbd', background: '#fff', fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.87)', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px' };
 const cptChipActive = { background: '#5770d7', color: '#fff', border: '1px solid #5770d7', fontWeight: 500 };
-// Edit / Cancel / Confirm buttons
-const cptEditBtn = { fontSize: 12, fontWeight: 500, color: '#2d4ccd', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px', alignSelf: 'flex-end', display: 'flex', alignItems: 'center', gap: 4 };
+// Edit / Cancel / Confirm buttons — a function (not a static object) since its color depends on the SmartScribe skin
+const cptEditBtn = (smartScribeSkin) => ({ fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.16px', alignSelf: 'flex-end', display: 'flex', alignItems: 'center', gap: 4 });
 const cptDivider = { height: 1, background: 'rgba(0,0,0,0.12)', margin: '8px 0' };
 
 // Primary CPT badge: #e3f2fd bg, #2d4ccd text
-const BadgePrimary = ({ compactMode = false }) => (
-  <div style={{ background: '#e3f2fd', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2d4ccd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-    </svg>
-    <span style={{ fontSize: 12, fontWeight: 500, color: '#2d4ccd', fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Primary' : 'Primary CPT Code'}</span>
-  </div>
-);
+const BadgePrimary = ({ compactMode = false }) => {
+  const smartScribeSkin = useSmartScribeSkin();
+  return (
+    <div style={{ background: '#e3f2fd', borderRadius: 4, padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span style={{ fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), fontFamily: 'Poppins, sans-serif', letterSpacing: '0.46px' }}>{compactMode ? 'Primary' : 'Primary CPT Code'}</span>
+    </div>
+  );
+};
 
 /// Add-on CPT badge: #ede7f6 bg, #6d3fcc text
 const BadgeAddOn = ({ compactMode = false }) => (
@@ -4719,6 +4735,7 @@ const BadgeAddOn = ({ compactMode = false }) => (
 );
 
 function PrimaryCptCard({ compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [patient, setPatient] = useState('Established');
   const [location, setLocation] = useState('Outpatient/Office');
   const [complexity, setComplexity] = useState('Moderate');
@@ -4764,7 +4781,7 @@ function PrimaryCptCard({ compactMode = false }) {
               <span style={cptValue}>{complexityText[complexity]}</span>
             </div>
           </div>
-          <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
+          <button style={cptEditBtn(smartScribeSkin)} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
         </>
       ) : (
         <>
@@ -4801,9 +4818,9 @@ function PrimaryCptCard({ compactMode = false }) {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
-            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
+            <button style={{ ...cptEditBtn(smartScribeSkin), color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
             <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-            <button style={cptEditBtn} onClick={() => setConfirmed(true)}>Confirm</button>
+            <button style={cptEditBtn(smartScribeSkin)} onClick={() => setConfirmed(true)}>Confirm</button>
           </div>
         </>
       )}
@@ -4812,6 +4829,7 @@ function PrimaryCptCard({ compactMode = false }) {
 }
 
 function AddOnCptCard({ compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [start, setStart]       = useState('10:00 A.M.');
   const [end, setEnd]           = useState('10:30 A.M.');
   const [confirmed, setConfirmed] = useState(true);
@@ -4861,7 +4879,7 @@ function AddOnCptCard({ compactMode = false }) {
       {confirmed ? (
         <>
           <TimeRow />
-          <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
+          <button style={cptEditBtn(smartScribeSkin)} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
         </>
       ) : (
         <>
@@ -4893,9 +4911,9 @@ function AddOnCptCard({ compactMode = false }) {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
-            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
+            <button style={{ ...cptEditBtn(smartScribeSkin), color: '#8194e1' }} onClick={() => setConfirmed(true)}>Cancel</button>
             <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-            <button style={cptEditBtn} onClick={() => setConfirmed(true)}>Confirm</button>
+            <button style={cptEditBtn(smartScribeSkin)} onClick={() => setConfirmed(true)}>Confirm</button>
           </div>
         </>
       )}
@@ -4906,6 +4924,7 @@ function AddOnCptCard({ compactMode = false }) {
 const IC_DEFAULT = 'Patient experiencing significant anxiety with co-occurring sleep disturbance and work-related stressors. Required coordination of care communication, management of treatment complications, and explanation of complex treatment plan. Interactive complexity added due to engagement of family member and need for cognitive reframing of treatment goals.';
 
 function InteractiveComplexityCptCard({ compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [confirmed, setConfirmed] = useState(true);
   const [narrative, setNarrative] = useState(IC_DEFAULT);
   const [draft, setDraft]         = useState(IC_DEFAULT);
@@ -4923,7 +4942,7 @@ function InteractiveComplexityCptCard({ compactMode = false }) {
             <div style={cptLabel}><IconLayers />Interactive Complexity</div>
             <p style={{ ...cptValue, margin: 0 }}>{narrative}</p>
           </div>
-          <button style={cptEditBtn} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
+          <button style={cptEditBtn(smartScribeSkin)} onClick={() => setConfirmed(false)}><IconPencil />Edit Data</button>
         </>
       ) : (
         <>
@@ -4937,9 +4956,9 @@ function InteractiveComplexityCptCard({ compactMode = false }) {
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8, paddingTop: 4 }}>
-            <button style={{ ...cptEditBtn, color: '#8194e1' }} onClick={() => { setDraft(narrative); setConfirmed(true); }}>Cancel</button>
+            <button style={{ ...cptEditBtn(smartScribeSkin), color: '#8194e1' }} onClick={() => { setDraft(narrative); setConfirmed(true); }}>Cancel</button>
             <span style={{ width: 1, height: 12, background: 'rgba(0,0,0,0.12)', display: 'inline-block' }} />
-            <button style={cptEditBtn} onClick={() => { setNarrative(draft); setConfirmed(true); }}>Confirm</button>
+            <button style={cptEditBtn(smartScribeSkin)} onClick={() => { setNarrative(draft); setConfirmed(true); }}>Confirm</button>
           </div>
         </>
       )}
@@ -4982,13 +5001,14 @@ function CodingPanel() {
 }
 
 function PlaceholderPanel({ tab }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12, padding: 32 }}>
-      <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(45,76,205,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.08)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="18" height="18" rx="3" stroke="#2D4CCD" strokeWidth="1.8"/>
-          <path d="M8 12h8M12 8v8" stroke="#2D4CCD" strokeWidth="1.8" strokeLinecap="round"/>
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.8"/>
+          <path d="M8 12h8M12 8v8" stroke={smartScribeColor(smartScribeSkin, '#2D4CCD')} strokeWidth="1.8" strokeLinecap="round"/>
         </svg>
       </div>
       <span style={{ ...P, fontSize: 18, fontWeight: 500, color: '#212121' }}>{NAV_LABELS[tab] ?? tab}</span>
@@ -5292,6 +5312,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
 
 function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false }) {
   const { lockedDownMode } = useLockedDownModeContext();
+  const smartScribeSkin = useSmartScribeSkin();
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState('');
@@ -5356,13 +5377,13 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
         {/* Tab bar — full width, no outer padding */}
         <div style={{ display: 'flex', marginTop: 8 }}>
           {/* Add to EHR tab */}
-          <div onClick={() => switchTab('ehr')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'ehr' ? '2px solid #2D4CCD' : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Add to EHR</span>
+          <div onClick={() => switchTab('ehr')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'ehr' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Add to EHR</span>
             <span style={{ background: activeTab === 'ehr' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'ehr' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'ehr' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{ehrList.length}</span>
           </div>
           {/* Marked as Done tab */}
-          <div onClick={() => switchTab('done')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'done' ? '2px solid #2D4CCD' : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? '#2D4CCD' : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{compactMode ? 'Done' : 'Marked as Done'}</span>
+          <div onClick={() => switchTab('done')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'done' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{compactMode ? 'Done' : 'Marked as Done'}</span>
             <span style={{ background: activeTab === 'done' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'done' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'done' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{doneList.length}</span>
           </div>
         </div>
@@ -5396,7 +5417,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                 {/* Month header — full-width lavender band */}
                 {showMonthHeader && (
                   <div style={{ padding: '8px 16px 6px' }}>
-                    <span style={{ ...P, fontSize: 12, fontWeight: 500, color: '#2D4CCD', letterSpacing: '0.14px' }}>{MONTH_FULL[session.month] ?? session.month}</span>
+                    <span style={{ ...P, fontSize: 12, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2D4CCD'), letterSpacing: '0.14px' }}>{MONTH_FULL[session.month] ?? session.month}</span>
                   </div>
                 )}
 
@@ -5419,7 +5440,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                     style={{ flex: 1, background: isExpanded ? '#E5F6FD' : 'white', borderRadius: 8, border: '1px solid #ECEFF1', boxShadow: '0 2px 1px -1px rgba(0,0,0,.20), 0 1px 1px 0 rgba(0,0,0,.05), 0 1px 3px 0 rgba(0,0,0,.12)', overflow: 'hidden', display: 'flex', cursor: 'pointer', transition: 'background 150ms ease' }}>
 
                     {/* Left strip — teal for EHR, navy for Done */}
-                    <div style={{ width: 6, flexShrink: 0, background: activeTab === 'done' ? '#293D87' : '#01579B' }} />
+                    <div style={{ width: 6, flexShrink: 0, background: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#293D87') : '#01579B' }} />
 
                     {/* Card content */}
                     <div style={{ flex: 1, minWidth: 0, padding: compactMode ? '8px 8px 8px 10px' : '12px 12px 12px 14px' }}>
@@ -5446,11 +5467,11 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                               <p style={{ ...P, fontSize: 13, color: '#212121', lineHeight: 1.6, margin: '0 0 12px' }}>
                                 {session.summary.length > 100 ? session.summary.slice(0, 100) + '… ' : session.summary}
                                 {session.summary.length > 100 && (
-                                  <span style={{ color: '#2D4CCD', cursor: 'pointer' }} onClick={e => e.stopPropagation()}>see more</span>
+                                  <span style={{ color: smartScribeColor(smartScribeSkin, '#2D4CCD'), cursor: 'pointer' }} onClick={e => e.stopPropagation()}>see more</span>
                                 )}
                               </p>
                               <span
-                                style={{ ...P, fontSize: 13, fontWeight: 400, color: '#2D4CCD', textDecoration: 'underline', cursor: 'pointer' }}
+                                style={{ ...P, fontSize: 13, fontWeight: 400, color: smartScribeColor(smartScribeSkin, '#2D4CCD'), textDecoration: 'underline', cursor: 'pointer' }}
                                 onClick={e => { e.stopPropagation(); undoDone(session.id); }}
                               >
                                 Undo Submission
@@ -5464,14 +5485,14 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                               </p>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'nowrap' }}>
                                 <span
-                                  style={{ ...P, fontSize: compactMode ? 12 : 13, fontWeight: 400, color: '#2D4CCD', textDecoration: 'underline', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                                  style={{ ...P, fontSize: compactMode ? 12 : 13, fontWeight: 400, color: smartScribeColor(smartScribeSkin, '#2D4CCD'), textDecoration: 'underline', cursor: 'pointer', whiteSpace: 'nowrap' }}
                                   onClick={e => { e.stopPropagation(); markDone(session.id); }}
                                 >
                                   {compactMode ? 'Mark submitted' : 'Mark as submitted'}
                                 </span>
                                 <button
                                   onClick={e => { e.stopPropagation(); onSelectSession(session); }}
-                                  style={{ padding: compactMode ? '5px 10px' : '7px 18px', background: '#2D4CCD', color: 'white', ...P, fontSize: compactMode ? 12 : 13, fontWeight: 500, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.1px', whiteSpace: 'nowrap' }}
+                                  style={{ padding: compactMode ? '5px 10px' : '7px 18px', background: smartScribeColor(smartScribeSkin, '#2D4CCD'), color: 'white', ...P, fontSize: compactMode ? 12 : 13, fontWeight: 500, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.1px', whiteSpace: 'nowrap' }}
                                 >
                                   {compactMode ? 'Select' : 'Select session'}
                                 </button>
@@ -5495,6 +5516,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 // ── Capture Session Panel (step 1) ────────────────────────────────────────────
 
 function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const SHADOW_EL16 = '0px 8px 10px -5px rgba(0,0,0,0.2), 0px 16px 24px 1px rgba(0,0,0,0.1), 0px 6px 30px 5px rgba(0,0,0,0.12)';
@@ -5579,7 +5601,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             {/* Client autocomplete input */}
             <div style={{ flex: 1, position: 'relative' }}>
-              <div style={{ background: 'white', border: `1px solid ${dropdownOpen ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: dropdownOpen && filtered.length > 0 ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: 'text' }}
+              <div style={{ background: 'white', border: `1px solid ${dropdownOpen ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`, borderRadius: dropdownOpen && filtered.length > 0 ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: 'text' }}
                 onClick={() => { setDropdownOpen(true); inputRef.current?.focus(); }}>
                 <input
                   ref={inputRef}
@@ -5598,7 +5620,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
               </div>
               {/* Dropdown */}
               {dropdownOpen && filtered.length > 0 && (
-                <div style={{ position: 'absolute', left: 0, right: 0, top: '100%', background: 'white', border: '1px solid #2d4ccd', borderTop: 'none', borderRadius: '0 0 8px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: 220, overflowY: 'auto' }}>
+                <div style={{ position: 'absolute', left: 0, right: 0, top: '100%', background: 'white', border: `1px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderTop: 'none', borderRadius: '0 0 8px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 100, maxHeight: 220, overflowY: 'auto' }}>
                   {filtered.map((name, i) => (
                     <div key={name}
                       onMouseDown={e => { e.preventDefault(); selectClient(name); }}
@@ -5623,7 +5645,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           {/* Pronouns + Edit Client */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, width: '100%' }}>
             {pronouns && <span style={{ ...P, fontSize: 14, color: 'rgba(33,33,33,0.8)', letterSpacing: '0.15px', lineHeight: '24px' }}>Pronouns: {pronouns}</span>}
-            <span style={{ ...P, fontSize: 14, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.15px', lineHeight: '24px', cursor: 'pointer' }}>Edit Client</span>
+            <span style={{ ...P, fontSize: 14, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.15px', lineHeight: '24px', cursor: 'pointer' }}>Edit Client</span>
           </div>
         </div>
 
@@ -5645,7 +5667,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {/* icon: info when collapsed, green check when expanded */}
             <div style={{ position: 'relative', width: 24, height: 24, flexShrink: 0 }}>
-              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: planExpanded ? 'rgba(46,160,67,0.15)' : 'rgba(45,76,205,0.15)' }} />
+              <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: planExpanded ? 'rgba(46,160,67,0.15)' : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.15)` }} />
               {planExpanded ? (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ position: 'absolute', top: 2, left: 2 }}>
                   <circle cx="10" cy="10" r="9" stroke="#2ea043" strokeWidth="1.5"/>
@@ -5653,8 +5675,8 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
                 </svg>
               ) : (
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ position: 'absolute', top: 2, left: 2 }}>
-                  <circle cx="10" cy="10" r="9" stroke="#2d4ccd" strokeWidth="1.5"/>
-                  <path d="M10 9v5M10 7v.5" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round"/>
+                  <circle cx="10" cy="10" r="9" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5"/>
+                  <path d="M10 9v5M10 7v.5" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round"/>
                 </svg>
               )}
             </div>
@@ -5665,16 +5687,16 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           </div>
           {/* View / Hide button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '22px' }}>{planExpanded ? 'Hide' : 'View'}</span>
+            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '22px' }}>{planExpanded ? 'Hide' : 'View'}</span>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ transform: planExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
-              <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="#2d4ccd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M4.5 6.75L9 11.25L13.5 6.75" stroke={smartScribeColor(smartScribeSkin, '#2d4ccd')} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </div>
 
         {/* Expanded plan content */}
         {planExpanded && (
-          <div style={{ background: '#F4F6FD', borderRadius: '0 0 8px 8px', padding: '12px 16px 16px', marginBottom: 16, borderTop: '1px solid rgba(45,76,205,0.12)' }}>
+          <div style={{ background: '#F4F6FD', borderRadius: '0 0 8px 8px', padding: '12px 16px 16px', marginBottom: 16, borderTop: `1px solid rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)` }}>
             {PLAN_ITEMS.map((item, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: i < PLAN_ITEMS.length - 1 ? 10 : 0 }}>
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
@@ -5718,7 +5740,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
             const dt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
             onCapture(clientName, dt);
           }}
-          style={{ width: '100%', padding: '8px 16px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
+          style={{ width: '100%', padding: '8px 16px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
         >
           Capture Session
         </button>
@@ -5728,6 +5750,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
 }
 
 function AcFormField({ label, defaultValue, options = [], compactMode = false, forcedValue, disabled }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [selected, setSelected] = useState(forcedValue ?? defaultValue);
   const [open, setOpen] = useState(false);
@@ -5739,22 +5762,22 @@ function AcFormField({ label, defaultValue, options = [], compactMode = false, f
       )}
       <div
         onClick={() => { if (!disabled) setOpen(v => !v); }}
-        style={{ background: 'white', border: `1px solid ${open ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.6 : 1, userSelect: 'none' }}
+        style={{ background: 'white', border: `1px solid ${open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.6 : 1, userSelect: 'none' }}
       >
         <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected}</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
-          <path d="M5 7.5L10 12.5L15 7.5" stroke={open ? '#2d4ccd' : 'rgba(33,33,33,0.54)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M5 7.5L10 12.5L15 7.5" stroke={open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.54)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
       {open && (
-        <div style={{ position: 'absolute', left: 0, right: 0, background: 'white', border: '1px solid #2d4ccd', borderTop: 'none', borderRadius: '0 0 8px 8px', zIndex: 20, boxShadow: '0px 4px 10px rgba(0,0,0,0.12)' }}>
+        <div style={{ position: 'absolute', left: 0, right: 0, background: 'white', border: `1px solid ${smartScribeColor(smartScribeSkin, '#2d4ccd')}`, borderTop: 'none', borderRadius: '0 0 8px 8px', zIndex: 20, boxShadow: '0px 4px 10px rgba(0,0,0,0.12)' }}>
           {options.map((opt, i) => (
             <div
               key={opt}
               onClick={() => { setSelected(opt); setOpen(false); }}
-              style={{ padding: '10px 12px', ...P, fontSize: 15, color: opt === selected ? '#2d4ccd' : 'rgba(0,0,0,0.87)', background: opt === selected ? 'rgba(45,76,205,0.06)' : 'white', cursor: 'pointer', borderBottom: i < options.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', borderRadius: i === options.length - 1 ? '0 0 8px 8px' : 0, fontWeight: opt === selected ? 500 : 400 }}
+              style={{ padding: '10px 12px', ...P, fontSize: 15, color: opt === selected ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.87)', background: opt === selected ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white', cursor: 'pointer', borderBottom: i < options.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', borderRadius: i === options.length - 1 ? '0 0 8px 8px' : 0, fontWeight: opt === selected ? 500 : 400 }}
               onMouseEnter={e => { if (opt !== selected) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = opt === selected ? 'rgba(45,76,205,0.06)' : 'white'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = opt === selected ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white'; }}
             >
               {opt}
             </div>
@@ -5825,6 +5848,7 @@ function AudioMeter() {
 // ── Session In Progress Panel ─────────────────────────────────────────────────
 
 function EqBars({ activeCount, total, animOffset }) {
+  const smartScribeSkin = useSmartScribeSkin();
   return (
     <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
       {Array.from({ length: total }, (_, i) => (
@@ -5834,7 +5858,7 @@ function EqBars({ activeCount, total, animOffset }) {
             width: 3,
             height: 8,
             borderRadius: 1,
-            background: i < activeCount ? '#2d4ccd' : 'rgba(45,76,205,0.38)',
+            background: i < activeCount ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`,
             animation: i < activeCount
               ? `eqBounce ${0.55 + (i % 5) * 0.12}s ease-in-out ${(i * 40 + animOffset) % 400}ms infinite alternate`
               : 'none',
@@ -5848,6 +5872,7 @@ function EqBars({ activeCount, total, animOffset }) {
 }
 
 function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEndSession }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const getElapsed = () => startedAt ? Math.floor((Date.now() - startedAt) / 1000) : 0;
   const [seconds, setSeconds] = useState(getElapsed);
@@ -5930,14 +5955,14 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
           </svg>
           <div style={{ ...P, fontSize: timerSize, fontWeight: 600, color: 'rgba(0,0,0,0.88)', lineHeight: 1, textAlign: 'center', transition: 'font-size 0.2s' }}>{mins}:{secs}</div>
         </div>
-        <div style={{ background: 'rgba(45,76,205,0.05)', borderRadius: 8, padding: 16, width: '100%', maxWidth: 295, overflow: 'hidden', boxSizing: 'border-box' }}>
+        <div style={{ background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.05)`, borderRadius: 8, padding: 16, width: '100%', maxWidth: 295, overflow: 'hidden', boxSizing: 'border-box' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
             <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap', flexShrink: 0 }}>Your microphone:</span>
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'flex-end' }}>
               <EqBars activeCount={3} total={19} animOffset={0} />
             </div>
           </div>
-          <div style={{ height: 1, background: 'rgba(45,76,205,0.15)', marginBottom: 12 }} />
+          <div style={{ height: 1, background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.15)`, marginBottom: 12 }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ ...P, fontSize: 14, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.17px', lineHeight: 1.43, whiteSpace: 'nowrap', flexShrink: 0 }}>Clients microphone:</span>
             <div style={{ flex: 1, overflow: 'hidden', display: 'flex', justifyContent: 'flex-end' }}>
@@ -5951,7 +5976,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
         <div style={{ flexShrink: 0, background: '#EAEDFA', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
           <button
             onClick={onEndSession}
-            style={{ width: '100%', padding: '8px 22px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
+            style={{ width: '100%', padding: '8px 22px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
           >
             End Session
           </button>
@@ -5964,6 +5989,7 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
 // ── Session End Panel ─────────────────────────────────────────────────────────
 
 function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onStartNew, compactMode = false }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
   const containerRef = useRef(null);
@@ -6021,10 +6047,10 @@ function SessionEndPanel({ clientName, dateTime, onBack, onGoToActivities, onSta
 
       {/* Bottom CTAs */}
       <div style={{ background: '#EAEDFA', padding: '12px 16px 24px', borderTop: '1px solid rgba(0,0,0,0.08)', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <button onClick={onGoToActivities} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 13, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
+        <button onClick={onGoToActivities} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 13, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}>
           {compactMode ? 'Activities' : 'Go to Activities List'}
         </button>
-        <button onClick={onStartNew} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#2d4ccd', ...P, fontWeight: 500, fontSize: 13, border: '1px solid rgba(45,76,205,0.5)', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px' }}>
+        <button onClick={onStartNew} style={{ width: '100%', height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: smartScribeColor(smartScribeSkin, '#2d4ccd'), ...P, fontWeight: 500, fontSize: 13, border: `1px solid rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.5)`, borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px' }}>
           {compactMode ? 'New Session' : 'Start New Session'}
         </button>
       </div>
