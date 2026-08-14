@@ -30,4 +30,12 @@ export const CLIENT_LOCK_RULES = {
     activityType: 'BPS Assessment',
     population: 'Adult',
   },
+  'Group, Anger Management': {
+    noteType: 'AngerManagementGroup',
+    noteTypeLabel: 'Group Note',
+  },
+  'Group, SUD': {
+    noteType: 'SUDGroup',
+    noteTypeLabel: 'Group Note',
+  },
 };
