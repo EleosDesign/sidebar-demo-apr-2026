@@ -17,6 +17,7 @@ const EHR_LIST = [
   { id: 'pce',        label: 'PCE' },
   { id: 'eleos-lite', label: 'Eleos Lite' },
   { id: 'streamline', label: 'Streamline' },
+  { id: 'calmhsa',    label: 'CalMHSA SmartCare' },
 ];
 
 export default function EhrSelector() {

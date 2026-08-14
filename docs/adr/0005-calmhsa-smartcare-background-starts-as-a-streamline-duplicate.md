@@ -1,0 +1,3 @@
+# CalMHSA SmartCare background starts as a duplicate of Streamline
+
+CalMHSA's underlying EHR is Netsmart SmartCare, the same product the existing Streamline background (`EHR_BACKGROUNDS.streamline`) already renders — but every other EHR chrome in `EhrBackgrounds.jsx` is hand-built from its own vendor-specific reference assets rather than shared between registry entries. We shipped `CalmhsaBg` as a literal copy of `StreamlineBg` (own component function, own `/calmhsa-smartcare-logo.png` asset) instead of designing distinct CalMHSA-specific chrome up front, so the two can diverge independently once CalMHSA-specific SmartCare details are scoped, rather than blocking this issue on that design work.
