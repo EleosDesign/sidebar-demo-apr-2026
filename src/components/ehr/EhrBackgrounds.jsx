@@ -5,7 +5,7 @@
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
-import { useEhrContext, useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.jsx';
+import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeEnhanceShadow } from '../../contexts/EhrContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
@@ -229,12 +229,7 @@ function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
           borderRadius: 16,
           padding: '10px 12px',
           display: 'flex', flexDirection: 'column', gap: 8,
-          boxShadow: [
-            '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
-            '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
-            '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
-            '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
-          ].join(', '),
+          boxShadow: smartScribeEnhanceShadow(skin, { includeOuterFade: false }),
           // ── Sizing — wide enough for title on one line ───────────────
           width: 'max-content',
           minWidth: 260,
@@ -366,13 +361,7 @@ function InlineLaunchButton({ skin = false }) {
           background: '#afbbec', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: 0, transition: 'background 0.15s',
-          boxShadow: [
-            '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
-            '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
-            '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
-            '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
-            '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
-          ].join(', '),
+          boxShadow: smartScribeEnhanceShadow(skin),
         }}
       >
         <div style={{

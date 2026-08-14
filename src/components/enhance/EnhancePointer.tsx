@@ -3,7 +3,7 @@ import {
   SHIELD_VIEWBOX, SHIELD_PATH, SHIELD_CHECK,
   ARC_VIEWBOX, ARC_PATH,
 } from './svg-o7kqsvjwcs';
-import { smartScribeColor } from '../../contexts/EhrContext.jsx';
+import { smartScribeColor, smartScribeEnhanceShadow } from '../../contexts/EhrContext.jsx';
 
 interface EnhancePointerProps {
   /** Number of outstanding quality items to show on the badge. */
@@ -97,13 +97,7 @@ export default function EnhancePointer({
             justifyContent: 'center',
             padding: 0,
             transition: 'background 0.15s',
-            boxShadow: [
-              '0px 7.3px 14.6px 0px rgba(41,61,135,0.14)',
-              '0px 25.55px 25.55px 0px rgba(41,61,135,0.12)',
-              '0px 58.4px 34.675px 0px rgba(41,61,135,0.07)',
-              '0px 102.2px 40.15px 0px rgba(41,61,135,0.02)',
-              '0px 160.6px 45.625px 0px rgba(41,61,135,0)',
-            ].join(', '),
+            boxShadow: smartScribeEnhanceShadow(skin),
           }}
           onMouseEnter={e => {
             setShowTooltip(true);

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import { useMobileModeContext } from '../../contexts/MobileModeContext.jsx';
+import { useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.jsx';
 
 function IconCard() {
   return (
@@ -61,6 +62,7 @@ function IconPhone() {
 }
 
 function Toggle({ on }) {
+  const smartScribeSkin = useSmartScribeSkin();
   return (
     <span
       style={{
@@ -70,7 +72,7 @@ function Toggle({ on }) {
         borderRadius: 999,
         width: 36,
         height: 20,
-        backgroundColor: on ? 'var(--primary, #2D4CCD)' : 'rgba(0,0,0,0.15)',
+        backgroundColor: on ? `var(--primary, ${smartScribeColor(smartScribeSkin, '#2D4CCD')})` : 'rgba(0,0,0,0.15)',
         transition: 'background-color 0.2s',
       }}
     >
@@ -92,6 +94,7 @@ function Toggle({ on }) {
 }
 
 export default function UserMenu() {
+  const smartScribeSkin = useSmartScribeSkin();
   const [open, setOpen] = useState(false);
   const { useEhrNoteHeaders, setUseEhrNoteHeaders } = useEhrNoteHeadersContext();
   const { enterMobileMode } = useMobileModeContext();
@@ -184,8 +187,8 @@ export default function UserMenu() {
         {/* Avatar — same SVG as original FigmaUserAvatar */}
         <svg width="25" height="24" viewBox="0 0 25 24" fill="none">
           <rect width="24" height="24" rx="12" fill="#EAEDFA"/>
-          <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill="#2D4CCD"/>
-          <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill="#2D4CCD"/>
+          <path fillRule="evenodd" clipRule="evenodd" d="M12 6.66683C10.5272 6.66683 9.33333 7.86074 9.33333 9.3335C9.33333 10.8063 10.5272 12.0002 12 12.0002C13.4728 12.0002 14.6667 10.8063 14.6667 9.3335C14.6667 7.86074 13.4728 6.66683 12 6.66683ZM8 9.3335C8 7.12436 9.79086 5.3335 12 5.3335C14.2091 5.3335 16 7.12436 16 9.3335C16 11.5426 14.2091 13.3335 12 13.3335C9.79086 13.3335 8 11.5426 8 9.3335Z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')}/>
+          <path fillRule="evenodd" clipRule="evenodd" d="M7.75736 13.7574C8.88258 12.6321 10.4087 12 12 12C13.5913 12 15.1174 12.6321 16.2426 13.7574C17.3679 14.8826 18 16.4087 18 18C18 18.3682 17.7015 18.6667 17.3333 18.6667C16.9651 18.6667 16.6667 18.3682 16.6667 18C16.6667 16.7623 16.175 15.5753 15.2998 14.7002C14.4247 13.825 13.2377 13.3333 12 13.3333C10.7623 13.3333 9.57534 13.825 8.70017 14.7002C7.825 15.5753 7.33333 16.7623 7.33333 18C7.33333 18.3682 7.03486 18.6667 6.66667 18.6667C6.29848 18.6667 6 18.3682 6 18C6 16.4087 6.63214 14.8826 7.75736 13.7574Z" fill={smartScribeColor(smartScribeSkin, '#2D4CCD')}/>
           <circle cx="22" cy="4" r="3" fill="#46BC9E"/>
         </svg>
         {/* Chevron */}

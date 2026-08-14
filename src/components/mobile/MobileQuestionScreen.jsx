@@ -1,3 +1,5 @@
+import { useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
+
 const P = { fontFamily: 'Poppins, sans-serif' };
 
 function IconBack() {
@@ -9,13 +11,14 @@ function IconBack() {
 }
 
 function OptionRow({ label, checked, multi, onToggle }) {
+  const smartScribeSkin = useSmartScribeSkin();
   return (
     <button
       onClick={onToggle}
       style={{
         width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-        background: checked ? 'rgba(45,76,205,0.06)' : 'white',
-        border: `1.5px solid ${checked ? '#2d4ccd' : 'rgba(33,33,33,0.23)'}`,
+        background: checked ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white',
+        border: `1.5px solid ${checked ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`,
         borderRadius: 8, padding: '12px 14px', marginBottom: 10,
         cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s, border-color 0.15s',
       }}
@@ -23,8 +26,8 @@ function OptionRow({ label, checked, multi, onToggle }) {
       <span style={{
         width: 20, height: 20, flexShrink: 0,
         borderRadius: multi ? 5 : '50%',
-        border: `1.5px solid ${checked ? '#2d4ccd' : 'rgba(33,33,33,0.38)'}`,
-        background: checked ? '#2d4ccd' : 'white',
+        border: `1.5px solid ${checked ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.38)'}`,
+        background: checked ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'white',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         {checked && multi && (
@@ -43,6 +46,7 @@ export default function MobileQuestionScreen({
   screen, stepIndex, totalSteps, value, onChange, otherValue, onOtherChange,
   onBack, onNext, onSkip, isLast, compactMode,
 }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const multi = screen.type === 'multi';
   const selected = multi ? (value || []) : value;
   const showOther = screen.allowOtherText && (multi ? selected.includes('Other') : selected === 'Other');
@@ -96,12 +100,12 @@ export default function MobileQuestionScreen({
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 12px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
           onClick={onNext}
-          style={{ width: '100%', padding: '8px 22px', background: '#2d4ccd', color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
+          style={{ width: '100%', padding: '8px 22px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
         >
           {isLast ? 'Finish' : 'Next'}
         </button>
         <div style={{ textAlign: 'center', marginTop: 10, marginBottom: 4 }}>
-          <span onClick={onSkip} style={{ ...P, fontSize: 13, fontWeight: 500, color: '#2d4ccd', letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
+          <span onClick={onSkip} style={{ ...P, fontSize: 13, fontWeight: 500, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), letterSpacing: '0.46px', lineHeight: '22px', cursor: 'pointer' }}>
             Skip to suggestions
           </span>
         </div>
