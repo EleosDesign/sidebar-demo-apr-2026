@@ -28,6 +28,10 @@ The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext
 
 The EHR background option (`EHR_BACKGROUNDS.calmhsa`, dropdown label "CalMHSA SmartCare") representing the SmartCare EHR chrome used by CalMHSA member counties. Visually identical today to the **Streamline** background (`EHR_BACKGROUNDS.streamline`), which represents the same underlying SmartCare product for other Streamline-branded clients — per ADR-0005, the two are separate components/assets so they can diverge independently as CalMHSA-specific chrome is designed. Not linked to CalMHSA's own note structures (`ehrSystem: "calmhsa-psych"` in `note-structures.json`, e.g. Patricia Rodriguez / Ashlyn Rivera) — EHR background selection stays fully manual via the EHR dropdown for every EHR, decoupled from Demo Mode client/note-type locking.
 
+## SmartScribe skin
+
+The Companion Sidebar nav rail and launcher circle/pill's alternate navy visual state, active whenever `useEhrContext().selectedEhr` is `'streamline'` or `'calmhsa'` (per ADR-0006, both trigger it — they render the same underlying SmartCare product per the **CalMHSA SmartCare** entry above). Recolors the nav rail background and active-icon color from the default Eleos navy to the Streamline navy, and swaps the launcher's Eleos mark for a distinct white "Streamline" mark. Scoped to the rail and launcher only — sidebar panels (Activities, Add Summary, etc.) keep the default light Eleos styling; there's no design reference for a navy variant of them. Purely an internal name for this visual concept — it implies no visible copy change. Not to be confused with the "SMARTscribe™ Powered by Eleos Health" splash/loader branding that appears elsewhere in the same Figma file, which is an unrelated loading-screen feature, not this skin.
+
 ## Note Complete screen
 
 The confirmation screen (`MobileNoteComplete`) shown after a suggestions review is sent to the EHR while in Mobile Mode. Offers "Go to Mobile Activities List" and "Enter New Summary." Used both by the new-summary flow (`AddSummaryPanel`) and, per this session's fix, by the session-select-from-activities flow.

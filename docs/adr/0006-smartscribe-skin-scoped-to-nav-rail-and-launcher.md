@@ -1,0 +1,9 @@
+# SmartScribe skin is scoped to the nav rail and launcher/pill only
+
+Issue #61's Figma reference (`Streamline-SmartCare`, node `92:12355`) has exactly one concretely-designed skin element: the `Companion Launch Button` component (`218:3832`, under "Master Components") — a navy circle with a white `StreamlineLogo` mark swapped in for the Eleos mark. An initial pass mistook a navy-tinted panel elsewhere in the file (`345:5169`, under "Flash Screen Components") for a navy-skinned "My Activities" panel, but re-screenshotting the content layer alone (`345:5170`, excluding the `LoaderBackdrop` layer stacked on top) showed the panel underneath is unchanged, plain light Eleos styling — the navy tint belonged to an unrelated splash/loading-screen overlay ("SMARTscribe™ Powered by Eleos Health," in a section literally named "Flash Screen Prototype/Components"), not to this issue's skin.
+
+We scoped the implementation to what's actually designed: the nav rail (navy background + active-icon color) and the launcher circle/pill (navy fill + hover state + mark swap). Sidebar panels (Activities, Add Summary, Capture Session, Clients, etc.) keep the default light Eleos styling — there's no design reference for a navy variant of them, and inventing one would be a guess rather than an implementation of a real spec.
+
+Implementation mechanism: derive a boolean from `useEhrContext().selectedEhr` (`'streamline'` or `'calmhsa'` → skin active) via a `useSmartScribeSkin()` helper in `EhrContext.jsx`, and swap hardcoded color literals inline at each nav-rail/launcher usage site, rather than introducing scoped CSS custom properties — this matches `ClinicianScene.jsx`'s existing all-inline-styles convention.
+
+"SmartScribe" is the internal name for this concept (see `CONTEXT.md`) — it does not correspond to any visible copy change; the nav rail's "Powered by eleos"-style wordmark stays as-is (it's already white by default, since the rail is always navy).

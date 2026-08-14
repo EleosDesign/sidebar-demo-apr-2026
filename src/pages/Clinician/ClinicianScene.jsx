@@ -5,7 +5,7 @@ import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
 import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolbar';
 import LQAReview from '../../components/ui/LQAReview.jsx';
-import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useEhrContext, useSmartScribeSkin } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
@@ -248,10 +248,16 @@ export default function ClinicianScene({ step, onNext }) {
 
 function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isRecording }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
   const dragRef = useRef(null);
   const dotsOnRight = pos.x + BTN_W / 2 > window.innerWidth / 2;
   const ehrCtx = useEhrField();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+  const smartScribeSkin = useSmartScribeSkin();
+  const smartScribeNavy = '#254A67';
+  const circleFill = smartScribeSkin
+    ? (isHovering ? 'rgba(37,74,103,0.6)' : smartScribeNavy)
+    : '#293D87';
 
   const handleMouseDown = (e) => {
     if (e.button !== 0) return;
@@ -304,7 +310,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
         {/* Dark navy pill */}
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          gap: 0, width: 68, height: 140, backgroundColor: '#293D87', borderRadius: 34,
+          gap: 0, width: 68, height: 140, backgroundColor: smartScribeSkin ? smartScribeNavy : '#293D87', borderRadius: 34,
           boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
           padding: '14px 0', boxSizing: 'border-box',
         }}>
@@ -318,7 +324,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
             {lqaStatus === 'loading' && (
               <div style={{ position: 'absolute', inset: -3, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.15)', borderTopColor: 'rgba(255,255,255,0.8)', animation: 'lqaPillSpin 0.9s linear infinite', zIndex: 3 }} />
             )}
-            <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: '2px solid #293D87', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: '50%', background: '#ef4444', border: `2px solid ${smartScribeSkin ? smartScribeNavy : '#293D87'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4 }}>
               {lqaStatus === 'loading' ? (
                 <>
                   <style>{`@keyframes lqaBadgePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }`}</style>
@@ -371,19 +377,22 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
         <div style={{ position: 'absolute', top: '16.67%', right: '33.33%', bottom: '16.67%', left: '33.33%' }}>
           <div style={{ position: 'absolute', top: '-6.25%', right: '-12.5%', bottom: '-6.25%', left: '-12.5%' }}>
             <svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" viewBox="0 0 10 18" fill="none">
-              <path d="M2 10C2.55228 10 3 9.55228 3 9C3 8.44772 2.55228 8 2 8C1.44772 8 1 8.44772 1 9C1 9.55228 1.44772 10 2 10Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 3C2.55228 3 3 2.55228 3 2C3 1.44772 2.55228 1 2 1C1.44772 1 1 1.44772 1 2C1 2.55228 1.44772 3 2 3Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 17C2.55228 17 3 16.5523 3 16C3 15.4477 2.55228 15 2 15C1.44772 15 1 15.4477 1 16C1 16.5523 1.44772 17 2 17Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8 10C8.55228 10 9 9.55228 9 9C9 8.44772 8.55228 8 8 8C7.44772 8 7 8.44772 7 9C7 9.55228 7.44772 10 8 10Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8 3C8.55228 3 9 2.55228 9 2C9 1.44772 8.55228 1 8 1C7.44772 1 7 1.44772 7 2C7 2.55228 7.44772 3 8 3Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M8 17C8.55228 17 9 16.5523 9 16C9 15.4477 8.55228 15 8 15C7.44772 15 7 15.4477 7 16C7 16.5523 7.44772 17 8 17Z" stroke="#293D87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 10C2.55228 10 3 9.55228 3 9C3 8.44772 2.55228 8 2 8C1.44772 8 1 8.44772 1 9C1 9.55228 1.44772 10 2 10Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 3C2.55228 3 3 2.55228 3 2C3 1.44772 2.55228 1 2 1C1.44772 1 1 1.44772 1 2C1 2.55228 1.44772 3 2 3Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 17C2.55228 17 3 16.5523 3 16C3 15.4477 2.55228 15 2 15C1.44772 15 1 15.4477 1 16C1 16.5523 1.44772 17 2 17Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 10C8.55228 10 9 9.55228 9 9C9 8.44772 8.55228 8 8 8C7.44772 8 7 8.44772 7 9C7 9.55228 7.44772 10 8 10Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 3C8.55228 3 9 2.55228 9 2C9 1.44772 8.55228 1 8 1C7.44772 1 7 1.44772 7 2C7 2.55228 7.44772 3 8 3Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 17C8.55228 17 9 16.5523 9 16C9 15.4477 8.55228 15 8 15C7.44772 15 7 15.4477 7 16C7 16.5523 7.44772 17 8 17Z" stroke={smartScribeSkin ? smartScribeNavy : '#293D87'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </div>
       </div>
 
       {/* Logo circle — 56×56 navy with inner shadow + exact logo overlay */}
-      <div style={{ width: 56, height: 56, position: 'relative', flexShrink: 0, marginRight: -2, borderRadius: '50%', animation: 'lbFloat 3s ease-in-out infinite, lbPulse 3s ease-in-out infinite' }}>
+      <div
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        style={{ width: 56, height: 56, position: 'relative', flexShrink: 0, marginRight: -2, borderRadius: '50%', animation: 'lbFloat 3s ease-in-out infinite, lbPulse 3s ease-in-out infinite' }}>
         {/* Background circle with Figma inner shadow (dy:-4, opacity:0.25) */}
         <svg width="56" height="56" viewBox="0 0 56 56" fill="none" style={{ position: 'absolute', top: 0, left: 0 }}>
           <defs>
@@ -397,7 +406,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
               <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
             </filter>
           </defs>
-          <circle cx="28" cy="28" r="28" fill="#293D87" filter="url(#lbInnerShadow)"/>
+          <circle cx="28" cy="28" r="28" fill={circleFill} filter="url(#lbInnerShadow)"/>
         </svg>
 
         {isRecording ? (
@@ -417,6 +426,18 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
                 animation: `lbWave 1.1s ease-in-out ${delay}s infinite`,
               }} />
             ))}
+          </div>
+        ) : smartScribeSkin ? (
+          /* Streamline mark — white, centered, 22×32.4 (matches Figma StreamlineLogo aspect) */
+          <div style={{ position: 'absolute', left: 17, top: 11.8, width: 22, height: 32.4 }}>
+            <svg preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 13.9662 20.5693" fill="none">
+              <path d="M2.87445 2.85929L5.27588 0.97343C5.60035 0.720805 5.9259 0.450573 6.2586 0.222037C6.68331 -0.0697127 7.32222 -0.0789627 7.7449 0.224055C8.7449 0.94093 9.72595 1.70022 10.717 2.43109C10.9482 2.60157 11.168 2.79625 11.3981 2.96997L12.5923 3.85929C12.8859 4.07457 13.2633 4.27532 13.4841 4.56372C14.0125 5.25382 13.9567 6.0818 13.9583 6.89684L13.9567 8.86606C13.9554 9.24422 13.9416 9.70718 13.9662 10.078L11.1497 8.00668C10.1134 7.23082 9.08749 6.43645 8.04219 5.67122C7.68301 5.40829 7.31917 5.13745 6.96985 4.86213C6.72983 5.09052 6.29497 5.41511 6.02347 5.62914C5.77481 5.82518 5.40237 6.13648 5.15103 6.30672C5.00945 6.20964 4.83226 6.0547 4.68558 5.94591C4.20629 5.59232 3.73035 5.23423 3.25781 4.87168C3.06235 4.71979 2.85074 4.54648 2.65794 4.39084C2.44158 4.21618 1.95165 3.93895 1.77372 3.7585C1.85978 3.66788 2.06644 3.5107 2.17292 3.42518L2.87445 2.85929Z" fill="white"/>
+              <path d="M2.87445 2.85928L2.93594 2.92273C3.0227 2.91455 3.10485 2.88043 3.1859 2.87536C3.63997 2.84752 4.11276 2.86605 4.51751 3.09677C4.91112 3.32114 5.25465 3.62107 5.62233 3.88553C6.03215 4.18032 6.49056 4.4635 6.88037 4.78275C6.9112 4.80805 6.94104 4.83453 6.96985 4.86212C6.72983 5.09052 6.29497 5.4151 6.02347 5.62914C5.77481 5.82518 5.40237 6.13648 5.15103 6.30671C5.00945 6.20964 4.83226 6.05469 4.68558 5.94591C4.20629 5.59232 3.73035 5.23423 3.25781 4.87168C3.06235 4.71978 2.85074 4.54648 2.65794 4.39084C2.44158 4.21618 1.95165 3.93894 1.77372 3.7585C1.85978 3.66787 2.06644 3.51069 2.17292 3.42518L2.87445 2.85928Z" fill="#254A67" fillOpacity="0.5"/>
+              <path d="M0.0181269 10.5017C0.633841 10.9922 1.32022 11.4433 1.94527 11.9281C2.15977 12.0945 2.41066 12.2366 2.62741 12.4049C2.87909 12.6003 3.12391 12.8046 3.37757 12.9967L5.67988 14.7102C6.12875 15.043 6.56932 15.3831 7.02341 15.7092L7.03434 15.721C7.14054 15.833 7.45522 16.0346 7.59429 16.1287C7.81273 16.2778 8.02805 16.4314 8.24013 16.5894C8.88463 17.0666 9.20995 17.4587 9.197 18.3251C9.19364 18.4828 9.1722 18.6394 9.13307 18.7923C9.08947 18.9594 8.93955 19.2496 8.9583 19.3558C8.48355 19.7708 7.59982 20.5903 6.93429 20.5689C6.37675 20.5508 5.64891 19.913 5.19827 19.5841C4.54164 19.1001 3.88752 18.6126 3.23593 18.1217C3.02061 17.9574 2.81468 17.7839 2.5972 17.6196L1.37504 16.7103C0.603055 16.1396 0.0836627 15.7905 0.0276805 14.7137C-0.000748053 14.1669 -0.000801551 13.6086 0.00398416 13.0605C0.0113949 12.2112 -0.0172481 11.3494 0.0181269 10.5017Z" fill="white"/>
+              <path d="M8.8238 14.28C8.62269 14.1195 8.41828 13.9632 8.21069 13.8112C7.71258 13.4452 7.30317 13.1576 7.22555 12.4937C7.18194 12.125 7.29528 11.67 7.53471 11.3822C7.69707 11.1871 8.01157 10.9109 8.2295 10.7702C8.67296 10.4837 9.20255 9.92321 9.65505 9.68571C9.82946 9.76696 10.0138 9.91901 10.1738 10.0363C10.5947 10.3447 10.9837 10.6569 11.3961 10.9819C11.9905 11.4503 12.6977 11.9001 13.2699 12.3855C13.6008 12.6662 13.8124 13.2622 13.8984 13.6635C14.0238 14.2731 13.9489 14.8701 13.6958 15.4378C13.493 15.8926 13.1992 16.0598 12.8169 16.3469C12.6385 16.4837 12.4614 16.6221 12.2857 16.7623C11.8187 17.1307 11.3398 17.4821 10.8974 17.8796C10.8459 17.926 10.7938 17.9708 10.7386 18.0128C10.6772 18.0799 10.2399 18.4014 10.1457 18.4685C9.82596 18.696 9.28528 19.1798 8.95832 19.3558C8.93957 19.2496 9.08948 18.9594 9.13308 18.7923C9.17221 18.6394 9.19366 18.4828 9.19701 18.3251C9.20996 17.4587 8.88464 17.0665 8.24014 16.5894C8.02807 16.4314 7.81274 16.2778 7.5943 16.1287C7.45523 16.0346 7.14055 15.833 7.03435 15.721L7.02342 15.7092C7.43792 15.3393 7.92753 14.9942 8.35894 14.6402C8.45196 14.5639 8.76466 14.3512 8.8238 14.28Z" fill="white"/>
+              <path d="M8.8238 14.28C9.04951 14.4234 9.41666 14.7159 9.63494 14.8825C10.1432 15.2705 10.8222 15.6359 10.96 16.3123C11.0428 16.719 11.019 17.334 10.8569 17.7224C10.8331 17.7794 10.7386 17.9862 10.7386 18.0128C10.6772 18.0799 10.2399 18.4014 10.1457 18.4685C9.82596 18.696 9.28528 19.1798 8.95832 19.3558C8.93957 19.2496 9.08948 18.9594 9.13308 18.7923C9.17221 18.6394 9.19366 18.4828 9.19701 18.3251C9.20996 17.4587 8.88464 17.0665 8.24014 16.5894C8.02807 16.4314 7.81274 16.2778 7.5943 16.1287C7.45523 16.0346 7.14055 15.833 7.03435 15.721L7.02342 15.7092C7.43792 15.3393 7.92753 14.9942 8.35894 14.6402C8.45196 14.5639 8.76466 14.3512 8.8238 14.28Z" fill="#254A67" fillOpacity="0.5"/>
+              <path d="M1.77373 3.7585C1.95166 3.93895 2.44159 4.21618 2.65794 4.39084C2.85075 4.54648 3.06235 4.71979 3.25782 4.87168C3.73035 5.23423 4.2063 5.59232 4.68559 5.94591C4.83227 6.0547 5.00946 6.20964 5.15103 6.30671C5.48868 6.52625 6.22687 7.08125 6.4223 7.39759C6.63103 7.72977 6.69791 8.13175 6.60793 8.51359C6.41223 9.32318 5.62171 9.67925 5.02894 10.184C4.79223 10.3856 4.42698 10.6734 4.16448 10.8329C3.92375 10.6048 3.56219 10.3751 3.30075 10.1621C2.7443 9.70889 2.1646 9.28707 1.59509 8.85309C1.2901 8.6207 0.790426 8.29095 0.560462 8.01029C0.145855 7.5043 -0.0313954 6.72657 0.031801 6.08216C0.146676 4.91077 0.959408 4.43832 1.77373 3.7585Z" fill="white"/>
+            </svg>
           </div>
         ) : (
           /* _CTA Logo: 34×34 container, centered at x=11, y=13 of 56×56 circle */
@@ -571,6 +592,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
   const { setClientName } = useEhrContext();
+  const smartScribeSkin = useSmartScribeSkin();
   const { lockedDownMode } = useLockedDownModeContext();
   const { mobileMode, sessionKey, enterMobileMode, exitMobileMode } = useMobileModeContext();
 
@@ -1110,7 +1132,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
                 background: activeNav === key ? 'rgba(255,255,255,0.15)' : 'transparent',
               }}
             >
-              <NavRailIcon navKey={key} active={activeNav === key} />
+              <NavRailIcon navKey={key} active={activeNav === key} skin={smartScribeSkin} />
               <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: activeNav === key ? 500 : 400, color: 'white' }}>
                 {NAV_ITEM_LABELS[key]}
               </span>
@@ -4989,8 +5011,8 @@ const NAV_ITEM_LABELS = {
 };
 
 // Reusable icon renderer (used both in rail and overflow menu)
-function NavRailIcon({ navKey, active, size = 24 }) {
-  const c = active ? '#293D87' : 'white';
+function NavRailIcon({ navKey, active, size = 24, skin = false }) {
+  const c = active ? (skin ? '#254A67' : '#293D87') : 'white';
   switch (navKey) {
     case 'activities':
       return (
@@ -5105,6 +5127,8 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
   const nav = (tab) => () => onNavClick(tab);
   const isActive = (key) => activeItem === key;
   const ehrCtx = useEhrField();
+  const smartScribeSkin = useSmartScribeSkin();
+  const railNavy = smartScribeSkin ? '#254A67' : '#293D87';
 
   const iconSize = compactMode ? 18 : 24;
   const iconBg = (active) => ({
@@ -5132,7 +5156,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         return (
           <NavTooltip key="activities" label="Activities" show={!showLabels}>
             <div onClick={nav('activities')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, marginTop: compactMode ? 10 : 12, cursor: 'pointer' }}>
-              <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} size={iconSize} /></div>
+              <div style={iconBg(isActive('activities'))}><NavRailIcon navKey="activities" active={isActive('activities')} size={iconSize} skin={smartScribeSkin} /></div>
               {lbl('Activities', isActive('activities'))}
             </div>
           </NavTooltip>
@@ -5141,7 +5165,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         return (
           <NavTooltip key="summary" label="Add Summary" show={!showLabels}>
             <div onClick={nav('summary')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-              <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} size={iconSize} /></div>
+              <div style={iconBg(isActive('summary'))}><NavRailIcon navKey="summary" active={isActive('summary')} size={iconSize} skin={smartScribeSkin} /></div>
               {lbl2('Add', 'Summary', isActive('summary'))}
             </div>
           </NavTooltip>
@@ -5151,7 +5175,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
           <NavTooltip key="capture" label="Capture Audio" show={!showLabels}>
             <div onClick={nav('capture')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
               <div style={{ position: 'relative' }}>
-                <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} size={iconSize} /></div>
+                <div style={iconBg(isActive('capture'))}><NavRailIcon navKey="capture" active={isActive('capture')} size={iconSize} skin={smartScribeSkin} /></div>
                 {isCapturing && (
                   <>
                     <style>{`@keyframes capturePing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.4); opacity: 0; } } @keyframes captureGlow { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }`}</style>
@@ -5170,7 +5194,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         return (
           <NavTooltip key="clients" label="Clients" show={!showLabels}>
             <div onClick={nav('clients')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
-              <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} size={iconSize} /></div>
+              <div style={iconBg(isActive('clients'))}><NavRailIcon navKey="clients" active={isActive('clients')} size={iconSize} skin={smartScribeSkin} /></div>
               {lbl('Clients', isActive('clients'))}
             </div>
           </NavTooltip>
@@ -5181,7 +5205,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
           <NavTooltip key="quality" label="Note Quality" show={!showLabels}>
             <div onClick={nav('quality')} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
               <div style={{ position: 'relative' }}>
-                <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} size={iconSize} /></div>
+                <div style={iconBg(isActive('quality'))}><NavRailIcon navKey="quality" active={isActive('quality')} size={iconSize} skin={smartScribeSkin} /></div>
                 {lqaStatus === 'loading' && (
                   <>
                     <style>{`@keyframes lqaSpin { to { transform: rotate(360deg); } }`}</style>
@@ -5206,13 +5230,13 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
   const moreActive = showMore || overflowActive;
 
   return (
-    <div style={{ width: compactMode ? 54 : 74, flexShrink: 0, background: '#293D87', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 24, paddingBottom: 24, position: 'relative' }}>
+    <div style={{ width: compactMode ? 54 : 74, flexShrink: 0, background: railNavy, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 24, paddingBottom: 24, position: 'relative' }}>
 
       {/* ── Resize handle — same color as rail, pill indicates drag target ── */}
       <div
         data-resize-handle="true"
         onMouseDown={onResizeMouseDown}
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 20, cursor: 'ns-resize', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, background: '#293D87' }}
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 20, cursor: 'ns-resize', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, background: railNavy }}
       >
         <div style={{ width: 28, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.45)' }} />
       </div>
@@ -5233,9 +5257,9 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         <div onClick={onMoreClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: compactMode ? 20 : 14, cursor: 'pointer' }}>
           <div style={iconBg(moreActive)}>
             <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
-              <circle cx="5" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
-              <circle cx="12" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
-              <circle cx="19" cy="12" r="2" fill={moreActive ? '#293D87' : 'white'}/>
+              <circle cx="5" cy="12" r="2" fill={moreActive ? railNavy : 'white'}/>
+              <circle cx="12" cy="12" r="2" fill={moreActive ? railNavy : 'white'}/>
+              <circle cx="19" cy="12" r="2" fill={moreActive ? railNavy : 'white'}/>
             </svg>
           </div>
           {showLabels && lbl('More', moreActive)}
@@ -5253,7 +5277,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
         <div style={iconBg(isActive('support'))}>
           <svg width="22" height="22" viewBox="25 663 24 25" fill="none">
             <path d="M34.09 672.707C34.3251 672.038 34.7892 671.475 35.4 671.116C36.0108 670.757 36.7289 670.625 37.4272 670.745C38.1255 670.865 38.7588 671.228 39.2151 671.77C39.6713 672.312 39.9211 672.998 39.92 673.707C39.92 675.707 36.92 676.707 36.92 676.707M37 680.707H37.01M47 675.707C47 681.229 42.5228 685.707 37 685.707C31.4772 685.707 27 681.229 27 675.707C27 670.184 31.4772 665.707 37 665.707C42.5228 665.707 47 670.184 47 675.707Z"
-              stroke={isActive('support') ? '#293D87' : 'white'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              stroke={isActive('support') ? railNavy : 'white'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
         {showLabels && lbl('Support', isActive('support'))}
