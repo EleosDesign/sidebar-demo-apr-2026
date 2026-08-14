@@ -13,3 +13,4 @@ dist/
 .serena/
 .vscode/
 graphify-out/
+.playwright-mcp/

@@ -5,7 +5,7 @@
  */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
-import { useEhrContext } from '../../contexts/EhrContext.jsx';
+import { useEhrContext, useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
@@ -165,10 +165,11 @@ function buildEnhancedText(text) {
 // Shares the CTA's lavender bg (#eaedfa) + navy border (#293d87).
 // Draggable via the header row.
 // Animated entrance (spring scale-in from button origin) and exit (fold-away).
-function EnhanceTooltip({ text, onUse, onDismiss }) {
+function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [closing, setClosing] = useState(false);
   const dragRef = useRef(null);
+  const navy = smartScribeColor(skin, '#293d87');
 
   // Trigger exit animation first, then call the real callback after it completes
   const handleDismiss = () => { setClosing(true); setTimeout(onDismiss, 210); };
@@ -224,7 +225,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
         <div style={{
           // ── CTA visual identity ──────────────────────────────────────
           background: '#eaedfa',
-          border: '1.5px solid #293d87',
+          border: `1.5px solid ${navy}`,
           borderRadius: 16,
           padding: '10px 12px',
           display: 'flex', flexDirection: 'column', gap: 8,
@@ -256,7 +257,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
                 <path d="M12 2l2.09 6.26H21l-5.47 3.97 2.09 6.26L12 14.52l-5.62 3.97 2.09-6.26L3 8.26h6.91L12 2z" />
               </svg>
               <span style={{
-                fontSize: 13, fontWeight: 600, color: '#293d87',
+                fontSize: 13, fontWeight: 600, color: navy,
                 letterSpacing: '0.01em', whiteSpace: 'nowrap',
                 fontFamily: 'var(--font-family, inherit)',
               }}>
@@ -269,7 +270,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
               aria-label="Dismiss"
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                padding: 4, color: '#293d87', opacity: 0.5,
+                padding: 4, color: navy, opacity: 0.5,
                 display: 'flex', alignItems: 'center', flexShrink: 0,
               }}
             >
@@ -287,7 +288,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
             borderRadius: 10, padding: '8px 10px',
           }}>
             <p style={{
-              fontSize: 13, color: '#293d87', lineHeight: 1.55, margin: 0,
+              fontSize: 13, color: navy, lineHeight: 1.55, margin: 0,
               fontFamily: "'Segoe UI', Arial, sans-serif",
             }}>
               {text}
@@ -303,7 +304,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
                 height: 26, padding: '0 10px',
                 background: 'none', border: 'none', borderRadius: 20,
                 cursor: 'pointer', fontSize: 12, fontWeight: 500,
-                color: '#293d87', opacity: 0.6,
+                color: navy, opacity: 0.6,
                 fontFamily: 'var(--font-family, inherit)',
               }}
             >
@@ -314,7 +315,7 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
               onClick={handleUse}
               style={{
                 height: 26, padding: '0 12px',
-                background: '#293d87', border: 'none', borderRadius: 20,
+                background: navy, border: 'none', borderRadius: 20,
                 cursor: 'pointer', fontSize: 12, fontWeight: 600,
                 color: '#eaedfa',
                 fontFamily: 'var(--font-family, inherit)',
@@ -339,8 +340,9 @@ function EnhanceTooltip({ text, onUse, onDismiss }) {
 // ── Inline launch button — shown on the last field when it's empty but the rest
 // of the note has content (i.e. the clinician has started writing but hasn't
 // filled the last section yet). Hidden when the entire note is blank.
-function InlineLaunchButton() {
+function InlineLaunchButton({ skin = false }) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const navy = smartScribeColor(skin, '#293d87');
   return (
     <div style={{ position: 'relative', display: 'inline-flex' }}>
       {showTooltip && (
@@ -374,7 +376,7 @@ function InlineLaunchButton() {
         }}
       >
         <div style={{
-          width: 32, height: 32, borderRadius: '50%', background: '#293d87',
+          width: 32, height: 32, borderRadius: '50%', background: navy,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -396,6 +398,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
   const noteTypeCtx = useNoteTypeContext();
   const ehrField = useEhrField();
+  const smartScribeSkin = useSmartScribeSkin();
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sidebarOpen = ehrField?.sidebarOpen ?? false;
   const [focusedField, setFocusedField] = useState(null);
@@ -516,15 +519,17 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                 {showLqaCta && (
                   <EnhancePointer
                     onCheckQuality={() => window.dispatchEvent(new CustomEvent('eleos:openQuality'))}
+                    skin={smartScribeSkin}
                   />
                 )}
                 {showEnhanceBtn && (
                   <EnhanceInlineButton
                     loading={isEnhancing}
                     onClick={() => mockEnhance(s.id, currentValue)}
+                    skin={smartScribeSkin}
                   />
                 )}
-                {showLaunchBtn && <InlineLaunchButton />}
+                {showLaunchBtn && <InlineLaunchButton skin={smartScribeSkin} />}
                 {/* Tooltip card — sits in the same row as the LQA circle */}
                 {isShowingTooltip && (
                   <div style={{ zIndex: 9 }}>
@@ -532,6 +537,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
                       text={tooltipText}
                       onUse={() => applyEnhanced(s.id)}
                       onDismiss={dismissTooltip}
+                      skin={smartScribeSkin}
                     />
                   </div>
                 )}
