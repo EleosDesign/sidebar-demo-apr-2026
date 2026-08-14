@@ -879,7 +879,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             ...daysAgo(0),
             name: captureSession.name,
             time: `${startT} – ${endT}`,
-            type: 'individual',
+            type: captureSession.name?.toLowerCase().includes('group') ? 'group' : 'individual',
             sessionType: 'audio',
             isActive: false,
             summary: 'Audio session captured and transcribed. AI-generated suggestions are ready for EHR review.',
@@ -5672,7 +5672,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
 
         {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : 'note'} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? 'DAP Note'} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+        <AcFormField key={rule?.noteType ? 'locked-note' : (isGroup ? 'group-note' : 'note')} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? (isGroup ? 'Group Note' : 'DAP Note')} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Group Note', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
