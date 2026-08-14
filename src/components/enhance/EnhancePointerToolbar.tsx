@@ -13,6 +13,8 @@ interface EnhancePointerToolbarProps {
   outstandingCount?: number;
   /** Whether a quality check has been performed (shows badge). */
   showBadge?: boolean;
+  /** SmartScribe skin active (Streamline/CalMHSA) — forwarded to EnhancePointer. */
+  skin?: boolean;
 }
 
 /**
@@ -31,6 +33,7 @@ export default function EnhancePointerToolbar({
   onCheckQuality,
   outstandingCount = 0,
   showBadge = false,
+  skin = false,
 }: EnhancePointerToolbarProps) {
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
@@ -155,6 +158,7 @@ export default function EnhancePointerToolbar({
         outstandingCount={outstandingCount}
         showBadge={showBadge}
         onCheckQuality={onCheckQuality}
+        skin={skin}
       />
     </div>,
     document.body,

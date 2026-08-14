@@ -1,9 +1,12 @@
 import React from 'react';
 import { STARS_VIEWBOX, STARS_PATHS } from './svg-efsgtmmfcy';
+import { smartScribeColor } from '../../contexts/EhrContext.jsx';
 
 interface EnhanceInlineButtonProps {
   onClick?: () => void;
   loading?: boolean;
+  /** SmartScribe skin active (Streamline/CalMHSA) — swaps the navy accent to #254A67. */
+  skin?: boolean;
 }
 
 /**
@@ -14,7 +17,8 @@ interface EnhanceInlineButtonProps {
  *   - Stars icon: #F9B534 (gold)
  *   - loading=true shows a spinning icon and "Enhancing…" label
  */
-export default function EnhanceInlineButton({ onClick, loading = false }: EnhanceInlineButtonProps) {
+export default function EnhanceInlineButton({ onClick, loading = false, skin = false }: EnhanceInlineButtonProps) {
+  const navy = smartScribeColor(skin, '#293d87');
   return (
     <>
       <style>{`
@@ -46,7 +50,7 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
         animation: loading
           ? 'enhanceBtnShimmer 1.4s ease-in-out infinite'
           : 'enhanceBtnIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both',
-        border: '1.5px solid #293d87',
+        border: `1.5px solid ${navy}`,
         borderRadius: 20,
         cursor: 'pointer',
         boxShadow: [
@@ -67,7 +71,7 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
       {loading ? (
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="#293d87" strokeWidth="2.5" strokeLinecap="round"
+          stroke={navy} strokeWidth="2.5" strokeLinecap="round"
           style={{ flexShrink: 0, animation: 'spin 0.9s linear infinite' }}
         >
           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
@@ -89,7 +93,7 @@ export default function EnhanceInlineButton({ onClick, loading = false }: Enhanc
       <span style={{
         fontSize: 13,
         fontWeight: 600,
-        color: '#293d87',
+        color: navy,
         letterSpacing: '0.01em',
         fontFamily: 'var(--font-family, inherit)',
         opacity: loading ? 0.6 : 1,

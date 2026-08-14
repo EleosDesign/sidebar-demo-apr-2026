@@ -3,6 +3,7 @@ import {
   SHIELD_VIEWBOX, SHIELD_PATH, SHIELD_CHECK,
   ARC_VIEWBOX, ARC_PATH,
 } from './svg-o7kqsvjwcs';
+import { smartScribeColor } from '../../contexts/EhrContext.jsx';
 
 interface EnhancePointerProps {
   /** Number of outstanding quality items to show on the badge. */
@@ -13,6 +14,8 @@ interface EnhancePointerProps {
   onCheckQuality?: () => void;
   /** Tooltip text. */
   tooltip?: string;
+  /** SmartScribe skin active (Streamline/CalMHSA) — swaps the navy accent to #254A67. */
+  skin?: boolean;
 }
 
 /**
@@ -30,9 +33,11 @@ export default function EnhancePointer({
   showBadge = false,
   onCheckQuality,
   tooltip = 'Check Note Quality',
+  skin = false,
 }: EnhancePointerProps) {
   const [spinning, setSpinning] = useState(true);
   const [showTooltip, setShowTooltip] = useState(false);
+  const navy = smartScribeColor(skin, '#293d87');
 
   // Spin for 3 seconds on mount, then stop
   useEffect(() => {
@@ -114,7 +119,7 @@ export default function EnhancePointer({
             width: 32,
             height: 32,
             borderRadius: '50%',
-            background: '#293d87',
+            background: navy,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -146,7 +151,7 @@ export default function EnhancePointer({
             >
               <path
                 d={ARC_PATH}
-                stroke="#293d87"
+                stroke={navy}
                 strokeWidth="3"
                 strokeLinecap="round"
                 fill="none"
