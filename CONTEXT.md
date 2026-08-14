@@ -24,6 +24,10 @@ Whether the Launcher Button and the Companion Sidebar panel sit closer to the le
 
 The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext`), toggled by the button labeled "Demo Mode" (`LockedDownModeToggle`) and defaulting on. While active, `CLIENT_LOCK_RULES` (`src/data/lockedDownRules.js`) forces session type, setting, and note type to fixed values for the demo clients it lists, overriding whatever the clinician would otherwise pick. Referred to as "Demo toggle" in issue reports — same concept, not a separate one.
 
+## CalMHSA SmartCare
+
+The EHR background option (`EHR_BACKGROUNDS.calmhsa`, dropdown label "CalMHSA SmartCare") representing the SmartCare EHR chrome used by CalMHSA member counties. Visually identical today to the **Streamline** background (`EHR_BACKGROUNDS.streamline`), which represents the same underlying SmartCare product for other Streamline-branded clients — per ADR-0005, the two are separate components/assets so they can diverge independently as CalMHSA-specific chrome is designed. Not linked to CalMHSA's own note structures (`ehrSystem: "calmhsa-psych"` in `note-structures.json`, e.g. Patricia Rodriguez / Ashlyn Rivera) — EHR background selection stays fully manual via the EHR dropdown for every EHR, decoupled from Demo Mode client/note-type locking.
+
 ## Note Complete screen
 
 The confirmation screen (`MobileNoteComplete`) shown after a suggestions review is sent to the EHR while in Mobile Mode. Offers "Go to Mobile Activities List" and "Enter New Summary." Used both by the new-summary flow (`AddSummaryPanel`) and, per this session's fix, by the session-select-from-activities flow.
