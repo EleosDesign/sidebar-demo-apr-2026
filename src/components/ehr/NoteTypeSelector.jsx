@@ -37,7 +37,7 @@ export default function NoteTypeSelector() {
             Note Type
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {NOTE_TYPE_LIST.map(({ id, label }) => {
+            {NOTE_TYPE_LIST.filter(({ id }) => id !== 'AngerManagementGroup').map(({ id, label }) => {
               const isActive = selectedNoteType === id;
               return (
                 <button
