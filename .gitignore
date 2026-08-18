@@ -14,3 +14,5 @@ dist/
 .vscode/
 graphify-out/
 .playwright-mcp/
+playwright-report/
+test-results/

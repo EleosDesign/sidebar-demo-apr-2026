@@ -593,7 +593,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const { setClientName } = useEhrContext();
   const smartScribeSkin = useSmartScribeSkin();
   const { lockedDownMode } = useLockedDownModeContext();
-  const { mobileMode, sessionKey, enterMobileMode, exitMobileMode } = useMobileModeContext();
+  const { mobileMode, sessionKey, exitMobileMode } = useMobileModeContext();
 
   // Bridge: when noteValues change after analysis completes, mark as dirty so Re-Run Analysis enables
   useEffect(() => {
@@ -603,8 +603,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   }, [noteTypeCtx?.noteValues]); // eslint-disable-line
 
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
-  // Mobile Mode always lands on the Add Summary flow, freshly, on every entry
-  useEffect(() => { if (mobileMode) setNavTab('summary'); }, [mobileMode, sessionKey]);
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
   const [ending, setEnding] = useState(false);
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
@@ -620,6 +618,18 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const [addedSessions, setAddedSessions] = useState(() => savedState?.addedSessions ?? []);
   // Session currently being worked on in Add Summary (set when suggestions phase is reached)
   const [pendingEHRSession, setPendingEHRSession] = useState(null);
+  const [mobileSummaryMethod, setMobileSummaryMethod] = useState(null);
+  const [summarySeq, setSummarySeq] = useState(0);
+  const [skipCaptureReadiness, setSkipCaptureReadiness] = useState(false);
+
+  // Every Mobile Mode entry starts from the shared Activities list.
+  useEffect(() => {
+    if (!mobileMode) return;
+    setNavTab('activities');
+    setPhase('sessions');
+    setActivitiesInitialTab('ehr');
+    setMobileSummaryMethod(null);
+  }, [mobileMode, sessionKey]);
 
   // ── Drag & resize state ─────────────────────────────────────────────────────
   const G = SIDEBAR_BOTTOM_GAP; // uniform edge gap: top / right / bottom / left
@@ -884,6 +894,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         dateTime={captureSession.dateTime}
         startedAt={captureSession.recordingStartedAt}
         onBack={() => { setCapturePhase(null); setPhase('form'); }}
+        mobileMode={mobileMode}
         onEndSession={() => {
           // Build an activity entry for the captured session and add to Add to EHR
           const startT = captureSession.dateTime?.split(', ').at(-1) ?? '10:30 AM';
@@ -924,14 +935,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     );
 
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} mobileMode={mobileMode} skipReadiness={skipCaptureReadiness} onSkipReadiness={() => setSkipCaptureReadiness(true)} />;
     }
     if (navTab === 'activities') {
       if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
       if (phase === 'complete' && mobileMode) return (
         <MobileNoteComplete
           onGoToActivities={() => { setActivitiesSession(null); setPhase('sessions'); }}
-          onStartNew={() => { setActivitiesSession(null); setPhase('sessions'); enterMobileMode(); }}
+          onStartNew={() => { setActivitiesSession(null); setMobileSummaryMethod(null); setSummarySeq(seq => seq + 1); setNavTab('summary'); }}
         />
       );
       if (phase === 'suggestions' && activitiesSession) return <SuggestionsPanel
@@ -945,6 +956,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         mobileMode={mobileMode}
         sidebarW={sidebarW}
         onAddedToEHR={() => {
+          setDoneIds(prev => new Set([...prev, activitiesSession.id]));
           if (mobileMode) setPhase('complete');
         }}
       />;
@@ -955,6 +967,19 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
         onUndoDone={id => { setDoneIds(prev => { const n = new Set(prev); n.delete(id); return n; }); }}
         compactMode={compactMode}
+        mobileMode={mobileMode}
+        onNewActivity={(method) => {
+          if (method === 'live') {
+            setCaptureSession({ name: '', dateTime: '' });
+            setCapturePhase(null);
+            setPhase('form');
+            setNavTab('capture');
+            return;
+          }
+          setMobileSummaryMethod(method);
+          setSummarySeq(seq => seq + 1);
+          setNavTab('summary');
+        }}
         onSelectSession={(session) => {
           setActivitiesSession(session);
           setPhase('suggestions');
@@ -988,11 +1013,13 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
     if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
-      key={sessionKey}
+      key={`${sessionKey}-${summarySeq}`}
       initialClient={captureSession.name || ''}
+      initialMethod={mobileSummaryMethod}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
       compactMode={compactMode}
+      onBackToActivities={() => { setMobileSummaryMethod(null); setNavTab('activities'); setPhase('sessions'); }}
       onSuggestionsReached={(name) => {
         // Update EHR client name and note type
         if (name) {
@@ -1021,6 +1048,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       onAddedToEHR={() => {
         if (pendingEHRSession) {
           setAddedSessions(prev => [pendingEHRSession, ...prev]);
+          setDoneIds(prev => new Set([...prev, pendingEHRSession.id]));
           setPendingEHRSession(null);
         }
       }}
@@ -1029,6 +1057,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         setNavTab('activities');
         setPhase('sessions');
       }}
+      onStartNew={() => { setMobileSummaryMethod(null); setSummarySeq(seq => seq + 1); setNavTab('summary'); }}
     />;
     return <PlaceholderPanel tab={navTab} />;
   };
@@ -3141,16 +3170,17 @@ function GeneratingOverlay() {
   );
 }
 
-function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, compactMode = false }) {
+function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, onStartNew, onBackToActivities, compactMode = false }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const { lockedDownMode } = useLockedDownModeContext();
-  const { mobileMode, enterMobileMode } = useMobileModeContext();
+  const { mobileMode } = useMobileModeContext();
   const [phase, setPhase] = useState('info'); // 'info' | 'voice' | 'text' | 'questions' | 'suggestions' | 'complete'
   const [showCaptureDrawer, setShowCaptureDrawer] = useState(false);
   const [voiceRecording, setVoiceRecording] = useState(false);
   const [voicePaused, setVoicePaused] = useState(false);
   const [voiceSeconds, setVoiceSeconds] = useState(0);
+  const [voiceDialog, setVoiceDialog] = useState(null);
   const voiceTimerRef = useRef(null);
   const [notes, setNotes] = useState('');
   const [animating, setAnimating] = useState(false);
@@ -3177,7 +3207,10 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   };
 
   // Clean up bullet animation timeouts on unmount
-  useEffect(() => () => animTimeoutsRef.current.forEach(clearTimeout), []);
+  useEffect(() => () => {
+    animTimeoutsRef.current.forEach(clearTimeout);
+    clearInterval(voiceTimerRef.current);
+  }, []);
 
   const handleTextareaKeyDown = (e) => {
     if (e.key === 'Enter' && notes.trim() === '' && !animating) {
@@ -3246,7 +3279,12 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 
         {/* Header card */}
         <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '20px 16px 16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: mobileMode ? 'space-between' : 'flex-end', marginBottom: 8 }}>
+            {mobileMode && (
+              <button aria-label="Back to activities" onClick={onBackToActivities} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'rgba(0,0,0,0.54)' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            )}
             <FigmaUserAvatar />
           </div>
           <div style={{ textAlign: 'center', paddingBottom: 6 }}>
@@ -3372,7 +3410,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         {/* Bottom CTA */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 28px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
           <button
-            onClick={() => setShowCaptureDrawer(true)}
+            onClick={() => initialMethod ? setPhase(initialMethod) : setShowCaptureDrawer(true)}
             style={{ width: '100%', padding: '8px 22px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 15, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
           >
             Next
@@ -3504,7 +3542,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
   if (phase === 'complete') return (
     <MobileNoteComplete
       onGoToActivities={() => onFinishToActivities?.()}
-      onStartNew={() => enterMobileMode()}
+      onStartNew={() => onStartNew?.()}
     />
   );
 
@@ -3559,6 +3597,13 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
       setVoiceSeconds(0);
     };
 
+    const openVoiceDialog = (type) => {
+      clearInterval(voiceTimerRef.current);
+      setVoiceRecording(false);
+      setVoicePaused(true);
+      setVoiceDialog(type);
+    };
+
     const isCountingDown = !voiceRecording && !voicePaused && voiceSeconds < 0;
     const countdown = isCountingDown ? Math.abs(voiceSeconds) : null;
     const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
@@ -3583,7 +3628,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
         {/* Controls */}
         <div style={{ background: 'white', borderRadius: 38, padding: 6, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Cancel */}
-          <button onClick={cancelRecording} style={{ background: '#ffebee', borderRadius: 909, width: 104, height: 40, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <button onClick={() => mobileMode ? openVoiceDialog('cancel') : cancelRecording()} style={{ background: '#ffebee', borderRadius: 909, width: 104, height: 40, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#e02d3c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -3591,13 +3636,13 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           </button>
           {/* Next */}
           <button
-            onClick={nextEnabled ? () => { cancelRecording(); proceedFromCapture('voice'); } : undefined}
+            onClick={nextEnabled ? () => { if (mobileMode) openVoiceDialog('done'); else { cancelRecording(); proceedFromCapture('voice'); } } : undefined}
             style={{ background: nextEnabled ? '#eaedfa' : 'transparent', borderRadius: 999, width: 104, height: 40, border: 'none', cursor: nextEnabled ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'background 0.2s ease' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M4 12l5 5L20 7" stroke={nextEnabled ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: nextEnabled ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, letterSpacing: '0.46px', lineHeight: '22px' }}>Next</span>
+            <span style={{ ...P, fontSize: 13, fontWeight: 500, color: nextEnabled ? smartScribeColor(smartScribeSkin, '#2d4ccd') : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, letterSpacing: '0.46px', lineHeight: '22px' }}>{mobileMode ? 'Done' : 'Next'}</span>
           </button>
         </div>
       </div>
@@ -3685,6 +3730,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
                   />
                 </svg>
                 <button
+                  aria-label="Pause voice summary"
                   onClick={pauseRecording}
                   style={{ position: 'absolute', inset: 0, width: 124, height: 124, borderRadius: '50%', background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
@@ -3695,6 +3741,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
           ) : voicePaused ? (
             /* ── Paused state ── */
             <button
+              aria-label="Resume voice summary"
               onClick={resumeRecording}
               style={{ background: '#eaedfa', border: 'none', cursor: 'pointer', borderRadius: 99, width: 209, height: 124, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}
             >
@@ -3711,6 +3758,7 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
             <>
               <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px', textAlign: 'center' }}>Press to start capturing</span>
               <button
+                aria-label="Start voice summary"
                 onClick={startCountdown}
                 style={{ width: 124, height: 124, borderRadius: '50%', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
@@ -3746,6 +3794,37 @@ function AddSummaryPanel({ initialClient = '', suggestionsData = SUGGESTIONS_DAT
 
         {/* ── Generating loader overlay ── */}
         {generating && <GeneratingOverlay />}
+        {voiceDialog && (
+          <div role="dialog" aria-modal="true" aria-label={voiceDialog === 'cancel' ? 'Cancel recording' : 'Finish voice summary'} style={{ position: 'absolute', inset: 0, zIndex: 40, background: 'rgba(34,54,72,0.78)', display: 'flex', alignItems: 'center', padding: 20 }}>
+            <div style={{ width: '100%', background: 'white', borderRadius: 16, padding: '18px 20px 24px', boxSizing: 'border-box', textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button aria-label="Resume recording" onClick={() => { setVoiceDialog(null); resumeRecording(); }} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 4, color: 'rgba(33,33,33,0.56)' }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+                </button>
+              </div>
+              <div style={{ ...P, fontSize: 22, fontWeight: 600, color: '#212121', margin: '12px 0' }}>{voiceDialog === 'cancel' ? 'Are you sure?' : 'Are you done?'}</div>
+              <div style={{ ...P, fontSize: 15, color: 'rgba(33,33,33,0.7)', lineHeight: 1.5, marginBottom: 28 }}>
+                {voiceDialog === 'cancel' ? 'Cancelling will delete everything you have captured so far.' : 'Make sure you covered everything. Confirming will start generating a summary.'}
+              </div>
+              <button
+                onClick={() => {
+                  if (voiceDialog === 'cancel') {
+                    cancelRecording();
+                    setVoiceDialog(null);
+                  } else {
+                    cancelRecording();
+                    setVoiceDialog(null);
+                    proceedFromCapture('voice');
+                  }
+                }}
+                style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: voiceDialog === 'cancel' ? '#D83F45' : '#2D4CCD', color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}
+              >
+                {voiceDialog === 'cancel' ? 'Cancel Recording' : 'Confirm'}
+              </button>
+              <button onClick={() => { setVoiceDialog(null); resumeRecording(); }} style={{ marginTop: 16, border: 'none', background: 'none', color: '#2D4CCD', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Resume</button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -5310,12 +5389,70 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
 
 // ── My Sessions Panel (step 1, phase = 'sessions') ───────────────────────────
 
-function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, compactMode = false }) {
+function MobileNewActivitySheet({ onClose, onContinue }) {
+  const [selected, setSelected] = useState(null);
+  const P = { fontFamily: 'Poppins, sans-serif' };
+  const options = [
+    { method: 'live', title: 'Live session', description: 'Capture the full activity in real time.' },
+    { method: 'text', title: 'Text summary', description: 'Type key details.' },
+    { method: 'voice', title: 'Voice summary', description: 'Dictate up to 4 minutes of key details.' },
+  ];
+  const Option = ({ method, title, description }) => (
+    <button
+      onClick={() => setSelected(method)}
+      aria-pressed={selected === method}
+      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px', background: selected === method ? '#F4F6FD' : 'white', border: `1.5px solid ${selected === method ? '#2D4CCD' : 'rgba(33,33,33,0.18)'}`, borderRadius: 12, cursor: 'pointer', textAlign: 'left' }}
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+        {method === 'live' && <path d="M3 12h2m2-5v10m4-13v16m4-11v6m4-3h2" stroke="#212121" strokeWidth="1.8" strokeLinecap="round"/>}
+        {method === 'text' && <><path d="M5 3h10l4 4v14H5z" stroke="#212121" strokeWidth="1.6"/><path d="M8 11h8M8 15h8" stroke="#212121" strokeWidth="1.6" strokeLinecap="round"/></>}
+        {method === 'voice' && <><rect x="9" y="3" width="6" height="11" rx="3" stroke="#212121" strokeWidth="1.6"/><path d="M6 11a6 6 0 0012 0M12 17v4" stroke="#212121" strokeWidth="1.6" strokeLinecap="round"/></>}
+      </svg>
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <span style={{ ...P, fontSize: 16, fontWeight: 600, color: '#212121' }}>{title}</span>
+        <span style={{ ...P, fontSize: 13, color: 'rgba(33,33,33,0.68)', lineHeight: 1.4 }}>{description}</span>
+      </span>
+    </button>
+  );
+  return (
+    <div role="dialog" aria-modal="true" aria-label="New activity" style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', alignItems: 'flex-end', background: 'rgba(34,54,72,0.78)' }}>
+      <div style={{ width: '100%', maxHeight: '92%', overflowY: 'auto', background: 'white', borderRadius: '20px 20px 0 0', padding: '20px 20px 24px', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button aria-label="Close new activity" onClick={onClose} style={{ border: 'none', background: 'none', cursor: 'pointer', padding: 4, color: 'rgba(33,33,33,0.6)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+          <div style={{ ...P, fontSize: 22, fontWeight: 600, color: '#212121' }}>New activity</div>
+          <div style={{ ...P, fontSize: 15, color: 'rgba(33,33,33,0.7)', marginTop: 6 }}>Choose how you'd like to capture this activity</div>
+        </div>
+        <div style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(33,33,33,0.72)', letterSpacing: '0.8px', marginBottom: 10 }}>DURING THE ACTIVITY</div>
+        <Option {...options[0]} />
+        <div style={{ ...P, fontSize: 12, fontWeight: 600, color: 'rgba(33,33,33,0.72)', letterSpacing: '0.8px', margin: '24px 0 10px' }}>AFTER THE ACTIVITY</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Option {...options[1]} />
+          <Option {...options[2]} />
+        </div>
+        <button
+          disabled={!selected}
+          onClick={() => selected && onContinue(selected)}
+          style={{ width: '100%', marginTop: 24, padding: '11px 16px', border: 'none', borderRadius: 4, background: selected ? '#2D4CCD' : '#EAEDFA', color: selected ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontSize: 15, fontWeight: 500, cursor: selected ? 'pointer' : 'default' }}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, onNewActivity, compactMode = false, mobileMode = false }) {
   const { lockedDownMode } = useLockedDownModeContext();
   const smartScribeSkin = useSmartScribeSkin();
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
   const [expanded, setExpanded] = useState(null);
   const [search, setSearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [showNewActivity, setShowNewActivity] = useState(false);
   const P = { fontFamily: 'Poppins, sans-serif' };
 
   const toggle = (id) => setExpanded(prev => prev === id ? null : id);
@@ -5345,7 +5482,8 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
   const currentList = filterBySearch(activeTab === 'ehr' ? ehrList : doneList);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, position: 'relative' }}>
+      <style>{`@keyframes mobileRefreshSpin { to { transform: rotate(360deg); } }`}</style>
 
       {/* ── Sticky Header — elevation/4, border-radius 16px ── */}
       <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 2px 4px -1px rgba(0,0,0,.20), 0 4px 10px 0 rgba(0,0,0,.10), 0 1px 10px 0 rgba(0,0,0,.10)', zIndex: 2, position: 'relative', overflow: 'hidden' }}>
@@ -5357,11 +5495,11 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 
         {/* Panel title — centered, 18px SemiBold */}
         <div style={{ textAlign: 'center', padding: '10px 16px' }}>
-          <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px' }}>My Activities</span>
+          <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.018px' }}>{mobileMode ? 'My Captured Activities' : 'My Activities'}</span>
         </div>
 
         {/* Search field — 47px tall, 12px padding, 20px icon, 8px gap */}
-        <div style={{ margin: '0 16px', position: 'relative' }}>
+        <div style={{ margin: '0 16px', position: 'relative', paddingRight: mobileMode ? 40 : 0 }}>
           <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)' }}>
             <FigmaSearchIcon size={20} />
           </div>
@@ -5372,18 +5510,23 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
             placeholder="Filter by client name"
             style={{ height: compactMode ? 38 : 47, width: '100%', boxSizing: 'border-box', background: 'white', border: '1px solid rgba(33,33,33,0.42)', borderRadius: 8, paddingLeft: 40, paddingRight: 16, ...P, fontSize: 14, color: '#212121', letterSpacing: '0.17px', outline: 'none' }}
           />
+          {mobileMode && (
+            <button aria-label="Refresh activities" onClick={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 600); }} style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, border: 'none', background: 'none', color: '#2D4CCD', cursor: 'pointer', padding: 4 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ animation: refreshing ? 'mobileRefreshSpin 0.6s linear' : 'none' }}><path d="M20 7v5h-5M4 17v-5h5M6.1 8A7 7 0 0118 6l2 6M17.9 16A7 7 0 016 18l-2-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          )}
         </div>
 
         {/* Tab bar — full width, no outer padding */}
         <div style={{ display: 'flex', marginTop: 8 }}>
           {/* Add to EHR tab */}
           <div onClick={() => switchTab('ehr')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'ehr' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Add to EHR</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{mobileMode ? 'For Review' : 'Add to EHR'}</span>
             <span style={{ background: activeTab === 'ehr' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'ehr' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'ehr' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{ehrList.length}</span>
           </div>
           {/* Marked as Done tab */}
           <div onClick={() => switchTab('done')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'done' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{compactMode ? 'Done' : 'Marked as Done'}</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{mobileMode ? 'Completed' : (compactMode ? 'Done' : 'Marked as Done')}</span>
             <span style={{ background: activeTab === 'done' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'done' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'done' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{doneList.length}</span>
           </div>
         </div>
@@ -5392,7 +5535,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
       </div>
 
       {/* ── Session list — scrollable ── */}
-      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'clip', paddingTop: 0, paddingBottom: 16 }}>
+      <div style={{ flex: 1, overflowY: 'auto', overflowX: 'clip', paddingTop: 0, paddingBottom: mobileMode ? 96 : 16 }}>
         {/* Sticky top spacer */}
         <div style={{ position: 'sticky', top: 0, height: 10, background: '#EAEDFA', zIndex: 5 }} />
         {(() => {
@@ -5508,14 +5651,21 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
             );
           });
         })()}
+        {mobileMode && <div style={{ ...P, textAlign: 'center', fontSize: 13, color: 'rgba(33,33,33,0.68)', padding: '14px 16px' }}>Shown all activities from the last two weeks</div>}
       </div>
+      {mobileMode && (
+        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '14px 20px 20px', background: '#EAEDFA', boxShadow: '0 -1px 3px rgba(0,0,0,0.12)' }}>
+          <button onClick={() => setShowNewActivity(true)} style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: smartScribeColor(smartScribeSkin, '#2D4CCD'), color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>New activity</button>
+        </div>
+      )}
+      {showNewActivity && <MobileNewActivitySheet onClose={() => setShowNewActivity(false)} onContinue={(method) => { setShowNewActivity(false); onNewActivity?.(method); }} />}
     </div>
   );
 }
 
 // ── Capture Session Panel (step 1) ────────────────────────────────────────────
 
-function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false }) {
+function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false, mobileMode = false, skipReadiness = false, onSkipReadiness }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
@@ -5525,11 +5675,17 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [planExpanded, setPlanExpanded] = useState(false);
   const [planHover, setPlanHover] = useState(false);
+  const [sessionType, setSessionType] = useState(mobileMode ? '' : 'Individual Therapy');
+  const [setting, setSetting] = useState(mobileMode ? '' : 'In Person');
+  const [noteType, setNoteType] = useState(mobileMode ? '' : 'DAP Note');
+  const [audioInput, setAudioInput] = useState(mobileMode ? 'iPhone Microphone' : 'MacBook Pro Microphone (Built In)');
+  const [showReadiness, setShowReadiness] = useState(false);
+  const [suppressReadiness, setSuppressReadiness] = useState(false);
   const inputRef = useRef(null);
   const { setClientName: setEhrClientName } = useEhrContext();
   const { lockedDownMode } = useLockedDownModeContext();
 
-  const clientPool = lockedDownMode ? DEMO_CLIENT_OPTIONS : CLIENT_OPTIONS;
+  const clientPool = (lockedDownMode ? DEMO_CLIENT_OPTIONS : CLIENT_OPTIONS).filter(name => !mobileMode || !name.toLowerCase().includes('group'));
   const filtered = query.trim()
     ? clientPool.filter(c => c.toLowerCase().includes(query.toLowerCase()))
     : clientPool;
@@ -5541,6 +5697,17 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
     const parts = name.trim().split(/\s+/);
     const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : name;
     setEhrClientName(formatted);
+    const selectedRule = lockedDownMode ? CLIENT_LOCK_RULES[formatted] : null;
+    if (mobileMode) {
+      setSessionType(selectedRule?.sessionType ?? '');
+      setSetting(typeof selectedRule?.setting === 'string' ? selectedRule.setting : '');
+      setNoteType(selectedRule?.noteTypeLabel ?? '');
+    } else {
+      const group = name.toLowerCase().includes('group');
+      setSessionType(selectedRule?.sessionType ?? (group ? 'Group Therapy' : 'Individual Therapy'));
+      setSetting(typeof selectedRule?.setting === 'string' ? selectedRule.setting : 'In Person');
+      setNoteType(selectedRule?.noteTypeLabel ?? (group ? 'Group Note' : 'DAP Note'));
+    }
   }
 
   function clearClient() {
@@ -5554,6 +5721,20 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
   const fmtName = (() => { const p = clientName.trim().split(/\s+/); return p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : clientName; })();
   const rule = lockedDownMode ? CLIENT_LOCK_RULES[fmtName] : null;
   const pronouns = CLIENT_PRONOUNS[clientName];
+  const canCapture = !mobileMode || !!(clientName && sessionType && setting && noteType && audioInput);
+
+  useEffect(() => {
+    if (!mobileMode || !initialClient) return;
+    setSessionType(rule?.sessionType ?? '');
+    setSetting(typeof rule?.setting === 'string' ? rule.setting : '');
+    setNoteType(rule?.noteTypeLabel ?? '');
+  }, []); // Existing capture metadata is only used as the panel's mount-time seed.
+
+  const startCapture = () => {
+    const now = new Date();
+    const dt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+    onCapture(clientName, dt);
+  };
 
   const PLAN_ITEMS = isGroup ? [
     'Practice interpersonal effectiveness skills: each member to identify one boundary to set this week',
@@ -5577,14 +5758,17 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
       {/* ── Header card ── */}
       <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '24px 16px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-          {/* invisible placeholder to center title */}
-          <div style={{ width: 24, opacity: 0 }} />
+          {mobileMode ? (
+            <button aria-label="Back to activities" onClick={onBack} style={{ width: 24, height: 24, border: 'none', background: 'none', padding: 0, color: 'rgba(0,0,0,0.54)', cursor: 'pointer' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          ) : <div style={{ width: 24, opacity: 0 }} />}
           <div style={{ flex: 1 }} />
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px 10px' }}>
           <span style={{ ...P, fontSize: compactMode ? 15 : 18, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.57, letterSpacing: '0.018px' }}>
-            Audio Capture
+            {mobileMode ? 'Capture Session' : 'Audio Capture'}
           </span>
         </div>
       </div>
@@ -5609,7 +5793,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
                   onChange={e => { setQuery(e.target.value); setClientName(''); setDropdownOpen(true); }}
                   onFocus={() => setDropdownOpen(true)}
                   onBlur={() => setTimeout(() => setDropdownOpen(false), 150)}
-                  placeholder="Select client or group"
+                  placeholder={mobileMode ? 'Select client' : 'Select client or group'}
                   style={{ ...P, flex: 1, fontSize: 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px', border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
                 />
                 {query && (
@@ -5711,18 +5895,18 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         </>}
 
         {/* Session Type */}
-        <AcFormField key={rule?.sessionType ? 'locked-session' : (isGroup ? 'group' : 'individual')} label="Session Type:" defaultValue={isGroup ? 'Group Therapy' : 'Individual Therapy'} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} />
+        <AcFormField key={`${clientName}-session`} label="Session Type:" defaultValue={sessionType} options={['Individual Therapy', 'Group Therapy', 'Family Therapy', 'Couples Therapy', 'Case Management', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.sessionType} disabled={!!rule?.sessionType} placeholder="Session Type" onChange={setSessionType} />
 
         {/* Setting */}
-        <AcFormField key={rule?.setting ? 'locked-setting' : 'setting'} label="Setting:" defaultValue="In Person" options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} />
+        <AcFormField key={`${clientName}-setting`} label="Setting:" defaultValue={setting} options={Array.isArray(rule?.setting) ? rule.setting : ['In Person', 'Telehealth', 'Hybrid']} compactMode={compactMode} forcedValue={typeof rule?.setting === 'string' ? rule.setting : undefined} disabled={typeof rule?.setting === 'string'} placeholder="Setting" onChange={setSetting} />
 
         {/* Note Type */}
-        <AcFormField key={rule?.noteType ? 'locked-note' : (isGroup ? 'group-note' : 'note')} label="Note Type:" defaultValue={rule?.noteTypeLabel ?? (isGroup ? 'Group Note' : 'DAP Note')} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Group Note', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} />
+        <AcFormField key={`${clientName}-note`} label="Note Type:" defaultValue={noteType} options={['DAP Note', 'SOAP Note', 'Progress Note', 'Treatment Plan', 'Group Note', 'Medication Management', 'BPS Assessment']} compactMode={compactMode} forcedValue={rule?.noteTypeLabel} disabled={!!rule?.noteType} placeholder="Note Type" onChange={setNoteType} />
 
         {/* Audio Input */}
         <div style={{ marginBottom: 8 }}>
           <span style={{ ...P, fontSize: compactMode ? 14 : 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', lineHeight: 1.334, display: 'block', marginBottom: 8 }}>Audio Input:</span>
-          <AcFormField key={lockedDownMode ? 'locked-audio' : 'audio'} label={null} defaultValue="MacBook Pro Microphone (Built In)" options={lockedDownMode ? DEMO_AUDIO_INPUT_OPTIONS : AUDIO_INPUT_OPTIONS} compactMode={compactMode} />
+          <AcFormField key={mobileMode ? 'mobile-audio' : (lockedDownMode ? 'locked-audio' : 'audio')} label={null} defaultValue={audioInput} options={mobileMode ? ['iPhone Microphone'] : (lockedDownMode ? DEMO_AUDIO_INPUT_OPTIONS : AUDIO_INPUT_OPTIONS)} compactMode={compactMode} onChange={setAudioInput} />
         </div>
 
         {/* Sound check */}
@@ -5735,21 +5919,33 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
       {/* ── Bottom CTA ── */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 16px 24px', boxShadow: '0px -1px 3px rgba(0,0,0,0.12),0px -1px 1px rgba(0,0,0,0.05)' }}>
         <button
-          onClick={() => {
-            const now = new Date();
-            const dt = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
-            onCapture(clientName, dt);
-          }}
-          style={{ width: '100%', padding: '8px 16px', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: 'pointer', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' }}
+          disabled={!canCapture}
+          onClick={() => { if (!canCapture) return; if (mobileMode && !skipReadiness) setShowReadiness(true); else startCapture(); }}
+          style={{ width: '100%', padding: '8px 16px', background: canCapture ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#EAEDFA', color: canCapture ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: canCapture ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: canCapture ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
         >
           Capture Session
         </button>
       </div>
+      {showReadiness && (
+        <div role="dialog" aria-modal="true" aria-label="Get ready to capture" style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', alignItems: 'flex-end', background: 'rgba(34,54,72,0.72)' }}>
+          <div style={{ width: '100%', background: 'white', borderRadius: '20px 20px 0 0', padding: '28px 24px 24px', boxSizing: 'border-box' }}>
+            <div style={{ ...P, fontSize: 22, fontWeight: 600, color: '#212121', textAlign: 'center', marginBottom: 24 }}>Get ready to capture</div>
+            {['Make sure you are in a quiet environment', 'Place your phone between you and your patient', 'Eleos may detect media played aloud during this session, including personal voice messages.'].map(text => (
+              <div key={text} style={{ ...P, display: 'flex', gap: 12, fontSize: 14, color: 'rgba(33,33,33,0.72)', lineHeight: 1.5, marginBottom: 14 }}><span style={{ color: '#2D4CCD' }}>•</span><span>{text}</span></div>
+            ))}
+            <label style={{ ...P, display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'rgba(33,33,33,0.72)', margin: '20px 0' }}>
+              <input type="checkbox" checked={suppressReadiness} onChange={e => setSuppressReadiness(e.target.checked)} />
+              Don't show this message again
+            </label>
+            <button onClick={() => { if (suppressReadiness) onSkipReadiness?.(); setShowReadiness(false); startCapture(); }} style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: '#2D4CCD', color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Start session capture</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function AcFormField({ label, defaultValue, options = [], compactMode = false, forcedValue, disabled }) {
+function AcFormField({ label, defaultValue, options = [], compactMode = false, forcedValue, disabled, placeholder = '', onChange }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const [selected, setSelected] = useState(forcedValue ?? defaultValue);
@@ -5764,7 +5960,7 @@ function AcFormField({ label, defaultValue, options = [], compactMode = false, f
         onClick={() => { if (!disabled) setOpen(v => !v); }}
         style={{ background: 'white', border: `1px solid ${open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.23)'}`, borderRadius: open ? '8px 8px 0 0' : 8, padding: '12px', display: 'flex', alignItems: 'center', cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.6 : 1, userSelect: 'none' }}
       >
-        <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: 'rgba(0,0,0,0.87)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected}</span>
+        <span style={{ ...P, flex: 1, fontSize: compactMode ? 14 : 16, color: selected ? 'rgba(0,0,0,0.87)' : 'rgba(33,33,33,0.38)', letterSpacing: '0.15px', lineHeight: '24px' }}>{selected || placeholder}</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
           <path d="M5 7.5L10 12.5L15 7.5" stroke={open ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(33,33,33,0.54)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -5774,7 +5970,7 @@ function AcFormField({ label, defaultValue, options = [], compactMode = false, f
           {options.map((opt, i) => (
             <div
               key={opt}
-              onClick={() => { setSelected(opt); setOpen(false); }}
+              onClick={() => { setSelected(opt); onChange?.(opt); setOpen(false); }}
               style={{ padding: '10px 12px', ...P, fontSize: 15, color: opt === selected ? smartScribeColor(smartScribeSkin, '#2d4ccd') : 'rgba(0,0,0,0.87)', background: opt === selected ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white', cursor: 'pointer', borderBottom: i < options.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none', borderRadius: i === options.length - 1 ? '0 0 8px 8px' : 0, fontWeight: opt === selected ? 500 : 400 }}
               onMouseEnter={e => { if (opt !== selected) e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = opt === selected ? `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.06)` : 'white'; }}
@@ -5871,7 +6067,7 @@ function EqBars({ activeCount, total, animOffset }) {
   );
 }
 
-function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEndSession }) {
+function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEndSession, mobileMode = false }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const getElapsed = () => startedAt ? Math.floor((Date.now() - startedAt) / 1000) : 0;
@@ -5906,9 +6102,11 @@ function SessionInProgressPanel({ clientName, dateTime, startedAt, onBack, onEnd
       {/* Header */}
       <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '16px 16px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'rgba(0,0,0,0.54)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
+          {mobileMode ? <div style={{ width: 24 }} /> : (
+            <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', color: 'rgba(0,0,0,0.54)' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
+          )}
           <FigmaUserAvatar />
         </div>
         <div style={{ textAlign: 'center', padding: '0 10px 6px' }}>
