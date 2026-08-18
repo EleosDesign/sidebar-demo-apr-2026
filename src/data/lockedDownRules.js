@@ -31,11 +31,11 @@ export const CLIENT_LOCK_RULES = {
     population: 'Adult',
   },
   'Group, Anger Management': {
-    noteType: 'AngerManagementGroup',
+    noteType: 'GroupNote',
     noteTypeLabel: 'Group Note',
   },
   'Group, SUD': {
-    noteType: 'SUDGroup',
+    noteType: 'GroupNote',
     noteTypeLabel: 'Group Note',
   },
 };

@@ -971,11 +971,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             'Treatment Plan':        'TreatmentPlan',
             'Med Management':        'PsychiatricMedical',
             'Assessment':            'Assessment',
-            'Anger Management Group': 'AngerManagementGroup',
-            'SUD Group':              'SUDGroup',
             'BPS Assessment':         'BPSAssessment',
           };
-          let noteTypeKey = NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
+          let noteTypeKey = session?.type === 'group' ? 'GroupNote' : NOTE_TYPE_KEY_MAP[session?.noteType] ?? 'DAP';
           if (lockedDownMode && session?.name) {
             const p = session.name.trim().split(/\s+/);
             const fmt = p.length >= 2 ? `${p[p.length - 1]}, ${p.slice(0, -1).join(' ')}` : session.name;
