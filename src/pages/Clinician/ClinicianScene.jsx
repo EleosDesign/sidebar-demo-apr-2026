@@ -3868,6 +3868,8 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
+  const { lockedDownMode } = useLockedDownModeContext();
+  const hideBulkAdd = lockedDownMode && session?.type === 'group';
 
   // Resolve which dataset to use — NoteTypeContext override takes priority,
   // then session-based selection, then default.
@@ -4074,7 +4076,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Scrollable sections — Suggestions tab only */}
-        {activeTab === 'suggestions' && <div ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: 82 }}>
+        {activeTab === 'suggestions' && <div ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: hideBulkAdd ? 0 : 82 }}>
           <div style={{ position: 'sticky', top: 0, height: 0, background: 'white', zIndex: 5 }} />
           {data.map(({ section, cards }) => {
             const isOpen = openSections.has(section);
@@ -4263,7 +4265,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Bottom CTA bar — Suggestions tab only */}
-        {activeTab === 'suggestions' && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
+        {activeTab === 'suggestions' && !hideBulkAdd && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
           {hasScrolledToBottom ? (
             <button
               onClick={() => {
