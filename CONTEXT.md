@@ -6,11 +6,33 @@ Glossary of domain terms for sidebar-demo-apr-2026. This file is descriptive onl
 
 A full-screen phone-frame overlay (`MobileModeFrame`) that the demo can enter from the desktop Companion Sidebar. While active, `MobileModeContext.mobileMode` is `true` and the sidebar's own nav rail / floating chrome is bypassed entirely — only the current panel renders, inside the phone frame.
 
+Every entry into Mobile Mode lands on the Mobile Activities List rather than resuming a previously open mobile flow.
+
 Distinct from **compact mode** (`compactMode = mobileMode || sidebarW < 380`), which is a narrower-width visual treatment that Mobile Mode always implies but that can also happen on desktop when the Companion Sidebar is resized below 380px.
 
 ## Mobile Activities List
 
-The "My Activities" panel (`MySessionsPanel`) rendered while Mobile Mode is still active, inside the phone frame — as opposed to the same panel rendered as part of the desktop floating Companion Sidebar. It's the same component and content either way; what makes it "mobile" is that `mobileMode` stays `true` so it's wrapped in `MobileModeFrame` rather than the desktop sidebar shell. Reaching it should never call `exitMobileMode()` — that's reserved for the phone frame's explicit "X" exit button.
+The Activity list rendered while Mobile Mode is still active, inside the phone frame. It uses the mobile labels **My Captured Activities**, **For Review**, and **Completed**, while showing the same underlying Activities and statuses as the desktop Companion Sidebar without applying a mobile-only date cutoff. The mobile presentation retains the prototype's two-week footer. Reaching the list should never exit Mobile Mode; that is reserved for the phone frame's explicit exit control.
+
+## Activity Capture Methods
+
+The three ways to create a new Activity: **Live Session** records the session as it happens, **Voice Summary** records a spoken account after the activity, and **Text Summary** accepts a written account after the activity. Opening a Voice Summary confirmation suspends capture; resuming continues the same recording. Cancelling discards the current recording but retains the Activity details and returns Voice Summary to its initial capture state.
+
+## Activity Completion
+
+An actively recording Live Session is not yet an Activity list item. Finishing the Live Session creates the reviewable Activity and completes its audio capture, but does not complete the resulting Activity. The Activity remains in **Add to EHR** (called **For Review** in Mobile Mode) until the clinician explicitly submits it or marks it as done; only then does it move to **Marked as Done** (called **Completed** in Mobile Mode).
+
+## Mobile Check-In Questions
+
+The six follow-up questions presented after a mobile Voice Summary and before suggestions are generated. Confirming that a Voice Summary is done proceeds to these questions rather than generating suggestions immediately.
+
+## Live Session Readiness Reminder
+
+The guidance shown immediately before a Live Session begins. A clinician may suppress it for later Live Sessions in the same demo run; the preference resets when the page reloads.
+
+## Mobile Live Session
+
+A Live Session created in Mobile Mode belongs to one Client, never a Group. Client, session type, setting, note type, and audio input are all required before capture can begin. Client-specific defaults follow the same rules as desktop Live Session capture, while mobile audio input defaults to iPhone Microphone. Once capture is active, **End Session** is the only in-flow exit. Voice Summary and Text Summary continue to allow either a Client or a Group.
 
 ## Sidebar Minimized
 
