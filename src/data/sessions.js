@@ -31,7 +31,7 @@ export const SESSION_LIST = [
   { id: 'aisha',       ...daysAgo(8), name: 'Aisha Monroe',           time: '11:00 – 11:45 AM',   type: 'individual', sessionType: 'audio',                                      isActive: false, summary: 'Initial assessment session. Client presenting with moderate depression following recent job loss. PHQ-9 score: 14. Treatment goals established. Weekly CBT sessions recommended.' },
 ];
 
-// ── Marked as Done list ───────────────────────────────────────────────────────
+// ── Completed list ────────────────────────────────────────────────────────────
 export const MARKED_DONE_LIST = [
   { id: 'done-sarah',  ...daysAgo(4),  name: 'Sarah Smith',         time: '11:00 – 11:45 AM', type: 'individual', sessionType: 'audio', summary: 'Client reported PTSD symptoms, including feeling more on edge, agitated, and upset with the staff. Discussed grounding techniques and reviewed safety plan. Progress on exposure work noted.' },
   { id: 'done-james',  ...daysAgo(6),  name: 'James Okafor',        time: '9:00 – 9:50 AM',   type: 'individual', sessionType: 'text',  summary: 'Session centered on medication adherence and mood tracking. Client missed two doses this week. Psychoeducation provided. PHQ-9 score improved from 16 to 11 since last session.' },

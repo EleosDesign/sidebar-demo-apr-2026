@@ -609,7 +609,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   const [capturePhase, setCapturePhase] = useState(() => savedState?.capturePhase ?? null); // null | 'recording' | 'done'
   const [captureSession, setCaptureSession] = useState({ name: '', dateTime: 'Apr 2, 2026, 10:30 AM' });
   const [activitiesSession, setActivitiesSession] = useState(null); // session selected for suggestions in activities flow
-  // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Marked as Done
+  // Lifted from MySessionsPanel so CTA in AddSummary can move a session to Completed
   const [doneIds, setDoneIds] = useState(() =>
     savedState?.doneIds ? new Set(savedState.doneIds) : INITIAL_DONE_IDS
   );
@@ -849,7 +849,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
   }, [ending, onNext]);
 
   const handleNavClick = (tab) => {
-    // Leaving Add Summary while suggestions are pending → add entry to "Add to EHR"
+    // Leaving Add Summary while suggestions are pending → add entry to For Review
     if (navTab === 'summary' && tab !== 'summary' && pendingEHRSession) {
       setAddedSessions(prev => [pendingEHRSession, ...prev]);
       setPendingEHRSession(null);
@@ -860,7 +860,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       // Don't reset to form if recording is active — go back to the in-progress view
       if (capturePhase !== 'recording') setPhase('form');
     } else {
-      // Manual nav to Activities always opens on Add to EHR (CTA nav sets 'done' programmatically)
+      // Manual nav to Activities always opens on For Review (CTA nav sets 'done' programmatically)
       if (tab === 'activities') setActivitiesInitialTab('ehr');
       setNavTab(tab);
       setPhase('sessions');
@@ -895,7 +895,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onBack={() => { setCapturePhase(null); setPhase('form'); }}
         mobileMode={mobileMode}
         onEndSession={() => {
-          // Build an activity entry for the captured session and add to Add to EHR
+          // Build an activity entry for the captured session and add to For Review
           const startT = captureSession.dateTime?.split(', ').at(-1) ?? '10:30 AM';
           const [tPart, ap] = startT.split(' ');
           const [hh, mm] = tPart.split(':').map(Number);
@@ -958,13 +958,18 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           setDoneIds(prev => new Set([...prev, activitiesSession.id]));
           if (mobileMode) setPhase('complete');
         }}
+        onMarkSubmitted={() => {
+          setDoneIds(prev => new Set([...prev, activitiesSession.id]));
+          setActivitiesInitialTab('ehr');
+          setActivitiesSession(null);
+          setPhase('sessions');
+        }}
       />;
       return <MySessionsPanel
         initialTab={activitiesInitialTab}
         doneIds={doneIds}
         extraSessions={addedSessions}
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
-        onUndoDone={id => { setDoneIds(prev => { const n = new Set(prev); n.delete(id); return n; }); }}
         compactMode={compactMode}
         mobileMode={mobileMode}
         onNewActivity={(method) => {
@@ -3536,7 +3541,7 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
   const resolvedSuggestions = clientName === 'Ashlyn Rivera' ? ASSESSMENT_SUGGESTIONS_DATA : suggestionsData;
-  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => { if (mobileMode) { setQuestionStep(MOBILE_QUESTION_SCREENS.length - 1); setPhase('questions'); } else { setPhase('text'); } }} onAddToNote={onAddToNote} onAddedToEHR={() => { onAddedToEHR?.(); if (mobileMode) setPhase('complete'); }} suggestionsData={resolvedSuggestions} compactMode={compactMode} mobileMode={mobileMode} sidebarW={467} />;
+  if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => { if (mobileMode) { setQuestionStep(MOBILE_QUESTION_SCREENS.length - 1); setPhase('questions'); } else { setPhase('text'); } }} onAddToNote={onAddToNote} onAddedToEHR={() => { onAddedToEHR?.(); if (mobileMode) setPhase('complete'); }} onMarkSubmitted={() => { onAddedToEHR?.(); onFinishToActivities?.(); }} suggestionsData={resolvedSuggestions} compactMode={compactMode} mobileMode={mobileMode} sidebarW={467} />;
 
   if (phase === 'complete') return (
     <MobileNoteComplete
@@ -3939,7 +3944,7 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
 // All suggestion datasets imported from src/data/suggestions.js
 
 
-function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, mobileMode = false, sidebarW = 467 }) {
+function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, onMarkSubmitted, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, mobileMode = false, sidebarW = 467 }) {
   const smartScribeSkin = useSmartScribeSkin();
   const { selectedEhr } = useEhrContext();
   const P = { fontFamily: 'Poppins, sans-serif' };
@@ -4168,7 +4173,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Scrollable sections — Suggestions tab only */}
-        {activeTab === 'suggestions' && <div ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: hideBulkAdd ? 0 : 82 }}>
+        {activeTab === 'suggestions' && <div ref={scrollRef} onScroll={checkScrollBottom} style={{ flex: 1, overflowY: 'auto', paddingBottom: mobileMode ? (hideBulkAdd ? 0 : 82) : (hideBulkAdd ? 70 : 122) }}>
           <div style={{ position: 'sticky', top: 0, height: 0, background: 'white', zIndex: 5 }} />
           {data.map(({ section, cards }) => {
             const isOpen = openSections.has(section);
@@ -4357,8 +4362,8 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
         </div>}
 
         {/* Bottom CTA bar — Suggestions tab only */}
-        {activeTab === 'suggestions' && !hideBulkAdd && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: '#EAEDFA', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
-          {hasScrolledToBottom ? (
+        {activeTab === 'suggestions' && (!mobileMode || !hideBulkAdd) && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, display: 'flex', flexDirection: 'column', gap: 10, background: '#EAEDFA', padding: '16px 24px 24px', boxShadow: '0px -1px 10px 0px rgba(0,0,0,0.1), 0px -4px 10px 0px rgba(0,0,0,0.1)' }}>
+          {!hideBulkAdd && (hasScrolledToBottom ? (
             <button
               onClick={() => {
                 data.forEach(({ section, cards }) => {
@@ -4368,7 +4373,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                     }
                   });
                 });
-                onAddedToEHR?.();
+                if (mobileMode) onAddedToEHR?.();
               }}
               style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}>
               {mobileMode ? 'Send to EHR' : (compactMode ? `Add ${activeCount} to EHR` : `Add ${activeCount} suggestion${activeCount !== 1 ? 's' : ''} to EHR`)}
@@ -4380,6 +4385,14 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                 <path d="M6 13l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               {mobileMode ? 'Scroll down to end' : 'Scroll down to add all'}
+            </button>
+          ))}
+          {!mobileMode && (
+            <button
+              onClick={onMarkSubmitted}
+              style={{ width: '100%', height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', background: smartScribeColor(smartScribeSkin, '#2d4ccd'), border: 'none', borderRadius: 4, cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)', ...P, fontSize: 13, fontWeight: 500, color: 'white', letterSpacing: '0.46px' }}
+            >
+              Mark as submitted
             </button>
           )}
         </div>}
@@ -5460,7 +5473,7 @@ function MobileNewActivitySheet({ onClose, onContinue }) {
   );
 }
 
-function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onUndoDone, onNewActivity, compactMode = false, mobileMode = false }) {
+function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onNewActivity, compactMode = false, mobileMode = false }) {
   const { lockedDownMode } = useLockedDownModeContext();
   const smartScribeSkin = useSmartScribeSkin();
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
@@ -5477,12 +5490,6 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
     onMarkDone?.(id);
     setExpanded(null);
     setActiveTab('done');
-  };
-
-  const undoDone = (id) => {
-    onUndoDone?.(id);
-    setExpanded(null);
-    setActiveTab('ehr');
   };
 
   // Merge dynamically added sessions (from Add Summary flow) at the top
@@ -5534,14 +5541,14 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 
         {/* Tab bar — full width, no outer padding */}
         <div style={{ display: 'flex', marginTop: 8 }}>
-          {/* Add to EHR tab */}
+          {/* For Review tab */}
           <div onClick={() => switchTab('ehr')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'ehr' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{mobileMode ? 'For Review' : 'Add to EHR'}</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'ehr' ? 500 : 400, color: activeTab === 'ehr' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>For Review</span>
             <span style={{ background: activeTab === 'ehr' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'ehr' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'ehr' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{ehrList.length}</span>
           </div>
-          {/* Marked as Done tab */}
+          {/* Completed tab */}
           <div onClick={() => switchTab('done')} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '9px 16px', borderBottom: activeTab === 'done' ? `2px solid ${smartScribeColor(smartScribeSkin, '#2D4CCD')}` : '2px solid transparent', cursor: 'pointer' }}>
-            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>{mobileMode ? 'Completed' : (compactMode ? 'Done' : 'Marked as Done')}</span>
+            <span style={{ ...P, fontSize: compactMode ? 13 : 14, fontWeight: activeTab === 'done' ? 500 : 400, color: activeTab === 'done' ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.80)', letterSpacing: '0.4px' }}>Completed</span>
             <span style={{ background: activeTab === 'done' ? '#E02D3C' : '#F5F5F5', color: activeTab === 'done' ? 'white' : 'rgba(33,33,33,0.80)', borderRadius: 24, padding: '0 8px', fontSize: 12, fontWeight: activeTab === 'done' ? 500 : 400, ...P, lineHeight: '20px', letterSpacing: '0.14px' }}>{doneList.length}</span>
           </div>
         </div>
@@ -5620,7 +5627,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                       {isExpanded && (
                         <div style={{ marginTop: 12 }}>
                           {activeTab === 'done' ? (
-                            /* Marked as Done: truncated summary + "see more" + "Undo Submission" */
+                            /* Completed: truncated summary */
                             <>
                               <p style={{ ...P, fontSize: 13, color: '#212121', lineHeight: 1.6, margin: '0 0 12px' }}>
                                 {session.summary.length > 100 ? session.summary.slice(0, 100) + '… ' : session.summary}
@@ -5628,15 +5635,9 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
                                   <span style={{ color: smartScribeColor(smartScribeSkin, '#2D4CCD'), cursor: 'pointer' }} onClick={e => e.stopPropagation()}>see more</span>
                                 )}
                               </p>
-                              <span
-                                style={{ ...P, fontSize: 13, fontWeight: 400, color: smartScribeColor(smartScribeSkin, '#2D4CCD'), textDecoration: 'underline', cursor: 'pointer' }}
-                                onClick={e => { e.stopPropagation(); undoDone(session.id); }}
-                              >
-                                Undo Submission
-                              </span>
                             </>
                           ) : (
-                            /* Add to EHR: full summary + "Mark as submitted" + "Select session" button */
+                            /* For Review: full summary + "Mark as submitted" + "Select session" button */
                             <>
                               <p style={{ ...P, fontSize: 13, color: '#212121', lineHeight: 1.6, margin: '0 0 14px' }}>
                                 {session.summary}
@@ -6291,11 +6292,11 @@ function RecordingPanel({ ending, onEndSession }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'flex-end', margin: '10px 0 0', paddingLeft: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, paddingBottom: 10, borderBottom: '2px solid var(--eleos-tab-active)', cursor: 'default' }}>
-            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: 'var(--eleos-tab-active)' }}>Add to EHR</span>
+            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, fontWeight: 500, color: 'var(--eleos-tab-active)' }}>For Review</span>
             <span style={{ background: 'var(--eleos-badge-red)', color: 'white', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 600, fontFamily: 'Poppins, sans-serif', lineHeight: '18px' }}>25</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 10, paddingLeft: 18, borderBottom: '2px solid transparent', cursor: 'default' }}>
-            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#757575' }}>Marked as Done</span>
+            <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 13, color: '#757575' }}>Completed</span>
             <span style={{ background: '#F5F5F5', color: '#757575', borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 500, fontFamily: 'Poppins, sans-serif', lineHeight: '18px' }}>10</span>
           </div>
         </div>
