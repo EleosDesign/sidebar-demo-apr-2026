@@ -290,58 +290,23 @@
       "description": "General progress note format for CalMHSA system",
       "sections": [
         {
-          "id": "noteAddressesObjective",
-          "label": "Note Addresses Which Objective",
-          "description": "Which treatment plan objective this session addresses",
-          "sampleContent": "The purpose of this session was to evaluate the client's mental status, support him in managing depressive symptoms, and discuss coping strategies."
+          "id": "information",
+          "label": "Information",
+          "description": "Describe current service(s), how the service addressed the beneficiary's behavioral health need (e.g., symptom, condition, diagnosis, and/or risk factors).",
+          "sampleContent": "The purpose of this session was to evaluate the client's mental status, support him in managing depressive symptoms, and discuss coping strategies. The session took place at a local park near the client's home. The client expressed symptoms of increased depression, stating, \"It has been hard to leave the house.\" He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions. During the mental status exam, the client's mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan. The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process."
         },
         {
-          "id": "caseManagementDetails",
-          "label": "Describe Details of the Case Management Service",
-          "description": "Details of the case management service provided",
-          "sampleContent": "The session took place at a local park near the client's home. The client expressed symptoms of increased depression, stating, \"It has been hard to leave the house.\" He shared a history of seasonal mood shifts, particularly during winter. The discussion included utilizing the DBT Wise Mind approach to assist him in accessing both intuitive and rational thinking when making decisions."
-        },
-        {
-          "id": "linkageToServices",
-          "label": "Explain Linkage to Services",
-          "description": "Explain how the client is linked to services",
-          "sampleContent": "The Wise Mind technique is integral in helping the client balance emotional responses with logical reasoning, which can enhance his decision-making and problem-solving capabilities."
-        },
-        {
-          "id": "clinicalObservations",
-          "label": "Clinical Observations",
-          "description": "Clinician observations during the session",
-          "sampleContent": "During the mental status exam, the client's mood was noted to be depressed. Nevertheless, he denied any suicidal ideation (SI) and agreed to a safety plan."
-        },
-        {
-          "id": "clientResponses",
-          "label": "Client Responses",
-          "description": "How the client responded during the session",
-          "sampleContent": "The client demonstrated willingness to reach out for support as needed, indicating a degree of proactive engagement in his treatment process."
-        },
-        {
-          "id": "recoveryPlanProgress",
-          "label": "Progress Towards Recovery Plan Objectives",
-          "description": "Progress made toward recovery plan goals",
-          "sampleContent": "Despite ongoing struggles with depression, the client has shown progress by being open about his feelings and agreeing to utilize coping strategies, including the safety planning discussed during the session."
-        },
-        {
-          "id": "timelinesNextService",
-          "label": "Timelines for Next Service",
-          "description": "Timeline and plan for the next service contact",
-          "sampleContent": "The client agreed to reach out for additional support as he navigates his depressive symptoms moving forward."
+          "id": "carePlan",
+          "label": "Care Plan",
+          "description": "Indicate the goals, treatment, service activities, and assistance to address the objectives of the plan and the medical, social, educational, and other services needed by the beneficiary. Include how the beneficiary or their representative helped to develop the goals, and the progress toward meeting the established goals. Indicate transition plan if the individual has achieved the goals of the care plan.",
+          "sampleContent": "Throughout the session, client showed engagement when discussing their symptoms and demonstrated an understanding of the Wise Mind technique practice with their therapist. Client's emotional state appeared downcast, but they were receptive to the conversation. By agreeing to the safety plan, client expressed a willingness to prioritize their well-being. Client's response to therapist's suggestions remained positive, and they articulated their commitment to seek support when needed."
         }
       ],
       "ehrSystem": "calmhsa-psych",
       "ehrMapping": {
         "calmhsa": {
-          "noteAddressesObjective": "calMhsaProgressNoteAddressesObjective",
-          "caseManagementDetails": "calMhsaProgressCaseManagementDetails",
-          "linkageToServices": "calMhsaProgressLinkageToServices",
-          "clinicalObservations": "calMhsaProgressClinicalObservations",
-          "clientResponses": "calMhsaProgressClientResponses",
-          "recoveryPlanProgress": "calMhsaProgressRecoveryPlanProgress",
-          "timelinesNextService": "calMhsaProgressTimelinesNextService"
+          "information": "calMhsaProgressInformation",
+          "carePlan": "calMhsaProgressCarePlan"
         }
       }
     },
