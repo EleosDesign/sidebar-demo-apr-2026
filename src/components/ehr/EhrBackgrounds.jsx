@@ -2421,31 +2421,31 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
     ['external', 'SmartLinks', false],
   ];
   const selectStyle = {
-    width: 288,
-    height: 31,
+    width: 230,
+    height: 25,
     border: '1px solid #cfcfcf',
     background: '#fff',
     color: '#111',
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: 'inherit',
   };
   const fieldBoxStyle = {
-    width: 288,
-    height: 31,
+    width: 230,
+    height: 25,
     border: '1px solid #cfcfcf',
     background: '#fff',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 7px',
-    fontSize: 16,
+    padding: '0 6px',
+    fontSize: 13,
     boxSizing: 'border-box',
   };
   const setServiceValue = (field, value) => setServiceValues(prev => ({ ...prev, [field]: value }));
   const formRow = (label, field, required = false) => (
-    <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+    <div style={{ display: 'grid', gridTemplateColumns: '148px 232px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+      <label style={{ fontSize: 13, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 19, fontWeight: 700 }}>*</span>}
         {serviceOptions[field] ? (
           <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={selectStyle}>
             {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
@@ -2457,19 +2457,19 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
     </div>
   );
   const rightRow = (label, field, required = false, suffix = '') => (
-    <div style={{ display: 'grid', gridTemplateColumns: '175px 210px 80px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+    <div style={{ display: 'grid', gridTemplateColumns: '140px 168px 64px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+      <label style={{ fontSize: 13, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 19, fontWeight: 700 }}>*</span>}
         {serviceOptions[field] ? (
-          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={{ ...selectStyle, width: 188 }}>
+          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={{ ...selectStyle, width: 150 }}>
             {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
           </select>
         ) : (
-          <input value={field === 'startDate' ? '02/09/2026' : ''} onChange={() => {}} style={{ width: 90, height: 31, border: '1px solid #cfcfcf', background: '#fff', padding: '0 5px', fontSize: 16, boxSizing: 'border-box' }} />
+          <input value={field === 'startDate' ? '02/09/2026' : ''} onChange={() => {}} style={{ width: 72, height: 25, border: '1px solid #cfcfcf', background: '#fff', padding: '0 4px', fontSize: 13, boxSizing: 'border-box' }} />
         )}
       </div>
-      <span style={{ fontSize: 16 }}>{suffix}</span>
+      <span style={{ fontSize: 13 }}>{suffix}</span>
     </div>
   );
   const Icon = ({ name, size = 24, color = '#254a67', fill = 'none' }) => {
@@ -2509,8 +2509,8 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
       default: return null;
     }
   };
-  const HeaderIcon = ({ children }) => <span style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</span>;
-  const Badge = ({ value }) => <span style={{ width: 31, height: 31, borderRadius: '50%', background: '#254a67', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700 }}>{value}</span>;
+  const HeaderIcon = ({ children }) => <span style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</span>;
+  const Badge = ({ value }) => <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#254a67', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{value}</span>;
   const ToolbarIcon = ({ name, disabled = false, size = 20 }) => (
     <span className={`streamline-toolbar-icon${disabled ? ' is-disabled' : ''}`}>
       <Icon name={name} size={size} color={disabled ? '#7e99a9' : '#254a67'} />
@@ -2524,11 +2524,11 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
   );
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden', zoom: 0.8 }}>
+    <div data-ehr="streamline" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden' }}>
       <style>{`
         .streamline-toolbar-icon {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -2544,47 +2544,47 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
           pointer-events: none;
         }
       `}</style>
-      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box', overflow: 'hidden' }}>
-        <HeaderIcon><Icon name="menu" size={31} /></HeaderIcon>
-        <img src="/streamline-smartcare-logo.png" alt="SmartCare" style={{ height: 100, width: 'auto', display: 'block', marginRight: 40 }} />
-        <HeaderIcon><Icon name="search" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="star" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="home-user" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="user" size={31} /></HeaderIcon>
-        <div style={{ color: '#000', fontSize: 24, borderBottom: '3px solid #254a67', minWidth: 470, height: 43, display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div data-smartcare-header style={{ height: 52, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 14, padding: '0 12px', boxSizing: 'border-box', overflow: 'hidden' }}>
+        <HeaderIcon><Icon name="menu" size={22} /></HeaderIcon>
+        <img src="/streamline-smartcare-logo.png" alt="SmartCare" style={{ height: 44, width: 'auto', display: 'block', marginRight: 24 }} />
+        <HeaderIcon><Icon name="search" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="star" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="home-user" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="user" size={22} /></HeaderIcon>
+        <div style={{ color: '#000', fontSize: 16, borderBottom: '3px solid #254a67', minWidth: 320, height: 34, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span>{patientLabel}</span>
-          <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-            <Icon name="money" size={21} /><Icon name="question" size={21} /><Icon name="smile" size={21} /><Icon name="medical" size={21} /><Icon name="briefcase" size={21} />
-            <Icon name="dots-vertical" size={18} /><Icon name="plus" size={18} /><Icon name="times" size={17} />
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Icon name="money" size={17} /><Icon name="question" size={17} /><Icon name="smile" size={17} /><Icon name="medical" size={17} /><Icon name="briefcase" size={17} />
+            <Icon name="dots-vertical" size={14} /><Icon name="plus" size={14} /><Icon name="times" size={14} />
           </span>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
-          <Icon name="briefcase" size={26} /><Icon name="bell" size={26} /><Icon name="history" size={26} /><Icon name="question" size={26} /><Icon name="power" size={25} />
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Icon name="briefcase" size={20} /><Icon name="bell" size={20} /><Icon name="history" size={20} /><Icon name="question" size={20} /><Icon name="power" size={20} />
         </div>
       </div>
       <div style={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
-        <div style={{ width: 345, background: '#efefef', borderRight: '1px solid #cfcfcf', flexShrink: 0 }}>
-          <div style={{ height: 53, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid #cfcfcf' }}>
-            {['user', 'home-user', 'building', 'list'].map((icon, i) => <div key={icon} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: i === 0 ? '3px solid #254a67' : 0 }}><Icon name={icon} size={27} /></div>)}
+        <div data-smartcare-rail style={{ width: 240, background: '#efefef', borderRight: '1px solid #cfcfcf', flexShrink: 0 }}>
+          <div style={{ height: 42, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid #cfcfcf' }}>
+            {['user', 'home-user', 'building', 'list'].map((icon, i) => <div key={icon} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: i === 0 ? '3px solid #254a67' : 0 }}><Icon name={icon} size={18} /></div>)}
           </div>
           {navItems.map(([icon, label, arrow], i) => (
-            <div key={label} style={{ height: i === 0 ? 52 : 51, borderBottom: '1px solid #cfcfcf', display: 'flex', alignItems: 'center', gap: 12, padding: '0 17px', boxSizing: 'border-box', fontSize: 16 }}>
-              {icon.startsWith('badge:') ? <Badge value={icon.slice(6)} /> : <span style={{ width: 31, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={27} /></span>}
+            <div key={label} style={{ height: i === 0 ? 42 : 41, borderBottom: '1px solid #cfcfcf', display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px', boxSizing: 'border-box', fontSize: 13 }}>
+              {icon.startsWith('badge:') ? <Badge value={icon.slice(6)} /> : <span style={{ width: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={18} /></span>}
               <span style={{ flex: 1 }}>{label}</span>
-              {arrow && <Icon name="chevron" size={16} />}
+              {arrow && <Icon name="chevron" size={13} />}
             </div>
           ))}
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
-          <div style={{ height: 53, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div style={{ color: '#000', fontSize: 29, flex: 1 }}>Progress Note</div>
+          <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
               <ToolbarIcon name="dots-vertical" size={16} />
               <ToolbarIcon name="clipboard-check" disabled size={18} />
               <ToolbarIcon name="user-circle" size={22} />
-              <span className="streamline-toolbar-icon" style={{ width: 34, fontSize: 14 }}>GoTo</span>
+              <span className="streamline-toolbar-icon" style={{ width: 30, fontSize: 12 }}>GoTo</span>
               <ToolbarStarPlus />
               <ToolbarIcon name="star" size={21} />
               <ToolbarIcon name="book" size={21} />
@@ -2592,21 +2592,21 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
               <ToolbarIcon name="trash" disabled size={18} />
             </div>
           </div>
-          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '8px 8px 24px 8px', boxSizing: 'border-box' }}>
-            <div style={{ width: 1190, minHeight: activeTab === 'Service' ? 1120 : '100%', background: '#fff', boxShadow: 'inset 0 0 0 1px #d8d8d8', padding: '20px 15px 56px', boxSizing: 'border-box' }}>
-              <div style={{ height: 49, display: 'grid', gridTemplateColumns: '260px 390px 370px 150px', gap: 8, alignItems: 'center', padding: '0 10px', boxShadow: '0 2px 9px rgba(0,0,0,.25)', marginBottom: 16 }}>
-                <div style={{ display: 'flex', height: 31, alignItems: 'center' }}><span style={{ background: '#eee', padding: '7px 8px', fontSize: 16 }}>Effective</span><span style={{ padding: '7px 8px', fontSize: 16 }}>02/09/2026</span><Icon name="calendar" size={21} /><Icon name="caret-down" size={14} /></div>
-                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Status</span><span style={{ padding: '7px 8px', fontSize: 16 }}>New</span></div>
-                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Author</span><span style={{ padding: '7px 8px', fontSize: 16 }}>Eleos</span></div>
-                <div style={{ fontSize: 16 }}>10/14/2025</div>
+          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '6px 6px 20px', boxSizing: 'border-box' }}>
+            <div style={{ width: 940, minHeight: activeTab === 'Service' ? 896 : '100%', background: '#fff', boxShadow: 'inset 0 0 0 1px #d8d8d8', padding: '16px 12px 45px', boxSizing: 'border-box' }}>
+              <div style={{ height: 39, display: 'grid', gridTemplateColumns: '200px 250px 250px 150px', gap: 6, alignItems: 'center', padding: '0 8px', boxShadow: '0 2px 9px rgba(0,0,0,.25)', marginBottom: 13 }}>
+                <div style={{ display: 'flex', height: 25, alignItems: 'center' }}><span style={{ background: '#eee', padding: '5px 6px', fontSize: 13 }}>Effective</span><span style={{ padding: '5px 6px', fontSize: 13 }}>02/09/2026</span><Icon name="calendar" size={17} /><Icon name="caret-down" size={11} /></div>
+                <div style={{ display: 'flex', height: 25 }}><span style={{ background: '#eee', padding: '5px 14px', fontSize: 13 }}>Status</span><span style={{ padding: '5px 6px', fontSize: 13 }}>New</span></div>
+                <div style={{ display: 'flex', height: 25 }}><span style={{ background: '#eee', padding: '5px 14px', fontSize: 13 }}>Author</span><span style={{ padding: '5px 6px', fontSize: 13 }}>Eleos</span></div>
+                <div style={{ fontSize: 13 }}>10/14/2025</div>
               </div>
-              <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #111', marginBottom: 16, fontSize: 17 }}>
+              <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #111', marginBottom: 13, fontSize: 14 }}>
                 {['Service', 'Note', 'Billing Diagnosis', 'Add-On Codes', 'Warnings', 'Disposition'].map(tab => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    style={{ padding: '8px 20px', background: activeTab === tab ? '#d7e9f6' : '#fff', border: 0, borderBottom: activeTab === tab ? '4px solid #254a67' : '4px solid transparent', font: 'inherit', cursor: 'pointer' }}
+                    style={{ padding: '6px 16px', background: activeTab === tab ? '#d7e9f6' : '#fff', border: 0, borderBottom: activeTab === tab ? '3px solid #254a67' : '3px solid transparent', font: 'inherit', cursor: 'pointer' }}
                   >
                     {tab}
                   </button>
@@ -2614,20 +2614,20 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
               </div>
               {activeTab === 'Service' ? (
                 <>
-                  <h2 style={{ margin: '0 0 15px 12px', fontSize: 24, fontWeight: 400, color: '#111' }}>Service</h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: '620px 460px', gap: 45, padding: '0 12px', color: '#111' }}>
+                  <h2 style={{ margin: '0 0 12px 10px', fontSize: 19, fontWeight: 400, color: '#111' }}>Service</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '476px 400px', gap: 36, padding: '0 10px', color: '#111' }}>
                     <div>
                       {formRow('Status', 'status')}
                       {formRow('Program', 'program', true)}
                       {formRow('Procedure', 'procedure')}
                       {formRow('Location', 'location', true)}
-                      <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-                        <label style={{ fontSize: 16, color: '#111' }}>Clinician</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: '148px 232px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+                        <label style={{ fontSize: 13, color: '#111' }}>Clinician</label>
                         <div style={fieldBoxStyle}>Eleos</div>
                       </div>
                       {formRow('Mode Of Delivery', 'modeOfDelivery')}
                       {formRow('Cancel Reason', 'cancelReason')}
-                      <div style={{ height: 28 }} />
+                      <div style={{ height: 22 }} />
                       {formRow('Evidence Based Practices', 'evidenceBasedPractices')}
                       {formRow('Transportation Service', 'transportationService')}
                     </div>
@@ -2635,32 +2635,32 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
                       {rightRow('Start Date', 'startDate')}
                       {rightRow('Start Time', 'startTime', true)}
                       {rightRow('Travel Time', 'travelTime', true, 'Minutes')}
-                      <div style={{ height: 39 }} />
+                      <div style={{ height: 31 }} />
                       {rightRow('Documentation Time', 'documentationTime', true, 'Minutes')}
                       {rightRow('Service Time', 'serviceTime', true, 'Minutes')}
                       {rightRow('Attending', 'attending')}
                       {rightRow('Referring', 'referring')}
-                      <div style={{ height: 40 }} />
-                      <label style={{ fontSize: 16 }}><span style={{ display: 'inline-block', width: 18, height: 18, border: '1px solid #aaa', verticalAlign: 'middle', marginRight: 6 }} />Interpreter Services Needed</label>
+                      <div style={{ height: 32 }} />
+                      <label style={{ fontSize: 13 }}><span style={{ display: 'inline-block', width: 14, height: 14, border: '1px solid #aaa', verticalAlign: 'middle', marginRight: 5 }} />Interpreter Services Needed</label>
                     </div>
                   </div>
-                  <div style={{ borderTop: '1px solid #cfcfcf', marginTop: 28, paddingTop: 50 }}>
-                    <h2 style={{ margin: '0 0 22px 8px', fontSize: 23, fontWeight: 400, color: '#111' }}>Custom Fields</h2>
-                    <div style={{ borderTop: '1px solid #cfcfcf', padding: '8px 22px' }}>
-                      <h3 style={{ margin: 0, fontSize: 22, fontWeight: 400, color: '#111' }}>Interpreter/Bilingual Service Information</h3>
+                  <div style={{ borderTop: '1px solid #cfcfcf', marginTop: 22, paddingTop: 40 }}>
+                    <h2 style={{ margin: '0 0 18px 6px', fontSize: 18, fontWeight: 400, color: '#111' }}>Custom Fields</h2>
+                    <div style={{ borderTop: '1px solid #cfcfcf', padding: '6px 18px' }}>
+                      <h3 style={{ margin: 0, fontSize: 18, fontWeight: 400, color: '#111' }}>Interpreter/Bilingual Service Information</h3>
                     </div>
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 12px 24px', maxWidth: '50%' }}>
-                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={16} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                <div style={{ padding: '0 10px 20px', maxWidth: '50%' }}>
+                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
                 </div>
               ) : (
-                <div style={{ padding: '28px 12px', color: '#666', fontSize: 16 }}>{activeTab} content is not available in this demo.</div>
+                <div style={{ padding: '22px 10px', color: '#666', fontSize: 13 }}>{activeTab} content is not available in this demo.</div>
               )}
             </div>
           </div>
-          <div style={{ height: 8, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
+          <div style={{ height: 6, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
         </div>
       </div>
     </div>
@@ -2806,31 +2806,31 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
     ['external', 'SmartLinks', false],
   ];
   const selectStyle = {
-    width: 288,
-    height: 31,
+    width: 230,
+    height: 25,
     border: '1px solid #cfcfcf',
     background: '#fff',
     color: '#111',
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: 'inherit',
   };
   const fieldBoxStyle = {
-    width: 288,
-    height: 31,
+    width: 230,
+    height: 25,
     border: '1px solid #cfcfcf',
     background: '#fff',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 7px',
-    fontSize: 16,
+    padding: '0 6px',
+    fontSize: 13,
     boxSizing: 'border-box',
   };
   const setServiceValue = (field, value) => setServiceValues(prev => ({ ...prev, [field]: value }));
   const formRow = (label, field, required = false) => (
-    <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+    <div style={{ display: 'grid', gridTemplateColumns: '148px 232px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+      <label style={{ fontSize: 13, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 19, fontWeight: 700 }}>*</span>}
         {serviceOptions[field] ? (
           <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={selectStyle}>
             {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
@@ -2842,19 +2842,19 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
     </div>
   );
   const rightRow = (label, field, required = false, suffix = '') => (
-    <div style={{ display: 'grid', gridTemplateColumns: '175px 210px 80px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-      <label style={{ fontSize: 16, color: '#111' }}>{label}</label>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {required && <span style={{ color: '#ff4050', fontSize: 24, fontWeight: 700 }}>*</span>}
+    <div style={{ display: 'grid', gridTemplateColumns: '140px 168px 64px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+      <label style={{ fontSize: 13, color: '#111' }}>{label}</label>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {required && <span style={{ color: '#ff4050', fontSize: 19, fontWeight: 700 }}>*</span>}
         {serviceOptions[field] ? (
-          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={{ ...selectStyle, width: 188 }}>
+          <select value={serviceValues[field]} onChange={e => setServiceValue(field, e.target.value)} style={{ ...selectStyle, width: 150 }}>
             {serviceOptions[field].map(option => <option key={option || 'blank'} value={option}>{option}</option>)}
           </select>
         ) : (
-          <input value={field === 'startDate' ? '02/09/2026' : ''} onChange={() => {}} style={{ width: 90, height: 31, border: '1px solid #cfcfcf', background: '#fff', padding: '0 5px', fontSize: 16, boxSizing: 'border-box' }} />
+          <input value={field === 'startDate' ? '02/09/2026' : ''} onChange={() => {}} style={{ width: 72, height: 25, border: '1px solid #cfcfcf', background: '#fff', padding: '0 4px', fontSize: 13, boxSizing: 'border-box' }} />
         )}
       </div>
-      <span style={{ fontSize: 16 }}>{suffix}</span>
+      <span style={{ fontSize: 13 }}>{suffix}</span>
     </div>
   );
   const Icon = ({ name, size = 24, color = '#254a67', fill = 'none' }) => {
@@ -2894,8 +2894,8 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
       default: return null;
     }
   };
-  const HeaderIcon = ({ children }) => <span style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</span>;
-  const Badge = ({ value }) => <span style={{ width: 31, height: 31, borderRadius: '50%', background: '#254a67', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700 }}>{value}</span>;
+  const HeaderIcon = ({ children }) => <span style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{children}</span>;
+  const Badge = ({ value }) => <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#254a67', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{value}</span>;
   const ToolbarIcon = ({ name, disabled = false, size = 20 }) => (
     <span className={`streamline-toolbar-icon${disabled ? ' is-disabled' : ''}`}>
       <Icon name={name} size={size} color={disabled ? '#7e99a9' : '#254a67'} />
@@ -2909,11 +2909,11 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
   );
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden', zoom: 0.8 }}>
+    <div data-ehr="calmhsa" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#e9f0fb', color: '#254a67', overflow: 'hidden' }}>
       <style>{`
         .streamline-toolbar-icon {
-          width: 24px;
-          height: 24px;
+          width: 20px;
+          height: 20px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -2929,47 +2929,47 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
           pointer-events: none;
         }
       `}</style>
-      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box', overflow: 'hidden' }}>
-        <HeaderIcon><Icon name="menu" size={31} /></HeaderIcon>
-        <img src="/calmhsa-smartcare-logo.png" alt="SmartCare" style={{ height: 100, width: 'auto', display: 'block', marginRight: 40 }} />
-        <HeaderIcon><Icon name="search" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="star" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="home-user" size={32} /></HeaderIcon>
-        <HeaderIcon><Icon name="user" size={31} /></HeaderIcon>
-        <div style={{ color: '#000', fontSize: 24, borderBottom: '3px solid #254a67', minWidth: 470, height: 43, display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div data-smartcare-header style={{ height: 52, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 14, padding: '0 12px', boxSizing: 'border-box', overflow: 'hidden' }}>
+        <HeaderIcon><Icon name="menu" size={22} /></HeaderIcon>
+        <img src="/calmhsa-smartcare-logo.png" alt="SmartCare" style={{ height: 44, width: 'auto', display: 'block', marginRight: 24 }} />
+        <HeaderIcon><Icon name="search" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="star" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="home-user" size={22} /></HeaderIcon>
+        <HeaderIcon><Icon name="user" size={22} /></HeaderIcon>
+        <div style={{ color: '#000', fontSize: 16, borderBottom: '3px solid #254a67', minWidth: 320, height: 34, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span>{patientLabel}</span>
-          <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
-            <Icon name="money" size={21} /><Icon name="question" size={21} /><Icon name="smile" size={21} /><Icon name="medical" size={21} /><Icon name="briefcase" size={21} />
-            <Icon name="dots-vertical" size={18} /><Icon name="plus" size={18} /><Icon name="times" size={17} />
+          <span style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Icon name="money" size={17} /><Icon name="question" size={17} /><Icon name="smile" size={17} /><Icon name="medical" size={17} /><Icon name="briefcase" size={17} />
+            <Icon name="dots-vertical" size={14} /><Icon name="plus" size={14} /><Icon name="times" size={14} />
           </span>
         </div>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, alignItems: 'center' }}>
-          <Icon name="briefcase" size={26} /><Icon name="bell" size={26} /><Icon name="history" size={26} /><Icon name="question" size={26} /><Icon name="power" size={25} />
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Icon name="briefcase" size={20} /><Icon name="bell" size={20} /><Icon name="history" size={20} /><Icon name="question" size={20} /><Icon name="power" size={20} />
         </div>
       </div>
       <div style={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
-        <div style={{ width: 345, background: '#efefef', borderRight: '1px solid #cfcfcf', flexShrink: 0 }}>
-          <div style={{ height: 53, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid #cfcfcf' }}>
-            {['user', 'home-user', 'building', 'list'].map((icon, i) => <div key={icon} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: i === 0 ? '3px solid #254a67' : 0 }}><Icon name={icon} size={27} /></div>)}
+        <div data-smartcare-rail style={{ width: 240, background: '#efefef', borderRight: '1px solid #cfcfcf', flexShrink: 0 }}>
+          <div style={{ height: 42, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', borderBottom: '1px solid #cfcfcf' }}>
+            {['user', 'home-user', 'building', 'list'].map((icon, i) => <div key={icon} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: i === 0 ? '3px solid #254a67' : 0 }}><Icon name={icon} size={18} /></div>)}
           </div>
           {navItems.map(([icon, label, arrow], i) => (
-            <div key={label} style={{ height: i === 0 ? 52 : 51, borderBottom: '1px solid #cfcfcf', display: 'flex', alignItems: 'center', gap: 12, padding: '0 17px', boxSizing: 'border-box', fontSize: 16 }}>
-              {icon.startsWith('badge:') ? <Badge value={icon.slice(6)} /> : <span style={{ width: 31, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={27} /></span>}
+            <div key={label} style={{ height: i === 0 ? 42 : 41, borderBottom: '1px solid #cfcfcf', display: 'flex', alignItems: 'center', gap: 10, padding: '0 14px', boxSizing: 'border-box', fontSize: 13 }}>
+              {icon.startsWith('badge:') ? <Badge value={icon.slice(6)} /> : <span style={{ width: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={18} /></span>}
               <span style={{ flex: 1 }}>{label}</span>
-              {arrow && <Icon name="chevron" size={16} />}
+              {arrow && <Icon name="chevron" size={13} />}
             </div>
           ))}
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
-          <div style={{ height: 53, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div style={{ color: '#000', fontSize: 29, flex: 1 }}>Progress Note</div>
+          <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
               <ToolbarIcon name="dots-vertical" size={16} />
               <ToolbarIcon name="clipboard-check" disabled size={18} />
               <ToolbarIcon name="user-circle" size={22} />
-              <span className="streamline-toolbar-icon" style={{ width: 34, fontSize: 14 }}>GoTo</span>
+              <span className="streamline-toolbar-icon" style={{ width: 30, fontSize: 12 }}>GoTo</span>
               <ToolbarStarPlus />
               <ToolbarIcon name="star" size={21} />
               <ToolbarIcon name="book" size={21} />
@@ -2977,21 +2977,21 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
               <ToolbarIcon name="trash" disabled size={18} />
             </div>
           </div>
-          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '8px 8px 24px 8px', boxSizing: 'border-box' }}>
-            <div style={{ width: 1190, minHeight: activeTab === 'Service' ? 1120 : '100%', background: '#fff', boxShadow: 'inset 0 0 0 1px #d8d8d8', padding: '20px 15px 56px', boxSizing: 'border-box' }}>
-              <div style={{ height: 49, display: 'grid', gridTemplateColumns: '260px 390px 370px 150px', gap: 8, alignItems: 'center', padding: '0 10px', boxShadow: '0 2px 9px rgba(0,0,0,.25)', marginBottom: 16 }}>
-                <div style={{ display: 'flex', height: 31, alignItems: 'center' }}><span style={{ background: '#eee', padding: '7px 8px', fontSize: 16 }}>Effective</span><span style={{ padding: '7px 8px', fontSize: 16 }}>02/09/2026</span><Icon name="calendar" size={21} /><Icon name="caret-down" size={14} /></div>
-                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Status</span><span style={{ padding: '7px 8px', fontSize: 16 }}>New</span></div>
-                <div style={{ display: 'flex', height: 31 }}><span style={{ background: '#eee', padding: '7px 18px', fontSize: 16 }}>Author</span><span style={{ padding: '7px 8px', fontSize: 16 }}>Eleos</span></div>
-                <div style={{ fontSize: 16 }}>10/14/2025</div>
+          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: '6px 6px 20px', boxSizing: 'border-box' }}>
+            <div style={{ width: 940, minHeight: activeTab === 'Service' ? 896 : '100%', background: '#fff', boxShadow: 'inset 0 0 0 1px #d8d8d8', padding: '16px 12px 45px', boxSizing: 'border-box' }}>
+              <div style={{ height: 39, display: 'grid', gridTemplateColumns: '200px 250px 250px 150px', gap: 6, alignItems: 'center', padding: '0 8px', boxShadow: '0 2px 9px rgba(0,0,0,.25)', marginBottom: 13 }}>
+                <div style={{ display: 'flex', height: 25, alignItems: 'center' }}><span style={{ background: '#eee', padding: '5px 6px', fontSize: 13 }}>Effective</span><span style={{ padding: '5px 6px', fontSize: 13 }}>02/09/2026</span><Icon name="calendar" size={17} /><Icon name="caret-down" size={11} /></div>
+                <div style={{ display: 'flex', height: 25 }}><span style={{ background: '#eee', padding: '5px 14px', fontSize: 13 }}>Status</span><span style={{ padding: '5px 6px', fontSize: 13 }}>New</span></div>
+                <div style={{ display: 'flex', height: 25 }}><span style={{ background: '#eee', padding: '5px 14px', fontSize: 13 }}>Author</span><span style={{ padding: '5px 6px', fontSize: 13 }}>Eleos</span></div>
+                <div style={{ fontSize: 13 }}>10/14/2025</div>
               </div>
-              <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #111', marginBottom: 16, fontSize: 17 }}>
+              <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #111', marginBottom: 13, fontSize: 14 }}>
                 {['Service', 'Note', 'Billing Diagnosis', 'Add-On Codes', 'Warnings', 'Disposition'].map(tab => (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    style={{ padding: '8px 20px', background: activeTab === tab ? '#d7e9f6' : '#fff', border: 0, borderBottom: activeTab === tab ? '4px solid #254a67' : '4px solid transparent', font: 'inherit', cursor: 'pointer' }}
+                    style={{ padding: '6px 16px', background: activeTab === tab ? '#d7e9f6' : '#fff', border: 0, borderBottom: activeTab === tab ? '3px solid #254a67' : '3px solid transparent', font: 'inherit', cursor: 'pointer' }}
                   >
                     {tab}
                   </button>
@@ -2999,20 +2999,20 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
               </div>
               {activeTab === 'Service' ? (
                 <>
-                  <h2 style={{ margin: '0 0 15px 12px', fontSize: 24, fontWeight: 400, color: '#111' }}>Service</h2>
-                  <div style={{ display: 'grid', gridTemplateColumns: '620px 460px', gap: 45, padding: '0 12px', color: '#111' }}>
+                  <h2 style={{ margin: '0 0 12px 10px', fontSize: 19, fontWeight: 400, color: '#111' }}>Service</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '476px 400px', gap: 36, padding: '0 10px', color: '#111' }}>
                     <div>
                       {formRow('Status', 'status')}
                       {formRow('Program', 'program', true)}
                       {formRow('Procedure', 'procedure')}
                       {formRow('Location', 'location', true)}
-                      <div style={{ display: 'grid', gridTemplateColumns: '185px 290px', alignItems: 'center', gap: 10, minHeight: 39 }}>
-                        <label style={{ fontSize: 16, color: '#111' }}>Clinician</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: '148px 232px', alignItems: 'center', gap: 8, minHeight: 31 }}>
+                        <label style={{ fontSize: 13, color: '#111' }}>Clinician</label>
                         <div style={fieldBoxStyle}>Eleos</div>
                       </div>
                       {formRow('Mode Of Delivery', 'modeOfDelivery')}
                       {formRow('Cancel Reason', 'cancelReason')}
-                      <div style={{ height: 28 }} />
+                      <div style={{ height: 22 }} />
                       {formRow('Evidence Based Practices', 'evidenceBasedPractices')}
                       {formRow('Transportation Service', 'transportationService')}
                     </div>
@@ -3020,36 +3020,36 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
                       {rightRow('Start Date', 'startDate')}
                       {rightRow('Start Time', 'startTime', true)}
                       {rightRow('Travel Time', 'travelTime', true, 'Minutes')}
-                      <div style={{ height: 39 }} />
+                      <div style={{ height: 31 }} />
                       {rightRow('Documentation Time', 'documentationTime', true, 'Minutes')}
                       {rightRow('Service Time', 'serviceTime', true, 'Minutes')}
                       {rightRow('Attending', 'attending')}
                       {rightRow('Referring', 'referring')}
-                      <div style={{ height: 40 }} />
-                      <label style={{ fontSize: 16 }}><span style={{ display: 'inline-block', width: 18, height: 18, border: '1px solid #aaa', verticalAlign: 'middle', marginRight: 6 }} />Interpreter Services Needed</label>
+                      <div style={{ height: 32 }} />
+                      <label style={{ fontSize: 13 }}><span style={{ display: 'inline-block', width: 14, height: 14, border: '1px solid #aaa', verticalAlign: 'middle', marginRight: 5 }} />Interpreter Services Needed</label>
                     </div>
                   </div>
-                  <div style={{ borderTop: '1px solid #cfcfcf', marginTop: 28, paddingTop: 50 }}>
-                    <h2 style={{ margin: '0 0 22px 8px', fontSize: 23, fontWeight: 400, color: '#111' }}>Custom Fields</h2>
-                    <div style={{ borderTop: '1px solid #cfcfcf', padding: '8px 22px' }}>
-                      <h3 style={{ margin: 0, fontSize: 22, fontWeight: 400, color: '#111' }}>Interpreter/Bilingual Service Information</h3>
+                  <div style={{ borderTop: '1px solid #cfcfcf', marginTop: 22, paddingTop: 40 }}>
+                    <h2 style={{ margin: '0 0 18px 6px', fontSize: 18, fontWeight: 400, color: '#111' }}>Custom Fields</h2>
+                    <div style={{ borderTop: '1px solid #cfcfcf', padding: '6px 18px' }}>
+                      <h3 style={{ margin: 0, fontSize: 18, fontWeight: 400, color: '#111' }}>Interpreter/Bilingual Service Information</h3>
                     </div>
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 12px 24px', maxWidth: selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
+                <div style={{ padding: '0 10px 20px', maxWidth: selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
                   {selectedNoteType === 'ProgressNote' ? (
                     <CalmhsaProgressNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
                   ) : (
-                    <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={16} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                    <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
                   )}
                 </div>
               ) : (
-                <div style={{ padding: '28px 12px', color: '#666', fontSize: 16 }}>{activeTab} content is not available in this demo.</div>
+                <div style={{ padding: '22px 10px', color: '#666', fontSize: 13 }}>{activeTab} content is not available in this demo.</div>
               )}
             </div>
           </div>
-          <div style={{ height: 8, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
+          <div style={{ height: 6, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
         </div>
       </div>
     </div>
