@@ -590,7 +590,7 @@ const SIDEBAR_BOTTOM_GAP = 16;
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, onActivitySelected, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
-  const { setClientName } = useEhrContext();
+  const { clientName, setClientName } = useEhrContext();
   const smartScribeSkin = useSmartScribeSkin();
   const { lockedDownMode } = useLockedDownModeContext();
   const { mobileMode, sessionKey, exitMobileMode } = useMobileModeContext();
@@ -866,8 +866,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     }
     // Clicking quality tab auto-triggers analysis if not already running
     if (tab === 'quality' && ehrCtx && ehrCtx.lqaStatus === 'idle') {
-      ehrCtx.setLqaStatus('loading');
-      setTimeout(() => ehrCtx.setLqaStatus('issues'), 2800);
+      setAutoRunQuality(true);
     }
   };
 
@@ -877,7 +876,6 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       setNavTab(startTab);
       if (startTab === 'quality') {
         setAutoRunQuality(true); // signal LQAReview to enter analyzing state immediately
-        ehrCtx?.triggerQualityCheck?.();  // update lqaStatus in context (drives badge + pill)
       }
       onStartTabConsumed?.();
     }
@@ -1011,7 +1009,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       />;
     }
     if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
-    if (navTab === 'quality')  return <LQAReview clientName="Larry Quinn" sessionLabel="Apr 15, 2026, 9:00 – 9:45 AM" onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
+    if (navTab === 'quality')  return <LQAReview clientName={clientName} onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
       key={`${sessionKey}-${summarySeq}`}
       initialClient={captureSession.name || ''}

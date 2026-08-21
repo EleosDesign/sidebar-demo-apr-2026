@@ -1,34 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useEhrField } from './EhrFieldContext.jsx';
-import { useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
-
-// ── Demo data ──────────────────────────────────────────────────────────────────
-
-const OPEN_ITEMS = [
-  { id: 0, title: 'Progress Mentioned',              detail: 'Note lacks specific progress documentation or goal indicators.' },
-  { id: 1, title: 'Client Response to Intervention', detail: 'No client response documented after intervention.' },
-  { id: 2, title: 'Compliant Plan',                  detail: 'Both criteria were not met: no next step or next appointment documented.' },
-  { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).', custom: true },
-];
-
-// 7 standard rules that passed
-const COMPLETED_ITEMS = [
-  { label: 'Completeness',       custom: false },
-  { label: 'Uniqueness',         custom: false },
-  { label: 'Golden Thread',      custom: false },
-  { label: 'Intervention Used',  custom: false },
-];
-
-const ALL_CLEAR_ITEMS = [
-  { label: 'Completeness',                   custom: false },
-  { label: 'Uniqueness',                     custom: false },
-  { label: 'Progress Mentioned',             custom: false },
-  { label: 'Golden Thread',                  custom: false },
-  { label: 'Intervention Used',              custom: false },
-  { label: 'Client Response to Intervention',custom: false },
-  { label: 'Compliant Plan',                 custom: false },
-  { label: 'Service Code Match',             custom: true  },
-];
+import { useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.jsx';
+import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
+import { evaluateNoteQuality } from '../../data/noteQuality.js';
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
@@ -87,14 +61,16 @@ function CheckItem({ label, custom }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessionLabel = 'Apr 15, 2026, 9:00 – 9:45 AM', autoRunAnalysis = false, onAutoRunConsumed }) {
+export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRunAnalysis = false, onAutoRunConsumed }) {
   const smartScribeSkin = useSmartScribeSkin();
   const ehrCtx = useEhrField();
+  const noteTypeCtx = useNoteTypeContext();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
-  const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
-  const fieldValues = ehrCtx?.fieldValues ?? { data: '', assessment: '', plan: '' };
+  const noteValues = noteTypeCtx?.noteValues ?? {};
+  const sections = noteTypeCtx?.sections ?? [];
+  const serviceCodeMatchPassed = ehrCtx?.serviceCodeMatchPassed ?? false;
 
-  const filledCount = Object.values(fieldValues).filter(v => v.trim()).length;
+  const filledCount = Object.values(noteValues).filter(v => String(v ?? '').trim()).length;
   const mostFilled = filledCount >= 2;
 
   // If opened via the inline LQA CTA, start straight in 'progress'; otherwise derive from saved status
@@ -105,13 +81,13 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
     return 'idle';
   });
 
-  const [resultsVariant, setResultsVariant] = useState('issues');
+  const [results, setResults] = useState(() => evaluateNoteQuality(noteValues, sections, serviceCodeMatchPassed));
   const [dismissed, setDismissed] = useState([]);
   const [openExpanded, setOpenExpanded] = useState(true);
   const [completedExpanded, setCompletedExpanded] = useState(false);
   const timerRef = useRef(null);
 
-  // If opened via the inline CTA, kick off analysis immediately on mount
+  // Auto-run when Quality is opened from either the nav or inline CTA.
   useEffect(() => {
     if (autoRunAnalysis) {
       runAnalysis();
@@ -125,27 +101,34 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
     if (lqaStatus === 'loading' && state === 'idle') setState('progress');
   }, [lqaStatus]); // eslint-disable-line
 
-  const visibleItems = OPEN_ITEMS.filter(item => !dismissed.includes(item.id));
+  const visibleItems = results.openItems.filter(item => !dismissed.includes(item.id));
 
   function runAnalysis() {
+    const nextResults = evaluateNoteQuality(noteValues, sections, serviceCodeMatchPassed);
     setState('progress');
     if (ehrCtx) ehrCtx.setLqaStatus('loading');
+    setDismissed([]);
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
+      setResults(nextResults);
       setState('results');
-      setResultsVariant('issues');
       if (ehrCtx) ehrCtx.setLqaStatus('issues');
     }, 3400);
   }
 
   function reRunAnalysis() {
+    const nextResults = evaluateNoteQuality(noteValues, sections, true);
     setState('progress');
-    if (ehrCtx) ehrCtx.setLqaStatus('loading');
+    setDismissed([]);
+    if (ehrCtx) {
+      ehrCtx.setLqaStatus('loading');
+      ehrCtx.setServiceCodeMatchPassed(true);
+    }
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
+      setResults(nextResults);
       setState('results');
-      setResultsVariant('allClear');
-      if (ehrCtx) ehrCtx.setLqaStatus('idle');
+      if (ehrCtx) ehrCtx.setLqaStatus('issues');
     }, 2800);
   }
 
@@ -181,7 +164,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
         </div>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', fontFamily: "'Poppins',sans-serif" }}>{clientName}</div>
-          <div style={{ fontSize: 13, color: '#aaa', fontFamily: "'Poppins',sans-serif" }}>{sessionLabel}</div>
+          {sessionLabel && <div style={{ fontSize: 13, color: '#aaa', fontFamily: "'Poppins',sans-serif" }}>{sessionLabel}</div>}
         </div>
       </div>
 
@@ -247,7 +230,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
         )}
 
         {/* RESULTS — issues */}
-        {state === 'results' && resultsVariant === 'issues' && (
+        {state === 'results' && results.openItems.length > 0 && (
           <div>
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div onClick={() => setOpenExpanded(!openExpanded)}
@@ -272,7 +255,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
               <div onClick={() => setCompletedExpanded(!completedExpanded)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', cursor: 'pointer', borderBottom: completedExpanded ? '1px solid #f0f0f0' : 'none' }}>
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>
-                  Completed <span>({COMPLETED_ITEMS.length})</span>
+                  Completed <span>({results.completedItems.length})</span>
                 </span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: completedExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -280,7 +263,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
               </div>
               {completedExpanded && (
                 <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {COMPLETED_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
+                  {results.completedItems.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
                 </div>
               )}
             </div>
@@ -288,7 +271,7 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
         )}
 
         {/* RESULTS — all clear */}
-        {state === 'results' && resultsVariant === 'allClear' && (
+        {state === 'results' && results.openItems.length === 0 && (
           <div>
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
@@ -303,13 +286,13 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #f0f0f0' }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({ALL_CLEAR_ITEMS.length})</span></span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({results.completedItems.length})</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(180deg)', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {ALL_CLEAR_ITEMS.map((item, i) => <CheckItem key={i} label={item.label} custom={item.custom} />)}
+                {results.completedItems.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
               </div>
             </div>
           </div>
@@ -322,8 +305,8 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
           <div style={{ width: '100%', height: 3, background: '#e0e4f7', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
             <div style={{
               height: '100%', borderRadius: 2,
-              background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : `linear-gradient(90deg, ${smartScribeColor(smartScribeSkin, '#2D4CCD')}, #7B8EE8)`,
-              width: resultsVariant === 'allClear' ? '100%' : `${Math.round(COMPLETED_ITEMS.length / (COMPLETED_ITEMS.length + OPEN_ITEMS.length) * 100)}%`,
+              background: results.openItems.length === 0 ? 'linear-gradient(90deg, #16a34a, #4ade80)' : `linear-gradient(90deg, ${smartScribeColor(smartScribeSkin, '#2D4CCD')}, #7B8EE8)`,
+              width: `${Math.round(results.completedItems.length / (results.completedItems.length + results.openItems.length) * 100)}%`,
               transition: 'width 0.5s ease, background 0.5s ease',
             }} />
           </div>
@@ -340,63 +323,23 @@ export default function LQAReview({ onAdvance, clientName = 'Larry Quinn', sessi
             Analyzing...
           </button>
         )}
-        {state === 'results' && resultsVariant === 'issues' && (
-          <>
-            <button
-              onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
-              disabled={!changedSinceAnalysis}
-              style={{
-                width: '100%', height: 30, border: 'none', borderRadius: 4,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
-                transition: 'background 0.2s, color 0.2s',
-                ...(changedSinceAnalysis
-                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
-                  : { background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
-                ),
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Re-Run Analysis
-            </button>
-            {!changedSinceAnalysis && (
-              <div style={{ fontSize: 12, color: '#aaa', textAlign: 'center', fontFamily: "'Poppins',sans-serif" }}>
-                Edit your note to enable re-analysis
-              </div>
-            )}
-          </>
-        )}
-        {state === 'results' && resultsVariant === 'allClear' && (
-          <>
-            <button
-              onClick={changedSinceAnalysis ? reRunAnalysis : undefined}
-              disabled={!changedSinceAnalysis}
-              style={{
-                width: '100%', height: 30, border: 'none', borderRadius: 4,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
-                transition: 'background 0.2s, color 0.2s',
-                ...(changedSinceAnalysis
-                  ? { background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer', boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)' }
-                  : { background: `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.12)`, color: smartScribeColor(smartScribeSkin, '#2d4ccd'), cursor: 'not-allowed' }
-                ),
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Re-Run Analysis
-            </button>
-            {!changedSinceAnalysis && (
-              <div style={{ fontSize: 12, color: '#aaa', textAlign: 'center', fontFamily: "'Poppins',sans-serif" }}>
-                Edit your note to enable re-analysis
-              </div>
-            )}
-          </>
+        {state === 'results' && (
+          <button
+            onClick={reRunAnalysis}
+            style={{
+              width: '100%', height: 30, border: 'none', borderRadius: 4,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              fontFamily: "'Poppins',sans-serif", fontSize: 13, fontWeight: 500, letterSpacing: '0.46px',
+              background: smartScribeColor(smartScribeSkin, '#2d4ccd'), color: 'white', cursor: 'pointer',
+              boxShadow: '0px 1px 5px rgba(0,0,0,0.12), 0px 2px 2px rgba(0,0,0,0.14), 0px 3px 1px -2px rgba(0,0,0,0.2)',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M4 4v5h5M20 20v-5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M4.93 14.94A8 8 0 1 0 6.34 6.34L4 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Re-Run Analysis
+          </button>
         )}
       </div>
     </div>

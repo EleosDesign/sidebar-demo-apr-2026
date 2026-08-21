@@ -7,6 +7,7 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
   const [fieldValues, setFieldValues] = useState({ data: '', assessment: '', plan: '' });
   const [lqaStatus, setLqaStatus] = useState('idle'); // 'idle' | 'loading' | 'issues'
   const [changedSinceAnalysis, setChangedSinceAnalysis] = useState(false);
+  const [serviceCodeMatchPassed, setServiceCodeMatchPassed] = useState(false);
 
   // ── Enhance state ──────────────────────────────────────────────────────────
   const [enhanceActive, setEnhanceActive] = useState(false);
@@ -59,6 +60,7 @@ export function EhrFieldProvider({ children, sidebarOpen = false }) {
       appendToField,
       lqaStatus, setLqaStatus,
       changedSinceAnalysis, setChangedSinceAnalysis,
+      serviceCodeMatchPassed, setServiceCodeMatchPassed,
       // enhance
       enhanceActive, setEnhanceActive,
       enhanceField, setEnhanceField,
