@@ -48,11 +48,15 @@ The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext
 
 ## CalMHSA SmartCare
 
-The EHR background option (`EHR_BACKGROUNDS.calmhsa`, dropdown label "CalMHSA SmartCare") representing the SmartCare EHR chrome used by CalMHSA member counties. Visually identical today to the **Streamline** background (`EHR_BACKGROUNDS.streamline`), which represents the same underlying SmartCare product for other Streamline-branded clients — per ADR-0005, the two are separate components/assets so they can diverge independently as CalMHSA-specific chrome is designed. Not linked to CalMHSA's own note structures (`ehrSystem: "calmhsa-psych"` in `note-structures.json`, e.g. Patricia Rodriguez / Ashlyn Rivera) — EHR background selection stays fully manual via the EHR dropdown for every EHR, decoupled from Demo Mode client/note-type locking.
+The EHR background option (`EHR_BACKGROUNDS.calmhsa`, dropdown label "CalMHSA SmartCare") representing the SmartCare EHR chrome used by CalMHSA member counties. Visually identical today to the **Streamline** background (`EHR_BACKGROUNDS.streamline`), which represents the same underlying SmartCare product for other Streamline-branded clients — per ADR-0005, the two are separate components/assets so they can diverge independently as CalMHSA-specific chrome is designed. EHR background selection stays manual and is generally decoupled from Demo Mode client/note-type locking; the **Calvin Murphy CalMHSA workflow** is the sole exception.
 
 ## CalMHSA Progress Note
 
 A clinical note format used in CalMHSA SmartCare. **Problem Details**, **Problem List**, and **Problems Addressed During This Session** establish the clinical context; **Information** and **Care Plan** are the two editable narrative sections populated from documentation suggestions.
+
+## Calvin Murphy CalMHSA workflow
+
+When Calvin Murphy is paired with **CalMHSA SmartCare**, his documentation suggestions use the **Information** and **Care Plan** sections of the **CalMHSA Progress Note** in every suggestion-entry flow. This pairing is specific to CalMHSA SmartCare and does not include the separate **Streamline** EHR option. In Demo Mode, the pairing also selects the CalMHSA Progress Note; leaving CalMHSA SmartCare restores Calvin's SOAP Note. Turning Demo Mode off preserves the currently selected note type but unlocks it for manual editing. Calvin's CalMHSA-specific suggestions remain active outside Demo Mode regardless of that manual note-type selection.
 
 ## SmartScribe skin
 

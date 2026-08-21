@@ -27,6 +27,7 @@ import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefau
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
   CASE_MGMT_SUGGESTIONS_DATA, TREATMENT_PLAN_SUGGESTIONS_DATA, ASSESSMENT_SUGGESTIONS_DATA,
+  CALMHSA_PROGRESS_SUGGESTIONS_DATA,
   ANGER_GROUP_SUGGESTIONS_DATA, SUD_GROUP_SUGGESTIONS_DATA, GROUP_SUGGESTIONS_BY_NOTE_TYPE,
   LARRY_QUINN_SUGGESTIONS_DATA, LARRY_QUINN_DAP_DATA,
   PROGRESS_NOTE_SUGGESTIONS_DATA,
@@ -3942,15 +3943,17 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
 
 function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, onAddedToEHR, suggestionsData, session = null, isIndividualAudio = false, compactMode = false, mobileMode = false, sidebarW = 467 }) {
   const smartScribeSkin = useSmartScribeSkin();
+  const { selectedEhr } = useEhrContext();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
   const { lockedDownMode } = useLockedDownModeContext();
   const hideBulkAdd = lockedDownMode && session?.type === 'group';
 
-  // Resolve which dataset to use — NoteTypeContext override takes priority,
-  // then session-based selection, then default.
+  // Resolve which dataset to use — Calvin's CalMHSA workflow takes priority,
+  // then the NoteTypeContext override, session-based selection, and default.
   const resolvedData = (() => {
+    if (clientName === 'Calvin Murphy' && selectedEhr === 'calmhsa') return CALMHSA_PROGRESS_SUGGESTIONS_DATA;
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
     if (session.id === 'larry' || session.name === 'Larry Quinn') return useEhrNoteHeaders ? LARRY_QUINN_DAP_DATA : LARRY_QUINN_SUGGESTIONS_DATA;
@@ -4034,6 +4037,20 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   };
 
   useEffect(() => {
+    setActiveSectionIdx(0);
+    setActiveCardIdx(0);
+    setOpenSections(new Set(data.map(section => section.section)));
+    setExcluded(new Set());
+    setAdded(new Set());
+    setCopied(new Set());
+    setEditingKey(null);
+    setEditDraft('');
+    setEditedContent({});
+    setHasScrolledToBottom(false);
+    checkScrollBottom();
+  }, [data]);
+
+  useEffect(() => {
     // Check on mount in case content fits without scrolling
     checkScrollBottom();
   }, []);
@@ -4053,7 +4070,7 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
     return next;
   });
 
-  const currentSection = data[activeSectionIdx];
+  const currentSection = data[activeSectionIdx] ?? data[0];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8 }}>
