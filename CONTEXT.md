@@ -65,3 +65,27 @@ The alternate navy visual state for Eleos-branded chrome, active whenever `useEh
 ## Note Complete screen
 
 The confirmation screen (`MobileNoteComplete`) shown after a suggestions review is sent to the EHR while in Mobile Mode. Offers "Go to Mobile Activities List" and "Enter New Summary." Used both by the new-summary flow (`AddSummaryPanel`) and, per this session's fix, by the session-select-from-activities flow.
+
+## Quality Document
+
+The complete clinical note evaluated by Note Quality, comprising all fields in the active note type regardless of Client or EHR.
+
+## Recognized Intervention
+
+An intervention documented with one of the demo's three canonical phrases: the full boundary-setting encouragement statement, "motivational interviewing techniques," or "provided psychoeducation." Matching is case-insensitive.
+
+## Progress Statement
+
+Quality Document language explicitly describing treatment progress, improvement, decline or regression, stability, or no change. "Managing urges" is also treated as a Progress Statement in the demo.
+
+## Client Response
+
+Documentation of how the Client responded to an intervention, either in a response-specific note field or through language linking the Client or their pronoun to an explicit response cue.
+
+## Compliant Plan
+
+A plan documenting at least one actionable step the Client can take between sessions or a scheduled next appointment or plan to schedule it.
+
+## Service Code Match
+
+The custom Note Quality rule comparing the documented session with its service code. In this demo it reports an error on the first analysis and remains clear after Re-Run Analysis until the page reloads.
