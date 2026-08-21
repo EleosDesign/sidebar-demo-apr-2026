@@ -381,10 +381,12 @@ function InlineLaunchButton({ skin = false }) {
   );
 }
 
-function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
+function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sections: sectionsOverride,
+  hideLabels = false, lastSectionId: lastSectionIdOverride,
   labelColor = '#555', labelWeight = 500, borderRadius = 4,
   borderColor = '#ccc', minHeight = 150, fontSize = 13,
-  fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff' }) {
+  fontFamily = "'Segoe UI', Arial, sans-serif", bg = '#fff', resize = 'vertical',
+  placeholder = 'Type here or use the cards on the right to build your note' }) {
   const noteTypeCtx = useNoteTypeContext();
   const ehrField = useEhrField();
   const smartScribeSkin = useSmartScribeSkin();
@@ -394,7 +396,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   const [enhancingField, setEnhancingField] = useState(null);
   const [tooltipField, setTooltipField] = useState(null);
   const [tooltipText, setTooltipText] = useState('');
-  const sections = noteTypeCtx?.sections ?? [
+  const sections = sectionsOverride ?? noteTypeCtx?.sections ?? [
     { id: 'Data/Goal:',                         label: 'Data' },
     { id: 'Intervention/Response:',             label: 'Intervention/Response' },
     { id: 'Assessment/Level of Participation:', label: 'Assessment' },
@@ -407,7 +409,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
   [sections, noteValues]); // eslint-disable-line
 
   // ID of the very last section in the list
-  const lastSectionId = sections[sections.length - 1]?.id ?? null;
+  const lastSectionId = lastSectionIdOverride ?? sections[sections.length - 1]?.id ?? null;
 
   // ID of the last (bottom-most) section that still has no content
   const lastEmptySectionId = useMemo(() => {
@@ -476,17 +478,18 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField,
 
         return (
           <div key={s.id} style={{ marginBottom: 22, position: 'relative' }}>
-            <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>
+            {!hideLabels && <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>}
             <textarea
+              aria-label={s.label}
               value={currentValue}
               onChange={e => handleChange(s.id, e.target.value)}
               onFocus={() => { setFocusedEhrField(s.id); setTimeout(() => setFocusedField(s.id), 300); }}
               onBlur={() => { setFocusedEhrField(null); setTimeout(() => setFocusedField(f => f === s.id ? null : f), 150); }}
-              placeholder="Type here or use the cards on the right to build your note"
+              placeholder={placeholder}
               style={{
                 width: '100%', minHeight, padding: '10px 12px',
                 border: `1px solid ${borderColor}`, borderRadius,
-                resize: 'vertical', fontSize, color: '#333', fontFamily,
+                resize, fontSize, color: '#333', fontFamily,
                 background: highlightedField === s.id ? '#fffde7' : bg,
                 outline: 'none', lineHeight: 1.5, boxSizing: 'border-box',
                 transition: 'background 0.3s',
@@ -2664,12 +2667,106 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
   );
 }
 
+function CalmhsaNoteSection({ title, action, children, hideTitleRightBorder = false }) {
+  return (
+    <section style={{ marginTop: 10, color: '#000' }}>
+      <div style={{ height: 27, display: 'flex', alignItems: 'stretch' }}>
+        <h3 style={{ margin: 0, padding: '4px 9px', border: '1px solid #d6d6d6', borderRight: hideTitleRightBorder ? 0 : undefined, borderBottom: 0, fontSize: 14, fontWeight: 400, lineHeight: '18px', background: '#fff' }}>{title}</h3>
+        <div style={{ flex: 1, borderTop: '1px solid #d6d6d6' }} />
+        {action}
+      </div>
+      <div style={{ border: '1px solid #d6d6d6', padding: '10px 10px 20px', background: '#fff' }}>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function CalmhsaProgressNote({ noteValues, onNoteChange, highlightedField, sections }) {
+  const information = sections.find(section => section.id === 'information') ?? { id: 'information', label: 'Information' };
+  const carePlan = sections.find(section => section.id === 'carePlan') ?? { id: 'carePlan', label: 'Care Plan' };
+  const buttonStyle = { minWidth: 67, height: 20, padding: '0 10px', border: 0, background: '#254a67', color: '#fff', font: 'inherit', fontSize: 13 };
+  const inputStyle = { height: 22, border: '1px solid #d6d6d6', background: '#fff', padding: '1px 4px', boxSizing: 'border-box', font: 'inherit', fontSize: 13 };
+  const tableColumns = '24px 24px 34px 65px 65px 70px 130px 100px 130px 128px';
+  const tableCell = { minHeight: 25, padding: '5px 7px', borderRight: '1px solid #d6d6d6', borderBottom: '1px solid #d6d6d6', boxSizing: 'border-box', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' };
+  const fieldProps = { noteValues, onNoteChange, highlightedField, hideLabels: true, lastSectionId: 'carePlan', labelColor: '#000', fontSize: 13, borderColor: '#d6d6d6', minHeight: 223, borderRadius: 0, resize: 'none', placeholder: '' };
+
+  return (
+    <div style={{ width: 846, paddingBottom: 20, color: '#000', fontFamily: "'IBM Plex Sans', Arial, sans-serif", fontSize: 13 }}>
+      <div style={{ width: 63, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#c6dff0', borderBottom: '2px solid #254a67', fontSize: 11 }}>General</div>
+
+      <CalmhsaNoteSection title="Problem Details">
+        <div style={{ display: 'grid', gridTemplateColumns: '38px 74px 72px 1fr 28px', gap: 6, alignItems: 'center' }}>
+          <span style={{ color: '#254a67', fontSize: 18, textAlign: 'center' }}>*</span>
+          <label htmlFor="calmhsa-problem-code">Code</label>
+          <input id="calmhsa-problem-code" aria-label="Problem code search" readOnly placeholder="Search" style={{ ...inputStyle, width: 61 }} />
+          <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr 24px 24px', gap: 6, alignItems: 'center' }}>
+            <label htmlFor="calmhsa-problem-description">Description</label>
+            <input id="calmhsa-problem-description" aria-label="Problem description search" readOnly placeholder="Search" style={{ ...inputStyle, width: '100%' }} />
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#254a67" strokeWidth="1.8">
+              <circle cx="7" cy="7" r="4.5" />
+              <path d="m10.5 10.5 3 3" />
+            </svg>
+            <span aria-hidden="true" style={{ color: '#254a67', fontSize: 16 }}>*</span>
+          </div>
+          <span />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '9px 0 8px 14px' }}>
+          <label htmlFor="calmhsa-problem-start">Start Date:</label>
+          <input id="calmhsa-problem-start" readOnly value="02/05/2026" style={{ ...inputStyle, width: 78 }} />
+          <label htmlFor="calmhsa-problem-end" style={{ marginLeft: 14 }}>End Date:</label>
+          <input id="calmhsa-problem-end" readOnly value="" style={{ ...inputStyle, width: 78 }} />
+          <label htmlFor="calmhsa-problem-program" style={{ marginLeft: 90 }}>Program</label>
+          <select id="calmhsa-problem-program" defaultValue="" aria-label="Problem program" style={{ ...inputStyle, width: 115 }}><option value="" /></select>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <button type="button" style={buttonStyle}>Insert</button>
+          <button type="button" style={buttonStyle}>Clear</button>
+        </div>
+
+        <div style={{ marginTop: 14 }}>
+          <div style={{ display: 'flex', height: 27 }}>
+            <h4 style={{ margin: 0, padding: '4px 8px', border: '1px solid #d6d6d6', borderBottom: 0, fontSize: 14, fontWeight: 400 }}>Problem List</h4>
+            <div style={{ flex: 1, borderTop: '1px solid #d6d6d6' }} />
+          </div>
+          <div style={{ overflowX: 'auto', borderTop: '1px solid #254a67' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: tableColumns, width: 770, background: '#efefef', borderLeft: '1px solid #d6d6d6', borderTop: '1px solid #d6d6d6' }}>
+              {['', '', '', 'Start Date', 'End Date', 'ICD 10 Code', 'ICD 10 Description', 'SNOMED CT Code', 'SNOMED Description', 'Program'].map((value, index) => <div key={`${value}-${index}`} style={tableCell}>{value}</div>)}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: tableColumns, width: 770, borderLeft: '1px solid #d6d6d6' }}>
+              {['x', 'o', 'i', '11/20/2...', '', 'F19.10', 'Other psychoactive su...', '1264080008', 'Fetal disorder caused ...', 'MH Adult Outpatient'].map((value, index) => <div key={`${value}-${index}`} style={{ ...tableCell, color: index < 3 ? '#254a67' : '#000', textAlign: index < 3 ? 'center' : 'left' }}>{value}</div>)}
+            </div>
+          </div>
+        </div>
+      </CalmhsaNoteSection>
+
+      <CalmhsaNoteSection title="Problems addressed during this session" action={<button type="button" style={buttonStyle}>Refresh</button>}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 4, paddingLeft: 10 }}>
+          <input type="checkbox" checked={false} onChange={() => {}} />
+          Other psychoactive substance abuse, uncomplicated
+        </label>
+      </CalmhsaNoteSection>
+
+      <CalmhsaNoteSection title="Information" hideTitleRightBorder>
+        <p style={{ margin: '0 0 4px 2px', lineHeight: 1.35 }}>{information.description}</p>
+        <StackedFields {...fieldProps} sections={[information]} />
+      </CalmhsaNoteSection>
+
+      <CalmhsaNoteSection title="Care Plan" hideTitleRightBorder>
+        <p style={{ margin: '0 0 4px 2px', lineHeight: 1.35 }}>{carePlan.description}</p>
+        <StackedFields {...fieldProps} sections={[carePlan]} />
+      </CalmhsaNoteSection>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // 15. CALMHSA SMARTCARE
 // Duplicate of StreamlineBg (see docs/adr/0005-calmhsa-smartcare-background-starts-as-a-streamline-duplicate.md)
 // ═══════════════════════════════════════════════════════════════════════════════
 export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, activitySelectionSeq }) {
   const { clientName } = useEhrContext();
+  const { selectedNoteType, sections } = useNoteTypeContext();
   const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState('Service');
   useEffect(() => {
@@ -2940,8 +3037,12 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 12px 24px', maxWidth: '50%' }}>
-                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={16} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                <div style={{ padding: '0 12px 24px', maxWidth: selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
+                  {selectedNoteType === 'ProgressNote' ? (
+                    <CalmhsaProgressNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
+                  ) : (
+                    <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={16} borderColor='#cfcfcf' minHeight={140} borderRadius={0} />
+                  )}
                 </div>
               ) : (
                 <div style={{ padding: '28px 12px', color: '#666', fontSize: 16 }}>{activeTab} content is not available in this demo.</div>
