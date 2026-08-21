@@ -12,7 +12,7 @@ Distinct from **compact mode** (`compactMode = mobileMode || sidebarW < 380`), w
 
 ## Mobile Activities List
 
-The Activity list rendered while Mobile Mode is still active, inside the phone frame. It uses the mobile labels **My Captured Activities**, **For Review**, and **Completed**, while showing the same underlying Activities and statuses as the desktop Companion Sidebar without applying a mobile-only date cutoff. The mobile presentation retains the prototype's two-week footer. Reaching the list should never exit Mobile Mode; that is reserved for the phone frame's explicit exit control.
+The Activity list rendered while Mobile Mode is still active, inside the phone frame. It uses the title **My Captured Activities** while showing the same underlying Activities and statuses as the desktop Companion Sidebar without applying a mobile-only date cutoff. The mobile presentation retains the prototype's two-week footer. Reaching the list should never exit Mobile Mode; that is reserved for the phone frame's explicit exit control.
 
 ## Activity Capture Methods
 
@@ -20,7 +20,7 @@ The three ways to create a new Activity: **Live Session** records the session as
 
 ## Activity Completion
 
-An actively recording Live Session is not yet an Activity list item. Finishing the Live Session creates the reviewable Activity and completes its audio capture, but does not complete the resulting Activity. The Activity remains in **Add to EHR** (called **For Review** in Mobile Mode) until the clinician explicitly submits it or marks it as done; only then does it move to **Marked as Done** (called **Completed** in Mobile Mode).
+An actively recording Live Session is not yet an Activity list item. Finishing the Live Session creates the reviewable Activity and completes its audio capture, but does not complete the resulting Activity. The Activity remains **For Review** until the clinician explicitly submits it. On desktop, adding its documentation suggestions to the EHR does not submit it; the clinician must mark it as submitted separately. In Mobile Mode, **Send to EHR** is the submission action. A submitted Activity becomes **Completed**.
 
 ## Mobile Check-In Questions
 
