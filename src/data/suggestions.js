@@ -1,3 +1,5 @@
+import NOTE_STRUCTURES_RAW from './note-structures.json';
+
 // ── Default DAP suggestions ───────────────────────────────────────────────────
 export const SUGGESTIONS_DATA = [
   { section: 'Data', cards: [
@@ -82,6 +84,11 @@ export const CASE_MGMT_SUGGESTIONS_DATA = [
     { field: 'Plan', content: 'Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group.', type: 'text', showActions: true },
   ]},
 ];
+
+export const CALMHSA_PROGRESS_SUGGESTIONS_DATA = NOTE_STRUCTURES_RAW.noteTypes.ProgressNote.sections.map(section => ({
+  section: section.label,
+  cards: [{ field: section.label, content: section.sampleContent, type: 'text', showActions: true }],
+}));
 
 // ── Treatment Plan suggestions — Trisha Platts ────────────────────────────────
 export const TREATMENT_PLAN_SUGGESTIONS_DATA = [
