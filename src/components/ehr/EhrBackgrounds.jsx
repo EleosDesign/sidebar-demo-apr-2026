@@ -2541,9 +2541,9 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
           pointer-events: none;
         }
       `}</style>
-      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box' }}>
+      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box', overflow: 'hidden' }}>
         <HeaderIcon><Icon name="menu" size={31} /></HeaderIcon>
-        <img src="/streamline-smartcare-logo.png" alt="SmartCare" style={{ height: 124.2, width: 'auto', display: 'block', marginRight: 150 }} />
+        <img src="/streamline-smartcare-logo.png" alt="SmartCare" style={{ height: 100, width: 'auto', display: 'block', marginRight: 40 }} />
         <HeaderIcon><Icon name="search" size={32} /></HeaderIcon>
         <HeaderIcon><Icon name="star" size={32} /></HeaderIcon>
         <HeaderIcon><Icon name="home-user" size={32} /></HeaderIcon>
@@ -2832,9 +2832,9 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
           pointer-events: none;
         }
       `}</style>
-      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box' }}>
+      <div style={{ height: 70, background: '#fff', borderBottom: '3px solid #f5a800', display: 'flex', alignItems: 'center', gap: 22, padding: '0 15px', boxSizing: 'border-box', overflow: 'hidden' }}>
         <HeaderIcon><Icon name="menu" size={31} /></HeaderIcon>
-        <img src="/calmhsa-smartcare-logo.png" alt="SmartCare" style={{ height: 124.2, width: 'auto', display: 'block', marginRight: 150 }} />
+        <img src="/calmhsa-smartcare-logo.png" alt="SmartCare" style={{ height: 100, width: 'auto', display: 'block', marginRight: 40 }} />
         <HeaderIcon><Icon name="search" size={32} /></HeaderIcon>
         <HeaderIcon><Icon name="star" size={32} /></HeaderIcon>
         <HeaderIcon><Icon name="home-user" size={32} /></HeaderIcon>
