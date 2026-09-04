@@ -910,7 +910,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             ...daysAgo(0),
             name: captureSession.name,
             time: `${startT} – ${endT}`,
-            type: 'individual',
+            type: knownSession?.type ?? 'individual',
             sessionType: 'audio',
             isActive: false,
             summary: 'Audio session captured and transcribed. AI-generated suggestions are ready for EHR review.',
