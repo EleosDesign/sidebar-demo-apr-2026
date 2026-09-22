@@ -16,7 +16,7 @@ export const CLIENTS_LIST = [
 export const CLIENT_OPTIONS = [
   'Marcus Webb', 'Aisha Monroe', 'Tom Reilly', 'Carmen Vega', 'David Park',
   'Priya Nair', 'James Osei', 'Linda Torres', 'Ryan Cho',
-  'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
+  'Larry Quinn', 'Calvin Murphy',
   'Anger Management Group', 'SUD Group', 'Patricia Rodriguez', 'Ashlyn Rivera',
 ];
 
@@ -39,7 +39,7 @@ export const CLIENT_PRONOUNS = {
 
 // ── Demo-mode subset (only clients/groups with wired-up content) ─────────────
 export const DEMO_CLIENT_OPTIONS = [
-  'Larry Quinn', 'Calvin Murphy', 'Trisha Platts',
+  'Larry Quinn', 'Calvin Murphy',
   'Patricia Rodriguez', 'Ashlyn Rivera',
   'Anger Management Group', 'SUD Group',
 ];

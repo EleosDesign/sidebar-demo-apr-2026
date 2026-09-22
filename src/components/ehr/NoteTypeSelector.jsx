@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 
+const EXCLUDED_NOTE_TYPES = ['AngerManagementGroup', 'TreatmentPlan'];
+
 export default function NoteTypeSelector() {
   const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
   const [open, setOpen] = useState(false);
@@ -37,7 +39,7 @@ export default function NoteTypeSelector() {
             Note Type
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {NOTE_TYPE_LIST.filter(({ id }) => id !== 'AngerManagementGroup').map(({ id, label }) => {
+            {NOTE_TYPE_LIST.filter(({ id }) => !EXCLUDED_NOTE_TYPES.includes(id)).map(({ id, label }) => {
               const isActive = selectedNoteType === id;
               return (
                 <button
