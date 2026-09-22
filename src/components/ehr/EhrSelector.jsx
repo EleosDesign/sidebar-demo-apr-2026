@@ -3,21 +3,21 @@ import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { EHR_LABELS } from './EhrBackgrounds.jsx';
 
 const EHR_LIST = [
-  { id: 'welligent',  label: 'Welligent' },
   { id: 'arize',      label: 'Arize' },
+  { id: 'calmhsa',    label: 'CalMHSA SmartCare' },
   { id: 'echo',       label: 'Echo' },
+  { id: 'eleos-lite', label: 'Eleos Lite' },
+  { id: 'exym',       label: 'Exym' },
+  { id: 'foothold',   label: 'Foothold' },
+  { id: 'kipu',       label: 'Kipu' },
+  { id: 'myavatar',   label: 'myAvatar' },
+  { id: 'myevolve',   label: 'myEvolv' },
+  { id: 'pce',        label: 'PCE' },
+  { id: 'carlogic',   label: 'Qualifacts Carelogic' },
   { id: 'credible',   label: 'Qualifacts Credible' },
   { id: 'insync',     label: 'Qualifacts Insync' },
-  { id: 'carlogic',   label: 'Qualifacts Carelogic' },
-  { id: 'myevolve',   label: 'myEvolv' },
-  { id: 'myavatar',   label: 'myAvatar' },
-  { id: 'kipu',       label: 'Kipu' },
-  { id: 'foothold',   label: 'Foothold' },
-  { id: 'exym',       label: 'Exym' },
-  { id: 'pce',        label: 'PCE' },
-  { id: 'eleos-lite', label: 'Eleos Lite' },
   { id: 'streamline', label: 'Streamline' },
-  { id: 'calmhsa',    label: 'CalMHSA SmartCare' },
+  { id: 'welligent',  label: 'Welligent' },
 ];
 
 export default function EhrSelector() {
