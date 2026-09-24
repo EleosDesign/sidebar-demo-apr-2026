@@ -4,6 +4,33 @@ import { useSmartScribeSkin, smartScribeColor } from '../../contexts/EhrContext.
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { evaluateNoteQuality } from '../../data/noteQuality.js';
 
+// ── Demo data ──────────────────────────────────────────────────────────────────
+
+const OPEN_ITEMS = [
+  { id: 0, title: 'Progress Mentioned',              detail: 'Note lacks specific progress documentation or goal indicators.' },
+  { id: 1, title: 'Client Response to Intervention', detail: 'No client response documented after intervention.' },
+  { id: 2, title: 'Compliant Plan',                  detail: 'Both criteria were not met: no next step or next appointment documented.' },
+  { id: 3, title: 'Service Code Match',              detail: 'CPT 90847 (Family Therapy w/patient) listed but requires the partner/family member to be physically (or virtually) in the session. Suggested code is 90837 (60 Minute Individual Therapy).', custom: true },
+];
+
+const COMPLETED_ITEMS = [
+  { label: 'Completeness',       custom: false },
+  { label: 'Uniqueness',         custom: false },
+  { label: 'Golden Thread',      custom: false },
+  { label: 'Intervention Used',  custom: false },
+];
+
+const ALL_CLEAR_ITEMS = [
+  { label: 'Completeness',                    custom: false },
+  { label: 'Uniqueness',                      custom: false },
+  { label: 'Progress Mentioned',              custom: false },
+  { label: 'Golden Thread',                   custom: false },
+  { label: 'Intervention Used',               custom: false },
+  { label: 'Client Response to Intervention', custom: false },
+  { label: 'Compliant Plan',                  custom: false },
+  { label: 'Service Code Match',              custom: true  },
+];
+
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
 function CustomBadge() {
@@ -66,6 +93,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
   const lqaStatus = ehrCtx?.lqaStatus ?? 'idle';
+  const changedSinceAnalysis = ehrCtx?.changedSinceAnalysis ?? false;
   const noteValues = noteTypeCtx?.noteValues ?? {};
   const sections = noteTypeCtx?.sections ?? [];
   const serviceCodeMatchPassed = ehrCtx?.serviceCodeMatchPassed ?? false;
@@ -106,17 +134,15 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
     if (lqaStatus === 'error') setState('error');
   }, [lqaStatus]); // eslint-disable-line
 
-  const visibleItems = results.openItems.filter(item => !dismissed.includes(item.id));
+  const visibleItems = OPEN_ITEMS.filter(item => !dismissed.includes(item.id));
 
   function runAnalysis() {
-    const nextResults = evaluateNoteQuality(noteValues, sections, serviceCodeMatchPassed);
     setState('progress');
     setDismissed([]);
     ehrCtx?.triggerQualityCheck({ duration: 3400 });
   }
 
   function reRunAnalysis() {
-    const nextResults = evaluateNoteQuality(noteValues, sections, true);
     setState('progress');
     ehrCtx?.triggerQualityCheck({ finalStatus: 'success' });
   }
@@ -217,7 +243,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
         )}
 
         {/* RESULTS — issues */}
-        {state === 'results' && results.openItems.length > 0 && (
+        {state === 'results' && resultsVariant === 'issues' && (
           <div>
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div onClick={() => setOpenExpanded(!openExpanded)}
@@ -242,7 +268,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
               <div onClick={() => setCompletedExpanded(!completedExpanded)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', cursor: 'pointer', borderBottom: completedExpanded ? '1px solid #f0f0f0' : 'none' }}>
                 <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>
-                  Completed <span>({results.completedItems.length})</span>
+                  Completed <span>({COMPLETED_ITEMS.length})</span>
                 </span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: completedExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -250,7 +276,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
               </div>
               {completedExpanded && (
                 <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {results.completedItems.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
+                  {COMPLETED_ITEMS.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
                 </div>
               )}
             </div>
@@ -278,7 +304,7 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
         )}
 
         {/* RESULTS — all clear */}
-        {state === 'results' && results.openItems.length === 0 && (
+        {state === 'results' && resultsVariant === 'allClear' && (
           <div>
             <div style={{ borderBottom: '1px solid #f0f0f0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px' }}>
@@ -293,13 +319,13 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #f0f0f0' }}>
-                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({results.completedItems.length})</span></span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', fontFamily: "'Poppins',sans-serif" }}>Completed <span>({ALL_CLEAR_ITEMS.length})</span></span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(180deg)', flexShrink: 0 }}>
                   <path d="M6 9l6 6 6-6" stroke="rgba(0,0,0,0.54)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <div style={{ padding: '4px 14px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {results.completedItems.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
+                {ALL_CLEAR_ITEMS.map(item => <CheckItem key={item.label} label={item.label} custom={item.custom} />)}
               </div>
             </div>
           </div>
@@ -312,8 +338,8 @@ export default function LQAReview({ onAdvance, clientName, sessionLabel, autoRun
           <div style={{ width: '100%', height: 3, background: '#e0e4f7', borderRadius: 2, overflow: 'hidden', marginBottom: 2 }}>
             <div style={{
               height: '100%', borderRadius: 2,
-              background: results.openItems.length === 0 ? 'linear-gradient(90deg, #16a34a, #4ade80)' : `linear-gradient(90deg, ${smartScribeColor(smartScribeSkin, '#2D4CCD')}, #7B8EE8)`,
-              width: `${Math.round(results.completedItems.length / (results.completedItems.length + results.openItems.length) * 100)}%`,
+              background: resultsVariant === 'allClear' ? 'linear-gradient(90deg, #16a34a, #4ade80)' : `linear-gradient(90deg, ${smartScribeColor(smartScribeSkin, '#2D4CCD')}, #7B8EE8)`,
+              width: resultsVariant === 'allClear' ? '100%' : `${Math.round(COMPLETED_ITEMS.length / (COMPLETED_ITEMS.length + OPEN_ITEMS.length) * 100)}%`,
               transition: 'width 0.5s ease, background 0.5s ease',
             }} />
           </div>
