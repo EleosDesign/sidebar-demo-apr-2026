@@ -4,6 +4,8 @@ import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
 import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolbar';
+import { EnhanceStatus } from '../../components/enhance/EnhanceWelcome.jsx';
+import { useEnhance } from '../../contexts/EnhanceContext.jsx';
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
@@ -89,6 +91,7 @@ export default function ClinicianScene({ step, onNext }) {
   }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
+  const { state: enhanceState, welcome: enhanceWelcome, enable: enableEnhance } = useEnhance();
   // Bumped whenever an activity/session is selected in the sidebar, for EHR shells
   // (Streamline) that need to react to that event rather than to noteType/clientName values.
   const [activitySelectionSeq, setActivitySelectionSeq] = useState(0);
@@ -232,6 +235,10 @@ export default function ClinicianScene({ step, onNext }) {
             <EhrSelector />
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <LockedDownModeToggle />
+            {!enhanceWelcome && <>
+              <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+              <EnhanceStatus state={enhanceState} onEnable={enableEnhance} />
+            </>}
           </div>
         </div>
         {(!sidebarOpen || step === 0) && !isClosing

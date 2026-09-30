@@ -21,9 +21,9 @@ export function EnhanceProvider({ children }) {
     setWelcome(false);
   };
   return (
-    <EnhanceContext.Provider value={{ ready: state.phase === 'ready', enhance: (text, options) => preparation.current.enhance(text, options) }}>
+    <EnhanceContext.Provider value={{ ready: state.phase === 'ready', state, welcome, enable, enhance: (text, options) => preparation.current.enhance(text, options) }}>
       {children}
-      <EnhanceWelcome welcome={welcome} state={state} onContinue={proceed} onEnable={enable} />
+      <EnhanceWelcome welcome={welcome} onContinue={proceed} />
     </EnhanceContext.Provider>
   );
 }

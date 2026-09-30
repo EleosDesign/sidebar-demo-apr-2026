@@ -39,11 +39,12 @@ async function select(field: Locator, from: number, to: number) {
 const enhance = (page: Page) => page.getByRole('button', { name: 'Enhance text', exact: true });
 const use = (page: Page) => page.getByRole('button', { name: 'Use this', exact: true });
 const preview = (page: Page) => page.getByRole('status').filter({ hasText: output });
+const showDemoControls = (page: Page) => page.locator('.demo-controls-hotzone').hover();
 
 async function continueWelcome(page: Page) {
   if (await page.getByRole('dialog').count()) {
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'AI ready' })).toBeVisible();
+    await expect(page.locator('.demo-controls-tray').getByRole('status')).toHaveText('AI ready');
   }
 }
 
@@ -284,6 +285,7 @@ for (const failure of ['missing API', 'unavailable', 'rejection'] as const) {
       await expect(enhance(page)).toHaveCount(0);
       if (failure === 'unavailable') {
         await page.evaluate(() => { window.localEnhanceTest.availability = 'available'; });
+        await showDemoControls(page);
         await page.getByRole('button', { name: 'Retry AI preparation' }).click();
         await expect(page.getByRole('status')).toHaveText('AI ready');
       }
@@ -315,6 +317,7 @@ test('skipping never creates; explicit enable prepares once and subsequent reque
   await select(field, start, end);
   await expect(enhance(page)).toHaveCount(0);
   expect(await page.evaluate(() => window.localEnhanceTest.createCalls)).toBe(0);
+  await showDemoControls(page);
   await page.getByRole('button', { name: 'Enable Enhance', exact: true }).click();
   await expect(page.getByRole('status')).toHaveText('AI ready');
   for (let i = 0; i < 2; i++) {
@@ -339,6 +342,7 @@ test('clone failure requires explicit preparation retry; page lifecycle releases
   await expect(page.getByRole('status')).toHaveText(ENHANCE_ERRORS.clone);
   await expect(field).toHaveValue(note);
   await page.evaluate(() => { window.localEnhanceTest.cloneReject = false; });
+  await showDemoControls(page);
   await page.getByRole('button', { name: 'Retry AI preparation' }).click();
   await expect(page.getByRole('status')).toHaveText('AI ready');
   await page.evaluate(() => window.dispatchEvent(new Event('pagehide')));
