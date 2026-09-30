@@ -1,0 +1,20 @@
+.enhance-welcome {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(440px, calc(100vw - 40px));
+  padding: 28px;
+  border: 1px solid #dce1ee;
+  border-radius: 16px;
+  color: #253454;
+  background: white;
+  box-shadow: 0 16px 60px #17264730;
+}
+.enhance-welcome::backdrop { background: #17264766; }
+.enhance-welcome h1 { font-size: 24px; margin: 0 0 12px; }
+.enhance-welcome p { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+.enhance-welcome label { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.enhance-welcome button { display: block; margin: 24px 0 0 auto; background: #293d87; color: white; padding: 8px 18px; border: 0; border-radius: 8px; }
+.enhance-ai-status { position: fixed; bottom: 8px; left: 8px; z-index: 1000; display: flex; align-items: center; gap: 10px; max-width: min(420px, calc(100vw - 16px)); padding: 6px 10px; border: 1px solid #dce1ee; border-radius: 8px; background: #fff; color: #46516a; font-size: 12px; box-shadow: 0 2px 8px #17264712; }
+.enhance-ai-status button { flex-shrink: 0; color: #293d87; text-decoration: underline; background: none; border: 0; padding: 4px; }
+.enhance-welcome button, .enhance-ai-status button { cursor: pointer; }
