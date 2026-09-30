@@ -32,10 +32,12 @@ export default function EnhanceInlineButton({ onClick, loading = false, skin = f
         }
       `}</style>
     <button
+      type="button"
       aria-label="Enhance text"
+      aria-busy={loading}
       onMouseDown={e => e.preventDefault()}
       onClick={loading ? undefined : onClick}
-      disabled={loading}
+      aria-disabled={loading}
       style={{
         display: 'flex',
         alignItems: 'center',

@@ -2,6 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 async function openCalmhsaProgressNote(page: Page) {
   await page.goto('/');
+  await page.getByRole('checkbox', { name: 'Enable Enhance features' }).uncheck();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.locator('.demo-controls-hotzone').hover();
   await page.getByTitle('Switch EHR background').click();
   await page.getByRole('button', { name: 'CalMHSA SmartCare', exact: true }).click();
