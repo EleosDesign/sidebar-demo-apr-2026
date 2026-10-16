@@ -9,6 +9,8 @@ async function selectEhr(page: Page, label: string) {
 test('keeps both SmartCare backgrounds aligned with peer EHR density', async ({ page }) => {
   await page.setViewportSize({ width: 1200, height: 648 });
   await page.goto('/');
+  await page.getByRole('checkbox', { name: 'Enable Enhance features' }).uncheck();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
 
   for (const [id, label] of [['streamline', 'Streamline'], ['calmhsa', 'CalMHSA SmartCare']]) {
     await selectEhr(page, label);

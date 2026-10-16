@@ -9,6 +9,7 @@ import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeEnhance
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
 import { useEhrField } from '../ui/EhrFieldContext.jsx';
 import EnhanceInlineButton from '../enhance/EnhanceInlineButton';
+import { useSelectionEnhance } from '../enhance/useSelectionEnhance.js';
 import EnhancePointer from '../enhance/EnhancePointer';
 import insyncDashboard from '../../assets/insync-dashboard.png';
 import insyncNote from '../../assets/insync-note.png';
@@ -28,152 +29,18 @@ const DAP_FIELD_MAP = {
   'Plan:': 'plan',
 };
 
-// ── Clinical text enhancer (mock AI) ─────────────────────────────────────────
-const DEMO_TEXT_SHORTCUT = 'ct challenging relationship w/ partner, affecting recovery.';
-const DEMO_TEXT_SHORTCUT_ENHANCED = 'The client is experiencing difficulties in his relationship with his partner, which appears to be impacting his recovery process. He is actively working on establishing and maintaining healthy boundaries to support his recovery and overall well-being.';
-
-function buildEnhancedText(text) {
-  let s = text.trim();
-  if (!s) return s;
-
-  if (s.includes(DEMO_TEXT_SHORTCUT)) {
-    return s.replaceAll(DEMO_TEXT_SHORTCUT, DEMO_TEXT_SHORTCUT_ENHANCED);
-  }
-
-  // ① Normalize: capitalize first character, ensure sentence-ending punctuation
-  s = s.charAt(0).toUpperCase() + s.slice(1);
-  if (!/[.!?]$/.test(s)) s += '.';
-  s = s.replace(/([.!?]\s+)([a-z])/g, (m, p1, p2) => p1 + p2.toUpperCase());
-
-  // ② First-person → clinical third-person perspective
-  s = s
-    .replace(/\bI feel\b/gi, 'Client reports experiencing')
-    .replace(/\bI felt\b/gi, 'Client reported experiencing')
-    .replace(/\bI am\b/gi, 'Client presents as')
-    .replace(/\bI was\b/gi, 'Client reported being')
-    .replace(/\bI have\b/gi, 'Client endorses')
-    .replace(/\bI had\b/gi, 'Client reported having')
-    .replace(/\bI want\b/gi, 'Client expressed desire to')
-    .replace(/\bI think\b/gi, 'Client verbalized')
-    .replace(/\bwe discussed\b/gi, 'Clinician and client collaboratively explored')
-    .replace(/\bwe worked on\b/gi, 'Clinician and client focused on')
-    .replace(/\bhe feels\b/gi, 'Client reports experiencing')
-    .replace(/\bshe feels\b/gi, 'Client reports experiencing')
-    .replace(/\bthey feel\b/gi, 'Client reports experiencing');
-
-  // ③ Casual vocabulary → clinical language
-  const casualSubs = [
-    [/\bfeeling\b/g, 'experiencing'],
-    [/\bfeelings\b/g, 'affective experiences'],
-    [/\bemotion(s)?\b/g, 'emotional response'],
-    [/\bworried about\b/g, 'expressing heightened concern regarding'],
-    [/\banxious\b/g, 'presenting with anxiety-related symptomatology'],
-    [/\bdepressed\b/g, 'endorsing depressive symptoms'],
-    [/\bproblem(s)?\b/g, 'presenting concern'],
-    [/\bstressed\b/g, 'demonstrating elevated stress responses'],
-    [/\bsaid\b/g, 'reported'],
-    [/\bhard time\b/g, 'significant functional difficulty'],
-    [/\bstruggling\b/g, 'demonstrating difficulty with'],
-    [/\bhelped\b/g, 'facilitated measurable improvement in'],
-    [/\bwill try\b/g, 'verbally committed to attempting'],
-    [/\bwants to\b/g, 'expressed motivation to'],
-    [/\btalked about\b/g, 'verbally processed'],
-    [/\bdiscussed\b/g, 'collaboratively reviewed'],
-    [/\bokay\b/g, 'within functional limits'],
-    [/\bgood progress\b/g, 'clinically significant progress'],
-    [/\bimproving\b/g, 'demonstrating measurable improvement'],
-    [/\bcoping\b/g, 'employing adaptive coping strategies'],
-    [/\bgoal(s)?\b/g, 'therapeutic objective'],
-    [/\bsession\b/g, 'therapeutic encounter'],
-    [/\bupset\b/g, 'experiencing emotional dysregulation'],
-    [/\bthings\b/g, 'identified areas'],
-    [/\bstuff\b/g, 'identified concerns'],
-    [/\bnervous\b/g, 'demonstrating heightened arousal'],
-    [/\bsad\b/g, 'experiencing low mood'],
-    [/\banger\b/g, 'dysregulated affect'],
-    [/\bangry\b/g, 'presenting with affective dysregulation'],
-    [/\bfocused on\b/g, 'directed clinical attention toward'],
-    [/\bworked on\b/g, 'targeted intervention toward'],
-  ];
-  casualSubs.forEach(([from, to]) => { s = s.replace(from, to); });
-
-  // ④ Elevate already-clinical third-person language
-  //    Ordered specific → general so longer phrases match before their constituent words.
-  const snapshot = s;
-  const clinicalSubs = [
-    // Provider label
-    [/\b[Tt]he [Tt]herapist\b/g,          'Clinician'],
-    [/\b[Tt]herapist\b/g,                  'clinician'],
-    // Concern phrasing (specific first)
-    [/\bshared concerns? about\b/g,        'expressed clinical concern regarding'],
-    [/\bshared concerns?\b/g,              'expressed clinical concern'],
-    [/\bconcerns? about\b/g,               'concerns regarding'],
-    [/\bconcern about\b/g,                 'concern regarding'],
-    // Action verbs
-    [/\bemphasized\b/g,                    'reinforced'],
-    [/\bhighlighted\b/g,                   'brought clinical attention to'],
-    [/\bpointed out\b/g,                   'clinically identified'],
-    [/\baddressed\b/g,                     'targeted'],
-    [/\bprovided\b/g,                      'delivered'],
-    [/\bshared\b/g,                        'communicated'],
-    [/\bnoted\b/g,                         'clinically documented'],
-    // Importance / significance
-    [/\bimportance of\b/g,                 'clinical significance of'],
-    [/\bimportant\b/g,                     'clinically significant'],
-    // Challenges (specific compound first)
-    [/\bchallenges of\b/g,                 'barriers associated with'],
-    [/\bchallenges?\b/g,                   'barriers'],
-    [/\bdifficulties\b/g,                  'functional impairments'],
-    // Support person
-    [/\b(his|her|their) partner\b/g,       '$1 identified support person'],
-    [/\bpartner\b/g,                       'identified support person'],
-    // Recovery phrasing (specific first)
-    [/\bearly recovery\b/g,                'the early recovery phase'],
-    [/\bindividual recovery\b/g,           'independent recovery trajectory'],
-    [/\btheir recovery\b/g,                'their respective recovery trajectories'],
-    // Relational / clinical modifiers
-    [/\bdynamic\b/g,                       'relational dynamic'],
-    [/\bsymptoms\b/g,                      'symptomatology'],
-    // Behavior / commitment
-    [/\bmaintaining\b/g,                   'sustaining'],
-    [/\bmaintain\b/g,                      'sustain'],
-    [/\bagreed to\b/g,                     'verbally committed to'],
-    [/\bdemonstrated\b/g,                  'exhibited'],
-    // Outreach / support
-    [/\badditional support\b/g,            'supplemental clinical support'],
-    [/\breach out\b/g,                     'initiate contact'],
-    [/\bnavigates?\b/g,                    'continues to manage'],
-    // Forward-looking language
-    [/\bmoving forward\b/g,               'as part of the ongoing treatment plan'],
-    [/\bgoing forward\b/g,                'throughout the continued course of treatment'],
-    // Depressive language
-    [/\bdepressive symptomatology\b/g,    'endorsed depressive symptomatology'],
-  ];
-  clinicalSubs.forEach(([from, to]) => { s = s.replace(from, to); });
-
-  // ⑤ Fallback: if nothing changed (text was already maximally formal),
-  //    wrap with a documentation frame so the card always shows a difference.
-  if (s === snapshot) {
-    const lower = s.charAt(0).toLowerCase() + s.slice(1);
-    s = `Clinician documented that ${lower}`;
-  }
-
-  return s;
-}
-
 // ── Enhance tooltip card — visual extension of the Enhance CTA ───────────────
 // Shares the CTA's lavender bg (#eaedfa) + navy border (#293d87).
 // Draggable via the header row.
-// Animated entrance (spring scale-in from button origin) and exit (fold-away).
+// Animated entrance (spring scale-in from button origin).
 function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [closing, setClosing] = useState(false);
   const dragRef = useRef(null);
   const navy = smartScribeColor(skin, '#293d87');
 
-  // Trigger exit animation first, then call the real callback after it completes
-  const handleDismiss = () => { setClosing(true); setTimeout(onDismiss, 210); };
-  const handleUse    = () => { setClosing(true); setTimeout(onUse,    210); };
+  // Apply synchronously so a delayed callback cannot overwrite a changed note.
+  const handleDismiss = onDismiss;
+  const handleUse = onUse;
 
   const startDrag = (e) => {
     // Don't start a drag on the dismiss button
@@ -204,23 +71,16 @@ function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
           60%  { filter: blur(0); }
           100% { opacity: 1; transform: scale(1) translateY(0);      filter: blur(0); }
         }
-        /* Card folds back toward the button on dismiss/use */
-        @keyframes enhanceCardOut {
-          0%   { opacity: 1; transform: scale(1)    translateY(0);   filter: blur(0); }
-          100% { opacity: 0; transform: scale(0.82) translateY(-6px); filter: blur(2px); }
-        }
       `}</style>
 
       {/*
         ── Two-layer structure:
-        •  Outer div  → entrance / exit animation  (transform-origin: top left = button position)
+        •  Outer div  → entrance animation  (transform-origin: top left = button position)
         •  Inner div  → drag translate + card visuals  (never fights with animation keyframes)
       */}
       <div style={{
         transformOrigin: 'top left',
-        animation: closing
-          ? 'enhanceCardOut 0.21s cubic-bezier(0.4, 0, 0.8, 0.6) both'
-          : 'enhanceCardIn  0.40s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        animation: 'enhanceCardIn 0.40s cubic-bezier(0.34, 1.56, 0.64, 1) both',
       }}>
         <div style={{
           // ── CTA visual identity ──────────────────────────────────────
@@ -263,6 +123,8 @@ function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
               onMouseDown={e => { e.stopPropagation(); e.preventDefault(); }}
               onClick={handleDismiss}
               aria-label="Dismiss"
+              type="button"
+              autoFocus
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
                 padding: 4, color: navy, opacity: 0.5,
@@ -282,7 +144,7 @@ function EnhanceTooltip({ text, onUse, onDismiss, skin = false }) {
             background: 'rgba(255,255,255,0.55)',
             borderRadius: 10, padding: '8px 10px',
           }}>
-            <p style={{
+            <p role="status" style={{
               fontSize: 13, color: navy, lineHeight: 1.55, margin: 0,
               fontFamily: "'Segoe UI', Arial, sans-serif",
             }}>
@@ -393,9 +255,7 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sectio
   const setFocusedEhrField = ehrField?.setActiveField ?? (() => {});
   const sidebarOpen = ehrField?.sidebarOpen ?? false;
   const [focusedField, setFocusedField] = useState(null);
-  const [enhancingField, setEnhancingField] = useState(null);
-  const [tooltipField, setTooltipField] = useState(null);
-  const [tooltipText, setTooltipText] = useState('');
+  const { selectedEhr, clientName } = useEhrContext();
   const sections = sectionsOverride ?? noteTypeCtx?.sections ?? [
     { id: 'Data/Goal:',                         label: 'Data' },
     { id: 'Intervention/Response:',             label: 'Intervention/Response' },
@@ -432,27 +292,17 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sectio
   }, []); // eslint-disable-line
 
   const handleChange = (id, val) => {
-    const nextVal = val.replaceAll('::', DEMO_TEXT_SHORTCUT);
-    onNoteChange?.(id, nextVal);
+    enhance.dismiss();
+    onNoteChange?.(id, val);
     // Keep EhrFieldContext.fieldValues in sync so LQA dirty-check works
     const key = DAP_FIELD_MAP[id];
     if (key && ehrField) {
-      ehrField.setFieldValues(prev => ({ ...prev, [key]: nextVal }));
+      ehrField.setFieldValues(prev => ({ ...prev, [key]: val }));
     }
   };
 
-  const mockEnhance = (id, originalText) => {
-    setEnhancingField(id);
-    setTooltipField(null);
-    setTimeout(() => {
-      setEnhancingField(null);
-      setTooltipField(id);
-      setTooltipText(buildEnhancedText(originalText));
-    }, 1400);
-  };
-
-  const dismissTooltip = () => { setTooltipField(null); setTooltipText(''); };
-  const applyEnhanced = (id) => { handleChange(id, tooltipText); dismissTooltip(); };
+  const enhance = useSelectionEnhance(noteValues,
+    [noteTypeCtx?.selectedNoteType, clientName, selectedEhr], handleChange);
 
   return (
     <>
@@ -460,11 +310,10 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sectio
         const currentValue = noteValues[s.id] ?? '';
         const isFocused = focusedField === s.id;
         const hasText = currentValue.trim().length > 0;
-        const isEnhancing = enhancingField === s.id;
-        const isShowingTooltip = tooltipField === s.id;
-
-        // Enhance button: focused, field has text (or loading), NOT while tooltip is open
-        const showEnhanceBtn = isFocused && (hasText || isEnhancing) && !isShowingTooltip;
+        const selection = enhance.state?.id === s.id ? enhance.state : null;
+        const isEnhancing = selection?.phase === 'loading';
+        const isShowingTooltip = selection?.phase === 'preview';
+        const showEnhanceBtn = !!selection && !isShowingTooltip;
         // LQA CTA: focused on the LAST section AND user has typed something in it
         const showLqaCta = isFocused && s.id === lastSectionId && hasText;
         // Launch button: last field is empty BUT at least one other field has content
@@ -477,14 +326,23 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sectio
         const showStrip = showEnhanceBtn || showLqaCta || showLaunchBtn;
 
         return (
-          <div key={s.id} style={{ marginBottom: 22, position: 'relative' }}>
+          <div key={s.id} style={{ marginBottom: 22, position: 'relative' }}
+            onBlur={e => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                setFocusedEhrField(null);
+                setFocusedField(null);
+                enhance.dismiss();
+              }
+            }}
+            onKeyDown={e => { if (e.key === 'Escape') enhance.dismissAndFocus(); }}
+          >
             {!hideLabels && <div style={{ fontSize, color: labelColor, marginBottom: 5, fontWeight: labelWeight }}>{s.label}</div>}
             <textarea
               aria-label={s.label}
               value={currentValue}
               onChange={e => handleChange(s.id, e.target.value)}
-              onFocus={() => { setFocusedEhrField(s.id); setTimeout(() => setFocusedField(s.id), 300); }}
-              onBlur={() => { setFocusedEhrField(null); setTimeout(() => setFocusedField(f => f === s.id ? null : f), 150); }}
+              onFocus={() => { setFocusedEhrField(s.id); setFocusedField(s.id); }}
+              onSelect={e => enhance.select(s.id, e.currentTarget)}
               placeholder={placeholder}
               style={{
                 width: '100%', minHeight, padding: '10px 12px',
@@ -517,18 +375,23 @@ function StackedFields({ noteValues = {}, onNoteChange, highlightedField, sectio
                 {showEnhanceBtn && (
                   <EnhanceInlineButton
                     loading={isEnhancing}
-                    onClick={() => mockEnhance(s.id, currentValue)}
+                    onClick={enhance.enhance}
                     skin={smartScribeSkin}
                   />
                 )}
+                {isEnhancing && <span role="status" aria-live="polite">
+                  {selection.progress == null ? 'Enhancing selection…' :
+                    selection.progress < 100 ? `Downloading on-device model: ${selection.progress}%` : 'Enhancing selection…'}
+                </span>}
+                {selection?.phase === 'error' && <span role="alert">{selection.error}</span>}
                 {showLaunchBtn && <InlineLaunchButton skin={smartScribeSkin} />}
                 {/* Tooltip card — sits in the same row as the LQA circle */}
                 {isShowingTooltip && (
                   <div style={{ zIndex: 9 }}>
                     <EnhanceTooltip
-                      text={tooltipText}
-                      onUse={() => applyEnhanced(s.id)}
-                      onDismiss={dismissTooltip}
+                      text={selection.result}
+                      onUse={enhance.apply}
+                      onDismiss={enhance.dismissAndFocus}
                       skin={smartScribeSkin}
                     />
                   </div>

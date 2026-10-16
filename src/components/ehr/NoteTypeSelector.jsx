@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useEhrContext } from '../../contexts/EhrContext.jsx';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 
+const EXCLUDED_NOTE_TYPES = ['AngerManagementGroup', 'TreatmentPlan'];
+
 export default function NoteTypeSelector() {
   const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
   const { selectedEhr } = useEhrContext();
@@ -41,7 +43,7 @@ export default function NoteTypeSelector() {
             Note Type
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {NOTE_TYPE_LIST.filter(({ id, ehrs }) => id !== 'AngerManagementGroup' && (!ehrs || ehrs.includes(selectedEhr))).map(({ id, label }) => {
+            {NOTE_TYPE_LIST.filter(({ id, ehrs }) => !EXCLUDED_NOTE_TYPES.includes(id) && (!ehrs || ehrs.includes(selectedEhr))).map(({ id, label }) => {
               const isActive = selectedNoteType === id;
               return (
                 <button

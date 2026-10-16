@@ -11,6 +11,8 @@ async function selectEhr(page: Page, name: string) {
 
 test('uses CalMHSA Progress Note suggestions for Calvin Murphy', async ({ page }) => {
   await page.goto('/');
+  await page.getByRole('checkbox', { name: 'Enable Enhance features' }).uncheck();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await selectEhr(page, 'CalMHSA SmartCare');
   await page.evaluate(() => window.dispatchEvent(new Event('eleos:openSidebar')));
   await page.getByText('Calvin Murphy', { exact: true }).click();
