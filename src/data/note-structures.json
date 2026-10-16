@@ -23,7 +23,10 @@
           "sampleContent": "The client will continue to engage in his current treatment and uphold his sobriety. The client will set boundaries for his girlfriend's move-in, emphasizing on commitment to treatment and sobriety. The client will engage in a potential family therapy session to further improve his relationship dynamics."
         }
       ],
-      "usedBy": ["Jake Carol", "Larry Quinn"],
+      "usedBy": [
+        "Jake Carol",
+        "Larry Quinn"
+      ],
       "ehrMapping": {
         "smartcare": {
           "data": "interventions",
@@ -61,7 +64,9 @@
           "sampleContent": "Case Manager will refer client to a virtual support group for individuals struggling with depression. The case manager will follow up with the client next week to evaluate if he was able to start attending the group."
         }
       ],
-      "usedBy": ["Calvin Murphy"],
+      "usedBy": [
+        "Calvin Murphy"
+      ],
       "featureFlag": "ENABLE_CALVIN_MURPHY",
       "ehrMapping": {
         "streamline": {
@@ -169,7 +174,9 @@
           "sampleContent": "1. Discontinue Sertraline. 2. Start Citalopram 20 mg by mouth once daily. 3. Start Hydroxyzine 25 mg as needed for anxiety. 4. Return to clinic in 4-6 weeks."
         }
       ],
-      "usedBy": ["Patricia Rodriguez"],
+      "usedBy": [
+        "Patricia Rodriguez"
+      ],
       "ehrSystem": "calmhsa-psych"
     },
     "CalAIMAssessment": {
@@ -271,7 +278,9 @@
           ]
         }
       ],
-      "usedBy": ["Ashlyn Rivera"],
+      "usedBy": [
+        "Ashlyn Rivera"
+      ],
       "ehrSystem": "calmhsa-psych",
       "ehrMapping": {
         "calmhsa": {
@@ -445,7 +454,10 @@
             }
           ],
           "ehrSystem": "smartscribe",
-          "usedBy": ["Anger Management Group", "SUD Group"]
+          "usedBy": [
+            "Anger Management Group",
+            "SUD Group"
+          ]
         }
       }
     },
@@ -468,27 +480,66 @@
               "id": "suicidality",
               "label": "Suicidality",
               "description": "Suicide risk assessment with ideation, intent, attempt, means, plan checkboxes and informed contacts",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied suicidal ideation, intent, plan, or means when directly asked. No passive death wish reported. No prior attempts in history. Risk assessed as low."
             },
             {
               "id": "harmToOthers",
               "label": "Harm to Others",
               "description": "Violence/harm to others risk assessment",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied any thoughts, intent, or plans to harm others. No history of violence or aggressive behavior reported. Duty to warn not indicated."
             },
             {
               "id": "harmToProperty",
               "label": "Harm to Property",
               "description": "Property destruction risk assessment",
-              "options": ["None Reported", "Please Specify"],
-              "checkboxes": ["Ideation", "Intent", "Attempt", "Means", "Plan", "Other"],
-              "fields": ["Other (text)", "I Informed (person)"],
+              "options": [
+                "None Reported",
+                "Please Specify"
+              ],
+              "checkboxes": [
+                "Ideation",
+                "Intent",
+                "Attempt",
+                "Means",
+                "Plan",
+                "Other"
+              ],
+              "fields": [
+                "Other (text)",
+                "I Informed (person)"
+              ],
               "sampleContent": "None reported. Client denied any ideation or intent to damage property. No history of property destruction noted."
             },
             {
@@ -537,7 +588,10 @@
           ]
         }
       ],
-      "usedBy": ["Jake Carol", "Larry Quinn"],
+      "usedBy": [
+        "Jake Carol",
+        "Larry Quinn"
+      ],
       "ehrSystem": "smartscribe",
       "qualityFeatures": [
         "Real-time field validation",
@@ -773,7 +827,9 @@
           "sampleContent": "The client is a 23-year-old female college senior presenting with long-standing anxiety and maladaptive alcohol use as a coping mechanism for social distress. Client is highly motivated and ready to engage in treatment."
         }
       ],
-      "noteTypes": ["Assessment"]
+      "noteTypes": [
+        "Assessment"
+      ]
     },
     "CrisisAssessment": {
       "name": "Crisis Assessment",
@@ -848,7 +904,9 @@
           "sampleContent": "Warning signs: Escalating hopelessness, isolation, inability to identify any positive future outcomes, increased alcohol use. Coping strategies (internal): Grounding exercises (5-4-3-2-1), deep breathing, reviewing past examples of navigating difficult situations successfully. Social supports to contact: (1) Carmen (girlfriend) — primary contact this evening; (2) David (close friend); (3) Mother. Crisis resources: 988 Suicide and Crisis Lifeline; local emergency room. Means restriction: No identified lethal means; no further restriction needed at this time. Client verbalized understanding of the safety plan and agreed to follow it. Plan reviewed and confirmed before ending contact."
         }
       ],
-      "noteTypes": ["Crisis Assessment"]
+      "noteTypes": [
+        "Crisis Assessment"
+      ]
     },
     "IndividualAudio": {
       "name": "Individual Audio Session",
@@ -945,44 +1003,483 @@
           "sampleContent": "Client will complete the behavioral activation task — draft a response email to supervisor — before next session, without sending it. Client will continue daily mood and anxiety log. Next session will review the email draft as a cognitive restructuring exercise and explore further steps toward re-engagement. Continue to build on the insight connecting avoidance patterns to early relational experiences. Administer GAD-7 and PHQ-9 at next session (week 4 assessment point). Consider introducing sleep restriction protocol if sleep continues to be impaired."
         }
       ],
-      "noteTypes": ["Individual Note"]
+      "noteTypes": [
+        "Individual Note"
+      ]
     },
     "BPSAssessment": {
       "name": "BPS Assessment",
       "description": "Biopsychosocial assessment for initial intake and evaluation",
       "sections": [
-        { "id": "presentingProblem", "label": "Presenting Problem", "description": "Reason for seeking services and presenting concerns" },
-        { "id": "anxietyHistory", "label": "Anxiety Symptoms And History", "description": "History and current presentation of anxiety symptoms" },
-        { "id": "previousTreatment", "label": "Previous Mental Health Treatment", "description": "Past mental health treatment history" },
-        { "id": "currentHealth", "label": "Current Health Status", "description": "Current physical health and wellness" },
-        { "id": "medicalHistory", "label": "Medical History And Medications", "description": "Medical history, surgeries, and current medications" },
-        { "id": "alcoholUse", "label": "Alcohol Use History And Pattern", "description": "History and pattern of alcohol use" },
-        { "id": "asamDim1", "label": "Dimension 1: Acute Intoxication And/Or Withdrawal Potential", "description": "ASAM Dimension 1" },
-        { "id": "asamDim2", "label": "Dimension 2: Biomedical Conditions & Complications", "description": "ASAM Dimension 2" },
-        { "id": "asamDim3", "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications", "description": "ASAM Dimension 3" },
-        { "id": "asamDim4", "label": "Dimension 4: Readiness To Change", "description": "ASAM Dimension 4" },
-        { "id": "asamDim5", "label": "Dimension 5: Relapse, Continued Use, Or Continued Problem Potential", "description": "ASAM Dimension 5" },
-        { "id": "asamDim6", "label": "Dimension 6: Recovery/Living Environment", "description": "ASAM Dimension 6" },
-        { "id": "riskAssessment", "label": "Risk To Self And Others", "description": "Assessment of risk to self and others" },
-        { "id": "socialSupport", "label": "Relationships And Social Support", "description": "Social relationships and support network" },
-        { "id": "spiritualBeliefs", "label": "Spiritual Beliefs", "description": "Spiritual and religious beliefs" },
-        { "id": "familyDynamics", "label": "Family Composition And Dynamics", "description": "Family structure and relational dynamics" },
-        { "id": "emotionalAbuse", "label": "History Of Emotional Abuse", "description": "History of emotional abuse" },
-        { "id": "housingFinancial", "label": "Financial And Housing Stability", "description": "Housing, financial, food, and transportation status" },
-        { "id": "educationEmployment", "label": "Education And Employment", "description": "Educational and employment history" },
-        { "id": "legalHistory", "label": "Legal History", "description": "Legal history and involvement" },
-        { "id": "functionalImpairment", "label": "Functional Impairment", "description": "Assessment of functional impairment across domains" },
-        { "id": "mentalStatusExam", "label": "Mental Status Examination", "description": "Mental status examination findings" },
-        { "id": "clientStrengths", "label": "Client Strengths", "description": "Identified client strengths and protective factors" },
-        { "id": "barriers", "label": "Barriers To Treatment", "description": "Potential barriers to treatment engagement and success" },
-        { "id": "dependents", "label": "Dependents", "description": "Supervision capacity and dependents" },
-        { "id": "adverseChildhood", "label": "Emotional Abuse", "description": "Adverse childhood events" },
-        { "id": "assessmentsCompleted", "label": "Assessments", "description": "Formal assessments administered" },
-        { "id": "treatmentGoals", "label": "Client Goals For Treatment", "description": "Client-identified goals for treatment" },
-        { "id": "disposition", "label": "Disposition", "description": "Assessment disposition and next steps" },
-        { "id": "interpretiveSummary", "label": "Interpretive Summary", "description": "Comprehensive interpretive summary" }
+        {
+          "id": "presentingProblem",
+          "label": "Presenting Problem",
+          "description": "Reason for seeking services and presenting concerns"
+        },
+        {
+          "id": "anxietyHistory",
+          "label": "Anxiety Symptoms And History",
+          "description": "History and current presentation of anxiety symptoms"
+        },
+        {
+          "id": "previousTreatment",
+          "label": "Previous Mental Health Treatment",
+          "description": "Past mental health treatment history"
+        },
+        {
+          "id": "currentHealth",
+          "label": "Current Health Status",
+          "description": "Current physical health and wellness"
+        },
+        {
+          "id": "medicalHistory",
+          "label": "Medical History And Medications",
+          "description": "Medical history, surgeries, and current medications"
+        },
+        {
+          "id": "alcoholUse",
+          "label": "Alcohol Use History And Pattern",
+          "description": "History and pattern of alcohol use"
+        },
+        {
+          "id": "asamDim1",
+          "label": "Dimension 1: Acute Intoxication And/Or Withdrawal Potential",
+          "description": "ASAM Dimension 1"
+        },
+        {
+          "id": "asamDim2",
+          "label": "Dimension 2: Biomedical Conditions & Complications",
+          "description": "ASAM Dimension 2"
+        },
+        {
+          "id": "asamDim3",
+          "label": "Dimension 3: Emotional, Behavioral, Or Cognitive Conditions & Complications",
+          "description": "ASAM Dimension 3"
+        },
+        {
+          "id": "asamDim4",
+          "label": "Dimension 4: Readiness To Change",
+          "description": "ASAM Dimension 4"
+        },
+        {
+          "id": "asamDim5",
+          "label": "Dimension 5: Relapse, Continued Use, Or Continued Problem Potential",
+          "description": "ASAM Dimension 5"
+        },
+        {
+          "id": "asamDim6",
+          "label": "Dimension 6: Recovery/Living Environment",
+          "description": "ASAM Dimension 6"
+        },
+        {
+          "id": "riskAssessment",
+          "label": "Risk To Self And Others",
+          "description": "Assessment of risk to self and others"
+        },
+        {
+          "id": "socialSupport",
+          "label": "Relationships And Social Support",
+          "description": "Social relationships and support network"
+        },
+        {
+          "id": "spiritualBeliefs",
+          "label": "Spiritual Beliefs",
+          "description": "Spiritual and religious beliefs"
+        },
+        {
+          "id": "familyDynamics",
+          "label": "Family Composition And Dynamics",
+          "description": "Family structure and relational dynamics"
+        },
+        {
+          "id": "emotionalAbuse",
+          "label": "History Of Emotional Abuse",
+          "description": "History of emotional abuse"
+        },
+        {
+          "id": "housingFinancial",
+          "label": "Financial And Housing Stability",
+          "description": "Housing, financial, food, and transportation status"
+        },
+        {
+          "id": "educationEmployment",
+          "label": "Education And Employment",
+          "description": "Educational and employment history"
+        },
+        {
+          "id": "legalHistory",
+          "label": "Legal History",
+          "description": "Legal history and involvement"
+        },
+        {
+          "id": "functionalImpairment",
+          "label": "Functional Impairment",
+          "description": "Assessment of functional impairment across domains"
+        },
+        {
+          "id": "mentalStatusExam",
+          "label": "Mental Status Examination",
+          "description": "Mental status examination findings"
+        },
+        {
+          "id": "clientStrengths",
+          "label": "Client Strengths",
+          "description": "Identified client strengths and protective factors"
+        },
+        {
+          "id": "barriers",
+          "label": "Barriers To Treatment",
+          "description": "Potential barriers to treatment engagement and success"
+        },
+        {
+          "id": "dependents",
+          "label": "Dependents",
+          "description": "Supervision capacity and dependents"
+        },
+        {
+          "id": "adverseChildhood",
+          "label": "Emotional Abuse",
+          "description": "Adverse childhood events"
+        },
+        {
+          "id": "assessmentsCompleted",
+          "label": "Assessments",
+          "description": "Formal assessments administered"
+        },
+        {
+          "id": "treatmentGoals",
+          "label": "Client Goals For Treatment",
+          "description": "Client-identified goals for treatment"
+        },
+        {
+          "id": "disposition",
+          "label": "Disposition",
+          "description": "Assessment disposition and next steps"
+        },
+        {
+          "id": "interpretiveSummary",
+          "label": "Interpretive Summary",
+          "description": "Comprehensive interpretive summary"
+        }
       ],
-      "usedBy": ["Ashlyn Rivera"]
+      "usedBy": [
+        "Ashlyn Rivera"
+      ]
+    },
+    "MyAvatarPsych": {
+      "name": "BH Psych Progress Note",
+      "description": "myAvatar NX behavioral health psychiatric progress note",
+      "ehrs": [
+        "myavatar"
+      ],
+      "sections": [
+        {
+          "id": "ma_noteFor",
+          "label": "Progress Note For",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_draftFinal",
+          "label": "Draft/Final",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Draft",
+            "Final"
+          ]
+        },
+        {
+          "id": "ma_dos",
+          "label": "Date Of Service",
+          "group": "Service Info",
+          "type": "date"
+        },
+        {
+          "id": "ma_duration",
+          "label": "Service Duration",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_startTime",
+          "label": "Service Start Time",
+          "group": "Service Info",
+          "type": "time"
+        },
+        {
+          "id": "ma_endTime",
+          "label": "Service End Time",
+          "group": "Service Info",
+          "type": "time"
+        },
+        {
+          "id": "ma_faceDuration",
+          "label": "Face-to-Face Duration",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_chargeCode",
+          "label": "Service Charge Code",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_program",
+          "label": "Service Program",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_noteType",
+          "label": "Note Type",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Psychiatric Evaluation",
+            "Medication Management",
+            "Follow-Up",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_discipline",
+          "label": "Discipline",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Psychiatry",
+            "Nursing",
+            "Therapy",
+            "Case Management",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_mode",
+          "label": "Mode of Delivery (Note Add-Ons)",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "In Person",
+            "Telehealth – Audio/Video",
+            "Telephone",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_cc",
+          "label": "Chief Complaint",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_hpi",
+          "label": "History of Present Illness",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_condition",
+          "label": "Current Problems – Condition",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_smoking",
+          "label": "Smoking Status",
+          "group": "Clinical Information",
+          "type": "select",
+          "options": [
+            "Never smoker",
+            "Former smoker",
+            "Current every day smoker",
+            "Current some day smoker",
+            "Unknown"
+          ]
+        },
+        {
+          "id": "ma_smokeDate",
+          "label": "Smoking Status – Assessment Date",
+          "group": "Clinical Information",
+          "type": "date"
+        },
+        {
+          "id": "ma_ros",
+          "label": "Review of Systems – Psychiatric",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_eye",
+          "label": "Eye Contact",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_psychomotor",
+          "label": "Psychomotor Behavior",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_speech",
+          "label": "Speech",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_thoughtProc",
+          "label": "Thought Process",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_assoc",
+          "label": "Associations",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_abnormal",
+          "label": "Abnormal/Psychotic Thoughts",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_judgment",
+          "label": "Judgment/Insight",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_orient",
+          "label": "Orientation",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_memory",
+          "label": "Recent/Remote Memory",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_attention",
+          "label": "Attention/Concentration",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_language",
+          "label": "Language",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_fund",
+          "label": "Fund of Knowledge",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_mood",
+          "label": "Mood and Affect",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_muscle",
+          "label": "Muscle strength and tone",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_gait",
+          "label": "Gait/station",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_appearance",
+          "label": "Appearance",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_billingDx",
+          "label": "Billing Diagnosis",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_dxPractitioner",
+          "label": "Diagnosing Practitioner",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_meds",
+          "label": "Active Medications",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_complexity",
+          "label": "Medical Decision Making – Number and Complexity of Problems Addressed",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_dataReview",
+          "label": "Medical Decision Making – Amount and/or Complexity of Data to be Reviewed and Analyzed",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_riskMdm",
+          "label": "Medical Decision Making – Risk of Complications and/or Morbidity or Mortality of Patient Management",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_plan",
+          "label": "Plan of Care",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_counseling",
+          "label": "Counseling and/or Care Coordination",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_medEd",
+          "label": "Medication Education",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        }
+      ]
     }
   },
   "metadata": {

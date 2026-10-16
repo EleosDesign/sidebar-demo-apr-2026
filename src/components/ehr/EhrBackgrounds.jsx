@@ -1420,13 +1420,63 @@ export function MyEvolvBg({ noteValues = {}, onNoteChange, highlightedField }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // 9. MYAVATAR
 // ═══════════════════════════════════════════════════════════════════════════════
+// Structured BH Psych Progress Note form (note type 'MyAvatarPsych'); fields come from note-structures.json
+const PSYCH_JUMP_SECTIONS = ['Service Info', 'Clinical Information', 'Summary of Activities'];
+const maSectionId = (group) => 'ma-sec-' + group.toLowerCase().replace(/\W+/g, '-');
+
+function MyAvatarPsychForm({ fields, noteValues, onNoteChange, collapsed, onToggle }) {
+  const groups = [...new Set(fields.map(f => f.group))];
+  const ctl = { boxSizing: 'border-box', width: '100%', padding: '6px 8px', border: '1px solid #b8c8d1', borderRadius: 2, fontSize: 13, background: '#fff', fontFamily: 'inherit' };
+  const set = (id, v) => onNoteChange?.(id, v);
+  return groups.map(group => (
+    <div key={group} id={maSectionId(group)} style={{ marginBottom: 12 }}>
+      <div
+        role="button" tabIndex={0} aria-expanded={!collapsed[group]}
+        onClick={() => onToggle(group)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onToggle(group); } }}
+        style={{ background: '#004866', color: '#fff', padding: '7px 10px', fontWeight: 700, cursor: 'pointer', userSelect: 'none' }}
+      >{collapsed[group] ? '›' : '⌄'} {group}</div>
+      <div style={{ display: collapsed[group] ? 'none' : 'flex', background: '#f5f6f6', padding: 22, border: '1px solid #c2cfd6', borderTop: 'none', flexDirection: 'column', gap: 14 }}>
+        {fields.filter(f => f.group === group).map(f => {
+          const value = noteValues[f.id] ?? '';
+          const common = { id: f.id, value, style: ctl, onChange: e => set(f.id, e.target.value) };
+          return (
+            <div key={f.id}>
+              <label htmlFor={f.id} style={{ display: 'block', color: '#cc0000', fontSize: 13, marginBottom: 4 }}>{f.label}</label>
+              {f.type === 'select' ? (
+                <select {...common}><option value="">Select…</option>{f.options.map(o => <option key={o} value={o}>{o}</option>)}</select>
+              ) : f.type === 'textarea' ? (
+                <textarea {...common} style={{ ...ctl, minHeight: 80, resize: 'vertical' }} />
+              ) : (
+                <input type={f.type} {...common} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ));
+}
+
 export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) {
   const { clientName } = useEhrContext();
+  const { selectedNoteType, sections: noteSections } = useNoteTypeContext();
+  const isPsych = selectedNoteType === 'MyAvatarPsych';
+  const noteTitle = isPsych ? 'BH Psych Progress Note' : 'BH CBT Note';
+  const [collapsed, setCollapsed] = useState({});
+  const [activeNav, setActiveNav] = useState(0);
+  const toggleSection = (group) => setCollapsed(c => ({ ...c, [group]: !c[group] }));
+  const jumpTo = (item, i) => {
+    setActiveNav(i);
+    if (!isPsych || !PSYCH_JUMP_SECTIONS.includes(item)) return;
+    setCollapsed(c => ({ ...c, [item]: false }));
+    requestAnimationFrame(() => document.getElementById(maSectionId(item))?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
   const [hoveredNav, setHoveredNav] = useState(null);
   const tabs = ['myDay', 'BH Documentation Viewer', 'Client Overview Medical', 'BH Compliance View', 'TRR View', 'CC INBOX', 'Widget Playground (Client)'];
   const navItems = ['My Clients', 'My Forms', 'My Favorites', 'Recent Forms'];
   const sections = ['Service Info', 'Clinical Information', 'Summary of Activities', 'Progress Towards Recovery'];
-  const fieldNav = ['BH CBT Note', 'Service Info', 'Clinical Information', 'Summary of Activities', 'Progress Towards Recovery', 'Plan to Continue Recovery', 'Encounter Data'];
+  const fieldNav = [noteTitle, 'Service Info', 'Clinical Information', 'Summary of Activities', 'Progress Towards Recovery', 'Plan to Continue Recovery', 'Encounter Data'];
 
   function navStyle(label) {
     const hovered = hoveredNav === label;
@@ -1530,7 +1580,7 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
 
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <div style={{ height: 42, background: '#d0d0d0', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-            <div style={{ marginLeft: 10, height: 28, width: 190, background: '#f4f4f4', borderLeft: '3px solid #004866', display: 'flex', alignItems: 'center', paddingLeft: 8, color: '#004866', fontSize: 13 }}>▣ BH CBT Note</div>
+            <div style={{ marginLeft: 10, height: 28, width: 190, background: '#f4f4f4', borderLeft: '3px solid #004866', display: 'flex', alignItems: 'center', paddingLeft: 8, color: '#004866', fontSize: 13 }}>▣ {noteTitle}</div>
           </div>
           <div style={{ height: 20, background: '#fff', borderBottom: '1px solid #a4b7c1', position: 'relative', flexShrink: 0 }}>
             <span style={{ position: 'absolute', left: 8, top: -3, color: '#004866', fontSize: 23 }}>▴</span>
@@ -1545,7 +1595,7 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
 
             <div style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '10px 8px 16px', gap: 16 }}>
               <div style={{ width: 260, flexShrink: 0 }}>
-                <h2 style={{ color: '#0076a8', fontSize: 19, margin: 0 }}>BH CBT NOTE</h2>
+                <h2 style={{ color: '#0076a8', fontSize: 19, margin: 0 }}>{noteTitle.toUpperCase()}</h2>
               </div>
               <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: 14 }}>
                 {['Submit', 'Backup', 'Discard', 'Add to Favorites'].map((label, i) => (
@@ -1556,14 +1606,17 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
 
             <div style={{ display: 'flex', padding: '10px 8px 0', gap: 16 }}>
               <div style={{ width: 260, flexShrink: 0 }}>
-                <div style={{ background: '#fff', padding: 8 }}>
+                <div style={{ background: '#fff', padding: 8, position: 'sticky', top: 0 }}>
                   {fieldNav.map((item, i) => (
-                    <div key={item} style={{ padding: '3px 20px', background: i === 0 ? '#c2cfd6' : 'transparent', borderRadius: 2, color: '#111', fontSize: 14 }}>{item}</div>
+                    <div key={item} onClick={() => jumpTo(item, i)} style={{ padding: '3px 20px', background: i === activeNav ? '#c2cfd6' : 'transparent', borderRadius: 2, color: '#111', fontSize: 14, cursor: isPsych && PSYCH_JUMP_SECTIONS.includes(item) ? 'pointer' : 'default' }}>{item}</div>
                   ))}
                 </div>
               </div>
 
               <div style={{ flex: 1, minWidth: 520 }}>
+                {isPsych ? (
+                  <MyAvatarPsychForm fields={noteSections} noteValues={noteValues} onNoteChange={onNoteChange} collapsed={collapsed} onToggle={toggleSection} />
+                ) : (<>
                 {panelTitle(sections[0])}
                 {panelTitle(sections[1])}
                 <div style={{ marginBottom: 12 }}>
@@ -1572,6 +1625,7 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
                     <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#cc0000' fontSize={13} borderColor='#b8c8d1' minHeight={92} borderRadius={0} />
                   </div>
                 </div>
+                </>)}
                 {panelTitle(sections[3])}
               </div>
 
