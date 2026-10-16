@@ -1424,7 +1424,7 @@ export function MyEvolvBg({ noteValues = {}, onNoteChange, highlightedField }) {
 const PSYCH_JUMP_SECTIONS = ['Service Info', 'Clinical Information', 'Summary of Activities'];
 const maSectionId = (group) => 'ma-sec-' + group.toLowerCase().replace(/\W+/g, '-');
 
-function MyAvatarPsychForm({ fields, noteValues, onNoteChange, collapsed, onToggle }) {
+function MyAvatarPsychForm({ fields, noteValues, onNoteChange, highlightedField, collapsed, onToggle }) {
   const groups = [...new Set(fields.map(f => f.group))];
   const ctl = { boxSizing: 'border-box', width: '100%', padding: '6px 8px', border: '1px solid #b8c8d1', borderRadius: 2, fontSize: 13, background: '#fff', fontFamily: 'inherit' };
   const set = (id, v) => onNoteChange?.(id, v);
@@ -1439,14 +1439,14 @@ function MyAvatarPsychForm({ fields, noteValues, onNoteChange, collapsed, onTogg
       <div style={{ display: collapsed[group] ? 'none' : 'flex', background: '#f5f6f6', padding: 22, border: '1px solid #c2cfd6', borderTop: 'none', flexDirection: 'column', gap: 14 }}>
         {fields.filter(f => f.group === group).map(f => {
           const value = noteValues[f.id] ?? '';
-          const common = { id: f.id, value, style: ctl, onChange: e => set(f.id, e.target.value) };
+          const common = { id: f.id, value, style: { ...ctl, background: highlightedField === f.id ? '#fffde7' : ctl.background }, onChange: e => set(f.id, e.target.value) };
           return (
             <div key={f.id}>
               <label htmlFor={f.id} style={{ display: 'block', color: '#cc0000', fontSize: 13, marginBottom: 4 }}>{f.label}</label>
               {f.type === 'select' ? (
                 <select {...common}><option value="">Select…</option>{f.options.map(o => <option key={o} value={o}>{o}</option>)}</select>
               ) : f.type === 'textarea' ? (
-                <textarea {...common} style={{ ...ctl, minHeight: 80, resize: 'vertical' }} />
+                <textarea {...common} style={{ ...common.style, minHeight: 80, resize: 'vertical' }} />
               ) : (
                 <input type={f.type} {...common} />
               )}
@@ -1615,7 +1615,7 @@ export function MyAvatarBg({ noteValues = {}, onNoteChange, highlightedField }) 
 
               <div style={{ flex: 1, minWidth: 520 }}>
                 {isPsych ? (
-                  <MyAvatarPsychForm fields={noteSections} noteValues={noteValues} onNoteChange={onNoteChange} collapsed={collapsed} onToggle={toggleSection} />
+                  <MyAvatarPsychForm fields={noteSections} noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} collapsed={collapsed} onToggle={toggleSection} />
                 ) : (<>
                 {panelTitle(sections[0])}
                 {panelTitle(sections[1])}
