@@ -45,4 +45,6 @@ export const DEMO_CLIENT_OPTIONS = [
 ];
 
 // ── Demo-mode subset of the sidebar Clients tab — mirrors DEMO_CLIENT_OPTIONS ──
-export const DEMO_CLIENTS_LIST = DEMO_CLIENT_OPTIONS.map((name, i) => ({ id: i + 1, name }));
+export const DEMO_CLIENTS_LIST = DEMO_CLIENT_OPTIONS.map((name, i) => ({ id: `demo-${i + 1}`, name }));
+
+export const ALL_CLIENTS_LIST = [...DEMO_CLIENTS_LIST, ...CLIENTS_LIST];
