@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import NOTE_STRUCTURES_RAW from '../data/note-structures.json';
+import { useEhrContext } from './EhrContext.jsx';
 
 const NOTE_TYPES = NOTE_STRUCTURES_RAW.noteTypes;
 
@@ -80,13 +81,21 @@ function buildEleosMapping(sections) {
 export const NOTE_TYPE_LIST = Object.entries(NOTE_TYPES).map(([key, val]) => ({
   id: key,
   label: val.name,
+  ehrs: val.ehrs, // optional allow-list; undefined = available in every EHR
 }));
 
 const NoteTypeContext = createContext(null);
 export const useNoteTypeContext = () => useContext(NoteTypeContext);
 
 export function NoteTypeProvider({ children }) {
+  const { selectedEhr } = useEhrContext();
   const [selectedNoteType, setSelectedNoteType] = useState('DAP');
+
+  // EHR-restricted note types fall back to DAP when the EHR changes
+  useEffect(() => {
+    const allowed = NOTE_TYPES[selectedNoteType]?.ehrs;
+    if (allowed && !allowed.includes(selectedEhr)) setSelectedNoteType('DAP');
+  }, [selectedEhr, selectedNoteType]);
 
   const sections = useMemo(() => flattenSections(selectedNoteType), [selectedNoteType]);
   const eleosMapping = useMemo(() => buildEleosMapping(sections), [sections]);

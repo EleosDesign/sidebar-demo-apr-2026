@@ -2,6 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 async function openMobileActivities(page: Page) {
   await page.goto('/');
+  await page.getByRole('checkbox', { name: 'Enable Enhance features' }).uncheck();
+  await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page.getByText('Session Notes - ELEOS')).toBeVisible();
   await page.evaluate(() => window.dispatchEvent(new Event('eleos:openSidebar')));
   await page.getByRole('button', { name: 'User menu' }).click();

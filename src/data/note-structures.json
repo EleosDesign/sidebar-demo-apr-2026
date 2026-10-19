@@ -452,6 +452,10 @@
     "IndividualServiceNote": {
       "name": "Core Note (SmartCare)",
       "description": "Structured individual service note for Streamline and CalMHSA SmartCare",
+      "ehrs": [
+        "streamline",
+        "calmhsa"
+      ],
       "sections": [
         {
           "id": "safetyAssessment",
@@ -983,6 +987,321 @@
         { "id": "interpretiveSummary", "label": "Interpretive Summary", "description": "Comprehensive interpretive summary" }
       ],
       "usedBy": ["Ashlyn Rivera"]
+    },
+    "MyAvatarPsych": {
+      "name": "BH Psych Progress Note",
+      "description": "myAvatar NX behavioral health psychiatric progress note",
+      "ehrs": [
+        "myavatar"
+      ],
+      "sections": [
+        {
+          "id": "ma_noteFor",
+          "label": "Progress Note For",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_draftFinal",
+          "label": "Draft/Final",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Draft",
+            "Final"
+          ]
+        },
+        {
+          "id": "ma_dos",
+          "label": "Date Of Service",
+          "group": "Service Info",
+          "type": "date"
+        },
+        {
+          "id": "ma_duration",
+          "label": "Service Duration",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_startTime",
+          "label": "Service Start Time",
+          "group": "Service Info",
+          "type": "time"
+        },
+        {
+          "id": "ma_endTime",
+          "label": "Service End Time",
+          "group": "Service Info",
+          "type": "time"
+        },
+        {
+          "id": "ma_faceDuration",
+          "label": "Face-to-Face Duration",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_chargeCode",
+          "label": "Service Charge Code",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_program",
+          "label": "Service Program",
+          "group": "Service Info",
+          "type": "text"
+        },
+        {
+          "id": "ma_noteType",
+          "label": "Note Type",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Psychiatric Evaluation",
+            "Medication Management",
+            "Follow-Up",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_discipline",
+          "label": "Discipline",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "Psychiatry",
+            "Nursing",
+            "Therapy",
+            "Case Management",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_mode",
+          "label": "Mode of Delivery (Note Add-Ons)",
+          "group": "Service Info",
+          "type": "select",
+          "options": [
+            "In Person",
+            "Telehealth – Audio/Video",
+            "Telephone",
+            "Other"
+          ]
+        },
+        {
+          "id": "ma_cc",
+          "label": "Chief Complaint",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_hpi",
+          "label": "History of Present Illness",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_condition",
+          "label": "Current Problems – Condition",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_smoking",
+          "label": "Smoking Status",
+          "group": "Clinical Information",
+          "type": "select",
+          "options": [
+            "Never smoker",
+            "Former smoker",
+            "Current every day smoker",
+            "Current some day smoker",
+            "Unknown"
+          ]
+        },
+        {
+          "id": "ma_smokeDate",
+          "label": "Smoking Status – Assessment Date",
+          "group": "Clinical Information",
+          "type": "date"
+        },
+        {
+          "id": "ma_ros",
+          "label": "Review of Systems – Psychiatric",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_eye",
+          "label": "Eye Contact",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_psychomotor",
+          "label": "Psychomotor Behavior",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_speech",
+          "label": "Speech",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_thoughtProc",
+          "label": "Thought Process",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_assoc",
+          "label": "Associations",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_abnormal",
+          "label": "Abnormal/Psychotic Thoughts",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_judgment",
+          "label": "Judgment/Insight",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_orient",
+          "label": "Orientation",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_memory",
+          "label": "Recent/Remote Memory",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_attention",
+          "label": "Attention/Concentration",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_language",
+          "label": "Language",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_fund",
+          "label": "Fund of Knowledge",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_mood",
+          "label": "Mood and Affect",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_muscle",
+          "label": "Muscle strength and tone",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_gait",
+          "label": "Gait/station",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_appearance",
+          "label": "Appearance",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_billingDx",
+          "label": "Billing Diagnosis",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_dxPractitioner",
+          "label": "Diagnosing Practitioner",
+          "group": "Clinical Information",
+          "type": "text"
+        },
+        {
+          "id": "ma_meds",
+          "label": "Active Medications",
+          "group": "Clinical Information",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_complexity",
+          "label": "Medical Decision Making – Number and Complexity of Problems Addressed",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_dataReview",
+          "label": "Medical Decision Making – Amount and/or Complexity of Data to be Reviewed and Analyzed",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_riskMdm",
+          "label": "Medical Decision Making – Risk of Complications and/or Morbidity or Mortality of Patient Management",
+          "group": "Summary of Activities",
+          "type": "select",
+          "options": [
+            "Minimal",
+            "Low",
+            "Moderate",
+            "High"
+          ]
+        },
+        {
+          "id": "ma_plan",
+          "label": "Plan of Care",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_counseling",
+          "label": "Counseling and/or Care Coordination",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        },
+        {
+          "id": "ma_medEd",
+          "label": "Medication Education",
+          "group": "Summary of Activities",
+          "type": "textarea"
+        }
+      ]
     }
   },
   "metadata": {

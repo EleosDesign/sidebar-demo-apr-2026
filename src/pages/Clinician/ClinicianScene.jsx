@@ -4,6 +4,8 @@ import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
 import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolbar';
+import { EnhanceStatus } from '../../components/enhance/EnhanceWelcome.jsx';
+import { useEnhance } from '../../contexts/EnhanceContext.jsx';
 import LQAReview from '../../components/ui/LQAReview.jsx';
 import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
@@ -24,6 +26,7 @@ import { MONTH_ABBREVS, MONTH_FULL, daysAgo, SESSION_LIST, MARKED_DONE_LIST, ALL
 import { CLIENTS_LIST, CLIENT_OPTIONS, CLIENT_PRONOUNS, DEMO_CLIENT_OPTIONS, DEMO_CLIENTS_LIST } from '../../data/clients.js';
 import { AUDIO_INPUT_OPTIONS, DEMO_AUDIO_INPUT_OPTIONS } from '../../data/audioOptions.js';
 import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefaults.js';
+import { CLIENT_MEDICATION_REPLIES, CLIENT_PRE_SESSION_BRIEFS, DEFAULT_PRE_SESSION_BRIEF } from '../../data/askEleos.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
   CASE_MGMT_SUGGESTIONS_DATA, TREATMENT_PLAN_SUGGESTIONS_DATA, ASSESSMENT_SUGGESTIONS_DATA,
@@ -89,6 +92,7 @@ export default function ClinicianScene({ step, onNext }) {
   }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
+  const { state: enhanceState, welcome: enhanceWelcome, enable: enableEnhance } = useEnhance();
   // Bumped whenever an activity/session is selected in the sidebar, for EHR shells
   // (Streamline) that need to react to that event rather than to noteType/clientName values.
   const [activitySelectionSeq, setActivitySelectionSeq] = useState(0);
@@ -232,6 +236,10 @@ export default function ClinicianScene({ step, onNext }) {
             <EhrSelector />
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <LockedDownModeToggle />
+            {!enhanceWelcome && <>
+              <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+              <EnhanceStatus state={enhanceState} onEnable={enableEnhance} />
+            </>}
           </div>
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
@@ -910,7 +918,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             ...daysAgo(0),
             name: captureSession.name,
             time: `${startT} – ${endT}`,
-            type: 'individual',
+            type: knownSession?.type ?? 'individual',
             sessionType: 'audio',
             isActive: false,
             summary: 'Audio session captured and transcribed. AI-generated suggestions are ready for EHR review.',
@@ -2556,45 +2564,8 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
 
   const clientName = client?.name ?? 'Client';
   const sessionNum = client?.sessionCount ?? 12;
-
-  const PREPARE_SECTIONS = [
-    {
-      heading: 'Recent Trends',
-      items: [
-        'Work-related anxiety increased across last 4 sessions — remains primary focus',
-        'Sleep difficulties correlating with workplace stress — tracking via sleep log',
-        'Avoidance patterns identified around conflict conversations with manager',
-      ],
-      sources: ['Mar 26, 2026', 'Mar 19, 2026'],
-    },
-    {
-      heading: 'Key Updates Since Last Session',
-      items: [
-        'Behavioral activation homework partially completed — review barriers',
-        'Client reports using breathing techniques during stressful work meetings',
-        'Continued CBT work on negative thought patterns around performance',
-      ],
-      sources: ['Mar 26, 2026'],
-    },
-    {
-      heading: 'Active Goals',
-      items: [
-        'Reduce anxiety symptoms — 50% progress',
-        'Improve conflict management at work — 35% progress',
-        'Build consistent sleep routine — 45% progress',
-      ],
-      sources: ['Feb 2026'],
-    },
-    {
-      heading: 'Suggested Focus Areas',
-      items: [
-        'Follow up on behavioral activation homework completion',
-        'Explore cognitive distortions around manager relationship',
-        'Review sleep log and reinforce sleep hygiene strategies',
-      ],
-      sources: ['Mar 26, 2026', 'Feb 2026'],
-    },
-  ];
+  const prepareBrief = CLIENT_PRE_SESSION_BRIEFS[clientName] ?? DEFAULT_PRE_SESSION_BRIEF;
+  const prepareSessionNum = prepareBrief.sessionNumber ?? sessionNum;
 
   const getFollowUpReply = (userText) => {
     const q = userText.toLowerCase();
@@ -2609,7 +2580,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
     if (/risk|safe|suicid|harm|crisis/.test(q))
       return `No active risk indicators documented. Most recent safety screening was conducted in session 11 — no SI or HI reported. ${clientName} has a current safety plan on file, last reviewed session 8. Plan includes two identified support contacts and a crisis line. Recommend re-reviewing the plan this session given the elevated stress period.`;
     if (/medic|prescri|psychiatr|drug|medication/.test(q))
-      return `No psychiatric medication is currently documented for ${clientName}. There is a note from session 6 indicating ${clientName} expressed interest in exploring medication as an adjunct — this was discussed but not pursued. If anxiety levels remain elevated, a referral to a prescriber for evaluation may be worth revisiting.`;
+      return CLIENT_MEDICATION_REPLIES[clientName] ?? `No psychiatric medication is currently documented for ${clientName}. There is a note from session 6 indicating ${clientName} expressed interest in exploring medication as an adjunct — this was discussed but not pursued. If anxiety levels remain elevated, a referral to a prescriber for evaluation may be worth revisiting.`;
     if (/manager|work|conflict|boss|colleague|job/.test(q))
       return `The workplace conflict remains one of the most active stressors. ${clientName} has continued to avoid direct conversations with their manager, which is reinforcing the anxiety cycle. A graduated exposure plan starting with low-stakes assertiveness (e.g., disagreeing in a small group setting) could be a practical next step before addressing the manager directly.`;
     if (/family|relationship|partner|spouse|social/.test(q))
@@ -2798,10 +2769,10 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
                           Pre-Session Brief — {clientName}
                         </div>
                         <div style={{ ...P, fontSize: compactMode ? 11 : 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', lineHeight: 1.66 }}>
-                          Session {sessionNum} · Scheduled: Apr 8, 2026
+                          Session {prepareSessionNum} · Scheduled: {prepareBrief.scheduledDate}
                         </div>
                       </div>
-                      {PREPARE_SECTIONS.map((section) => (
+                      {prepareBrief.sections.map((section) => (
                         <div key={section.heading} style={{ display: 'flex', flexDirection: 'column', gap: compactMode ? 5 : 8 }}>
                           <div style={{ ...P, fontSize: compactMode ? 13 : 16, fontWeight: 600, color: '#212121', letterSpacing: '0.15px', lineHeight: '24px' }}>
                             {section.heading}
@@ -2816,7 +2787,7 @@ function AskEleosDrawer({ onClose, client, P, compactMode = false }) {
                       ))}
                       <div style={{ borderTop: '1px solid rgba(0,0,0,0.12)', paddingTop: 9 }}>
                         <p style={{ ...P, fontSize: 12, fontWeight: 400, color: 'rgba(0,0,0,0.6)', letterSpacing: '0.4px', lineHeight: 1.66, margin: 0 }}>
-                          Based on {sessionNum} documented sessions · Aug 2024 – Apr 2026
+                          Based on {prepareSessionNum} documented sessions · {prepareBrief.dateRange}
                         </p>
                       </div>
                     </div>
