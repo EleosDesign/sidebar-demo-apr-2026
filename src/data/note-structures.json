@@ -450,8 +450,12 @@
       }
     },
     "IndividualServiceNote": {
-      "name": "Individual Service Note (Streamline Smartscribe)",
-      "description": "Comprehensive individual service note with quality assurance features for Streamline Smartscribe EHR",
+      "name": "Core Note (SmartCare)",
+      "description": "Structured individual service note for Streamline and CalMHSA SmartCare",
+      "ehrs": [
+        "streamline",
+        "calmhsa"
+      ],
       "sections": [
         {
           "id": "safetyAssessment",
@@ -538,7 +542,7 @@
         }
       ],
       "usedBy": ["Jake Carol", "Larry Quinn"],
-      "ehrSystem": "smartscribe",
+      "ehrSystem": "smartcare",
       "qualityFeatures": [
         "Real-time field validation",
         "Required field indicators",

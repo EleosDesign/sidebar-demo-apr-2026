@@ -1017,7 +1017,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             const r = CLIENT_LOCK_RULES[fmt];
             if (r?.noteType) noteTypeKey = r.noteType;
           }
-          noteTypeCtx?.setSelectedNoteType(noteTypeKey);
+          if (noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
+            noteTypeCtx?.setSelectedNoteType(noteTypeKey);
+          }
           onActivitySelected?.();
         }}
       />;
@@ -1040,7 +1042,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           setClientName(formatted);
           if (lockedDownMode) {
             const r = CLIENT_LOCK_RULES[formatted];
-            if (r?.noteType) noteTypeCtx?.setSelectedNoteType(r.noteType);
+            if (r?.noteType && noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
+              noteTypeCtx?.setSelectedNoteType(r.noteType);
+            }
           }
           onActivitySelected?.();
         }
@@ -3921,8 +3925,9 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
+  const { selectedNoteType } = useNoteTypeContext();
   const { lockedDownMode } = useLockedDownModeContext();
-  const hideBulkAdd = lockedDownMode && session?.type === 'group';
+  const hideBulkAdd = selectedNoteType === 'IndividualServiceNote' || (lockedDownMode && session?.type === 'group');
 
   // Resolve which dataset to use — Calvin's CalMHSA workflow takes priority,
   // then the NoteTypeContext override, session-based selection, and default.

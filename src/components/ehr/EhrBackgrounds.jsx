@@ -2299,6 +2299,8 @@ export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField })
 }
 export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, activitySelectionSeq }) {
   const { clientName } = useEhrContext();
+  const { selectedNoteType, sections } = useNoteTypeContext();
+  const isCoreNote = selectedNoteType === 'IndividualServiceNote';
   const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState('Service');
   useEffect(() => {
@@ -2494,7 +2496,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -2569,8 +2571,12 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: '50%' }}>
-                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
+                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote ? 'none' : '50%' }}>
+                  {isCoreNote ? (
+                    <SmartCareCoreNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
+                  ) : (
+                    <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
+                  )}
                 </div>
               ) : (
                 <div style={{ padding: '22px 10px', color: '#666', fontSize: 13 }}>{activeTab} content is not available in this demo.</div>
@@ -2580,6 +2586,134 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
           <div style={{ height: 6, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
         </div>
       </div>
+    </div>
+  );
+}
+
+const CORE_NOTE_FONT = "Arial, 'Helvetica Neue', sans-serif";
+
+function CoreNoteSection({ title, children }) {
+  return (
+    <section style={{ marginTop: 14, border: '1px solid #d6d6d6', background: '#fff' }}>
+      <h3 style={{ margin: '0 9px', padding: '6px 0 4px', borderBottom: '1px solid #254a67', color: '#000', fontSize: 14, fontWeight: 600 }}>{title}</h3>
+      <div style={{ padding: '10px 9px 12px' }}>{children}</div>
+    </section>
+  );
+}
+
+// Visual-only checkbox/radio; the browser holds the state (nothing reads it).
+function CoreNoteInput({ type = 'checkbox', name, children }) {
+  return (
+    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#000', fontSize: 11, cursor: 'pointer' }}>
+      <input type={type} name={name} style={{ margin: 0 }} />
+      {children}
+    </label>
+  );
+}
+
+const CoreNoteLabel = ({ children }) => <div style={{ marginBottom: 2 }}>{children}</div>;
+const CORE_NOTE_TEXT_INPUT_STYLE = { width: 106, height: 20, border: '1px solid #a5a3a3', boxSizing: 'border-box' };
+
+function SmartCareCoreNote({ noteValues, onNoteChange, highlightedField, sections }) {
+  const renderField = (id, minHeight = 58) => (
+    <StackedFields
+      noteValues={noteValues}
+      onNoteChange={onNoteChange}
+      highlightedField={highlightedField}
+      sections={[sections.find(item => item.id === id)]}
+      minHeight={minHeight}
+      labelColor="#000"
+      fontSize={11}
+      borderColor="#a5a3a3"
+      borderRadius={0}
+      fontFamily={CORE_NOTE_FONT}
+      placeholder=""
+      hideLabels
+      lastSectionId="documentPlan"
+    />
+  );
+  const areaItems = ['Mood/Affect', 'Thought Process/Orientation', 'Behavior/Functioning', 'Medical Condition', 'Substance Abuse', 'Nonsuicidal Self-Injury', 'Other'];
+  const trackItems = ['DBT', 'OQYOQ', 'Motivational Interviewing', 'EMDR', 'DV', 'TFCBT'];
+  const harmAssessment = (id, label) => (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '5px 16px', marginBottom: 7 }}>
+        <span style={{ minWidth: 138, color: '#000', fontSize: 11 }}>{label}*</span>
+        <CoreNoteInput type="radio" name={`${id}-status`}>None Reported</CoreNoteInput>
+        <CoreNoteInput type="radio" name={`${id}-status`}>Please Specify</CoreNoteInput>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '5px 10px', margin: '0 0 5px 2px' }}>
+        {['Ideation', 'Intent', 'Attempt', 'Means', 'Plan', 'Other'].map(item => <CoreNoteInput key={item}>{item}</CoreNoteInput>)}
+        <input aria-label={`${label} other`} style={CORE_NOTE_TEXT_INPUT_STYLE} />
+        <CoreNoteInput>I informed:</CoreNoteInput>
+        <input aria-label={`${label} informed person`} style={CORE_NOTE_TEXT_INPUT_STYLE} />
+      </div>
+      <CoreNoteLabel>Comments</CoreNoteLabel>
+      {renderField(id, 48)}
+    </div>
+  );
+
+  return (
+    <div style={{ width: 640, maxWidth: '100%', paddingBottom: 20, color: '#000', fontFamily: CORE_NOTE_FONT, fontSize: 11 }}>
+      <div style={{ width: 63, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#c6dff0', borderBottom: '2px solid #254a67', fontWeight: 600 }}>General</div>
+
+      <CoreNoteSection title="Information">
+        <span>Current Life Events <span title="Information" style={{ color: '#254a67', fontWeight: 700 }}>ⓘ</span></span>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Tracks/EBPs Utilized During the Session">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '7px 16px' }}>
+          {trackItems.map(item => <CoreNoteInput key={item}>{item}</CoreNoteInput>)}
+        </div>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Objectives Addressed by this Service">
+        <div style={{ marginBottom: 14 }}>
+          <CoreNoteInput>Show only selected items</CoreNoteInput>
+        </div>
+        <span style={{ marginLeft: 8 }}>No goals linked to procedure code.</span>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Client's Current Condition">
+        <div style={{ marginBottom: 6 }}>Areas Noted During Service</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px 14px', margin: '0 2px 7px' }}>
+          {areaItems.map(item => <CoreNoteInput key={item}>{item}</CoreNoteInput>)}
+        </div>
+        <CoreNoteLabel>Comments</CoreNoteLabel>
+        {renderField('areasComments', 48)}
+        {harmAssessment('suicidality', 'Suicidality')}
+        {harmAssessment('harmToOthers', 'Harm to Others')}
+        {harmAssessment('harmToProperty', 'Harm to Property')}
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Safety Plan">
+        <span style={{ display: 'inline-block', marginBottom: 8, color: '#174cc4', fontStyle: 'italic' }}>Safety / Crisis Plan</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px 14px', marginBottom: 6 }}>
+          <CoreNoteInput>The Safety Plan was Reviewed</CoreNoteInput>
+          <CoreNoteInput type="radio" name="safety-review">With the Client</CoreNoteInput>
+          <CoreNoteInput type="radio" name="safety-review">Without the client, specify the reason client was not able to review below and discuss Next Steps</CoreNoteInput>
+        </div>
+        <CoreNoteLabel>Next Steps</CoreNoteLabel>
+        {renderField('safetyNextSteps', 48)}
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Intervention/Progress">
+        <CoreNoteLabel>What was the focus of the session (i.e. alleviation of emotional disturbances, reversal or change of maladaptive Patterns or behaviors, encouragement of personality growth or development)?</CoreNoteLabel>
+        {renderField('focusOfSession', 62)}
+        <CoreNoteLabel>Describe the interventions provided.</CoreNoteLabel>
+        {renderField('interventions', 62)}
+        <CoreNoteLabel>Describe the client's response to the intervention, progress made toward goals and clients strengths. If progress is not being made, describe reasons and barriers to progress.</CoreNoteLabel>
+        {renderField('clientResponse', 62)}
+        <CoreNoteLabel>Document the plan. If there were barriers describe the plan to overcome the barriers.</CoreNoteLabel>
+        {renderField('documentPlan', 62)}
+        <CoreNoteLabel>Plan from Last Service</CoreNoteLabel>
+        <textarea
+          aria-label="Plan from Last Service"
+          value={noteValues.planFromLastService ?? ''}
+          disabled
+          rows={4}
+          style={{ width: '100%', minHeight: 62, padding: '10px 12px', border: '1px solid #a5a3a3', borderRadius: 0, resize: 'none', fontSize: 11, color: '#777', fontFamily: CORE_NOTE_FONT, background: '#efefef', boxSizing: 'border-box' }}
+        />
+      </CoreNoteSection>
     </div>
   );
 }
@@ -2684,6 +2818,7 @@ function CalmhsaProgressNote({ noteValues, onNoteChange, highlightedField, secti
 export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, activitySelectionSeq }) {
   const { clientName } = useEhrContext();
   const { selectedNoteType, sections } = useNoteTypeContext();
+  const isCoreNote = selectedNoteType === 'IndividualServiceNote';
   const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState('Service');
   useEffect(() => {
@@ -2879,7 +3014,7 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -2954,9 +3089,11 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
+                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote || selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
                   {selectedNoteType === 'ProgressNote' ? (
                     <CalmhsaProgressNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
+                  ) : isCoreNote ? (
+                    <SmartCareCoreNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
                   ) : (
                     <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
                   )}

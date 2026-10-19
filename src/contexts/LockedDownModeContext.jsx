@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useEhrContext } from './EhrContext.jsx';
+import { useEhrContext, useSmartScribeSkin } from './EhrContext.jsx';
 import { useNoteTypeContext } from './NoteTypeContext.jsx';
 import { CLIENT_LOCK_RULES } from '../data/lockedDownRules.js';
 
@@ -11,10 +11,12 @@ const LockedDownModeContext = createContext({
 export function LockedDownModeProvider({ children }) {
   const [lockedDownMode, setLockedDownMode] = useState(true);
   const { selectedEhr, clientName } = useEhrContext();
-  const { setSelectedNoteType } = useNoteTypeContext();
+  const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
+  const coreNoteAllowed = useSmartScribeSkin();
 
   useEffect(() => {
     if (!lockedDownMode) return;
+    if (selectedNoteType === 'IndividualServiceNote' && coreNoteAllowed) return;
     const rule = CLIENT_LOCK_RULES[clientName];
     const noteType = clientName === 'Murphy, Calvin' && selectedEhr === 'calmhsa'
       ? 'ProgressNote'
