@@ -50,6 +50,89 @@ export const PSYCH_SUGGESTIONS_DATA = [
   ]},
 ];
 
+// ── MyAvatar BH Psych Progress Note suggestions — Marlene Oviedo ─────────────
+export const MARLENE_OVIEDO_SUGGESTIONS_DATA = [
+  { section: 'Chief Complaint', cards: [
+    { field: 'Chief Complaint', content: `Patient states, "My housemates, who work for MI5, are doing stuff to my brain... they're out to get me."`, type: 'text', showActions: true },
+  ]},
+  { section: 'History of Present Illness', cards: [
+    { field: 'History of Present Illness', content: `Adult patient presenting with first-episode psychosis. She reports her housemates, whom she believes work for MI5, are "doing stuff to my brain" and are "out to get me." She believes her housemates are poisoning her food and has significantly reduced her oral intake as a result. She describes a somatic sensation of a "chip" in her head that she can feel "moving around," which she believes causes thoughts that are not her own (thought insertion). She endorses third-person auditory hallucinations of her housemates' voices commenting on her actions. Symptoms are causing marked distress and functional impairment, including social isolation and food refusal.
+Patient reports past suicidal ideation with a plan (overdose); no recent action and no current intent. Denies homicidal ideation but keeps a knife and a baseball bat for self-protection.
+Her reported daily cannabis use and recent amphetamine use are significant co-occurring factors that require further evaluation.
+Patient is not prescribed and does not report taking any psychotropic medications.`, type: 'text', showActions: true },
+  ]},
+  { section: 'Current Problems- Condition', cards: [
+    { field: 'Current Problems – Condition', content: `First-episode psychosis with persecutory and somatic delusions, thought insertion, and third-person auditory hallucinations (provisional unspecified schizophrenia spectrum and other psychotic disorder). Reduced oral intake/food refusal secondary to delusions of poisoning. Daily cannabis use and recent amphetamine use (significant co-occurring factors that require further evaluation). History of suicidal ideation with plan (overdose); access to a knife and baseball bat kept for self-protection in the context of paranoia toward housemates.`, type: 'text', showActions: true },
+  ]},
+  { section: 'Review of Systems- Psychiatric', cards: [
+    { field: 'Review of Systems – Psychiatric', content: `Positive for delusions (persecutory, somatic, thought insertion/control), third-person auditory hallucinations, anxiety/fearfulness, decreased appetite with food refusal, and social isolation. Past suicidal ideation with plan (overdose), no recent action, no current intent. Denies homicidal ideation. Mood not explicitly stated. Denies other physical health problems or changes (somatic 'chip' sensation is delusional in nature).`, type: 'text', showActions: true },
+  ]},
+  { section: 'Eye Contact', cards: [
+    { field: 'Eye Contact', content: 'Fair, intermittent; frequently breaks contact to scan the room', type: 'text', showActions: true },
+  ]},
+  { section: 'Psychomotor Behavior', cards: [
+    { field: 'Psychomotor Behavior', content: 'Intermittently looks around the room as if scanning the environment.', type: 'text', showActions: true },
+  ]},
+  { section: 'Speech', cards: [
+    { field: 'Speech', content: 'Normal rate and volume', type: 'text', showActions: true },
+  ]},
+  { section: 'Thought Process', cards: [
+    { field: 'Thought Process', content: 'Logical and coherent', type: 'text', showActions: true },
+  ]},
+  { section: 'Associations', cards: [
+    { field: 'Associations', content: 'Intact; no loosening of associations', type: 'text', showActions: true },
+  ]},
+  { section: 'Abnormal/psychotic Thoughts', cards: [
+    { field: 'Abnormal/Psychotic Thoughts', content: 'Fixed, complex delusional system: persecutory, somatic, and thought insertion/control; third-person AH', type: 'text', showActions: true },
+  ]},
+  { section: 'Judgement/Insight', cards: [
+    { field: 'Judgment/Insight', content: 'Judgment impaired; insight absent/profoundly poor', type: 'text', showActions: true },
+  ]},
+  { section: 'Orientation', cards: [
+    { field: 'Orientation', content: 'Alert; oriented to person, place, time, and situation', type: 'text', showActions: true },
+  ]},
+  { section: 'Recent/Remote Memory', cards: [
+    { field: 'Recent/Remote Memory', content: 'Recent and remote memory grossly intact', type: 'text', showActions: true },
+  ]},
+  { section: 'Attention/Concentration', cards: [
+    { field: 'Attention/Concentration', content: 'Adequate to participate in interview; intermittently drawn to internal/environmental cues', type: 'text', showActions: true },
+  ]},
+  { section: 'Language', cards: [
+    { field: 'Language', content: 'Fluent; naming and repetition intact', type: 'text', showActions: true },
+  ]},
+  { section: 'Fund of Knowledge', cards: [
+    { field: 'Fund of Knowledge', content: 'Appropriate for education level', type: 'text', showActions: true },
+  ]},
+  { section: 'Mood and Affect', cards: [
+    { field: 'Mood and Affect', content: 'Mood not explicitly mentioned. Affect constricted, anxious, fearful; congruent with described experiences', type: 'text', showActions: true },
+  ]},
+  { section: 'Muscle Strength and Tone', cards: [
+    { field: 'Muscle strength and tone', content: 'Not explicitly discussed', type: 'text', showActions: true },
+  ]},
+  { section: 'Gait/Station', cards: [
+    { field: 'Gait/station', content: 'Not explicitly discussed', type: 'text', showActions: true },
+  ]},
+  { section: 'Appearance', cards: [
+    { field: 'Appearance', content: 'Not explicitly discussed', type: 'text', showActions: true },
+  ]},
+  { section: 'Active Medications', cards: [
+    { field: 'Active Medications', content: `Prior to visit, no psychotropic medications prescribed; patient denies taking any.
+New orders this visit include, Risperidone 1 mg tablet, by mouth at bedtime and Lorazepam 0.5 mg tablet PO every 6 hours AS NEEDED for severe anxiety or agitation.`, type: 'text', showActions: true },
+  ]},
+  { section: 'Plan of Care', cards: [
+    { field: 'Plan of Care', content: '1. LEVEL OF CARE: Voluntary inpatient psychiatric admission (acute adult unit) recommended and accepted by the patient. 2. MEDICATIONS: Start risperidone with PRN lorazepam. 3. SAFETY: Collaborative safety plan completed with patient. Weapons (knife, baseball bat) to be removed/secured from patient\'s access; patient will not return to the housemate setting alone. 4. NUTRITION/MONITORING: Monitor oral intake and hydration; dietitian consult. 5. FOLLOW-UP: Daily psychiatric reassessment while inpatient.', type: 'text', showActions: true },
+  ]},
+  { section: 'Counseling and/or Coordination of Care', cards: [
+    { field: 'Counseling and/or Care Coordination', content: 'Session held with patient: shared clinical impressions, reviewed safety plan, and discussed recommended level of care, including voluntary hospitalization. Release of information confirmed for communication with mother and inpatient staff.', type: 'text', showActions: true },
+  ]},
+  { section: 'Medication Education', cards: [
+    { field: 'Medication Education', content: `Medications and alternatives were discussed with the patient; patient verbalized understanding and agreed to start treatment. Risperidone (antipsychotic) is expected to reduce delusions and hallucinations; some improvement may begin within days, with fuller benefit over several weeks. Common side effects include drowsiness, dizziness or lightheadedness on standing, increased appetite and weight gain, constipation, missed or irregular periods, breast tenderness and/or milk discharge. Movement side effects: stiffness, tremor, restlessness (akathisia), muscle spasms. Less common/serious: tardive dyskinesia, neuroleptic malignant syndrome (fever, severe rigidity, confusion), heart beat irregularities, high blood sugar and cholesterol. Take at the same times daily; do not stop suddenly. Lorazepam (as needed) should be used short-term for severe anxiety/agitation; may cause sedation, dizziness, and impaired coordination; dependence risk with prolonged use. Cannabis, amphetamines, and alcohol can worsen psychosis, reduce medication effectiveness, and increase sedation; avoid them. Patient's concern about poisoning acknowledged; medications will be given in sealed unit-dose packaging and staff will answer questions. Pregnancy test required before starting; contraception counseling to be provided. Alternatives discussed: other antipsychotics (e.g., olanzapine, aripiprazole), non-medication treatment alone, and long-acting injectable options for future consideration.`, type: 'text', showActions: true },
+  ]},
+  { section: 'Coding', cards: [
+    { field: 'Billing Diagnosis', content: '', type: 'text', showActions: true },
+  ]},
+];
+
 // ── Audio-session suggestions (James Edwards capture flow) ────────────────────
 export const AUDIO_SUGGESTIONS_DATA = [
   { section: 'Data', cards: [
