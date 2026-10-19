@@ -54,6 +54,10 @@ The EHR background option (`EHR_BACKGROUNDS.calmhsa`, dropdown label "CalMHSA Sm
 
 A clinical note format used in CalMHSA SmartCare. **Problem Details**, **Problem List**, and **Problems Addressed During This Session** establish the clinical context; **Information** and **Care Plan** are the two editable narrative sections populated from documentation suggestions.
 
+## Core Note (SmartCare)
+
+A structured individual-service note format available for manual selection when either **Streamline** or **CalMHSA SmartCare** is the EHR background. It combines session context, safety assessment and planning, and intervention/progress narratives. Its structured controls are interactive EHR details; its narrative fields participate in documentation suggestions, Add to EHR, Enhance, and Note Quality.
+
 ## Calvin Murphy CalMHSA workflow
 
 When Calvin Murphy is paired with **CalMHSA SmartCare**, his documentation suggestions use the **Information** and **Care Plan** sections of the **CalMHSA Progress Note** in every suggestion-entry flow. This pairing is specific to CalMHSA SmartCare and does not include the separate **Streamline** EHR option. In Demo Mode, the pairing also selects the CalMHSA Progress Note; leaving CalMHSA SmartCare restores Calvin's SOAP Note. Turning Demo Mode off preserves the currently selected note type but unlocks it for manual editing. Calvin's CalMHSA-specific suggestions remain active outside Demo Mode regardless of that manual note-type selection.

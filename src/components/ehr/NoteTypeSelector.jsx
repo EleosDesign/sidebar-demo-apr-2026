@@ -1,8 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
+import { useEhrContext } from '../../contexts/EhrContext.jsx';
+
+const CORE_NOTE_EHRS = new Set(['streamline', 'calmhsa']);
 
 export default function NoteTypeSelector() {
   const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
+  const { selectedEhr } = useEhrContext();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -15,7 +19,16 @@ export default function NoteTypeSelector() {
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
+  useEffect(() => {
+    if (selectedNoteType === 'IndividualServiceNote' && !CORE_NOTE_EHRS.has(selectedEhr)) {
+      setSelectedNoteType('DAP');
+    }
+  }, [selectedEhr, selectedNoteType, setSelectedNoteType]);
+
   const current = NOTE_TYPE_LIST.find(n => n.id === selectedNoteType);
+  const availableNoteTypes = NOTE_TYPE_LIST.filter(({ id }) =>
+    id !== 'AngerManagementGroup' && (id !== 'IndividualServiceNote' || CORE_NOTE_EHRS.has(selectedEhr))
+  );
 
   return (
     <div ref={ref} style={{ position: 'relative', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
@@ -37,7 +50,7 @@ export default function NoteTypeSelector() {
             Note Type
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {NOTE_TYPE_LIST.filter(({ id }) => id !== 'AngerManagementGroup').map(({ id, label }) => {
+            {availableNoteTypes.map(({ id, label }) => {
               const isActive = selectedNoteType === id;
               return (
                 <button

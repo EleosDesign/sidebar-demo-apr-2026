@@ -2382,6 +2382,7 @@ export function EleosLiteBg({ noteValues = {}, onNoteChange, highlightedField })
 }
 export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, activitySelectionSeq }) {
   const { clientName } = useEhrContext();
+  const { selectedNoteType, sections } = useNoteTypeContext();
   const { lockedDownMode } = useLockedDownModeContext();
   const [activeTab, setActiveTab] = useState('Service');
   useEffect(() => {
@@ -2577,7 +2578,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'IndividualServiceNote' ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -2652,8 +2653,12 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: '50%' }}>
-                  <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
+                <div style={{ padding: '0 10px 20px', maxWidth: selectedNoteType === 'IndividualServiceNote' ? 'none' : '50%' }}>
+                  {selectedNoteType === 'IndividualServiceNote' ? (
+                    <SmartCareCoreNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
+                  ) : (
+                    <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
+                  )}
                 </div>
               ) : (
                 <div style={{ padding: '22px 10px', color: '#666', fontSize: 13 }}>{activeTab} content is not available in this demo.</div>
@@ -2663,6 +2668,154 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
           <div style={{ height: 6, flexShrink: 0, borderTop: '1px solid #d6d6d6', background: 'linear-gradient(90deg, #efefef 0%, #efefef 25%, orange 50%, #efefef 75%, #efefef 100%)' }} />
         </div>
       </div>
+    </div>
+  );
+}
+
+const CORE_NOTE_FIELD_STYLE = {
+  labelColor: '#000',
+  fontSize: 11,
+  borderColor: '#a5a3a3',
+  borderRadius: 0,
+  fontFamily: "Arial, 'Helvetica Neue', sans-serif",
+  resize: 'vertical',
+  placeholder: '',
+  hideLabels: true,
+  lastSectionId: 'documentPlan',
+};
+
+function CoreNoteSection({ title, children }) {
+  return (
+    <section style={{ marginTop: 14, border: '1px solid #d6d6d6', background: '#fff' }}>
+      <h3 style={{ margin: '0 9px', padding: '6px 0 4px', borderBottom: '1px solid #254a67', color: '#000', fontSize: 14, fontWeight: 600 }}>{title}</h3>
+      <div style={{ padding: '10px 9px 12px' }}>{children}</div>
+    </section>
+  );
+}
+
+function CoreNoteCheck({ checked, onChange, children }) {
+  return (
+    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#000', fontSize: 11, cursor: 'pointer' }}>
+      <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} style={{ margin: 0 }} />
+      {children}
+    </label>
+  );
+}
+
+function CoreNoteRadio({ name, checked, onChange, children }) {
+  return (
+    <label style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: '#000', fontSize: 11, cursor: 'pointer' }}>
+      <input type="radio" name={name} checked={checked} onChange={onChange} style={{ margin: 0 }} />
+      {children}
+    </label>
+  );
+}
+
+function CoreNoteHarmAssessment({ id, label, controls, setControl, renderField }) {
+  const checkItems = ['Ideation', 'Intent', 'Attempt', 'Means', 'Plan'];
+  return (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '5px 16px', marginBottom: 7 }}>
+        <span style={{ minWidth: 138, color: '#000', fontSize: 11 }}>{label}*</span>
+        <CoreNoteRadio name={`${id}-status`} checked={controls[`${id}Status`] === 'none'} onChange={() => setControl(`${id}Status`, 'none')}>None Reported</CoreNoteRadio>
+        <CoreNoteRadio name={`${id}-status`} checked={controls[`${id}Status`] === 'specify'} onChange={() => setControl(`${id}Status`, 'specify')}>Please Specify</CoreNoteRadio>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '5px 10px', margin: '0 0 5px 2px' }}>
+        {checkItems.map(item => (
+          <CoreNoteCheck key={item} checked={!!controls[`${id}${item}`]} onChange={value => setControl(`${id}${item}`, value)}>{item}</CoreNoteCheck>
+        ))}
+        <CoreNoteCheck checked={!!controls[`${id}Other`]} onChange={value => setControl(`${id}Other`, value)}>Other</CoreNoteCheck>
+        <input aria-label={`${label} other`} value={controls[`${id}OtherText`] ?? ''} onChange={e => setControl(`${id}OtherText`, e.target.value)} style={{ width: 106, height: 20, border: '1px solid #a5a3a3', boxSizing: 'border-box' }} />
+        <CoreNoteCheck checked={!!controls[`${id}Informed`]} onChange={value => setControl(`${id}Informed`, value)}>I informed:</CoreNoteCheck>
+        <input aria-label={`${label} informed person`} value={controls[`${id}InformedText`] ?? ''} onChange={e => setControl(`${id}InformedText`, e.target.value)} style={{ width: 106, height: 20, border: '1px solid #a5a3a3', boxSizing: 'border-box' }} />
+      </div>
+      <div style={{ color: '#000', fontSize: 11, marginBottom: 2 }}>Comments</div>
+      {renderField(id, 48)}
+    </div>
+  );
+}
+
+function SmartCareCoreNote({ noteValues, onNoteChange, highlightedField, sections }) {
+  const [controls, setControls] = useState({});
+  const setControl = (key, value) => setControls(previous => ({ ...previous, [key]: value }));
+  const renderField = (id, minHeight = 58) => {
+    const section = sections.find(item => item.id === id) ?? { id, label: id };
+    return (
+      <StackedFields
+        noteValues={noteValues}
+        onNoteChange={onNoteChange}
+        highlightedField={highlightedField}
+        sections={[section]}
+        minHeight={minHeight}
+        {...CORE_NOTE_FIELD_STYLE}
+      />
+    );
+  };
+  const areaItems = ['Mood/Affect', 'Thought Process/Orientation', 'Behavior/Functioning', 'Medical Condition', 'Substance Abuse', 'Nonsuicidal Self-Injury', 'Other'];
+  const trackItems = ['DBT', 'OQYOQ', 'Motivational Interviewing', 'EMDR', 'DV', 'TFCBT'];
+
+  return (
+    <div style={{ width: 640, maxWidth: '100%', paddingBottom: 20, color: '#000', fontFamily: "Arial, 'Helvetica Neue', sans-serif", fontSize: 11 }}>
+      <div style={{ width: 63, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#c6dff0', borderBottom: '2px solid #254a67', fontWeight: 600 }}>General</div>
+
+      <CoreNoteSection title="Information">
+        <span>Current Life Events <span title="Information" style={{ color: '#254a67', fontWeight: 700 }}>ⓘ</span></span>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Tracks/EBPs Utilized During the Session">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '7px 16px' }}>
+          {trackItems.map(item => <CoreNoteCheck key={item} checked={!!controls[`track-${item}`]} onChange={value => setControl(`track-${item}`, value)}>{item}</CoreNoteCheck>)}
+        </div>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Objectives Addressed by this Service">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <CoreNoteCheck checked={!!controls.showSelectedObjectives} onChange={value => setControl('showSelectedObjectives', value)}>Show only selected items</CoreNoteCheck>
+        </div>
+        <span style={{ marginLeft: 8 }}>No goals linked to procedure code.</span>
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Client's Current Condition">
+        <div style={{ marginBottom: 6 }}>Areas Noted During Service</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px 14px', margin: '0 2px 7px' }}>
+          {areaItems.map(item => <CoreNoteCheck key={item} checked={!!controls[`area-${item}`]} onChange={value => setControl(`area-${item}`, value)}>{item}</CoreNoteCheck>)}
+        </div>
+        <div style={{ marginBottom: 2 }}>Comments</div>
+        {renderField('areasComments', 48)}
+        <CoreNoteHarmAssessment id="suicidality" label="Suicidality" controls={controls} setControl={setControl} renderField={renderField} />
+        <CoreNoteHarmAssessment id="harmToOthers" label="Harm to Others" controls={controls} setControl={setControl} renderField={renderField} />
+        <CoreNoteHarmAssessment id="harmToProperty" label="Harm to Property" controls={controls} setControl={setControl} renderField={renderField} />
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Safety Plan">
+        <a href="#" onClick={event => event.preventDefault()} style={{ display: 'inline-block', marginBottom: 8, color: '#174cc4', fontStyle: 'italic' }}>Safety / Crisis Plan</a>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px 14px', marginBottom: 6 }}>
+          <CoreNoteCheck checked={!!controls.safetyReviewed} onChange={value => setControl('safetyReviewed', value)}>The Safety Plan was Reviewed</CoreNoteCheck>
+          <CoreNoteRadio name="safety-review" checked={controls.safetyReview === 'with'} onChange={() => setControl('safetyReview', 'with')}>With the Client</CoreNoteRadio>
+          <CoreNoteRadio name="safety-review" checked={controls.safetyReview === 'without'} onChange={() => setControl('safetyReview', 'without')}>Without the client, specify the reason client was not able to review below and discuss Next Steps</CoreNoteRadio>
+        </div>
+        <div style={{ marginBottom: 2 }}>Next Steps</div>
+        {renderField('safetyNextSteps', 48)}
+      </CoreNoteSection>
+
+      <CoreNoteSection title="Intervention/Progress">
+        <div style={{ marginBottom: 2 }}>What was the focus of the session (i.e. alleviation of emotional disturbances, reversal or change of maladaptive Patterns or behaviors, encouragement of personality growth or development)?</div>
+        {renderField('focusOfSession', 62)}
+        <div style={{ marginBottom: 2 }}>Describe the interventions provided.</div>
+        {renderField('interventions', 62)}
+        <div style={{ marginBottom: 2 }}>Describe the client's response to the intervention, progress made toward goals and clients strengths. If progress is not being made, describe reasons and barriers to progress.</div>
+        {renderField('clientResponse', 62)}
+        <div style={{ marginBottom: 2 }}>Document the plan. If there were barriers describe the plan to overcome the barriers.</div>
+        {renderField('documentPlan', 62)}
+        <div style={{ marginBottom: 2 }}>Plan from Last Service</div>
+        <textarea
+          aria-label="Plan from Last Service"
+          value={noteValues.planFromLastService ?? ''}
+          disabled
+          rows={4}
+          style={{ width: '100%', minHeight: 62, padding: '10px 12px', border: '1px solid #a5a3a3', borderRadius: 0, resize: 'none', fontSize: 11, color: '#777', fontFamily: "Arial, 'Helvetica Neue', sans-serif", background: '#efefef', boxSizing: 'border-box' }}
+        />
+      </CoreNoteSection>
     </div>
   );
 }
@@ -2962,7 +3115,7 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>Progress Note</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'IndividualServiceNote' ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -3037,9 +3190,11 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
+                <div style={{ padding: '0 10px 20px', maxWidth: ['ProgressNote', 'IndividualServiceNote'].includes(selectedNoteType) ? 'none' : '50%' }}>
                   {selectedNoteType === 'ProgressNote' ? (
                     <CalmhsaProgressNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
+                  ) : selectedNoteType === 'IndividualServiceNote' ? (
+                    <SmartCareCoreNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
                   ) : (
                     <StackedFields noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} labelColor='#333' fontSize={13} borderColor='#cfcfcf' minHeight={112} borderRadius={0} />
                   )}

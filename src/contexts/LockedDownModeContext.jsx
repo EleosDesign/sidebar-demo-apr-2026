@@ -11,10 +11,11 @@ const LockedDownModeContext = createContext({
 export function LockedDownModeProvider({ children }) {
   const [lockedDownMode, setLockedDownMode] = useState(true);
   const { selectedEhr, clientName } = useEhrContext();
-  const { setSelectedNoteType } = useNoteTypeContext();
+  const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
 
   useEffect(() => {
     if (!lockedDownMode) return;
+    if (selectedNoteType === 'IndividualServiceNote' && ['streamline', 'calmhsa'].includes(selectedEhr)) return;
     const rule = CLIENT_LOCK_RULES[clientName];
     const noteType = clientName === 'Murphy, Calvin' && selectedEhr === 'calmhsa'
       ? 'ProgressNote'
