@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
-import { useEhrContext } from '../../contexts/EhrContext.jsx';
-
-const CORE_NOTE_EHRS = new Set(['streamline', 'calmhsa']);
+import { useSmartScribeSkin } from '../../contexts/EhrContext.jsx';
 
 export default function NoteTypeSelector() {
   const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
-  const { selectedEhr } = useEhrContext();
+  const coreNoteAllowed = useSmartScribeSkin();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -20,14 +18,14 @@ export default function NoteTypeSelector() {
   }, [open]);
 
   useEffect(() => {
-    if (selectedNoteType === 'IndividualServiceNote' && !CORE_NOTE_EHRS.has(selectedEhr)) {
+    if (selectedNoteType === 'IndividualServiceNote' && !coreNoteAllowed) {
       setSelectedNoteType('DAP');
     }
-  }, [selectedEhr, selectedNoteType, setSelectedNoteType]);
+  }, [coreNoteAllowed, selectedNoteType, setSelectedNoteType]);
 
   const current = NOTE_TYPE_LIST.find(n => n.id === selectedNoteType);
   const availableNoteTypes = NOTE_TYPE_LIST.filter(({ id }) =>
-    id !== 'AngerManagementGroup' && (id !== 'IndividualServiceNote' || CORE_NOTE_EHRS.has(selectedEhr))
+    id !== 'AngerManagementGroup' && (id !== 'IndividualServiceNote' || coreNoteAllowed)
   );
 
   return (
