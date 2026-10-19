@@ -44,7 +44,7 @@ Whether the Launcher Button and the Companion Sidebar panel sit closer to the le
 
 ## Demo Mode
 
-The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext`), toggled by the button labeled "Demo Mode" (`LockedDownModeToggle`) and defaulting on. While active, `CLIENT_LOCK_RULES` (`src/data/lockedDownRules.js`) forces session type, setting, and note type to fixed values for the demo clients it lists, overriding whatever the clinician would otherwise pick. Referred to as "Demo toggle" in issue reports — same concept, not a separate one.
+The clinician-facing name for the `lockedDownMode` state (`LockedDownModeContext`), toggled by the button labeled "Demo Mode" (`LockedDownModeToggle`) and defaulting on. While active, `CLIENT_LOCK_RULES` (`src/data/lockedDownRules.js`) forces session type, setting, and note type to fixed values for the demo clients it lists, overriding whatever the clinician would otherwise pick. Demo clients remain available in My Clients when Demo Mode is inactive. Referred to as "Demo toggle" in issue reports — same concept, not a separate one.
 
 ## CalMHSA SmartCare
 
