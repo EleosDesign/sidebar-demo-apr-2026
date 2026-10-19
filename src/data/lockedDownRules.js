@@ -16,6 +16,13 @@ export const CLIENT_LOCK_RULES = {
     activityType: 'Case Management',
     population: 'Adult',
   },
+  'Oviedo, Marlene': {
+    sessionType: 'Psych Follow Up',
+    setting: 'In Person',
+    noteType: 'MyAvatarPsych',
+    noteTypeLabel: 'BH Psych Progress Note',
+    activityType: 'Psych Follow Up',
+  },
   'Rodriguez, Patricia': {
     sessionType: 'Medication Management',
     setting: ['In Person', 'Telehealth'],

@@ -29,6 +29,7 @@ import { INITIAL_NOTE_VALUES, SECTION_TO_NOTE_FIELD } from '../../data/noteDefau
 import { CLIENT_MEDICATION_REPLIES, CLIENT_PRE_SESSION_BRIEFS, DEFAULT_PRE_SESSION_BRIEF } from '../../data/askEleos.js';
 import {
   SUGGESTIONS_DATA, PSYCH_SUGGESTIONS_DATA, AUDIO_SUGGESTIONS_DATA,
+  MARLENE_OVIEDO_SUGGESTIONS_DATA,
   CASE_MGMT_SUGGESTIONS_DATA, TREATMENT_PLAN_SUGGESTIONS_DATA, ASSESSMENT_SUGGESTIONS_DATA,
   CALMHSA_PROGRESS_SUGGESTIONS_DATA,
   ANGER_GROUP_SUGGESTIONS_DATA, SUD_GROUP_SUGGESTIONS_DATA, GROUP_SUGGESTIONS_BY_NOTE_TYPE,
@@ -3515,7 +3516,11 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
   }
 
   // ── Phase 3: suggestions ─────────────────────────────────────────────────
-  const resolvedSuggestions = clientName === 'Ashlyn Rivera' ? ASSESSMENT_SUGGESTIONS_DATA : suggestionsData;
+  const resolvedSuggestions = clientName === 'Marlene Oviedo'
+    ? MARLENE_OVIEDO_SUGGESTIONS_DATA
+    : clientName === 'Ashlyn Rivera'
+      ? ASSESSMENT_SUGGESTIONS_DATA
+      : suggestionsData;
   if (phase === 'suggestions') return <SuggestionsPanel clientName={clientName} sessionSubtitle={sessionSubtitle} onBack={() => { if (mobileMode) { setQuestionStep(MOBILE_QUESTION_SCREENS.length - 1); setPhase('questions'); } else { setPhase('text'); } }} onAddToNote={onAddToNote} onAddedToEHR={() => { onAddedToEHR?.(); if (mobileMode) setPhase('complete'); }} onMarkSubmitted={() => { onAddedToEHR?.(); onFinishToActivities?.(); }} suggestionsData={resolvedSuggestions} compactMode={compactMode} mobileMode={mobileMode} sidebarW={467} />;
 
   if (phase === 'complete') return (
@@ -3929,9 +3934,10 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const { lockedDownMode } = useLockedDownModeContext();
   const hideBulkAdd = selectedNoteType === 'IndividualServiceNote' || (lockedDownMode && session?.type === 'group');
 
-  // Resolve which dataset to use — Calvin's CalMHSA workflow takes priority,
+  // Resolve which dataset to use — client-specific workflows take priority,
   // then the NoteTypeContext override, session-based selection, and default.
   const resolvedData = (() => {
+    if (clientName === 'Marlene Oviedo') return MARLENE_OVIEDO_SUGGESTIONS_DATA;
     if (clientName === 'Calvin Murphy' && selectedEhr === 'calmhsa') return CALMHSA_PROGRESS_SUGGESTIONS_DATA;
     if (suggestionsData) return suggestionsData;
     if (!session) return SUGGESTIONS_DATA;
