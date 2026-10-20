@@ -12,6 +12,8 @@ import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
 import LockedDownModeToggle from '../../components/ehr/LockedDownModeToggle.jsx';
+import SidebarAlert from '../../components/SidebarAlert/SidebarAlert.jsx';
+import SidebarAlertDevTrigger from '../../components/SidebarAlert/SidebarAlertDevTrigger.jsx';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
@@ -242,6 +244,10 @@ export default function ClinicianScene({ step, onNext }) {
               <EnhanceStatus state={enhanceState} onEnable={enableEnhance} />
             </>}
           </div>
+        </div>
+        {/* Always-visible dev trigger for the sidebar notification alert — bottom-left corner */}
+        <div style={{ position: 'fixed', bottom: 16, left: 16, zIndex: 9 }}>
+          <SidebarAlertDevTrigger />
         </div>
         {(!sidebarOpen || step === 0) && !isClosing
           ? <CompanionLaunchButton pos={btnPos} onPosChange={setBtnPosDeliberate} onNext={handleLaunch} onOpenQuality={handleOpenQuality} isRecording={isRecording} />
@@ -597,6 +603,15 @@ function NoteField({ label, height, value = '', onChange, onFocus, placeholder, 
 
 const SIDEBAR_BOTTOM_GAP = 16;
 
+// Sidebar notification alert — tuned via the (now-removed) Dev Dials panel.
+const ALERT_OVERLAP_MARGIN = -28;
+const ALERT_TRANSITION_MS = 337;
+const ALERT_EASING = 'ease-in-out';
+const ALERT_BORDER_RADIUS = 0;
+const ALERT_PADDING_TOP = 18;
+const ALERT_PADDING_SIDES = 14;
+const ALERT_PADDING_BOTTOM = 40;
+
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, onActivitySelected, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
@@ -611,6 +626,35 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       ehrCtx.setChangedSinceAnalysis(true);
     }
   }, [noteTypeCtx?.noteValues]); // eslint-disable-line
+
+  // Notification alert — fixed above the header, same spot across every nav screen.
+  // Triggered by the dev-only "Test Alert" button. Split into "mounted" (present in the
+  // DOM) vs "open" (transitioned-in state) so the CSS enter/exit transitions below get a
+  // chance to run instead of the alert just popping in/out.
+  const [alertMounted, setAlertMounted] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const alertDismissTimeoutRef = useRef(null);
+
+  const dismissAlert = () => {
+    setAlertOpen(false);
+    clearTimeout(alertDismissTimeoutRef.current);
+    alertDismissTimeoutRef.current = setTimeout(() => setAlertMounted(false), ALERT_TRANSITION_MS);
+  };
+
+  useEffect(() => {
+    const onShowAlert = () => {
+      clearTimeout(alertDismissTimeoutRef.current);
+      setAlertMounted(true);
+      // Mount in the collapsed/hidden state first, then flip to "open" on the next frame
+      // so the CSS transition has a starting value to animate from.
+      requestAnimationFrame(() => requestAnimationFrame(() => setAlertOpen(true)));
+    };
+    window.addEventListener('eleos:showSidebarAlert', onShowAlert);
+    return () => {
+      window.removeEventListener('eleos:showSidebarAlert', onShowAlert);
+      clearTimeout(alertDismissTimeoutRef.current);
+    };
+  }, []);
 
   const [navTab, setNavTab] = useState(() => startTab ?? savedState?.navTab ?? 'activities'); // active nav rail tab
   const [phase, setPhase] = useState(() => savedState?.phase ?? 'sessions');     // sub-phase within activities
@@ -943,10 +987,10 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
     );
 
     if (navTab === 'capture') {
-      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} mobileMode={mobileMode} skipReadiness={skipCaptureReadiness} onSkipReadiness={() => setSkipCaptureReadiness(true)} />;
+      return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => { setNavTab('activities'); setPhase('sessions'); }} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} mobileMode={mobileMode} skipReadiness={skipCaptureReadiness} onSkipReadiness={() => setSkipCaptureReadiness(true)} alertOpen={alertOpen} />;
     }
     if (navTab === 'activities') {
-      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} />;
+      if (phase === 'form') return <CaptureSessionPanel key={captureSession.name || 'new'} initialClient={captureSession.name || ''} onBack={() => setPhase('sessions')} onCapture={(name, dt) => { setCaptureSession({ name, dateTime: dt, recordingStartedAt: Date.now() }); setCapturePhase('recording'); }} compactMode={compactMode} alertOpen={alertOpen} />;
       if (phase === 'complete' && mobileMode) return (
         <MobileNoteComplete
           onGoToActivities={() => { setActivitiesSession(null); setPhase('sessions'); }}
@@ -981,6 +1025,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         onMarkDone={id => { setDoneIds(prev => new Set([...prev, id])); }}
         compactMode={compactMode}
         mobileMode={mobileMode}
+        alertOpen={alertOpen}
         onNewActivity={(method) => {
           if (method === 'live') {
             setCaptureSession({ name: '', dateTime: '' });
@@ -1025,7 +1070,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
         }}
       />;
     }
-    if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} />;
+    if (navTab === 'clients') return <ClientsPanel sidebarW={sidebarW} alertOpen={alertOpen} />;
     if (navTab === 'quality')  return <LQAReview clientName={clientName} onAdvance={() => handleNavClick('activities')} autoRunAnalysis={autoRunQuality} onAutoRunConsumed={() => setAutoRunQuality(false)} />;
     if (navTab === 'summary') return <AddSummaryPanel
       key={`${sessionKey}-${summarySeq}`}
@@ -1033,6 +1078,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
       initialMethod={mobileSummaryMethod}
       suggestionsData={noteTypeCtx?.suggestionsData ?? SUGGESTIONS_DATA}
       onAddToNote={onAddToNote}
+      alertOpen={alertOpen}
       compactMode={compactMode}
       onBackToActivities={() => { setMobileSummaryMethod(null); setNavTab('activities'); setPhase('sessions'); }}
       onSuggestionsReached={(name) => {
@@ -1143,7 +1189,38 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           compactMode={compactMode}
         />
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eleos-content-bg)' }}>
-          <div key={`${navTab}-${phase}-${capturePhase}-${step}`} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {alertMounted && (
+            // grid-template-rows 0fr→1fr animates the reveal without a measured pixel
+            // height (auto-height can't be transitioned directly in CSS). The negative
+            // marginBottom creates the overlap; the header wrapper's higher z-index
+            // (own stacking context via position:relative) is what makes it paint
+            // in front of the alert in that overlapping region.
+            <div style={{
+              position: 'relative', zIndex: 1,
+              display: 'grid', gridTemplateRows: alertOpen ? '1fr' : '0fr',
+              marginBottom: alertOpen ? ALERT_OVERLAP_MARGIN : 0,
+              transition: `grid-template-rows ${ALERT_TRANSITION_MS}ms ${ALERT_EASING}, margin-bottom ${ALERT_TRANSITION_MS}ms ${ALERT_EASING}`,
+            }}>
+              <div style={{ overflow: 'hidden' }}>
+                <SidebarAlert
+                  title="Marcus R. is at the front desk now."
+                  accentColor={smartScribeColor(smartScribeSkin, '#2D4CCD')}
+                  open={alertOpen}
+                  transitionMs={ALERT_TRANSITION_MS}
+                  easing={ALERT_EASING}
+                  borderRadius={ALERT_BORDER_RADIUS}
+                  paddingTop={ALERT_PADDING_TOP}
+                  paddingSides={ALERT_PADDING_SIDES}
+                  paddingBottom={ALERT_PADDING_BOTTOM}
+                  onDismiss={dismissAlert}
+                />
+              </div>
+            </div>
+          )}
+          <div
+            key={`${navTab}-${phase}-${capturePhase}-${step}`}
+            style={{ position: 'relative', zIndex: 2, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+          >
             {renderPanel()}
           </div>
         </div>
@@ -1189,7 +1266,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
 
 // ── Clients Panel ─────────────────────────────────────────────────────────────
 
-function ClientsPanel({ sidebarW = 467 }) {
+function ClientsPanel({ sidebarW = 467, alertOpen = false }) {
   const { lockedDownMode } = useLockedDownModeContext();
   const [search, setSearch] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
@@ -1211,7 +1288,7 @@ function ClientsPanel({ sidebarW = 467 }) {
       {/* ── Sticky header (elevation/4, pt:24 pb:16 px:16) ── */}
       <div style={{
         background: 'white',
-        borderRadius: 16,
+        borderRadius: alertOpen ? '0 0 16px 16px' : 16,
         overflow: 'hidden',
         paddingTop: compactMode ? 16 : 24, paddingBottom: compactMode ? 10 : 16, paddingLeft: compactMode ? 10 : 16, paddingRight: compactMode ? 10 : 16,
         boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)',
@@ -3150,7 +3227,7 @@ function GeneratingOverlay() {
   );
 }
 
-function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, onStartNew, onBackToActivities, compactMode = false }) {
+function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestionsData = SUGGESTIONS_DATA, onAddToNote, onAddedToEHR, onSuggestionsReached, onSuggestionsLeft, onFinishToActivities, onStartNew, onBackToActivities, compactMode = false, alertOpen = false }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const { lockedDownMode } = useLockedDownModeContext();
@@ -3258,7 +3335,7 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, position: 'relative' }}>
 
         {/* Header card */}
-        <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '20px 16px 16px' }}>
+        <div style={{ background: 'white', borderRadius: alertOpen ? '0 0 16px 16px' : 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '20px 16px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: mobileMode ? 'space-between' : 'flex-end', marginBottom: 8 }}>
             {mobileMode && (
               <button aria-label="Back to activities" onClick={onBackToActivities} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: 'rgba(0,0,0,0.54)' }}>
@@ -5455,7 +5532,7 @@ function MobileNewActivitySheet({ onClose, onContinue }) {
   );
 }
 
-function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onNewActivity, compactMode = false, mobileMode = false }) {
+function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIAL_DONE_IDS, extraSessions = [], onMarkDone, onNewActivity, compactMode = false, mobileMode = false, alertOpen = false }) {
   const { lockedDownMode } = useLockedDownModeContext();
   const smartScribeSkin = useSmartScribeSkin();
   const [activeTab, setActiveTab] = useState(initialTab); // 'ehr' | 'done'
@@ -5490,7 +5567,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
       <style>{`@keyframes mobileRefreshSpin { to { transform: rotate(360deg); } }`}</style>
 
       {/* ── Sticky Header — elevation/4, border-radius 16px ── */}
-      <div style={{ background: 'white', borderRadius: 16, boxShadow: '0 2px 4px -1px rgba(0,0,0,.20), 0 4px 10px 0 rgba(0,0,0,.10), 0 1px 10px 0 rgba(0,0,0,.10)', zIndex: 2, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: 'white', borderRadius: alertOpen ? '0 0 16px 16px' : 16, boxShadow: '0 2px 4px -1px rgba(0,0,0,.20), 0 4px 10px 0 rgba(0,0,0,.10), 0 1px 10px 0 rgba(0,0,0,.10)', zIndex: 2, position: 'relative', overflow: 'hidden' }}>
 
         {/* Top bar: empty left (online) + user avatar right */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '24px 16px 0' }}>
@@ -5663,7 +5740,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
 
 // ── Capture Session Panel (step 1) ────────────────────────────────────────────
 
-function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false, mobileMode = false, skipReadiness = false, onSkipReadiness }) {
+function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMode = false, mobileMode = false, skipReadiness = false, onSkipReadiness, alertOpen = false }) {
   const smartScribeSkin = useSmartScribeSkin();
   const P = { fontFamily: 'Poppins, sans-serif' };
   const SHADOW_EL4 = '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 10px 0px rgba(0,0,0,0.1), 0px 1px 10px 0px rgba(0,0,0,0.1)';
@@ -5754,7 +5831,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#EAEDFA', gap: 8, position: 'relative' }}>
 
       {/* ── Header card ── */}
-      <div style={{ background: 'white', borderRadius: 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '24px 16px 16px' }}>
+      <div style={{ background: 'white', borderRadius: alertOpen ? '0 0 16px 16px' : 16, boxShadow: SHADOW_EL4, flexShrink: 0, padding: '24px 16px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           {mobileMode ? (
             <button aria-label="Back to activities" onClick={onBack} style={{ width: 24, height: 24, border: 'none', background: 'none', padding: 0, color: 'rgba(0,0,0,0.54)', cursor: 'pointer' }}>
