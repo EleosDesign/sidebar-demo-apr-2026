@@ -58,6 +58,10 @@ A clinical note format used in CalMHSA SmartCare. **Problem Details**, **Problem
 
 A structured individual-service note format available for manual selection when either **Streamline** or **CalMHSA SmartCare** is the EHR background. It combines session context, safety assessment and planning, and intervention/progress narratives. Its structured controls are interactive EHR details; its narrative fields participate in documentation suggestions, Add to EHR, Enhance, and Note Quality.
 
+## Group G/O Note
+
+A group-service note format in **CalMHSA SmartCare** and **Streamline**, distinct from the existing **Group Note**. It records objectives addressed by the service, a **Group Summary**, participant response and progress in **Service Note**, and follow-up in **Document the Plan**. Goal and objective selections, progress statuses, and an accompanying Comment provide structured context for the narrative.
+
 ## Calvin Murphy CalMHSA workflow
 
 When Calvin Murphy is paired with **CalMHSA SmartCare**, his documentation suggestions use the **Information** and **Care Plan** sections of the **CalMHSA Progress Note** in every suggestion-entry flow. This pairing is specific to CalMHSA SmartCare and does not include the separate **Streamline** EHR option. In Demo Mode, the pairing also selects the CalMHSA Progress Note; leaving CalMHSA SmartCare restores Calvin's SOAP Note. Turning Demo Mode off preserves the currently selected note type but unlocks it for manual editing. Calvin's CalMHSA-specific suggestions remain active outside Demo Mode regardless of that manual note-type selection.

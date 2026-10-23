@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useEhrContext, useSmartScribeSkin } from './EhrContext.jsx';
 import { useNoteTypeContext } from './NoteTypeContext.jsx';
 import { CLIENT_LOCK_RULES } from '../data/lockedDownRules.js';
+import { groupNoteForEhr, supportsGroupGO } from '../data/groupGoNote.js';
 
 const LockedDownModeContext = createContext({
   lockedDownMode: true,
@@ -16,8 +17,13 @@ export function LockedDownModeProvider({ children }) {
 
   useEffect(() => {
     if (!lockedDownMode) return;
-    if (selectedNoteType === 'IndividualServiceNote' && coreNoteAllowed) return;
+    if (selectedNoteType === 'GroupGONote' && supportsGroupGO(selectedEhr)) return;
     const rule = CLIENT_LOCK_RULES[clientName];
+    if (rule?.noteType === 'GroupNote' && supportsGroupGO(selectedEhr)) {
+      setSelectedNoteType(groupNoteForEhr(selectedEhr));
+      return;
+    }
+    if (selectedNoteType === 'IndividualServiceNote' && coreNoteAllowed) return;
     const noteType = clientName === 'Murphy, Calvin' && selectedEhr === 'calmhsa'
       ? 'ProgressNote'
       : rule?.noteType;

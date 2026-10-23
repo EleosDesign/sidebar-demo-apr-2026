@@ -394,6 +394,33 @@
         }
       ]
     },
+    "GroupGONote": {
+      "name": "Group G/O Note",
+      "ehrs": [
+        "streamline",
+        "calmhsa"
+      ],
+      "sections": [
+        {
+          "id": "groupSummary",
+          "label": "Group Summary",
+          "description": "Brief overview of group session",
+          "sampleContent": "Recovery-focused group addressing substance use triggers and coping strategies."
+        },
+        {
+          "id": "serviceNote",
+          "label": "Service Note",
+          "description": "Client response to intervention, progress toward goals, and strengths/barriers",
+          "sampleContent": "Group members actively participated in discussing personal triggers and practiced identifying early warning signs. Members demonstrated engagement and supported one another. Several participants shared specific examples of using coping skills learned in previous sessions. Barriers noted included difficulty with consistency in applying skills outside of group setting."
+        },
+        {
+          "id": "documentPlan",
+          "label": "Document the Plan",
+          "description": "Plan for continued treatment and follow-up",
+          "sampleContent": "Members will practice daily mindfulness exercises and bring examples to next session. Group will continue focus on relapse prevention strategies. Individual check-ins scheduled for members who expressed increased struggle."
+        }
+      ]
+    },
     "GroupNote": {
       "name": "Group Note",
       "description": "Documentation for group therapy sessions",
