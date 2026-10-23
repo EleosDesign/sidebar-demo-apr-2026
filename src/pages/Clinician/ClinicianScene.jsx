@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { groupNoteForEhr, supportsGroupGO } from '../../data/groupGoNote.js';
+import { supportsPsychiatricNote } from '../../data/psychiatricNote.js';
 import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
@@ -126,9 +127,27 @@ export default function ClinicianScene({ step, onNext }) {
       const mappedId = noteTypeCtx.eleosMapping[section];
       directSection = noteTypeCtx.sections.find(s => s.id === mappedId);
     }
-    const field = noteTypeCtx?.selectedNoteType === 'GroupGONote'
-      ? (directSection?.id ?? (/plan|next steps/i.test(cardField || section) ? 'documentPlan' : /^(group summary|overall summary)$/i.test(section) ? 'groupSummary' : 'serviceNote'))
-      : directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
+    let field = directSection?.id;
+    if (noteTypeCtx?.selectedNoteType === 'PsychiatricNote') {
+      const target = `${section} ${cardField ?? ''}`.toLowerCase();
+      if (!field) {
+        if (/chief complaint/i.test(target)) field = 'todayChiefComplaint';
+        else if (/history of present illness/i.test(target)) field = 'historyOfPresentIllness';
+        else if (/review of systems/i.test(target)) field = 'reviewComments';
+        else if (/problem|condition/i.test(target)) field = 'problemCondition';
+        else if (/active med|medication/i.test(target) && !/education/i.test(target)) field = 'medicalRecordsRelevantResults';
+        else if (/education/i.test(target)) field = 'informationAndEducation';
+        else if (/counseling|care coordination/i.test(target)) field = 'elaborateCheckedCounselingActivities';
+        else if (/plan of care|next steps/i.test(target)) field = 'planComment';
+        else if (/treatment plan/i.test(target)) field = 'treatmentPlanRecommendation';
+        else if (/abnormal|psychotic/i.test(target)) field = 'abnormalPsychoticThoughtComments';
+        else if (/mental status|thought process|speech|mood|affect|orientation|memory|attention|associations|language|appearance|eye contact|psychomotor|insight|judgement/i.test(target)) field = 'mentalStatusComments';
+      }
+    } else if (noteTypeCtx?.selectedNoteType === 'GroupGONote') {
+      field = directSection?.id ?? (/plan|next steps/i.test(cardField || section) ? 'documentPlan' : /^(group summary|overall summary)$/i.test(section) ? 'groupSummary' : 'serviceNote');
+    } else {
+      field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
+    }
     if (!field) return;
     noteTypeCtx.updateNoteValue(field, prev => prev ? prev + '\n\n' + content : content);
     setHighlightedField(field);
@@ -1024,7 +1043,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           }
           const isGroupGO = session?.type === 'group' && supportsGroupGO(selectedEhr);
           if (isGroupGO) noteTypeKey = groupNoteForEhr(selectedEhr);
-          if (isGroupGO || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
+          const isPsych = (session?.name?.includes('Marlene') || session?.name?.includes('Oviedo')) && supportsPsychiatricNote(selectedEhr);
+          if (isPsych) noteTypeKey = 'PsychiatricNote';
+          if (isGroupGO || isPsych || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
             noteTypeCtx?.setSelectedNoteType(noteTypeKey);
           }
           onActivitySelected?.();
@@ -1049,11 +1070,14 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           setClientName(formatted);
           if (supportsGroupGO(selectedEhr) && name.toLowerCase().includes('group')) {
             noteTypeCtx?.setSelectedNoteType(groupNoteForEhr(selectedEhr));
+          } else if (supportsPsychiatricNote(selectedEhr) && (name.includes('Marlene') || name.includes('Oviedo'))) {
+            noteTypeCtx?.setSelectedNoteType('PsychiatricNote');
           } else if (lockedDownMode) {
             const r = CLIENT_LOCK_RULES[formatted];
             const isGroupGO = r?.noteType === 'GroupNote' && supportsGroupGO(selectedEhr);
-            if (r?.noteType && (isGroupGO || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote')) {
-              noteTypeCtx?.setSelectedNoteType(isGroupGO ? groupNoteForEhr(selectedEhr) : r.noteType);
+            const isPsych = (formatted === 'Oviedo, Marlene') && supportsPsychiatricNote(selectedEhr);
+            if (r?.noteType && (isGroupGO || isPsych || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote')) {
+              noteTypeCtx?.setSelectedNoteType(isGroupGO ? groupNoteForEhr(selectedEhr) : isPsych ? 'PsychiatricNote' : r.noteType);
             }
           }
           onActivitySelected?.();
@@ -4300,13 +4324,13 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                   {/* Add to EHR button */}
                                   {(() => {
                                     const isAdded = added.has(excludeKey);
-                                    const canAdd = selectedNoteType === 'GroupGONote' || isAdded || !!focusedEhrField;
+                                    const canAdd = selectedNoteType === 'GroupGONote' || selectedNoteType === 'PsychiatricNote' || isAdded || !!focusedEhrField;
                                     return (
                                       <button
                                         onMouseDown={e => e.preventDefault()}
                                         onClick={() => {
                                           if (!canAdd) return;
-                                          onAddToNote?.(selectedNoteType === 'GroupGONote' ? section : focusedEhrField ?? section, displayContent, card.field);
+                                          onAddToNote?.(selectedNoteType === 'GroupGONote' || selectedNoteType === 'PsychiatricNote' ? section : focusedEhrField ?? section, displayContent, card.field);
                                           setAdded(prev => new Set(prev).add(excludeKey));
                                           setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
                                         }}

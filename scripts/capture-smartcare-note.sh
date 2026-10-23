@@ -30,9 +30,16 @@ end run
 APPLESCRIPT
 }
 
-shot() { # window bounds -> region screenshot
-  b=$(osascript -e 'tell application "Google Chrome" to get bounds of front window' | tr -d ' ')
-  IFS=, read -r x1 y1 x2 y2 <<<"$b"; screencapture -x -R"$x1,$y1,$((x2-x1)),$((y2-y1))" "$1"
+# Capture Chrome's front window by window id (not a screen region), so another app on top can't end up in the shot.
+# Fails loudly if the front Chrome tab is not the page we mean to capture.
+shot() {
+  local info url wid
+  info=$(osascript -e 'tell application "Google Chrome"' -e 'activate' -e 'return (URL of active tab of front window) & "|" & (id of front window)' -e 'end tell')
+  url=${info%|*}; wid=${info##*|}
+  case "$url" in *"$SC_URL_MATCH"*) ;; *) echo "ABORT: front Chrome tab is '$url', expected URL containing '$SC_URL_MATCH'" >&2; exit 1;; esac
+  sleep 0.3
+  screencapture -x -o -l"$wid" "$1"
+  [ -s "$1" ] || { echo "ABORT: empty screenshot $1" >&2; exit 1; }
 }
 
 capture() { # name
@@ -43,7 +50,7 @@ capture() { # name
   shot "$out/$name-0.png"
   if [ -n "$sid" ]; then
     max=$(run_js "(()=>{let e=document.getElementById('$sid');return e.scrollHeight-e.clientHeight})()")
-    while [ "$((n*400))" -lt "${max%.*}" ] && [ $n -lt 8 ]; do
+    while [ "$((n*400))" -lt "${max%.*}" ] && [ $n -lt 15 ]; do
       n=$((n+1)); run_js "document.getElementById('$sid').scrollTop=$((n*400))" >/dev/null; sleep 0.5; shot "$out/$name-$n.png"
     done
     run_js "document.getElementById('$sid').scrollTop=0" >/dev/null
@@ -52,6 +59,11 @@ capture() { # name
 }
 
 if [ $# -eq 0 ]; then capture current; else
-  for tab in "$@"; do run_js "document.getElementById('$tab').click()" >/dev/null; sleep 2; capture "$tab"; done
+  for tab in "$@"; do
+    run_js "(()=>{let el=document.getElementById('$tab') || [...document.querySelectorAll('a.rtsLink, .dxtcTab, [id*=\"Tab\"]')].find(e=>e.innerText.trim()==='$tab'||e.id==='$tab'); if(el) el.click();})()" >/dev/null
+    sleep 2
+    safe_tab=$(echo "$tab" | tr ' /' '_')
+    capture "$safe_tab"
+  done
 fi
 echo "-> $out"

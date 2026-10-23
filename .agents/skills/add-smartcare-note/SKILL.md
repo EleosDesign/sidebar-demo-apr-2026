@@ -11,13 +11,23 @@ Worked example: PR #125 (Group G/O Note). Read it with `gh pr diff 125` to see e
 
 ## 2. Capture the reference
 
-Ask the user to open the note on a **demo record** in their logged-in Chrome with *View → Developer → Allow JavaScript from Apple Events* on (it resets when Chrome restarts). Never open a second browser or ask for credentials.
+Use Playwright, not AppleScript (the Chrome/`screencapture` route photographed Slack when another window was on top). Never ask for credentials.
 
 ```bash
-scripts/capture-smartcare-note.sh <slug> <tab-element-id> ...   # e.g. ServiceNoteTabPage_T1
+node scripts/capture-smartcare-pw.mjs <slug> smartcare "https://<tenant>.smartcarenet.com/<site>/Login.aspx"
+TABS=AIMS,Diagnosis node scripts/capture-smartcare-pw.mjs <slug> smartcare "<url>"   # recapture only some tabs
 ```
 
-Writes `docs/note-references/<slug>/<tab>.json` (labels, control options, rects, fonts, colors, borders) and scrolled screenshots. Find tab ids with a one-off `execute javascript` over `[id$=TabPage_T0]`-style cells if unknown. Read the screenshots and JSON before writing any code. Done when every tab and scroll position of the note has a screenshot and no section is known only from memory.
+- It opens a headed Chrome with a persistent profile (`~/.cache/smartcare-pw-profile`). Ask the user to log in and open the note on a **demo record**; the script waits up to 10 min for the tab strip. Sessions expire, so expect to ask again.
+- Tab ids/selectors are hard-coded to the RadTabStrip in the script; adjust `TABS` and the strip selector for a new note.
+- Writes `docs/note-references/<slug>/<Tab>.json` (labels, rects, fonts, colors, borders) plus `<Tab>-N.png` at 600px scroll steps, 1440x900.
+- Pages load asynchronously. The script waits for network idle, the "Processing" overlay to clear, then 3 s; a blank-looking tab means it was captured too early, so recapture.
+- **Open every PNG** before coding and confirm it is SmartCare (not another app or a login page), fully loaded, and not truncated (scroll height +0 on a long tab is suspect).
+- **Conditional UI:** click each radio/checkbox that might reveal fields (e.g. "Yes" on an add-on question) and capture each state; the default state hides them. Ask the user for screenshots of states you cannot reach.
+- Reference record values (diagnosis rows, allergies, "test" text) are test data; do not copy them into the build.
+- Commit the JSON and script; do not commit PNGs you have not viewed (each is ~100 KB).
+
+Done when every tab, scroll position and conditional state has a viewed screenshot and no section is known only from memory.
 
 ## 3. Confirm scope
 
@@ -51,7 +61,9 @@ Done when all pass and nothing is claimed from code alone:
 
 1. `npm run build`.
 2. A Playwright spec (`e2e/<note>.spec.ts`, model on `e2e/group-go-note.spec.ts`) in **both** EHRs covering: option appears; blank initial state; controls interactive; narrative edit; reset on note-type change; state kept on EHR switch; Add to EHR against **real source cards** per destination, with highlight; no overflow with the sidebar open at 830/600/380/280px.
-3. Parity: `SC_URL_MATCH=localhost:5173 scripts/capture-smartcare-note.sh <slug>-ours`, then compare screenshots and JSON rects/fonts/colors against the reference capture. Fix mismatches over ~2px or any font/color difference.
+3. Parity: `node scripts/capture-smartcare-pw.mjs <slug>-ours ours Streamline` (same viewport; `TABS=` works too; the `ours` driver clicks Psychiatric Note, so adapt its note-type name). View the PNGs side by side with the reference and compare JSON rects/fonts/colors. Fix mismatches over ~2px or any font/color difference. Don't screenshot mid-HMR: re-capture if the layout looks stale.
+
+Implementation pitfalls: define form primitives at module scope (using a context for `noteValues`), never as components inside the render function, or text inputs remount and lose focus on every keystroke. In the overflow test, skip elements inside intentionally scrollable table wrappers, and loop over every sub-tab, not just the first.
 
 ## 6. Ship
 

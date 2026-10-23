@@ -62,6 +62,10 @@ A structured individual-service note format available for manual selection when 
 
 A group-service note format in **CalMHSA SmartCare** and **Streamline**, distinct from the existing **Group Note**. It records objectives addressed by the service, a **Group Summary**, participant response and progress in **Service Note**, and follow-up in **Document the Plan**. Goal and objective selections, progress statuses, and an accompanying Comment provide structured context for the narrative.
 
+## Psychiatric Note
+
+A structured psychiatric evaluation and medication management note format in **CalMHSA SmartCare** and **Streamline**. Organised under six tabs (**General**, **MSE**, **Medical Decision Making**, **AIMS**, **Diagnosis**, and **Psychotherapy**), it captures comprehensive psychiatric history, mental status findings, AIMS movement ratings, diagnostic codes, and therapy interventions. Narrative sections participate in documentation suggestions, Add to EHR routing, and note quality evaluation. In Demo Mode, selecting psychiatric client **Marlene Oviedo** on Streamline or CalMHSA auto-selects this note.
+
 ## Calvin Murphy CalMHSA workflow
 
 When Calvin Murphy is paired with **CalMHSA SmartCare**, his documentation suggestions use the **Information** and **Care Plan** sections of the **CalMHSA Progress Note** in every suggestion-entry flow. This pairing is specific to CalMHSA SmartCare and does not include the separate **Streamline** EHR option. In Demo Mode, the pairing also selects the CalMHSA Progress Note; leaving CalMHSA SmartCare restores Calvin's SOAP Note. Turning Demo Mode off preserves the currently selected note type but unlocks it for manual editing. Calvin's CalMHSA-specific suggestions remain active outside Demo Mode regardless of that manual note-type selection.
