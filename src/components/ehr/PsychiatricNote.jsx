@@ -1,581 +1,430 @@
 import React from 'react';
 import {
-  PSYCH_NOTE_TABS,
-  ROS_SYSTEMS,
-  SUBSTANCE_USE_ITEMS,
-  MSE_DOMAINS,
-  AIMS_ITEMS,
-  AIMS_SCALE_OPTIONS,
-  AIMS_SEVERITY_OPTIONS,
-  AIMS_AWARENESS_OPTIONS,
-  MDM_COMPLEXITY_OPTIONS,
-  PSYCH_GO_OBJECTIVES,
-  PSYCH_GO_STATUSES,
+  PSYCH_NOTE_TABS, ROS_SYSTEMS, SUBSTANCE_USE_ITEMS, PAST_HISTORY_ROWS, MSE_DOMAINS, RISK_ROWS,
+  AIMS_SECTIONS, AIMS_SCALE_OPTIONS, MDM_COMPLEXITY_OPTIONS, MDM_DATA_REVIEWED_TOP, MDM_DATA_REVIEWED_ROWS,
+  MDM_RISK_ITEMS, ORDER_COLUMNS, MED_COLUMNS, MED_TABLES, COUNSELING_ACTIVITIES, NON_COUNSELING_ACTIVITIES,
+  DIAGNOSIS_LIST_COLUMNS,
 } from '../../data/psychiatricNote.js';
 import './PsychiatricNote.css';
 
+const slug = s => s.replace(/[^a-z0-9]+/gi, '');
+
+const Ctx = React.createContext({ noteValues: {}, set: () => {}, highlightedField: null });
+const useNote = () => React.useContext(Ctx);
+
+const Panel = ({ title, aside, children, className = '' }) => (
+  <section className={`psych-panel ${className}`}>
+    <div className="psych-heading"><h3>{title}</h3>{aside}</div>
+    <div className="psych-body">{children}</div>
+  </section>
+);
+const Check = ({ id, label, className = '' }) => {
+  const { noteValues, set } = useNote();
+  return (
+    <label className={`psych-opt ${className}`}>
+      <input type="checkbox" aria-label={label} checked={!!noteValues[id]} onChange={e => set(id, e.target.checked)} />
+      <span>{label}</span>
+    </label>
+  );
+};
+const Radio = ({ name, value, label, disabled }) => {
+  const { noteValues, set } = useNote();
+  return (
+    <label className="psych-opt">
+      <input type="radio" name={`psych-${name}`} aria-label={label} disabled={disabled}
+        checked={noteValues[name] === value} onChange={() => set(name, value)} />
+      <span>{label}</span>
+    </label>
+  );
+};
+const Radios = ({ name, options }) => options.map(o => <Radio key={o} name={name} value={o} label={o} />);
+const Area = ({ id, label, h = 64, grey, noLabel }) => {
+  const { noteValues, set, highlightedField } = useNote();
+  return (
+    <div className="psych-field">
+      {!noLabel && <label htmlFor={`psych-${id}`} className="psych-lbl">{label}</label>}
+      <textarea id={`psych-${id}`} data-field={id} aria-label={label} style={{ height: h }}
+        className={`${grey ? 'psych-grey' : ''} ${highlightedField === id ? 'psych-highlight' : ''}`}
+        value={noteValues[id] ?? ''} onChange={e => set(id, e.target.value)} />
+    </div>
+  );
+};
+const Input = ({ id, label, w, className = '' }) => {
+  const { noteValues, set } = useNote();
+  return (
+    <input type="text" id={`psych-${id}`} aria-label={label} className={`psych-input ${className}`} style={w ? { width: w } : undefined}
+      value={noteValues[id] ?? ''} onChange={e => set(id, e.target.value)} />
+  );
+};
+const Select = ({ id, label, options = [''], w, disabled }) => {
+  const { noteValues, set } = useNote();
+  return (
+    <select id={`psych-${id}`} aria-label={label} className="psych-select" style={w ? { width: w } : undefined} disabled={disabled}
+      value={noteValues[id] ?? ''} onChange={e => set(id, e.target.value)}>
+      {options.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  );
+};
+const Btn = ({ children, w, onClick }) => (
+  <button type="button" className="psych-btn" style={w ? { width: w } : undefined} onClick={onClick}>{children}</button>
+);
+const Grid = ({ cols, items, prefix }) => (
+  <div className="psych-checks" style={{ gridTemplateColumns: `repeat(${cols}, auto)` }}>
+    {items.map((it, i) => it == null ? <span key={i} /> : <Check key={it + i} id={`${prefix}-${slug(it)}${i}`} label={it} />)}
+  </div>
+);
+const DataTable = ({ columns, empty = 'No data to display', h = 120 }) => (
+  <div className="psych-table-wrap" style={{ minHeight: h }}>
+    <table className="psych-table"><thead><tr>{columns.map(c => <th key={c}>{c}</th>)}</tr></thead></table>
+    {empty && <div className="psych-empty">{empty}</div>}
+  </div>
+);
+
 export default function PsychiatricNote({ noteValues = {}, onNoteChange, highlightedField }) {
   const activeTab = noteValues.psychActiveTab || 'General';
+  const set = (id, v) => onNoteChange?.(id, v);
 
-  const setTab = tab => {
-    onNoteChange?.('psychActiveTab', tab);
-  };
-
-  const checkbox = (id, label) => (
-    <input
-      type="checkbox"
-      id={`psych-${id}`}
-      aria-label={label}
-      checked={!!noteValues[id]}
-      onChange={e => onNoteChange?.(id, e.target.checked)}
-    />
-  );
-
-  const radio = (name, val, label) => (
-    <label className="psych-check-item" key={val}>
-      <input
-        type="radio"
-        name={`psych-${name}`}
-        aria-label={label}
-        value={val}
-        checked={noteValues[name] === val}
-        onChange={() => onNoteChange?.(name, val)}
-      />
-      {label}
-    </label>
-  );
-
-  const textarea = (id, label, rows = 3, placeholder = '') => (
-    <label className="psych-field" htmlFor={`psych-${id}`}>
-      <span className="psych-field-label">{label}</span>
-      <textarea
-        id={`psych-${id}`}
-        data-field={id}
-        rows={rows}
-        placeholder={placeholder}
-        value={noteValues[id] ?? ''}
-        onChange={e => onNoteChange?.(id, e.target.value)}
-        className={highlightedField === id ? 'psych-highlight' : ''}
-      />
-    </label>
-  );
-
-  const textInput = (id, label, placeholder = '') => (
-    <label className="psych-field" htmlFor={`psych-${id}`}>
-      <span className="psych-field-label">{label}</span>
-      <input
-        type="text"
-        id={`psych-${id}`}
-        data-field={id}
-        placeholder={placeholder}
-        value={noteValues[id] ?? ''}
-        onChange={e => onNoteChange?.(id, e.target.value)}
-      />
-    </label>
-  );
-
-  const select = (id, label, options) => (
-    <label className="psych-field" htmlFor={`psych-${id}`}>
-      <span className="psych-field-label">{label}</span>
-      <select
-        id={`psych-${id}`}
-        data-field={id}
-        aria-label={label}
-        value={noteValues[id] ?? ''}
-        onChange={e => onNoteChange?.(id, e.target.value)}
-      >
-        {options.map(opt => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
+  // ---- General ----------------------------------------------------------
+  const General = () => (
+    <>
+      <Panel title="General" aside={<span className="psych-goals">Goals/Objectives <i className="psych-info">i</i></span>}>
+        <div className="psych-row">
+          <Radio name="patientType" value="Adult" label="Adult" />
+          <Radio name="patientType" value="Child" label="Child/Adolescent" />
+        </div>
+      </Panel>
+      <Panel title="Today's Chief Complaint/Reason for Visit">
+        <Area id="chiefComplaintLastVisit" label="Chief Complaint/Reason for Visit - Last Visit" h={151} grey />
+        <div className="psych-row psych-lbl">
+          <span>Today's Chief Complaint/Reason for Visit</span>
+          <Check id="chiefComplaintSame" label="Same as Last Visit" />
+        </div>
+        <Area id="todayChiefComplaint" label="Today's Chief Complaint/Reason for Visit" noLabel />
+      </Panel>
+      <Panel title="Other Notes"><Area id="otherNotes" label="Other Notes" noLabel /></Panel>
+      <Panel title="History of Present Illness"><Area id="historyOfPresentIllness" label="History of Present Illness" noLabel /></Panel>
+      <Panel title="Persons Present other than Consumer">
+        <div className="psych-row psych-split">
+          <span>History obtained from person present other than patient or reviewed summary of records</span>
+          <span className="psych-row"><Radio name="reviewedRecords" value="Y" label="Yes" /><Radio name="reviewedRecords" value="N" label="No" /></span>
+        </div>
+        <Area id="personPresentComments" label="Comments" />
+      </Panel>
+      <Panel title="Past History">
+        {PAST_HISTORY_ROWS.map(r => (
+          <div key={r.id}>
+            <div className="psych-row psych-past">
+              <span className="psych-past-label">{r.label}</span>
+              <Radio name={`${r.id}Status`} value="N" label="Reviewed No Changes" />
+              <Radio name={`${r.id}Status`} value="C" label="Reviewed With Changes" />
+            </div>
+            <Area id={r.field} label={`${r.label} comments`} noLabel />
+          </div>
         ))}
-      </select>
-    </label>
+      </Panel>
+      <Panel title="Side Effects">
+        <div className="psych-row"><span className="psych-side-label">Side Effects</span><Radio name="sideEffects" value="None" label="None" /><Radio name="sideEffects" value="Specify" label="Specify" /></div>
+      </Panel>
+      <Panel title="Plan – Last Visit"><Area id="planLastVisit" label="Plan – Last Visit" /></Panel>
+      <Panel title="Review of Systems" aside={<span className="psych-row psych-ros-status"><Radio name="rosStatus" value="N" label="Reviewed No Changes" /><Radio name="rosStatus" value="C" label="Reviewed With Changes" /></span>}>
+        <Grid cols={4} items={ROS_SYSTEMS} prefix="ros" />
+        <Area id="reviewComments" label="Comments" />
+      </Panel>
+      <Panel title="Allergies">
+        <div className="psych-btn-row"><Btn w={75}>Open Allergy</Btn><Btn w={47}>Refresh</Btn></div>
+        <table className="psych-table psych-allergy"><thead><tr><th>Allergies</th><th>Comments</th></tr></thead><tbody><tr><td /><td /></tr></tbody></table>
+        <div className="psych-blank-box" />
+      </Panel>
+      <Panel title="Substance Use Hx">
+        <div className="psych-row"><span className="psych-lbl">Substance Use</span><Check id="suNone" label="None" /></div>
+        {SUBSTANCE_USE_ITEMS.map(s => (
+          <div className="psych-su-row" key={s}><Check id={`su-${slug(s)}`} label={s} /><Input id={`su-${slug(s)}-text`} label={`${s} details`} /></div>
+        ))}
+        <div className="psych-row">
+          <Radio name="tobaccoStatus" value="Non-Smoker" label="Non-Smoker" />
+          <Radio name="tobaccoStatus" value="Smoker" label="Smoker" />
+          <span>How Much?</span><Input id="allergiesSmokePerday" label="How Much?" w={124} />
+        </div>
+        <div className="psych-side-row"><span>Other Tobacco Use</span><Area id="allergiesTobacouse" label="Other Tobacco Use" h={35} noLabel /></div>
+        <div className="psych-side-row"><span>Caffeine Consumption</span><Area id="allergiesCaffeineConsumption" label="Caffeine Consumption" h={35} noLabel /></div>
+      </Panel>
+      <Panel title="Pregnant/Last Menstrual Period">
+        <div className="psych-row psych-preg"><span>Pregnant</span><Radio name="pregnancyStatus" value="Y" label="Yes" /><Radio name="pregnancyStatus" value="N" label="No" /><Radio name="pregnancyStatus" value="NA" label="N/A" /></div>
+        <div className="psych-row"><span>Last Menstrual Period</span><Input id="lastMenstrualPeriod" label="Last Menstrual Period" w={348} /></div>
+      </Panel>
+      <Panel title="Strengths and Barriers">
+        <Area id="strengths" label="Strengths" /><Area id="barriers" label="Barriers" />
+      </Panel>
+      <Panel title="Vitals"><Btn>Open vitals flow sheet</Btn></Panel>
+    </>
   );
+
+  // ---- MSE --------------------------------------------------------------
+  const clearDomain = dom => {
+    Object.keys(noteValues).filter(k => k.startsWith(`mse-${dom.id}-`)).forEach(k => set(k, typeof noteValues[k] === 'boolean' ? false : ''));
+  };
+  const inline = (dom, block, bi) => {
+    const rows = block.perRow ? Array.from({ length: Math.ceil(block.items.length / block.perRow) }, (_, i) => block.items.slice(i * block.perRow, (i + 1) * block.perRow)) : [block.items];
+    return (
+      <div className="psych-mse-block">
+        {block.heading && <div className="psych-sub">{block.heading}</div>}
+        {rows.map((r, ri) => (
+          <div className="psych-inline" key={ri}>
+            {block.label && ri === 0 && <span className="psych-inline-label">{block.label}</span>}
+            {r.map((it, i) => <Check key={it + i} id={`mse-${dom.id}-${bi}-${slug(it)}${ri}${i}`} label={it} />)}
+          </div>
+        ))}
+        {block.text && <Input id={`mse-${dom.id}-${bi}-text`} label={`${dom.title} other`} className="psych-input-wide" />}
+      </div>
+    );
+  };
+  const domain = dom => (
+    <div className="psych-mse-domain">
+      <div className="psych-mse-head">
+        <span className="psych-mse-title">{dom.title}</span>
+        {dom.assess.map(a => <Radio key={a} name={`mse-${dom.id}-assess`} value={a} label={a} />)}
+        <Radio name={`mse-${dom.id}-assess`} value="WNL" label={dom.wnl} />
+      </div>
+      {dom.blocks.map((b, bi) => {
+        if (b.kind === 'checks') return <Grid key={bi} cols={b.cols ?? 5} items={b.items} prefix={`mse-${dom.id}-${bi}`} />;
+        if (b.kind === 'inline') return <React.Fragment key={bi}>{inline(dom, b, bi)}</React.Fragment>;
+        if (b.kind === 'radios') return <div key={bi} className="psych-row psych-mse-block"><span>{b.label}</span><Radios name={`mse-${dom.id}-${bi}`} options={b.options} /></div>;
+        if (b.kind === 'memory') return (
+          <div key={bi} className="psych-mse-block">
+            {b.rows.map(r => (
+              <div className="psych-inline" key={r}>
+                <span className="psych-inline-label">{r}</span>
+                <Radios name={`mse-${dom.id}-${r}`} options={['Good', 'Fair', 'Impaired']} />
+                <span>As Evidenced By</span><Input id={`mse-${dom.id}-${r}-by`} label={`${r} as evidenced by`} w={150} />
+                {r === 'Immediate' && <><Input id={`mse-${dom.id}-words`} label="Words recalled" w={30} /><span>/3 Words In Five Minutes</span></>}
+              </div>
+            ))}
+          </div>
+        );
+        if (b.kind === 'evidence') return (
+          <div key={bi} className="psych-mse-block">
+            <div className="psych-sub">{b.heading}</div>
+            <div className="psych-evidence">
+              {b.prompts.map(p => <div key={p}><span>{p}</span><Input id={`mse-${dom.id}-${slug(p)}`} label={p} className="psych-input-wide" /></div>)}
+            </div>
+          </div>
+        );
+        if (b.kind === 'risk') return (
+          <div key={bi} className="psych-mse-block">
+            <div className="psych-row">
+              <span className="psych-bold">Suicide/Homicide</span>
+              <Radio name="suicideRiskPresent" value="None" label="No Suicidal/homicidal concerns" />
+              <Radio name="suicideRiskPresent" value="Present" label="Present" />
+            </div>
+            <div className="psych-risk">
+              {RISK_ROWS.map(([a, b2], ri) => (
+                <React.Fragment key={a + ri}>
+                  <span>{a}</span><span className="psych-row"><Radios name={`risk-${ri}-0`} options={['Yes', 'No']} /></span>
+                  <span>{b2}</span><span className="psych-row"><Radios name={`risk-${ri}-1`} options={['Yes', 'No']} /></span>
+                </React.Fragment>
+              ))}
+            </div>
+            <Area id="abnormalPsychoticThoughtComments" label="Comments" h={80} />
+          </div>
+        );
+        return null;
+      })}
+      <div className="psych-clear"><Btn w={60} onClick={() => clearDomain(dom)}>Clear</Btn></div>
+    </div>
+  );
+  const MSE = () => (
+    <>
+      <Panel title="Vitals">
+        <div className="psych-btn-row"><Btn w={122}>Open vitals flow sheet</Btn><Btn w={52}>Refresh</Btn></div>
+        <div className="psych-vitals-box"><span>No data found for the client</span></div>
+      </Panel>
+      <Panel title="Mental Status Exam">
+        <Check id="mseAllWnl" label="All Within Normal Limits (WNL)" />
+        {MSE_DOMAINS.map(d => <React.Fragment key={d.id}>{domain(d)}</React.Fragment>)}
+        <Area id="mentalStatusComments" label="Mental status exam additional comments, Descriptions" h={90} />
+      </Panel>
+    </>
+  );
+
+  // ---- MDM --------------------------------------------------------------
+  const problemCount = Math.max(1, Number(noteValues.mdmProblemCount) || 1);
+  const problem = n => {
+    const sfx = n === 1 ? '' : String(n);
+    return (
+      <section className="psych-panel">
+        <div className="psych-heading"><h3><span className="psych-x">✕</span> Problem {n}</h3></div>
+        <div className="psych-body">
+          <div className="psych-problem-top"><Btn w={120}>Problem....</Btn><Area id={`problemCondition${sfx}`} label={`Problem ${n}`} noLabel /></div>
+          <div className="psych-row"><span>Complexity of Problem</span><Select id={`mdmComplexity${n}`} label={`Complexity of Problem ${n}`} options={MDM_COMPLEXITY_OPTIONS} w={443} /></div>
+          <Area id={`associatedSignsSymptomsOtherText${sfx}`} label="Associated signs/systems; other information" />
+        </div>
+      </section>
+    );
+  };
+  const MDM = () => (
+    <>
+      {Array.from({ length: problemCount }, (_, i) => <React.Fragment key={i}>{problem(i + 1)}</React.Fragment>)}
+      <div className="psych-link-row"><a href="#add-problem" onClick={e => { e.preventDefault(); set('mdmProblemCount', problemCount + 1); }}>Add Problem</a></div>
+      <Panel title="Data Reviewed">
+        <div className="psych-row psych-data-top">{MDM_DATA_REVIEWED_TOP.map((l, i) => <Check key={l} id={`mdmData${i}`} label={l} />)}</div>
+        {MDM_DATA_REVIEWED_ROWS.map((l, i) => <div key={l}><Check id={`mdmDataRow${i}`} label={l} /></div>)}
+        <div className="psych-two-col">
+          <Area id="medicalRecordsRelevantResults" label="Relevant/Test Results" h={106} grey />
+          <Area id="labsOrderedLastVisit" label="Labs Ordered Last Visit" h={100} />
+        </div>
+        <div className="psych-btn-row psych-btn-right"><Btn w={120}>Refresh</Btn></div>
+        <Area id="labComments" label="Lab Comments" />
+      </Panel>
+      <Panel title="Risk of complications and/or Morbidity or Mortality of Patient Management">
+        <Grid cols={2} items={MDM_RISK_ITEMS} prefix="mdmRisk" />
+      </Panel>
+      <Panel title="Client Orders">
+        <div className="psych-order-form">
+          <Input id="orderSearch" label="Search Order" w={143} />
+          <span>Clinic/Location:</span><Select id="orderClinic" label="Clinic/Location" w={131} />
+          <span>Diagnosis:</span><Select id="orderDx" label="Order Diagnosis" w={187} /><Btn w={112}>Add Diagnosis</Btn>
+          <span>Frequency:</span><Select id="orderFreq" label="Frequency" w={107} />
+          <span>Labs:</span><Select id="orderLabs" label="Labs" w={143} />
+          <span>Ordering Physician:</span><Select id="orderPhys" label="Ordering Physician" w={128} /><Btn w={112}>Send to Lab</Btn>
+          <span>Start:</span><Input id="orderStart" label="Start date" w={98} /><Input id="orderStartTime" label="Start time" w={92} />
+          <span>End:</span><Input id="orderEnd" label="End date" w={91} /><Input id="orderEndTime" label="End time" w={95} />
+          <Btn w={112}>Open Client Orders</Btn><Btn w={112}>Add Order</Btn>
+        </div>
+        <DataTable columns={ORDER_COLUMNS} h={150} />
+        <div className="psych-btn-row psych-btn-right"><Btn w={120}>Refresh</Btn></div>
+        <DataTable columns={ORDER_COLUMNS} empty="" h={150} />
+      </Panel>
+      <Panel title="Medications">
+        <p className="psych-note-text">The information displayed in the SmartCare Rx section is entered into the SmartCare Rx module and current read only information as applicable on the date of service is specified below.</p>
+        <div className="psych-row"><Btn w={121}>Open SmartCare RX</Btn><Btn w={120}>View Medication History</Btn><Check id="medReconciliation" label="Medication Reconciliation" /></div>
+        <div className="psych-row psych-split">
+          <span>Risk/benefits/side effects have been discussed with the client/guardian and understood</span>
+          <span className="psych-row"><Radios name="medRiskDiscussed" options={['Yes', 'No', 'N/A']} /></span>
+        </div>
+        {MED_TABLES.map(t => (
+          <div className="psych-subpanel" key={t}><h4>{t}</h4><DataTable columns={MED_COLUMNS} empty="" h={140} /></div>
+        ))}
+        <Area id="informationAndEducation" label="Information and Education" />
+      </Panel>
+      <Panel title="Activities Completed">
+        <div className="psych-row"><span>Total time spent on encounter</span><Input id="totalTimeMinutes" label="Total time spent on encounter" w={56} /><span>Minutes</span></div>
+        <div className="psych-subpanel">
+          <h4>Counseling Activities</h4>
+          <Grid cols={2} items={COUNSELING_ACTIVITIES} prefix="counsel" />
+          <Area id="elaborateCheckedCounselingActivities" label="Elaborate on activities checked above" />
+        </div>
+        <div className="psych-subpanel">
+          <h4>Non Counseling Activities</h4>
+          <Grid cols={2} items={NON_COUNSELING_ACTIVITIES} prefix="noncounsel" />
+          <Area id="elaborateCheckedNonCounselingActivities" label="Elaborate on activities checked above" />
+        </div>
+      </Panel>
+      <Panel title="Plan">
+        <Area id="planLastVisitMDM" label="Plan – Last Visit" grey />
+        <div className="psych-row psych-split">
+          <span>Patient/Parent/Guardian voiced understanding and gave consent for the below plan.</span>
+          <span className="psych-row"><Radios name="planConsent" options={['Yes', 'No']} /></span>
+        </div>
+        <div className="psych-row psych-lbl"><span>Plan</span><Check id="planSame" label="Same as Last Visit" /></div>
+        <Area id="planComment" label="Plan" noLabel />
+        <div className="psych-row"><b>Next Visit</b><Radios name="nextVisit" options={['PRN', 'N/A']} /></div>
+        <Area id="nextPhysicianVisit" label="Next Physician's Visit" h={40} />
+        <Check id="treatmentOptionsDiscussed" label="Treatment options and risks of non-compliance with treatment recommendations were discussed with the client." />
+      </Panel>
+    </>
+  );
+
+  // ---- AIMS -------------------------------------------------------------
+  const AIMS = () => (
+    <>
+      <div className="psych-aims-intro">MOVEMENT RATINGS: Rate highest severity observed. Rate movements that occur upon activation one less than those observed spontaneously.</div>
+      {AIMS_SECTIONS.map((s, si) => (
+        <Panel key={s.title} title={s.title} aside={si === 0 ? <Check id="aimsDefaultZero" label="Default Score to Zero" className="psych-aims-default" /> : null}>
+          {si === 0 && <div className="psych-aims-cols"><span>Current Score</span><span>Previous Score</span></div>}
+          {s.rows.map(([id, label]) => (
+            <div className="psych-aims-row" key={id}>
+              <span>{label}</span>
+              <Select id={`aims-${id}`} label={`AIMS ${id}`} options={AIMS_SCALE_OPTIONS} w={149} />
+              <Select id={`aims-${id}-prev`} label={`AIMS ${id} previous`} options={['']} w={149} disabled />
+            </div>
+          ))}
+        </Panel>
+      ))}
+      <Panel title="Dental">
+        {['Current problems with teeth and/or dentures', 'Does patient usually wear dentures?'].map((l, i) => (
+          <div className="psych-aims-row psych-dental" key={l}>
+            <span>{l}</span>
+            <span className="psych-row"><Radios name={`aimsDental${i}`} options={['Yes', 'No']} /></span>
+            <span className="psych-row"><Radio name={`aimsDental${i}-prev`} value="Yes" label="Yes" disabled /><Radio name={`aimsDental${i}-prev`} value="No" label="No" disabled /></span>
+          </div>
+        ))}
+      </Panel>
+      <div className="psych-aims-foot">
+        <b>Comments</b><Input id="aimsComments" label="AIMS comments" w={355} />
+        <b>Current Total Score:</b><b>Previous Total Score:</b>
+        <b className="psych-aims-cur">Current:</b><span className="psych-row"><Radios name="aimsCurrentResult" options={['Positive', 'Negative']} /></span>
+        <b>Previous:</b><span className="psych-row"><Radio name="aimsPrevResult" value="Positive" label="Positive" disabled /><Radio name="aimsPrevResult" value="Negative" label="Negative" disabled /></span>
+      </div>
+    </>
+  );
+
+  // ---- Diagnosis --------------------------------------------------------
+  const Diagnosis = () => (
+    <>
+      <Check id="noDiagnosis" label="No Diagnosis" />
+      <Panel title="Diagnosis">
+        <div className="psych-dx-form">
+          <div className="psych-dx-row"><span className="psych-star">★</span><Select id="dxFavorites" label="Diagnosis favorites" w={679} /></div>
+          <div className="psych-dx-row"><span>Code</span><Input id="dxCode" label="Code" w={60} /><span>Description</span><Input id="dxDescription" label="Description" w={420} /></div>
+          <div className="psych-dx-row"><Check id="dxRuleOut" label="Rule Out" /><span className="psych-dx-l">Type</span><Select id="dxType" label="Type" w={248} /><span className="psych-dx-l">Specifier</span><Input id="dxSpecifier" label="Specifier" w={222} /></div>
+          <div className="psych-dx-row"><span className="psych-dx-l psych-dx-l2">Severity</span><Select id="dxSeverity" label="Severity" w={248} /><span className="psych-dx-l">Source</span><Input id="dxSource" label="Source" w={222} /></div>
+          <div className="psych-dx-row"><span className="psych-dx-l psych-dx-l2">Remission</span><Select id="dxRemission" label="Remission" w={248} /><span className="psych-dx-l">Order</span><Input id="dxOrder" label="Order" w={56} /><span>Billable</span><Radios name="dxBillable" options={['Yes', 'No']} /></div>
+          <div className="psych-dx-row"><span className="psych-dx-l psych-dx-l2">Comments</span><Input id="dxComments" label="Diagnosis comments" w={589} /></div>
+        </div>
+        <div className="psych-subpanel psych-dx-list">
+          <div className="psych-dx-listhead"><h4>Diagnosis List</h4><Btn w={67}>Insert</Btn><Btn w={67}>Clear</Btn></div>
+          <DataTable columns={DIAGNOSIS_LIST_COLUMNS} empty="" h={100} />
+        </div>
+        <div className="psych-row"><span>Screening Tools Used</span><Input id="screeningTools" label="Screening Tools Used" className="psych-input-wide" /></div>
+        <Area id="otherMedicalCondition" label="Other General Medical Conditions" h={64} />
+      </Panel>
+      <Panel title="Psychosocial, Environmental, and Other Factors">
+        <Btn w={91}>Factor Lookup...</Btn>
+        <div className="psych-subpanel"><DataTable columns={['Source']} h={150} /></div>
+        <Area id="factorComments" label="Comments" />
+      </Panel>
+      <Panel title="Level of Functioning Score">
+        <div className="psych-gaf">
+          <span>GAF Score</span><Input id="gafScore" label="GAF Score" w={56} />
+          <span>WHODAS Score</span><Input id="whodasScore" label="WHODAS Score" w={56} />
+          <span>CAFAS Score</span><Input id="cafasScore" label="CAFAS Score" w={56} />
+        </div>
+      </Panel>
+    </>
+  );
+
+  // ---- Psychotherapy ----------------------------------------------------
+  const Psychotherapy = () => (
+    <Panel title="Psychotherapy">
+      <div className="psych-row"><span>Was add on psychotherapy provided to patient?</span><Radios name="psychotherapyProvided" options={['Yes', 'No']} /></div>
+    </Panel>
+  );
+
+  const TAB_VIEWS = { General, MSE, 'Medical Decision Making': MDM, AIMS, Diagnosis, Psychotherapy };
 
   return (
+    <Ctx.Provider value={{ noteValues, set, highlightedField }}>
     <div className="psych-note">
-      {/* Tab Navigation Strip */}
       <div className="psych-tabs-strip" role="tablist">
         {PSYCH_NOTE_TABS.map(tab => (
-          <button
-            key={tab}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab}
-            className={`psych-tab-btn ${activeTab === tab ? 'active' : ''}`}
-            onClick={() => setTab(tab)}
-          >
+          <button key={tab} type="button" role="tab" aria-selected={activeTab === tab}
+            className={`psych-tab-btn ${activeTab === tab ? 'active' : ''}`} onClick={() => set('psychActiveTab', tab)}>
             {tab}
           </button>
         ))}
       </div>
-
-      {/* Tab 1: General */}
-      {activeTab === 'General' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Patient Type & Chief Complaint</h3>
-            </div>
-            <div className="psych-row">
-              <span style={{ fontWeight: 600 }}>Patient Type:</span>
-              {radio('patientType', 'Adult', 'Adult')}
-              {radio('patientType', 'Child', 'Child/Adolescent')}
-            </div>
-            <div className="psych-grid-2">
-              <div>{textarea('todayChiefComplaint', "Today's Chief Complaint")}</div>
-              <div>{textarea('otherNotes', 'Other Notes')}</div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>History of Present Illness</h3>
-            </div>
-            {textarea('historyOfPresentIllness', 'History of Present Illness', 4)}
-            <div className="psych-row" style={{ marginTop: 8 }}>
-              <span style={{ fontWeight: 600 }}>Reviewed Summary of Records:</span>
-              {radio('reviewedRecords', 'Y', 'Yes')}
-              {radio('reviewedRecords', 'N', 'No')}
-            </div>
-            {textarea('personPresentComments', 'Persons Present & Relationship / Comments', 2)}
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Past Medical, Family & Social History</h3>
-            </div>
-            <div className="psych-grid-3">
-              <div>
-                <div className="psych-row">
-                  <span style={{ fontWeight: 600 }}>Medical:</span>
-                  {radio('medHistoryStatus', 'N', 'No Changes')}
-                  {radio('medHistoryStatus', 'Y', 'Changes')}
-                </div>
-                {textarea('medicalHistoryComments', 'Medical History Comments', 2)}
-              </div>
-              <div>
-                <div className="psych-row">
-                  <span style={{ fontWeight: 600 }}>Family:</span>
-                  {radio('famHistoryStatus', 'N', 'No Changes')}
-                  {radio('famHistoryStatus', 'Y', 'Changes')}
-                </div>
-                {textarea('familyHistoryComments', 'Family History Comments', 2)}
-              </div>
-              <div>
-                <div className="psych-row">
-                  <span style={{ fontWeight: 600 }}>Social:</span>
-                  {radio('socHistoryStatus', 'N', 'No Changes')}
-                  {radio('socHistoryStatus', 'Y', 'Changes')}
-                </div>
-                {textarea('socialHistoryComments', 'Social History Comments', 2)}
-              </div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Side Effects & Last Visit Plan</h3>
-            </div>
-            <div className="psych-row">
-              <span style={{ fontWeight: 600 }}>Side Effects:</span>
-              {radio('sideEffects', 'None', 'None')}
-              {radio('sideEffects', 'Specify', 'Specify')}
-            </div>
-            {textarea('planLastVisit', 'Plan From Last Visit', 2)}
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Psychiatric Review of Systems (ROS)</h3>
-              <div className="psych-row" style={{ margin: 0 }}>
-                {radio('rosStatus', 'N', 'Reviewed No Changes')}
-                {radio('rosStatus', 'C', 'Reviewed With Changes')}
-              </div>
-            </div>
-            <div className="psych-checklist">
-              {ROS_SYSTEMS.map(sys => (
-                <label className="psych-check-item" key={sys.id}>
-                  {checkbox(`ros-${sys.id}`, sys.label)}
-                  <span>{sys.label}</span>
-                </label>
-              ))}
-            </div>
-            {textarea('reviewComments', 'Review of Systems Comments', 3)}
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Substance Use, Tobacco & Caffeine</h3>
-            </div>
-            <div className="psych-checklist">
-              {SUBSTANCE_USE_ITEMS.map(sub => (
-                <label className="psych-check-item" key={sub.id}>
-                  {checkbox(`su-${sub.id}`, sub.label)}
-                  <span>{sub.label}</span>
-                </label>
-              ))}
-            </div>
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>
-                <div className="psych-row">
-                  <span style={{ fontWeight: 600 }}>Tobacco:</span>
-                  {radio('tobaccoStatus', 'Non-Smoker', 'Non-Smoker')}
-                  {radio('tobaccoStatus', 'Smoker', 'Smoker')}
-                </div>
-                {textInput('allergiesSmokePerday', 'Cigarettes Per Day')}
-                {textarea('allergiesTobacouse', 'Tobacco Use Details', 2)}
-              </div>
-              <div>
-                <div className="psych-row">
-                  <span style={{ fontWeight: 600 }}>Pregnancy:</span>
-                  {radio('pregnancyStatus', 'N', 'No')}
-                  {radio('pregnancyStatus', 'Y', 'Yes')}
-                  {radio('pregnancyStatus', 'NA', 'N/A')}
-                </div>
-                {textarea('allergiesCaffeineConsumption', 'Caffeine Consumption', 2)}
-              </div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Strengths & Barriers</h3>
-            </div>
-            <div className="psych-grid-2">
-              <div>{textarea('strengths', 'Strengths', 2)}</div>
-              <div>{textarea('barriers', 'Barriers', 2)}</div>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {/* Tab 2: MSE */}
-      {activeTab === 'MSE' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Mental Status Exam (MSE)</h3>
-              <label className="psych-check-item" style={{ fontWeight: 600 }}>
-                {checkbox('mseAllWnl', 'All Within Normal Limits (WNL)')}
-                <span>All Within Normal Limits (WNL)</span>
-              </label>
-            </div>
-
-            {MSE_DOMAINS.map(dom => (
-              <div className="psych-mse-domain" key={dom.id}>
-                <div className="psych-mse-header">
-                  <span className="psych-mse-title">{dom.title}</span>
-                  <div className="psych-mse-status">
-                    {radio(`mse-assess-${dom.id}`, 'Assessed', 'Assessed')}
-                    {radio(`mse-assess-${dom.id}`, 'NotAssessed', 'Not Assessed')}
-                    {radio(`mse-assess-${dom.id}`, 'Unable', 'Unable to Assess')}
-                    <label className="psych-check-item" style={{ marginLeft: 6 }}>
-                      {checkbox(`mse-wnl-${dom.id}`, dom.wnlText)}
-                      <span style={{ fontSize: 10 }}>WNL</span>
-                    </label>
-                  </div>
-                </div>
-                <div className="psych-checklist">
-                  {dom.items.map(item => (
-                    <label className="psych-check-item" key={item}>
-                      {checkbox(`mse-item-${dom.id}-${item}`, item)}
-                      <span>{item}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {/* Suicide / Homicide risk assessment */}
-            <div className="psych-mse-domain" style={{ borderLeftColor: '#c53929' }}>
-              <div className="psych-mse-header">
-                <span className="psych-mse-title" style={{ color: '#c53929' }}>
-                  Suicide & Homicide Risk Assessment
-                </span>
-                <div className="psych-mse-status">
-                  {radio('suicideRiskPresent', 'None', 'No Concerns')}
-                  {radio('suicideRiskPresent', 'Present', 'Present')}
-                </div>
-              </div>
-              <div className="psych-grid-2" style={{ marginTop: 6 }}>
-                <div>
-                  <div className="psych-row">
-                    <span>Suicidal Ideation:</span>
-                    {radio('siIdeation', 'Y', 'Yes')}
-                    {radio('siIdeation', 'N', 'No')}
-                  </div>
-                  <div className="psych-row">
-                    <span>Suicidal Plan:</span>
-                    {radio('siPlan', 'Y', 'Yes')}
-                    {radio('siPlan', 'N', 'No')}
-                  </div>
-                  <div className="psych-row">
-                    <span>Suicidal Intent:</span>
-                    {radio('siIntent', 'Y', 'Yes')}
-                    {radio('siIntent', 'N', 'No')}
-                  </div>
-                </div>
-                <div>
-                  <div className="psych-row">
-                    <span>Homicidal Ideation:</span>
-                    {radio('hiIdeation', 'Y', 'Yes')}
-                    {radio('hiIdeation', 'N', 'No')}
-                  </div>
-                  <div className="psych-row">
-                    <span>Homicidal Plan:</span>
-                    {radio('hiPlan', 'Y', 'Yes')}
-                    {radio('hiPlan', 'N', 'No')}
-                  </div>
-                  <div className="psych-row">
-                    <span>Homicidal Intent:</span>
-                    {radio('hiIntent', 'Y', 'Yes')}
-                    {radio('hiIntent', 'N', 'No')}
-                  </div>
-                </div>
-              </div>
-              {textarea('abnormalPsychoticThoughtComments', 'Abnormal / Psychotic Thoughts & Risk Comments', 3)}
-            </div>
-
-            {textarea('mentalStatusComments', 'Mental Status Exam Additional Comments, Descriptions', 4)}
-          </section>
-        </div>
-      )}
-
-      {/* Tab 3: Medical Decision Making */}
-      {activeTab === 'Medical Decision Making' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Problem Formulation & Complexity</h3>
-            </div>
-            <div className="psych-grid-2">
-              <div>
-                {select('mdmComplexity1', 'Problem 1 Complexity', MDM_COMPLEXITY_OPTIONS)}
-                {textarea('problemCondition', 'Problem 1 / Current Problems – Condition', 4)}
-              </div>
-              <div>
-                {select('mdmComplexity2', 'Problem 2 Complexity', MDM_COMPLEXITY_OPTIONS)}
-                {textarea('associatedSignsSymptomsOtherText', 'Associated Signs & Symptoms / Secondary Problem', 4)}
-              </div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Data Reviewed, Labs & Medications</h3>
-            </div>
-            <div className="psych-grid-2">
-              <div>{textarea('medicalRecordsRelevantResults', 'Medical Records / Relevant Results / Active Medications', 4)}</div>
-              <div>{textarea('labComments', 'Lab Results & Orders Comments', 4)}</div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Patient Education, Counseling & Care Coordination</h3>
-            </div>
-            {textarea('informationAndEducation', 'Information & Medication Education', 3)}
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>{textarea('elaborateCheckedCounselingActivities', 'Counseling Activities & Coordination of Care', 3)}</div>
-              <div>{textarea('elaborateCheckedNonCounselingActivities', 'Non-Counseling Activities', 3)}</div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Plan & Next Steps</h3>
-            </div>
-            {textarea('planComment', 'Plan of Care / Next Steps', 3)}
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>{textarea('planLastVisitMDM', 'Plan from Last Visit MDM', 2)}</div>
-              <div>{textInput('nextPhysicianVisit', 'Next Physician Visit / Follow-up')}</div>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {/* Tab 4: AIMS */}
-      {activeTab === 'AIMS' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Abnormal Involuntary Movement Scale (AIMS)</h3>
-            </div>
-            <table className="psych-table">
-              <thead>
-                <tr>
-                  <th style={{ width: '60%' }}>Assessment Item</th>
-                  <th style={{ width: '20%' }}>Previous</th>
-                  <th style={{ width: '20%' }}>Current Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {AIMS_ITEMS.map((item, idx) => {
-                  const opts =
-                    idx >= 9
-                      ? AIMS_AWARENESS_OPTIONS
-                      : idx >= 7
-                      ? AIMS_SEVERITY_OPTIONS
-                      : AIMS_SCALE_OPTIONS;
-                  return (
-                    <tr key={item.id}>
-                      <td>{item.label}</td>
-                      <td>
-                        <span style={{ color: '#666' }}>0 = None</span>
-                      </td>
-                      <td>
-                        <select
-                          aria-label={`AIMS ${item.id}`}
-                          value={noteValues[`aims-${item.id}`] ?? ''}
-                          onChange={e => onNoteChange?.(`aims-${item.id}`, e.target.value)}
-                          style={{ width: '100%', fontSize: 11 }}
-                        >
-                          <option value="">-- Select --</option>
-                          {opts.map(o => (
-                            <option key={o} value={o}>
-                              {o}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <div className="psych-row" style={{ marginTop: 8 }}>
-              <span style={{ fontWeight: 600 }}>Dental Status:</span>
-              <label className="psych-check-item">
-                {checkbox('aimsDentures', 'Dentures')}
-                <span>Dentures</span>
-              </label>
-              <label className="psych-check-item">
-                {checkbox('aimsEdentulous', 'Edentulous')}
-                <span>Edentulous</span>
-              </label>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {/* Tab 5: Diagnosis */}
-      {activeTab === 'Diagnosis' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Billing & Clinical Diagnosis</h3>
-              <label className="psych-check-item">
-                {checkbox('noDiagnosis', 'No Diagnosis')}
-                <span>No Diagnosis</span>
-              </label>
-            </div>
-            <table className="psych-table">
-              <thead>
-                <tr>
-                  <th>Order</th>
-                  <th>ICD-10</th>
-                  <th>Description</th>
-                  <th>Type</th>
-                  <th>Severity</th>
-                  <th>Billable</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>F29</td>
-                  <td>Unspecified psychosis not due to a substance or known physiological condition</td>
-                  <td>Primary</td>
-                  <td>High</td>
-                  <td>Yes</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>F12.10</td>
-                  <td>Cannabis abuse, uncomplicated</td>
-                  <td>Additional</td>
-                  <td>Moderate</td>
-                  <td>Yes</td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>{textarea('otherMedicalCondition', 'Other Medical Conditions', 3)}</div>
-              <div>{textarea('factorComments', 'Psychosocial & Environmental Factors', 3)}</div>
-            </div>
-            <div className="psych-grid-3" style={{ marginTop: 8 }}>
-              <div>{textInput('gafScore', 'GAF Score')}</div>
-              <div>{textInput('whodasScore', 'WHODAS Score')}</div>
-              <div>{textInput('cafasScore', 'CAFAS Score')}</div>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {/* Tab 6: Psychotherapy */}
-      {activeTab === 'Psychotherapy' && (
-        <div className="psych-tab-content">
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Psychotherapy Provided</h3>
-              <div className="psych-row" style={{ margin: 0 }}>
-                {radio('psychotherapyProvided', 'Y', 'Yes')}
-                {radio('psychotherapyProvided', 'N', 'No')}
-              </div>
-            </div>
-            <div className="psych-grid-3">
-              <div>{textInput('addonProcedureCode', 'Add-On Procedure Code')}</div>
-              <div>{textInput('displayStartTime', 'Start Time')}</div>
-              <div>{textInput('addonUnit', 'Unit / Duration')}</div>
-            </div>
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>{textarea('problemDescribedThisSession', 'Problem Described This Session', 3)}</div>
-              <div>{textarea('clinicalImpressionWithIndividual', 'Clinical Impression With Individual', 3)}</div>
-            </div>
-            <div className="psych-grid-2" style={{ marginTop: 8 }}>
-              <div>{textarea('sessionSummary', 'Session Summary', 3)}</div>
-              <div>{textarea('treatmentPlanRecommendation', 'Treatment Plan & Recommendations', 3)}</div>
-            </div>
-          </section>
-
-          <section className="psych-panel">
-            <div className="psych-heading">
-              <h3>Goals & Objectives Addressed</h3>
-              <label className="psych-check-item">
-                {checkbox('showCheckedGoals', 'Show only selected items')}
-                <span>Show only selected items</span>
-              </label>
-            </div>
-            {PSYCH_GO_OBJECTIVES.map(obj => (
-              <div className="psych-row" key={obj.id} style={{ justifyContent: 'space-between' }}>
-                <label className="psych-check-item" style={{ flex: 1 }}>
-                  {checkbox(`carePlanObjective-${obj.id}`, `Objective ${obj.id}: ${obj.text}`)}
-                  <span>
-                    <strong>Objective {obj.id}:</strong> {obj.text}
-                  </span>
-                </label>
-                <div style={{ width: 170 }}>
-                  <select
-                    aria-label={`Status ${obj.id}`}
-                    value={noteValues[`carePlanStatus-${obj.id}`] ?? ''}
-                    onChange={e => onNoteChange?.(`carePlanStatus-${obj.id}`, e.target.value)}
-                    style={{ width: '100%', fontSize: 11 }}
-                  >
-                    {PSYCH_GO_STATUSES.map(s => (
-                      <option key={s} value={s}>
-                        {s || '-- Select Status --'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            ))}
-            {textarea('psychotherapyComment', 'Objectives Comments', 2)}
-          </section>
-        </div>
-      )}
+      <div className="psych-tab-content">{TAB_VIEWS[activeTab] ? TAB_VIEWS[activeTab]() : General()}</div>
     </div>
+    </Ctx.Provider>
   );
 }

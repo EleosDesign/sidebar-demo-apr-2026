@@ -33,6 +33,7 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
     await note.locator('#psych-todayChiefComplaint').fill('Patient presents for psych follow-up');
     await note.locator('#psych-historyOfPresentIllness').fill('Detailed history of present illness text');
     await note.getByRole('radio', { name: 'Adult', exact: true }).check();
+    await note.getByRole('checkbox', { name: 'Psychiatric', exact: true }).check();
 
     // Tab 2: Switch to MSE
     await note.getByRole('tab', { name: 'MSE', exact: true }).click();
@@ -49,26 +50,23 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
 
     // Tab 4: Switch to AIMS
     await note.getByRole('tab', { name: 'AIMS', exact: true }).click();
-    await expect(note.getByLabel('AIMS facialExpression')).toBeVisible();
-    await note.getByLabel('AIMS facialExpression').selectOption('1 = Minimal, maybe extreme normal');
+    await expect(note.getByLabel('AIMS facialExpression', { exact: true })).toBeVisible();
+    await note.getByLabel('AIMS facialExpression', { exact: true }).selectOption('1 = Minimal, maybe extreme normal');
 
     // Tab 5: Switch to Diagnosis
     await note.getByRole('tab', { name: 'Diagnosis', exact: true }).click();
-    await expect(note.getByText('F29')).toBeVisible();
+    await expect(note.getByRole('heading', { name: 'Diagnosis List' })).toBeVisible();
     await note.locator('#psych-otherMedicalCondition').fill('None reported');
 
     // Tab 6: Switch to Psychotherapy
     await note.getByRole('tab', { name: 'Psychotherapy', exact: true }).click();
-    await expect(note.locator('#psych-treatmentPlanRecommendation')).toBeVisible();
-    await note.locator('#psych-treatmentPlanRecommendation').fill('Weekly therapy recommended');
-    await note.getByLabel('Status 1.01').selectOption('Some Improvement');
+    await note.getByRole('radio', { name: 'Yes', exact: true }).check();
 
     // EHR switch preserves all filled values and active tab
     const otherEhr = ehr === 'Streamline' ? 'CalMHSA SmartCare' : 'Streamline';
     await choose(page, 'Switch EHR background', otherEhr);
     await page.getByRole('button', { name: 'Note', exact: true }).click();
-    await expect(note.getByLabel('Status 1.01')).toHaveValue('Some Improvement');
-    await expect(note.locator('#psych-treatmentPlanRecommendation')).toHaveValue('Weekly therapy recommended');
+    await expect(note.getByRole('radio', { name: 'Yes', exact: true })).toBeChecked();
 
     // Check General tab values were preserved across EHR switch
     await note.getByRole('tab', { name: 'General', exact: true }).click();
@@ -131,6 +129,8 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
     await expect(form).toBeVisible();
 
     // Test responsive widths with all tabs
+    for (const tab of ['General', 'MSE', 'Medical Decision Making', 'AIMS', 'Diagnosis', 'Psychotherapy']) {
+    await form.getByRole('tab', { name: tab, exact: true }).click();
     for (const width of [830, 600, 380, 280]) {
       await form.evaluate((element, width) => { element.style.width = `${width}px`; }, width);
       const overflows = await form.evaluate(element => {
@@ -138,7 +138,7 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
         return [...element.querySelectorAll('*')]
           .filter(child => {
             const rect = child.getBoundingClientRect();
-            return child.getClientRects().length && (rect.left < bounds.left - 1 || rect.right > bounds.right + 1);
+            return child.getClientRects().length && !child.closest('.psych-table-wrap') && (rect.left < bounds.left - 1 || rect.right > bounds.right + 1);
           })
           .map(child => ({
             tag: child.tagName,
@@ -152,7 +152,8 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
       if (overflows.length > 0) {
         console.log(`Overflows at ${width}px:`, JSON.stringify(overflows.slice(0, 5)));
       }
-      expect(overflows.length).toBe(0);
+      expect(overflows.length, `${tab} @ ${width}px`).toBe(0);
+    }
     }
   });
 }
