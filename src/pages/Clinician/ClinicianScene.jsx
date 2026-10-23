@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { groupNoteForEhr, supportsGroupGO } from '../../data/groupGoNote.js';
 import DurationPill from '../../components/ui/DurationPill.jsx';
 import '../../components/ui/DurationPill.css';
 import { EhrFieldProvider, useEhrField } from '../../components/ui/EhrFieldContext.jsx';
@@ -113,6 +114,7 @@ export default function ClinicianScene({ step, onNext }) {
   };
 
   const handleAddToNote = (section, content, cardField) => {
+    if (noteTypeCtx?.selectedNoteType === 'GroupGONote' && /objective|comment/i.test(`${section} ${cardField ?? ''}`)) return;
     // Direct label/id match first
     let directSection = noteTypeCtx?.sections?.find(s => s.label === section || s.id === section);
     // Secondary: try the card's own field label (used when section is a group name like 'Progress Note')
@@ -124,7 +126,9 @@ export default function ClinicianScene({ step, onNext }) {
       const mappedId = noteTypeCtx.eleosMapping[section];
       directSection = noteTypeCtx.sections.find(s => s.id === mappedId);
     }
-    const field = directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
+    const field = noteTypeCtx?.selectedNoteType === 'GroupGONote'
+      ? (directSection?.id ?? (/plan|next steps/i.test(cardField || section) ? 'documentPlan' : /^(group summary|overall summary)$/i.test(section) ? 'groupSummary' : 'serviceNote'))
+      : directSection?.id ?? SECTION_TO_NOTE_FIELD[section];
     if (!field) return;
     noteTypeCtx.updateNoteValue(field, prev => prev ? prev + '\n\n' + content : content);
     setHighlightedField(field);
@@ -600,7 +604,7 @@ const SIDEBAR_BOTTOM_GAP = 16;
 function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSaveState, onSideChange, onRecordingChange, onAddToNote, onActivitySelected, startTab, onStartTabConsumed }) {
   const ehrCtx = useEhrField();
   const noteTypeCtx = useNoteTypeContext();
-  const { clientName, setClientName } = useEhrContext();
+  const { clientName, setClientName, selectedEhr } = useEhrContext();
   const smartScribeSkin = useSmartScribeSkin();
   const { lockedDownMode } = useLockedDownModeContext();
   const { mobileMode, sessionKey, exitMobileMode } = useMobileModeContext();
@@ -1018,7 +1022,9 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
             const r = CLIENT_LOCK_RULES[fmt];
             if (r?.noteType) noteTypeKey = r.noteType;
           }
-          if (noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
+          const isGroupGO = session?.type === 'group' && supportsGroupGO(selectedEhr);
+          if (isGroupGO) noteTypeKey = groupNoteForEhr(selectedEhr);
+          if (isGroupGO || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
             noteTypeCtx?.setSelectedNoteType(noteTypeKey);
           }
           onActivitySelected?.();
@@ -1041,10 +1047,13 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           const parts = name.trim().split(/\s+/);
           const formatted = parts.length >= 2 ? `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(' ')}` : name;
           setClientName(formatted);
-          if (lockedDownMode) {
+          if (supportsGroupGO(selectedEhr) && name.toLowerCase().includes('group')) {
+            noteTypeCtx?.setSelectedNoteType(groupNoteForEhr(selectedEhr));
+          } else if (lockedDownMode) {
             const r = CLIENT_LOCK_RULES[formatted];
-            if (r?.noteType && noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote') {
-              noteTypeCtx?.setSelectedNoteType(r.noteType);
+            const isGroupGO = r?.noteType === 'GroupNote' && supportsGroupGO(selectedEhr);
+            if (r?.noteType && (isGroupGO || noteTypeCtx?.selectedNoteType !== 'IndividualServiceNote')) {
+              noteTypeCtx?.setSelectedNoteType(isGroupGO ? groupNoteForEhr(selectedEhr) : r.noteType);
             }
           }
           onActivitySelected?.();
@@ -1055,7 +1064,7 @@ function EleosSidebar({ step, onNext, onCollapse, initialPos, savedState, onSave
           ...daysAgo(0),
           name,
           time: '10:00 – 10:45 AM',
-          type: 'individual',
+          type: supportsGroupGO(selectedEhr) && name?.toLowerCase().includes('group') ? 'group' : 'individual',
           sessionType: 'text',
           isActive: true,
           summary: 'The client expressed experiencing seasonal depression and shared a winter seasonal mood shift. The client stated, "it\'s been hard to leave the house".',
@@ -3930,13 +3939,18 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
   const P = { fontFamily: 'Poppins, sans-serif' };
   const focusedEhrField = useEhrField()?.activeField ?? null;
   const { useEhrNoteHeaders } = useEhrNoteHeadersContext();
-  const { selectedNoteType } = useNoteTypeContext();
+  const { selectedNoteType, suggestionsData: noteTypeSuggestions } = useNoteTypeContext();
   const { lockedDownMode } = useLockedDownModeContext();
   const hideBulkAdd = selectedNoteType === 'IndividualServiceNote' || (lockedDownMode && session?.type === 'group');
 
   // Resolve which dataset to use — client-specific workflows take priority,
   // then the NoteTypeContext override, session-based selection, and default.
   const resolvedData = (() => {
+    if (selectedNoteType === 'GroupGONote') {
+      return session?.type === 'group'
+        ? GROUP_SUGGESTIONS_BY_NOTE_TYPE[session.noteType] ?? SUD_GROUP_SUGGESTIONS_DATA
+        : noteTypeSuggestions;
+    }
     if (clientName === 'Marlene Oviedo') return MARLENE_OVIEDO_SUGGESTIONS_DATA;
     if (clientName === 'Calvin Murphy' && selectedEhr === 'calmhsa') return CALMHSA_PROGRESS_SUGGESTIONS_DATA;
     if (suggestionsData) return suggestionsData;
@@ -4286,13 +4300,13 @@ function SuggestionsPanel({ clientName, sessionSubtitle, onBack, onAddToNote, on
                                   {/* Add to EHR button */}
                                   {(() => {
                                     const isAdded = added.has(excludeKey);
-                                    const canAdd = isAdded || !!focusedEhrField;
+                                    const canAdd = selectedNoteType === 'GroupGONote' || isAdded || !!focusedEhrField;
                                     return (
                                       <button
                                         onMouseDown={e => e.preventDefault()}
                                         onClick={() => {
                                           if (!canAdd) return;
-                                          onAddToNote?.(focusedEhrField ?? section, displayContent, card.field);
+                                          onAddToNote?.(selectedNoteType === 'GroupGONote' ? section : focusedEhrField ?? section, displayContent, card.field);
                                           setAdded(prev => new Set(prev).add(excludeKey));
                                           setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(excludeKey); return n; }), 1800);
                                         }}
