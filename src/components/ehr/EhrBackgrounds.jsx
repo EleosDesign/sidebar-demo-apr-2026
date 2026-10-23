@@ -4,6 +4,7 @@
  * Patient: Webb, Marcus
  */
 import GroupGONote from './GroupGONote.jsx';
+import PsychiatricNote from './PsychiatricNote.jsx';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNoteTypeContext, NOTE_TYPE_LIST } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeEnhanceShadow } from '../../contexts/EhrContext.jsx';
@@ -2497,7 +2498,7 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'GroupGONote' ? 'Group G/O Note' : isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'PsychiatricNote' ? 'Psychiatric Note' : selectedNoteType === 'GroupGONote' ? 'Group G/O Note' : isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -2572,8 +2573,10 @@ export function StreamlineBg({ noteValues = {}, onNoteChange, highlightedField, 
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote || selectedNoteType === 'GroupGONote' ? 'none' : '50%' }}>
-                  {selectedNoteType === 'GroupGONote' ? (
+                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote || selectedNoteType === 'GroupGONote' || selectedNoteType === 'PsychiatricNote' ? 'none' : '50%' }}>
+                  {selectedNoteType === 'PsychiatricNote' ? (
+                    <PsychiatricNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} />
+                  ) : selectedNoteType === 'GroupGONote' ? (
                     <GroupGONote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} />
                   ) : isCoreNote ? (
                     <SmartCareCoreNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />
@@ -3017,7 +3020,7 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
           <div style={{ height: 42, background: '#edf4f9', borderBottom: '1px solid #c7c7c7', display: 'flex', alignItems: 'center', padding: '0 10px', boxSizing: 'border-box' }}>
-            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'GroupGONote' ? 'Group G/O Note' : isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
+            <div data-smartcare-title style={{ color: '#000', fontSize: 20, flex: 1 }}>{selectedNoteType === 'PsychiatricNote' ? 'Psychiatric Note' : selectedNoteType === 'GroupGONote' ? 'Group G/O Note' : isCoreNote ? 'Core Note (SmartCare)' : 'Progress Note'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#254a67' }}>
               <ToolbarIcon name="handshake" size={21} />
               <ToolbarIcon name="file" size={18} />
@@ -3092,8 +3095,10 @@ export function CalmhsaBg({ noteValues = {}, onNoteChange, highlightedField, act
                   </div>
                 </>
               ) : activeTab === 'Note' ? (
-                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote || selectedNoteType === 'GroupGONote' || selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
-                  {selectedNoteType === 'GroupGONote' ? (
+                <div style={{ padding: '0 10px 20px', maxWidth: isCoreNote || selectedNoteType === 'GroupGONote' || selectedNoteType === 'PsychiatricNote' || selectedNoteType === 'ProgressNote' ? 'none' : '50%' }}>
+                  {selectedNoteType === 'PsychiatricNote' ? (
+                    <PsychiatricNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} />
+                  ) : selectedNoteType === 'GroupGONote' ? (
                     <GroupGONote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} />
                   ) : selectedNoteType === 'ProgressNote' ? (
                     <CalmhsaProgressNote noteValues={noteValues} onNoteChange={onNoteChange} highlightedField={highlightedField} sections={sections} />

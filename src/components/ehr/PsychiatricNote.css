@@ -1,0 +1,256 @@
+.psych-note {
+  width: 830px;
+  max-width: 100%;
+  font: 11px/1.35 'IBM Plex Sans', sans-serif;
+  color: #000;
+  box-sizing: border-box;
+  container-type: inline-size;
+}
+
+/* Tab Strip Header matching SmartCare RadTabStrip */
+.psych-tabs-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  border-bottom: 1px solid #7f9db9;
+  background: #f7f7f7;
+  padding: 4px 6px 0;
+  margin-bottom: 12px;
+  gap: 2px;
+}
+
+.psych-tab-btn {
+  background: #e8e8e8;
+  color: #333;
+  border: 1px solid #7f9db9;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  padding: 5px 12px;
+  font: 600 11px 'IBM Plex Sans', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  margin-bottom: -1px;
+}
+
+.psych-tab-btn:hover {
+  background: #f0f0f0;
+}
+
+.psych-tab-btn.active {
+  background: #ffffff;
+  color: #000;
+  border-bottom: 1px solid #ffffff;
+  font-weight: 700;
+  padding-top: 6px;
+}
+
+/* Panels */
+.psych-panel {
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0 0 14px;
+  padding: 6px 10px 14px;
+  border: 1px solid #d6d6d6;
+  background: #ffffff;
+}
+
+.psych-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #304f6e;
+  margin-bottom: 10px;
+}
+
+.psych-heading h3 {
+  margin: 0;
+  font: 600 13px/1.4 'IBM Plex Sans', sans-serif;
+  color: #254a67;
+}
+
+.psych-note input[type=checkbox],
+.psych-note input[type=radio] {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  margin: 0 5px 0 0;
+  vertical-align: middle;
+}
+
+.psych-field {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+
+.psych-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.psych-field textarea {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 56px;
+  min-height: 44px;
+  margin-top: 2px;
+  padding: 4px 6px;
+  resize: vertical;
+  font: inherit;
+  color: #000;
+  border: 1px solid #d6d6d6;
+  background: #ffffff;
+}
+
+.psych-field input[type=text] {
+  box-sizing: border-box;
+  width: 100%;
+  height: 24px;
+  padding: 2px 6px;
+  font: inherit;
+  border: 1px solid #d6d6d6;
+  background: #ffffff;
+}
+
+.psych-field select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 24px;
+  padding: 1px 4px;
+  font: inherit;
+  border: 1px solid #d6d6d6;
+  background: #ffffff;
+}
+
+.psych-field textarea.psych-highlight {
+  outline: 2px solid #7c9cff;
+  background: #edf3ff !important;
+}
+
+/* Grids and rows */
+.psych-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.psych-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.psych-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 6px 0;
+}
+
+.psych-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 4px 10px;
+  margin-top: 6px;
+}
+
+.psych-check-item {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* Tables */
+.psych-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 11px;
+}
+
+.psych-table th,
+.psych-table td {
+  border: 1px solid #d6d6d6;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.psych-table th {
+  background: #edf4f9;
+  font-weight: 600;
+  color: #254a67;
+}
+
+/* MSE domain card */
+.psych-mse-domain {
+  border: 1px solid #e2e2e2;
+  border-left: 3px solid #254a67;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.psych-mse-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.psych-mse-title {
+  font-weight: 700;
+  color: #254a67;
+  font-size: 12px;
+}
+
+.psych-mse-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.psych-wnl-banner {
+  background: #eef6ed;
+  border: 1px solid #c2e2bf;
+  color: #23591f;
+  padding: 4px 8px;
+  margin: 4px 0 6px;
+  border-radius: 2px;
+  font-size: 11px;
+}
+
+/* Responsive adjustments using container queries */
+@container (max-width: 650px) {
+  .psych-grid-2,
+  .psych-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@container (max-width: 420px) {
+  .psych-checklist {
+    grid-template-columns: 1fr;
+  }
+  .psych-tab-btn {
+    padding: 4px 7px;
+    font-size: 10px;
+  }
+  .psych-mse-status {
+    flex-wrap: wrap;
+  }
+}

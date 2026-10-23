@@ -394,6 +394,82 @@
         }
       ]
     },
+    "PsychiatricNote": {
+      "name": "Psychiatric Note",
+      "description": "Structured psychiatric evaluation and medication management note for Streamline and CalMHSA SmartCare",
+      "ehrs": [
+        "streamline",
+        "calmhsa"
+      ],
+      "sections": [
+        {
+          "id": "todayChiefComplaint",
+          "label": "Chief Complaint",
+          "description": "Today's chief complaint and presenting concerns",
+          "sampleContent": "Patient presents for psychiatric follow-up and evaluation of medication management."
+        },
+        {
+          "id": "historyOfPresentIllness",
+          "label": "History of Present Illness",
+          "description": "Detailed narrative of current psychiatric episode and symptom evolution",
+          "sampleContent": "Adult patient presenting with ongoing psychiatric symptoms and functional impairment. Current treatment regimen reviewed."
+        },
+        {
+          "id": "reviewComments",
+          "label": "Review of Systems",
+          "description": "Psychiatric review of systems and pertinent negatives",
+          "sampleContent": "Psychiatric review of systems positive for mood and anxiety symptoms as detailed. All other systems reviewed and negative."
+        },
+        {
+          "id": "mentalStatusComments",
+          "label": "Mental Status Exam",
+          "description": "Comprehensive mental status examination observations and descriptions",
+          "sampleContent": "Alert and oriented to person, place, time, and situation. Speech normal rate and tone. Thought process linear and goal-directed. Insight fair, judgment intact."
+        },
+        {
+          "id": "abnormalPsychoticThoughtComments",
+          "label": "Abnormal/Psychotic Thoughts",
+          "description": "Assessment of perceptual disturbances, delusions, or hallucinations",
+          "sampleContent": "No active hallucinations or overt delusions reported at time of evaluation."
+        },
+        {
+          "id": "problemCondition",
+          "label": "Current Problems – Condition",
+          "description": "Medical decision making problem formulation and clinical status",
+          "sampleContent": "Primary psychiatric condition evaluated and stable under current treatment plan."
+        },
+        {
+          "id": "medicalRecordsRelevantResults",
+          "label": "Medical Records / Active Medications",
+          "description": "Review of medical records, relevant lab results, and active medications",
+          "sampleContent": "Active medication regimen reviewed and tolerated without reported adverse events."
+        },
+        {
+          "id": "informationAndEducation",
+          "label": "Medication Education",
+          "description": "Patient education regarding medication risks, benefits, and side effects",
+          "sampleContent": "Discussed medication indication, potential side effects, dosing schedule, and signs requiring immediate contact."
+        },
+        {
+          "id": "elaborateCheckedCounselingActivities",
+          "label": "Counseling and Care Coordination",
+          "description": "Counseling activities and coordination of care with outside providers",
+          "sampleContent": "Supportive counseling provided. Care coordinated with primary clinician and support team."
+        },
+        {
+          "id": "planComment",
+          "label": "Plan of Care",
+          "description": "Treatment plan, medication adjustments, and follow-up timeline",
+          "sampleContent": "Continue current regimen. Patient to return in 4 weeks for follow-up evaluation."
+        },
+        {
+          "id": "treatmentPlanRecommendation",
+          "label": "Treatment Plan / Recommendations",
+          "description": "Psychotherapy and interdisciplinary treatment recommendations",
+          "sampleContent": "Recommended continued engagement in individual therapy and adherence to treatment plan."
+        }
+      ]
+    },
     "GroupGONote": {
       "name": "Group G/O Note",
       "ehrs": [
