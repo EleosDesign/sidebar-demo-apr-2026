@@ -172,6 +172,10 @@ label.psych-lbl { display: block; }
 .psych-dx-listhead h4 { flex: 1; margin: 0; }
 .psych-gaf { display: grid; grid-template-columns: 110px 160px 110px 160px 110px 1fr; align-items: center; gap: 4px; padding: 4px 8px 8px; }
 
+/* Psychotherapy */
+.psych-addon { gap: 4px 10px; margin-left: 9px; }
+.psych-addon-gap { margin-left: 48px; }
+
 /* Narrow (sidebar open) layouts */
 @container (max-width: 650px) {
   .psych-two-col, .psych-aims-foot, .psych-gaf, .psych-risk { grid-template-columns: 1fr; }

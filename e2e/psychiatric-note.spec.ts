@@ -61,6 +61,8 @@ for (const ehr of ['Streamline', 'CalMHSA SmartCare']) {
     // Tab 6: Switch to Psychotherapy
     await note.getByRole('tab', { name: 'Psychotherapy', exact: true }).click();
     await note.getByRole('radio', { name: 'Yes', exact: true }).check();
+    await expect(note.locator('#psych-treatmentPlanRecommendation')).toBeVisible();
+    await note.locator('#psych-treatmentPlanRecommendation').fill('Weekly therapy recommended');
 
     // EHR switch preserves all filled values and active tab
     const otherEhr = ehr === 'Streamline' ? 'CalMHSA SmartCare' : 'Streamline';

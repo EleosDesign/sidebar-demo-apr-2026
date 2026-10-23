@@ -139,6 +139,7 @@ export default function ClinicianScene({ step, onNext }) {
         else if (/education/i.test(target)) field = 'informationAndEducation';
         else if (/counseling|care coordination/i.test(target)) field = 'elaborateCheckedCounselingActivities';
         else if (/plan of care|next steps/i.test(target)) field = 'planComment';
+        else if (/treatment plan/i.test(target)) field = 'treatmentPlanRecommendation';
         else if (/abnormal|psychotic/i.test(target)) field = 'abnormalPsychoticThoughtComments';
         else if (/mental status|thought process|speech|mood|affect|orientation|memory|attention|associations|language|appearance|eye contact|psychomotor|insight|judgement/i.test(target)) field = 'mentalStatusComments';
       }

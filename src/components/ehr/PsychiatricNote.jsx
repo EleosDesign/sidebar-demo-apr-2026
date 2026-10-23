@@ -407,6 +407,19 @@ export default function PsychiatricNote({ noteValues = {}, onNoteChange, highlig
   const Psychotherapy = () => (
     <Panel title="Psychotherapy">
       <div className="psych-row"><span>Was add on psychotherapy provided to patient?</span><Radios name="psychotherapyProvided" options={['Yes', 'No']} /></div>
+      {noteValues.psychotherapyProvided === 'Yes' && (
+        <>
+          <div className="psych-row psych-addon">
+            <span>Add-On Code</span><Select id="addOnCode" label="Add-On Code" w={198} />
+            <span className="psych-addon-gap">Start Time</span><Input id="psychStartTime" label="Start Time" w={61} />
+            <span>Duration</span><Input id="psychDuration" label="Duration" w={65} />
+          </div>
+          <Area id="problemDescribedThisSession" label="Problem as described this session" h={70} />
+          <Area id="clinicalImpressionWithIndividual" label="Clinical impression as shared with individual" h={70} />
+          <Area id="sessionSummary" label="Session Summary" h={70} />
+          <Area id="treatmentPlanRecommendation" label="Treatment plan and recommendation" h={70} />
+        </>
+      )}
     </Panel>
   );
 
