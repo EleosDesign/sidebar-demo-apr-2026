@@ -9,11 +9,12 @@ import EnhancePointerToolbar from '../../components/enhance/EnhancePointerToolba
 import { EnhanceStatus } from '../../components/enhance/EnhanceWelcome.jsx';
 import { useEnhance } from '../../contexts/EnhanceContext.jsx';
 import LQAReview from '../../components/ui/LQAReview.jsx';
-import { useEhrContext, useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
+import { useEhrContext, useSmartScribeBrandingAvailable, useSmartScribeSkin, smartScribeColor, smartScribeRgb } from '../../contexts/EhrContext.jsx';
 import { EHR_BACKGROUNDS } from '../../components/ehr/EhrBackgrounds.jsx';
 import EhrSelector from '../../components/ehr/EhrSelector.jsx';
 import NoteTypeSelector from '../../components/ehr/NoteTypeSelector.jsx';
 import LockedDownModeToggle from '../../components/ehr/LockedDownModeToggle.jsx';
+import EleosBrandingToggle from '../../components/ehr/EleosBrandingToggle.jsx';
 import { useNoteTypeContext } from '../../contexts/NoteTypeContext.jsx';
 import { useEhrNoteHeadersContext } from '../../contexts/EhrNoteHeadersContext.jsx';
 import { useLockedDownModeContext } from '../../contexts/LockedDownModeContext.jsx';
@@ -96,6 +97,7 @@ export default function ClinicianScene({ step, onNext }) {
   const [isRecording, setIsRecording] = useState(false);
   const [highlightedField, setHighlightedField] = useState(null);
   const { state: enhanceState, welcome: enhanceWelcome, enable: enableEnhance } = useEnhance();
+  const smartScribeBrandingAvailable = useSmartScribeBrandingAvailable();
   // Bumped whenever an activity/session is selected in the sidebar, for EHR shells
   // (Streamline) that need to react to that event rather than to noteType/clientName values.
   const [activitySelectionSeq, setActivitySelectionSeq] = useState(0);
@@ -258,6 +260,10 @@ export default function ClinicianScene({ step, onNext }) {
             <NoteTypeSelector />
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <EhrSelector />
+            {smartScribeBrandingAvailable && <>
+              <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
+              <EleosBrandingToggle />
+            </>}
             <div style={{ width: 1, height: 14, background: 'rgba(0,0,0,0.12)', borderRadius: 1 }} />
             <LockedDownModeToggle />
             {!enhanceWelcome && <>
@@ -367,8 +373,11 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
           </div>
           {/* Divider */}
           <div style={{ width: 32, height: 1, backgroundColor: 'rgba(255,255,255,0.2)', margin: '12px 0' }} />
-          {/* Eleos logo */}
+          {/* Brand logo */}
           <div style={{ width: 52, height: 52, borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
+            {smartScribeSkin ? (
+              <img src="/streamline-mark.svg" alt="" style={{ width: 20, height: 30 }} />
+            ) : (
             <div style={{ position: 'absolute', left: 10, top: 10, width: 32, height: 32, overflow: 'hidden' }}>
               <div style={{ position: 'absolute', left: 3.5, top: 8.22, width: 28, height: 23.6, transform: 'scale(0.92)', transformOrigin: 'top left' }}>
                 <svg preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 30.5033 25.7853" fill="none">
@@ -381,6 +390,7 @@ function CompanionLaunchButton({ pos, onPosChange, onNext, onOpenQuality, isReco
                 </svg>
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
@@ -3834,11 +3844,11 @@ function AddSummaryPanel({ initialClient = '', initialMethod = null, suggestions
                     proceedFromCapture('voice');
                   }
                 }}
-                style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: voiceDialog === 'cancel' ? '#D83F45' : '#2D4CCD', color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}
+                style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: voiceDialog === 'cancel' ? '#D83F45' : smartScribeColor(smartScribeSkin, '#2D4CCD'), color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}
               >
                 {voiceDialog === 'cancel' ? 'Cancel Recording' : 'Confirm'}
               </button>
-              <button onClick={() => { setVoiceDialog(null); resumeRecording(); }} style={{ marginTop: 16, border: 'none', background: 'none', color: '#2D4CCD', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Resume</button>
+              <button onClick={() => { setVoiceDialog(null); resumeRecording(); }} style={{ marginTop: 16, border: 'none', background: 'none', color: smartScribeColor(smartScribeSkin, '#2D4CCD'), ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Resume</button>
             </div>
           </div>
         )}
@@ -5438,6 +5448,7 @@ function EleosNavRail({ activeItem, onNavClick, side, visibleItems, hasOverflow,
 // ── My Sessions Panel (step 1, phase = 'sessions') ───────────────────────────
 
 function MobileNewActivitySheet({ onClose, onContinue }) {
+  const smartScribeSkin = useSmartScribeSkin();
   const [selected, setSelected] = useState(null);
   const P = { fontFamily: 'Poppins, sans-serif' };
   const options = [
@@ -5449,7 +5460,7 @@ function MobileNewActivitySheet({ onClose, onContinue }) {
     <button
       onClick={() => setSelected(method)}
       aria-pressed={selected === method}
-      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px', background: selected === method ? '#F4F6FD' : 'white', border: `1.5px solid ${selected === method ? '#2D4CCD' : 'rgba(33,33,33,0.18)'}`, borderRadius: 12, cursor: 'pointer', textAlign: 'left' }}
+      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px', background: selected === method ? '#F4F6FD' : 'white', border: `1.5px solid ${selected === method ? smartScribeColor(smartScribeSkin, '#2D4CCD') : 'rgba(33,33,33,0.18)'}`, borderRadius: 12, cursor: 'pointer', textAlign: 'left' }}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
         {method === 'live' && <path d="M3 12h2m2-5v10m4-13v16m4-11v6m4-3h2" stroke="#212121" strokeWidth="1.8" strokeLinecap="round"/>}
@@ -5484,7 +5495,7 @@ function MobileNewActivitySheet({ onClose, onContinue }) {
         <button
           disabled={!selected}
           onClick={() => selected && onContinue(selected)}
-          style={{ width: '100%', marginTop: 24, padding: '11px 16px', border: 'none', borderRadius: 4, background: selected ? '#2D4CCD' : '#EAEDFA', color: selected ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontSize: 15, fontWeight: 500, cursor: selected ? 'pointer' : 'default' }}
+          style={{ width: '100%', marginTop: 24, padding: '11px 16px', border: 'none', borderRadius: 4, background: selected ? smartScribeColor(smartScribeSkin, '#2D4CCD') : '#EAEDFA', color: selected ? 'white' : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, ...P, fontSize: 15, fontWeight: 500, cursor: selected ? 'pointer' : 'default' }}
         >
           Next
         </button>
@@ -5553,7 +5564,7 @@ function MySessionsPanel({ onSelectSession, initialTab = 'ehr', doneIds = INITIA
             style={{ height: compactMode ? 38 : 47, width: '100%', boxSizing: 'border-box', background: 'white', border: '1px solid rgba(33,33,33,0.42)', borderRadius: 8, paddingLeft: 40, paddingRight: 16, ...P, fontSize: 14, color: '#212121', letterSpacing: '0.17px', outline: 'none' }}
           />
           {mobileMode && (
-            <button aria-label="Refresh activities" onClick={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 600); }} style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, border: 'none', background: 'none', color: '#2D4CCD', cursor: 'pointer', padding: 4 }}>
+            <button aria-label="Refresh activities" onClick={() => { setRefreshing(true); setTimeout(() => setRefreshing(false), 600); }} style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', width: 32, height: 32, border: 'none', background: 'none', color: smartScribeColor(smartScribeSkin, '#2D4CCD'), cursor: 'pointer', padding: 4 }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ animation: refreshing ? 'mobileRefreshSpin 0.6s linear' : 'none' }}><path d="M20 7v5h-5M4 17v-5h5M6.1 8A7 7 0 0118 6l2 6M17.9 16A7 7 0 016 18l-2-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           )}
@@ -5957,7 +5968,7 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
         <button
           disabled={!canCapture}
           onClick={() => { if (!canCapture) return; if (mobileMode && !skipReadiness) setShowReadiness(true); else startCapture(); }}
-          style={{ width: '100%', padding: '8px 16px', background: canCapture ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#EAEDFA', color: canCapture ? 'white' : 'rgba(45,76,205,0.38)', ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: canCapture ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: canCapture ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
+          style={{ width: '100%', padding: '8px 16px', background: canCapture ? smartScribeColor(smartScribeSkin, '#2d4ccd') : '#EAEDFA', color: canCapture ? 'white' : `rgba(${smartScribeRgb(smartScribeSkin, '45,76,205')},0.38)`, ...P, fontWeight: 500, fontSize: 14, border: 'none', borderRadius: 4, cursor: canCapture ? 'pointer' : 'default', letterSpacing: '0.46px', lineHeight: '26px', boxShadow: canCapture ? '0px 1px 5px rgba(0,0,0,0.12),0px 2px 2px rgba(0,0,0,0.14),0px 3px 1px -2px rgba(0,0,0,0.2)' : 'none' }}
         >
           Capture Session
         </button>
@@ -5967,13 +5978,13 @@ function CaptureSessionPanel({ onCapture, onBack, initialClient = '', compactMod
           <div style={{ width: '100%', background: 'white', borderRadius: '20px 20px 0 0', padding: '28px 24px 24px', boxSizing: 'border-box' }}>
             <div style={{ ...P, fontSize: 22, fontWeight: 600, color: '#212121', textAlign: 'center', marginBottom: 24 }}>Get ready to capture</div>
             {['Make sure you are in a quiet environment', 'Place your phone between you and your patient', 'Eleos may detect media played aloud during this session, including personal voice messages.'].map(text => (
-              <div key={text} style={{ ...P, display: 'flex', gap: 12, fontSize: 14, color: 'rgba(33,33,33,0.72)', lineHeight: 1.5, marginBottom: 14 }}><span style={{ color: '#2D4CCD' }}>•</span><span>{text}</span></div>
+              <div key={text} style={{ ...P, display: 'flex', gap: 12, fontSize: 14, color: 'rgba(33,33,33,0.72)', lineHeight: 1.5, marginBottom: 14 }}><span style={{ color: smartScribeColor(smartScribeSkin, '#2D4CCD') }}>•</span><span>{text}</span></div>
             ))}
             <label style={{ ...P, display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'rgba(33,33,33,0.72)', margin: '20px 0' }}>
               <input type="checkbox" checked={suppressReadiness} onChange={e => setSuppressReadiness(e.target.checked)} />
               Don't show this message again
             </label>
-            <button onClick={() => { if (suppressReadiness) onSkipReadiness?.(); setShowReadiness(false); startCapture(); }} style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: '#2D4CCD', color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Start session capture</button>
+            <button onClick={() => { if (suppressReadiness) onSkipReadiness?.(); setShowReadiness(false); startCapture(); }} style={{ width: '100%', padding: '10px 16px', border: 'none', borderRadius: 4, background: smartScribeColor(smartScribeSkin, '#2D4CCD'), color: 'white', ...P, fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>Start session capture</button>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useEhrContext, useSmartScribeSkin } from './EhrContext.jsx';
+import { useEhrContext, supportsSmartScribeBranding } from './EhrContext.jsx';
 import { useNoteTypeContext } from './NoteTypeContext.jsx';
 import { CLIENT_LOCK_RULES } from '../data/lockedDownRules.js';
 import { groupNoteForEhr, supportsGroupGO } from '../data/groupGoNote.js';
@@ -14,7 +14,7 @@ export function LockedDownModeProvider({ children }) {
   const [lockedDownMode, setLockedDownMode] = useState(true);
   const { selectedEhr, clientName } = useEhrContext();
   const { selectedNoteType, setSelectedNoteType } = useNoteTypeContext();
-  const coreNoteAllowed = useSmartScribeSkin();
+  const coreNoteAllowed = supportsSmartScribeBranding(selectedEhr);
 
   useEffect(() => {
     if (!lockedDownMode) return;

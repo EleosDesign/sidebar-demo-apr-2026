@@ -1,16 +1,27 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const EhrContext = createContext({ selectedEhr: 'welligent', setSelectedEhr: () => {}, clientName: 'Webb, Marcus', setClientName: () => {} });
+const EhrContext = createContext({
+  selectedEhr: 'welligent', setSelectedEhr: () => {},
+  clientName: 'Webb, Marcus', setClientName: () => {},
+  eleosBranding: false, setEleosBranding: () => {},
+});
 
 export const useEhrContext = () => useContext(EhrContext);
 
-// EHR backgrounds that render the same underlying SmartCare product (ADR-0005) and
-// share the Companion Sidebar's navy "SmartScribe skin" (ADR-0006).
-const SMARTSCRIBE_SKIN_EHRS = new Set(['streamline', 'calmhsa']);
+// EHR backgrounds that render the same underlying SmartCare product (ADR-0005)
+// and can use SmartScribe branding.
+const SMARTSCRIBE_EHRS = new Set(['streamline', 'calmhsa']);
+
+export const supportsSmartScribeBranding = (ehr) => SMARTSCRIBE_EHRS.has(ehr);
+
+export const useSmartScribeBrandingAvailable = () => {
+  const { selectedEhr } = useEhrContext();
+  return supportsSmartScribeBranding(selectedEhr);
+};
 
 export const useSmartScribeSkin = () => {
-  const { selectedEhr } = useEhrContext();
-  return SMARTSCRIBE_SKIN_EHRS.has(selectedEhr);
+  const { selectedEhr, eleosBranding } = useEhrContext();
+  return supportsSmartScribeBranding(selectedEhr) && !eleosBranding;
 };
 
 // The single source of truth for the skin's navy — every CTA/border that swaps
@@ -50,8 +61,9 @@ export const smartScribeEnhanceShadow = (skinActive, { includeOuterFade = true }
 export function EhrProvider({ children }) {
   const [selectedEhr, setSelectedEhr] = useState('welligent');
   const [clientName, setClientName] = useState('Webb, Marcus');
+  const [eleosBranding, setEleosBranding] = useState(false);
   return (
-    <EhrContext.Provider value={{ selectedEhr, setSelectedEhr, clientName, setClientName }}>
+    <EhrContext.Provider value={{ selectedEhr, setSelectedEhr, clientName, setClientName, eleosBranding, setEleosBranding }}>
       {children}
     </EhrContext.Provider>
   );
